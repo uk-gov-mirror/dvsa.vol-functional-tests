@@ -8,18 +8,15 @@
     <artifactId>vol-functional-tests</artifactId>
     <version>0.1</version>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <properties>
+        <maven.compiler.version>3.7.0</maven.compiler.version>
+        <cucumber-java.version>2.3.1</cucumber-java.version>
+        <cucumber-junit.version>2.3.1</cucumber-junit.version>
+        <junit.version>4.12</junit.version>
+        <active-support.version>1.1.0</active-support.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <commons-lang3.version>3.7</commons-lang3.version>
+    </properties>
 
     <repositories>
         <repository>
@@ -35,14 +32,26 @@
         </repository>
     </distributionManagement>
 
-    <properties>
-        <cucumber-java.version>2.3.1</cucumber-java.version>
-        <cucumber-junit.version>2.3.1</cucumber-junit.version>
-        <junit.version>4.12</junit.version>
-        <active-support.version>1.1.0</active-support.version>
-        <slf4j.version>1.7.25</slf4j.version>
-        <commons-lang3.version>3.7</commons-lang3.version>
-    </properties>
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.springframework.build</groupId>
+                <artifactId>aws-maven</artifactId>
+                <version>5.0.0.RELEASE</version>
+            </extension>
+        </extensions>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
