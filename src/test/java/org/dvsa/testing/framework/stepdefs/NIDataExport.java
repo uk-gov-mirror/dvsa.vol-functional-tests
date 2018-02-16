@@ -21,7 +21,7 @@ public class NIDataExport {
     @Given("^Northern Ireland goods vehicles data has been exported$")
     public void northernIrelandGoodsVehiclesDataHasBeenExported() throws Throwable {
         HashMap<String, String> jenkinsParams = new HashMap<>();
-        jenkinsParams.put(Param.NODE.toString(), String.format("api&&%s&&olcs", Properties.get("env")));
+        jenkinsParams.put(Param.NODE.toString(), String.format("api&&%s&&olcs", Properties.get("env", true)));
         jenkinsParams.put(Param.REPORT.toString(), "ni-operator-licence");
 
         Jenkins.trigger(Jenkins.Job.NI_EXPORT, jenkinsParams);
