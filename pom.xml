@@ -13,10 +13,12 @@
         <cucumber-java.version>2.3.1</cucumber-java.version>
         <cucumber-junit.version>2.3.1</cucumber-junit.version>
         <junit.version>4.12</junit.version>
-        <active-support.version>1.1.0.1</active-support.version>
+        <active-support.version>1.2.3</active-support.version>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-log4j12.version>1.7.5</slf4j-log4j12.version>
         <commons-lang3.version>3.7</commons-lang3.version>
+        <page-objects.version>0.6.2</page-objects.version>
+        <page-action.version>0.1</page-action.version>
     </properties>
 
     <repositories>
@@ -57,7 +59,7 @@
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
+            <artifactId>cucumber-java8</artifactId>
             <version>${cucumber-java.version}</version>
         </dependency>
         <dependency>
@@ -93,5 +95,16 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.dvsa.testing.lib</groupId>
+            <artifactId>page-objects</artifactId>
+            <version>${page-objects.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dvsa.testing.lib</groupId>
+            <artifactId>page-action</artifactId>
+            <version>${page-action.version}</version>
+        </dependency>
+
     </dependencies>
 </project>
