@@ -4,7 +4,7 @@ import activesupport.aws.s3.S3;
 import activesupport.database.DBUnit;
 import activesupport.file.Files;
 import activesupport.jenkins.Jenkins;
-import activesupport.jenkins.Param;
+import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -21,8 +21,8 @@ public class NIDataExport {
     @Given("^Northern Ireland goods vehicles data has been exported$")
     public void northernIrelandGoodsVehiclesDataHasBeenExported() throws Throwable {
         HashMap<String, String> jenkinsParams = new HashMap<>();
-        jenkinsParams.put(Param.NODE.toString(), String.format("api&&%s&&olcs", Properties.get("env", true)));
-        jenkinsParams.put(Param.REPORT.toString(), "ni-operator-licence");
+        jenkinsParams.put(JenkinsParameterKey.NODE.toString(), String.format("api&&%s&&olcs", Properties.get("env", true)));
+        jenkinsParams.put(JenkinsParameterKey.REPORT.toString(), "ni-operator-licence");
 
         Jenkins.trigger(Jenkins.Job.NI_EXPORT, jenkinsParams);
     }
