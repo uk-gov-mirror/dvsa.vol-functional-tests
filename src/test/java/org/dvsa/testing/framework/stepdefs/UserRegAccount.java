@@ -37,7 +37,8 @@ public class UserRegAccount implements En {
         });
 
         And("^I should see help text for signing in problems$", () -> {
-            Assert.assertEquals(RegisterConfirmationPage.signingInProblems(), RegisterConfirmationPage.getEmailNotRecivevedMessage());
+            Assert.assertEquals(RegisterConfirmationPage.signingInProblems(),
+                                RegisterConfirmationPage.getEmailNotRecivevedMessage());
         });
     }
 }
