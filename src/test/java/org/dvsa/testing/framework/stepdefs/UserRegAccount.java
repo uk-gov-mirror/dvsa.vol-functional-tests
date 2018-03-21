@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class UserRegAccount implements En {
 
     public UserRegAccount() {
-        Given("I am on the VOL External registration", () -> {
+        Given("I am on the VOL external registration", () -> {
             EnvironmentType env = Environment.enumType(Properties.get("env", true));
             String URL = URI.build(ApplicationType.EXTERNAL, env, "register") ;
 
@@ -28,9 +28,12 @@ public class UserRegAccount implements En {
         });
 
         Then("^I should be notified to check my email for temp password$", () -> {
-            Assert.assertTrue(Pattern.matches(RegisterConfirmationPage.checkEmail().pattern(),
-                    RegisterConfirmationPage.getConfirmEmailTemppassSentMessageText()
-            ));
+            Assert.assertTrue(
+                    Pattern.matches(
+                            RegisterConfirmationPage.checkEmail(),
+                            RegisterConfirmationPage.getConfirmEmailTemppassSentMessageText()
+                    )
+            );
         });
 
         And("^I should see help text for signing in problems$", () -> {
