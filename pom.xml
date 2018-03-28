@@ -17,7 +17,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-log4j12.version>1.7.5</slf4j-log4j12.version>
         <commons-lang3.version>3.7</commons-lang3.version>
-        <page-objects.version>0.6.5</page-objects.version>
+        <page-objects.version>0.6.7</page-objects.version>
         <page-action.version>0.1</page-action.version>
     </properties>
 
