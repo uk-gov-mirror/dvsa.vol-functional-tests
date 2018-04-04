@@ -2,8 +2,8 @@
 Feature: Change validation on interim directions so can have 0 vehicles
 
   Background:
-    Given I have logged in to selfserve
-    And I have an internal license
+    Given I have logged in to internal
+    And I have an internal application
 
   Scenario:
     Given I have an interim application

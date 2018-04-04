@@ -8,7 +8,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(plugin = {"pretty", "html:target/cucumber"},
-        features = {"src/test/resources/features/internal/interim-license.feature"},
+
+        features = {"src/test/resources/features"},
         glue = {"org.dvsa.testing.framework.stepdefs"}
 )
 public class TestRunner {

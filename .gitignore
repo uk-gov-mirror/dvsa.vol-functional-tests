@@ -122,3 +122,4 @@ pom.xml.tag
 
 # Testing
 target/
+/.gradle/
