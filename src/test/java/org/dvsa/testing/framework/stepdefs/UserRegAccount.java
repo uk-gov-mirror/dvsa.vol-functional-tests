@@ -28,12 +28,12 @@ public class UserRegAccount implements En {
         });
 
         Then("^I should be notified to check my email for temp password$", () -> {
-            Assert.assertTrue(
-                    Pattern.matches(
-                            RegisterConfirmationPage.checkEmail(),
-                            RegisterConfirmationPage.getConfirmEmailTemppassSentMessageText()
-                    )
-            );
+              Assert.assertTrue(
+                                Pattern.matches(
+                                    RegisterConfirmationPage.checkEmail().pattern(),
+                                    RegisterConfirmationPage.getConfirmEmailTemppassSentMessageText()
+                                )
+                    );
         });
 
         And("^I should see help text for signing in problems$", () -> {
