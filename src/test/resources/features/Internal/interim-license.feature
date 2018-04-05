@@ -6,6 +6,5 @@ Feature: Change validation on interim directions so can have 0 vehicles
     And I have an internal application
 
   Scenario:
-    Given I have an interim application
     When  I have zero vehicle authority on a goods variation application
-    Then  I save the application with no error
+    Then  I save the application with an error

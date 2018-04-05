@@ -11,7 +11,6 @@ import activesupport.string.Str;
 import activesupport.number.Int;
 
 
-
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +40,7 @@ public class APICreateInterimGoodsLicence {
     private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
 
     private static int version = 1;
-    private static String applicationNumber;
+    public static String applicationNumber;
     private static String userId;
     private static String pid;
     private static String organisationId;
@@ -49,6 +48,29 @@ public class APICreateInterimGoodsLicence {
     private static String transportManagerApplicationId;
     private static String companyNumber = String.valueOf(Int.random(00000000,99999999));
     private static String noOfVehiclesRequired = "5";
+
+    public void createGoodsApp(){
+        registerUser();
+        getUserDetails();
+        createApplication();
+        updateBusinessType();
+        updateBusinessDetails();
+        addAddressDetails();
+        addPartners();
+        addOperatingCentre();
+        updateOperatingCentre();
+        addFinancialEvidence();
+        addTransportManager();
+        submitTransport();
+        vehicles();
+        addFinancialHistory();
+        addApplicationSafetyAndComplianceDetails();
+        addSafetyInspector();
+        addConvictionsDetails();
+        addLicenceHistory();
+        reviewAndDeclare();
+        submitApplication();
+    }
 
     public void registerUser() {
         String registerResource = "user/selfserve/register";
