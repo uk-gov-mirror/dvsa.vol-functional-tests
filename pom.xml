@@ -18,7 +18,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-log4j12.version>1.7.5</slf4j-log4j12.version>
         <commons-lang3.version>3.7</commons-lang3.version>
-        <page-objects.version>0.6.7.1</page-objects.version>
+        <page-objects.version>0.6.7.2</page-objects.version>
         <page-action.version>0.2</page-action.version>
         <uri-constructor.version>1.4.4</uri-constructor.version>
         <assertj-core-version>3.9.1</assertj-core-version>
@@ -118,6 +118,12 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
             <version>${hamcrest-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dvsa.testing.lib</groupId>
+            <artifactId>uri-constructor</artifactId>
+            <version>1.4.1</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
