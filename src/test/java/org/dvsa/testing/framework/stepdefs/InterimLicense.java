@@ -12,7 +12,7 @@ public class InterimLicense extends BasePage implements En {
     public InterimLicense() {
 
 
-        When("^I have zero vehicle authority on a goods variation application$", () -> {
+        When("^I have an interim vehicle authority greater than my application vehicle authority$", () -> {
             InterimPage.addInterim();
             InterimPage.startDate(LocalDate.now().getDayOfWeek(), LocalDate.now().getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.endDate(LocalDate.now().plusDays(7).getDayOfWeek(), LocalDate.now().plusMonths(2).getMonthOfYear(), LocalDate.now().getYear());
