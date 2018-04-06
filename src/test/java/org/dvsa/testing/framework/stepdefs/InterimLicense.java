@@ -1,6 +1,5 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
