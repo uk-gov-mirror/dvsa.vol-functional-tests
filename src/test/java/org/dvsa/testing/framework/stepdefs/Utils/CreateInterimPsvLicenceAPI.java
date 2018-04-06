@@ -1,15 +1,15 @@
 package org.dvsa.testing.framework.stepdefs.Utils;
 
 import activesupport.http.RestUtils;
+import activesupport.number.Int;
+import activesupport.string.Str;
 import enums.BusinessType;
 import enums.LicenceType;
 import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.stepdefs.builders.*;
-import activesupport.string.Str;
-import activesupport.number.Int;
-
+import org.junit.Test;
 
 import java.util.HashMap;
 
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
 
 
-public class APICreateInterimGoodsLicence {
+public class CreateInterimPsvLicenceAPI {
 
     private static ValidatableResponse apiResponse;
 
@@ -35,7 +35,6 @@ public class APICreateInterimGoodsLicence {
     private String emailAddress = Str.randomWord(6).concat("tester@dvsa.com");
     private String organisationName = Str.randomWord(10);
 
-
     private static String env = System.getProperty("env");
     private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
 
@@ -46,39 +45,9 @@ public class APICreateInterimGoodsLicence {
     private static String organisationId;
     private static String licenceNumber;
     private static String transportManagerApplicationId;
-    private static String companyNumber = String.valueOf(Int.random(00000000, 99999999));
-    private static int noOfVehiclesRequired = 5;
+    private static String companyNumber = String.valueOf(Int.random(00000000,99999999));
+    private static String noOfVehiclesRequired = "5";
 
-    public static int getNoOfVehiclesRequired() {
-        return noOfVehiclesRequired;
-    }
-
-    public static String getApplicationNumber() {
-        return applicationNumber;
-    }
-
-    public void createGoodsApp() {
-        registerUser();
-        getUserDetails();
-        createApplication();
-        updateBusinessType();
-        updateBusinessDetails();
-        addAddressDetails();
-        addPartners();
-        addOperatingCentre();
-        updateOperatingCentre();
-        addFinancialEvidence();
-        addTransportManager();
-        submitTransport();
-        vehicles();
-        addFinancialHistory();
-        addApplicationSafetyAndComplianceDetails();
-        addSafetyInspector();
-        addConvictionsDetails();
-        addLicenceHistory();
-        reviewAndDeclare();
-        submitApplication();
-    }
 
     public void registerUser() {
         String registerResource = "user/selfserve/register";
@@ -87,7 +56,7 @@ public class APICreateInterimGoodsLicence {
         PersonBuilder personBuilder = new PersonBuilder().withTitle(title).withForename(foreName).withFamilyName(familyName).withBirthDate(birthDate);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withEmailAddress(emailAddress).withPerson(personBuilder);
         SelfServeUserRegistrationDetailsBuilder selfServeUserRegistrationDetailsBuilder = new SelfServeUserRegistrationDetailsBuilder().withLoginId(loginId).withContactDetails(contactDetailsBuilder)
-                .withOrganisationName(organisationName).withBusinessType(String.valueOf(BusinessType.getEnum("limited_company")));
+                .withOrganisationName(organisationName).withBusinessType(String.valueOf(BusinessType.getEnum("sole_trader")));
         apiResponse = RestUtils.post(selfServeUserRegistrationDetailsBuilder, baseURL.concat(registerResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         userId = apiResponse.extract().jsonPath().getString("id.user");
@@ -100,14 +69,14 @@ public class APICreateInterimGoodsLicence {
         apiResponse = RestUtils.get(baseURL.concat(userDetailsResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         pid = apiResponse.extract().jsonPath().getString("pid");
-        organisationId = apiResponse.extract().jsonPath().prettyPeek().getString("organisationUsers.organisation.id");
+        organisationId = apiResponse.extract().jsonPath().getString("organisationUsers.organisation.id");
     }
 
     public void createApplication() {
         String createApplicationResource = "application";
         Headers.headers.put("x-pid", pid);
         HashMap<String, String> headers = getHeaders();
-        ApplicationBuilder applicationBuilder = new ApplicationBuilder().withOperatorType(String.valueOf(OperatorType.getEnum("goods")))
+        ApplicationBuilder applicationBuilder = new ApplicationBuilder().withOperatorType(String.valueOf(OperatorType.getEnum("public")))
                 .withLicenceType(String.valueOf(LicenceType.getEnum("standard_international"))).withNiFlag(niFlag).withOrganisation(organisationId);
         apiResponse = RestUtils.post(applicationBuilder, baseURL.concat(createApplicationResource), headers);
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
@@ -117,20 +86,20 @@ public class APICreateInterimGoodsLicence {
 
     public void updateBusinessType() {
         String updateBusinessTypeResource = String.format("organisation/%s/business-type/", organisationId);
-            BusinessTypeBuilder businessTypeBuilder = new BusinessTypeBuilder().withBusinessType(String.valueOf(BusinessType.getEnum("limited_company"))).withVersion(String.valueOf(version))
-                    .withId(organisationId).withApplication(applicationNumber);
-            apiResponse = RestUtils.put(businessTypeBuilder, baseURL.concat(updateBusinessTypeResource), getHeaders());
+        BusinessTypeBuilder businessTypeBuilder = new BusinessTypeBuilder().withBusinessType(String.valueOf(BusinessType.getEnum("sole_trader"))).withVersion(String.valueOf(version))
+                .withId(organisationId).withApplication(applicationNumber);
+        apiResponse = RestUtils.put(businessTypeBuilder, baseURL.concat(updateBusinessTypeResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
     public void updateBusinessDetails() {
         String natureOfBusiness = "apiTesting";
         String updateBusinessDetailsResource = String.format("organisation/business-details/application/%s", licenceNumber);
-            AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
-            UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
-                    .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
-                    .withVersion(String.valueOf(version)).withName(natureOfBusiness).withAddress(address);
-            apiResponse = RestUtils.put(businessDetails, baseURL.concat(updateBusinessDetailsResource), getHeaders());
+        AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
+        UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
+                .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
+                .withVersion(String.valueOf(version)).withName(natureOfBusiness).withAddress(address);
+        apiResponse = RestUtils.put(businessDetails, baseURL.concat(updateBusinessDetailsResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
@@ -155,8 +124,8 @@ public class APICreateInterimGoodsLicence {
         String operatingCentreResource = String.format("application/%s/operating-centre/", applicationNumber);
         String permissionOption = "Y";
         AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
-        OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder().withApplication(applicationNumber).withNoOfVehiclesRequired(String.valueOf(noOfVehiclesRequired))
-                .withNoOfTrailersRequired(String.valueOf(noOfVehiclesRequired)).withPermission(permissionOption).withAddress(address);
+        OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder().withApplication(applicationNumber).withNoOfVehiclesRequired(noOfVehiclesRequired)
+                .withPermission(permissionOption).withAddress(address);
         apiResponse = RestUtils.post(operatingCentreBuilder, baseURL.concat(operatingCentreResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
     }
@@ -164,24 +133,22 @@ public class APICreateInterimGoodsLicence {
     public void updateOperatingCentre() {
         String trafficArea = "D";
         String updateOperatingCentreResource = String.format("application/%s/operating-centres", applicationNumber);
-
         do {
-            OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater().withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
-                    .withTrafficArea(trafficArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
+            OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater().withId(applicationNumber).withTotAuthVehicles(Integer.parseInt(noOfVehiclesRequired))
+                   .withTrafficArea(trafficArea).withVersion(version);
             apiResponse = RestUtils.put(updateOperatingCentre, baseURL.concat(updateOperatingCentreResource), getHeaders());
             version++;
-        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
     public void addFinancialEvidence() {
         String financialEvidenceResource = String.format("application/%s/financial-evidence", applicationNumber);
-
         do {
             FinancialEvidenceBuilder financialEvidenceBuilder = new FinancialEvidenceBuilder().withId(applicationNumber).withVersion(version).withFinancialEvidenceUploaded(0);
             apiResponse = RestUtils.put(financialEvidenceBuilder, baseURL.concat(financialEvidenceResource), getHeaders());
             version++;
-        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
@@ -197,19 +164,37 @@ public class APICreateInterimGoodsLicence {
 
     public void submitTransport() {
         String submitTransportManager = String.format("transport-manager-application/%s/submit", applicationNumber);
-        GenericBuilder genericBuilder = new GenericBuilder().withId(transportManagerApplicationId).withVersion(1);
-        apiResponse = RestUtils.put(genericBuilder, baseURL.concat(submitTransportManager), getHeaders());
+            GenericBuilder genericBuilder = new GenericBuilder().withId(transportManagerApplicationId).withVersion(1);
+            apiResponse = RestUtils.put(genericBuilder, baseURL.concat(submitTransportManager), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
     public void vehicles() {
         String hasEnteredReg = "N";
-        String psvVehiclesResource = String.format("application/%s/vehicles", applicationNumber);
-
+        String psvVehiclesResource = String.format("application/%s/psv-vehicles", applicationNumber);
         do {
             VehiclesBuilder psvVehiclesBuilder = new VehiclesBuilder().withId(applicationNumber).withHasEnteredReg(hasEnteredReg).withVersion(version);
             apiResponse = RestUtils.put(psvVehiclesBuilder, baseURL.concat(psvVehiclesResource), getHeaders());
-        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+    }
+
+    public void submitVehicleDeclaration() {
+        String psvVehicleSize = "psvvs_both";
+        String psvNoSmallVhlConfirmation = "Y";
+        String psvOperateSmallVhl = "Y";
+        String psvSmallVhlNotes = "submitted through the API";
+        String psvLimousines = "Y";
+        String psvNoLimousineConfirmation = "Y";
+        String psvOnlyLimousinesConfirmation = "Y";
+        String vehicleDeclarationResource = String.format("application/%s/vehicle-declaration", applicationNumber);
+        do {
+            VehicleDeclarationBuilder vehicleDeclarationBuilder = new VehicleDeclarationBuilder().withId(applicationNumber).withPsvVehicleSize(psvVehicleSize)
+                    .withPsvLimousines(psvLimousines).withPsvNoSmallVhlConfirmation(psvNoSmallVhlConfirmation).withPsvOperateSmallVhl(psvOperateSmallVhl).withPsvSmallVhlNotes(psvSmallVhlNotes)
+                    .withPsvNoLimousineConfirmation(psvNoLimousineConfirmation).withPsvOnlyLimousinesConfirmation(psvOnlyLimousinesConfirmation).withVersion(version);
+            apiResponse = RestUtils.put(vehicleDeclarationBuilder, baseURL.concat(vehicleDeclarationResource), getHeaders());
+            version++;
+        }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
@@ -217,14 +202,13 @@ public class APICreateInterimGoodsLicence {
         String financialHistoryAnswer = "N";
         String insolvencyAnswer = "false";
         String financialHistoryResource = String.format("application/%s/financial-history", applicationNumber);
-
         do {
             FinancialHistoryBuilder financialHistoryBuilder = new FinancialHistoryBuilder().withId(applicationNumber).withVersion(String.valueOf(version)).withBankrupt(financialHistoryAnswer)
                     .withLiquidation(financialHistoryAnswer).withReceivership(financialHistoryAnswer).withAdministration(financialHistoryAnswer).withAdministration(financialHistoryAnswer)
                     .withDisqualified(financialHistoryAnswer).withInsolvencyDetails(insolvencyAnswer).withInsolvencyConfirmation(insolvencyAnswer);
             apiResponse = RestUtils.put(financialHistoryBuilder, baseURL.concat(financialHistoryResource), getHeaders());
             version++;
-        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
@@ -235,8 +219,8 @@ public class APICreateInterimGoodsLicence {
         String applicationSafetyResource = String.format("application/%s/safety", applicationNumber);
 
         do {
-            Licence licence = new Licence().withId(licenceNumber).withVersion(version).withSafetyInsVaries(safetyInsVaries).withSafetyInsVehicles(String.valueOf(noOfVehiclesRequired))
-                    .withSafetyInsTrailers(String.valueOf(noOfVehiclesRequired)).withTachographIns(tachographIns);
+            Licence licence = new Licence().withId(licenceNumber).withVersion(version).withSafetyInsVaries(safetyInsVaries).withSafetyInsVehicles(noOfVehiclesRequired)
+                    .withSafetyInsTrailers(noOfVehiclesRequired).withTachographIns(tachographIns);
             ApplicationSafetyBuilder applicationSafetyBuilder = new ApplicationSafetyBuilder().withId(applicationNumber).withVersion(version)
                     .withSafetyConfirmation(safetyConfirmationOption).withLicence(licence);
             apiResponse = RestUtils.put(applicationSafetyBuilder, baseURL.concat(applicationSafetyResource), getHeaders());
@@ -257,9 +241,8 @@ public class APICreateInterimGoodsLicence {
     }
 
     public void addConvictionsDetails() {
-        String previousConvictionsResource = String.format("application/%s/previous-convictions", applicationNumber);
-
         do {
+            String previousConvictionsResource = String.format("application/%s/previous-convictions", applicationNumber);
             ConvictionsPenaltiesBuilder convictionsPenaltiesBuilder = new ConvictionsPenaltiesBuilder().withId(applicationNumber).withConvictionsConfirmation("Y")
                     .withPrevConviction("N").withVersion(version);
             apiResponse = RestUtils.put(convictionsPenaltiesBuilder, baseURL.concat(previousConvictionsResource), getHeaders());
@@ -268,11 +251,10 @@ public class APICreateInterimGoodsLicence {
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
-    public void addLicenceHistory() {
+    public void addLicenceHistory(){
         String optionResponse = "N";
-        String licenceHistoryResource = String.format("application/%s/licence-history", applicationNumber);
-
-        do {
+        do{
+            String licenceHistoryResource = String.format("application/%s/licence-history", applicationNumber);
             LicenceHistoryBuilder licenceHistoryBuilder = new LicenceHistoryBuilder().withId(applicationNumber).withPrevHadLicence(optionResponse).withPrevHasLicence(optionResponse)
                     .withPrevBeenAtPi(optionResponse).withPrevBeenDisqualifiedTc(optionResponse).withPrevBeenRefused(optionResponse).withPrevBeenRevoked(optionResponse).withPrevPurchasedAssets(optionResponse)
                     .withVersion(version);
@@ -282,28 +264,27 @@ public class APICreateInterimGoodsLicence {
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
-    public void reviewAndDeclare() {
+    public void reviewAndDeclare(){
         String interimReason = "Testing through the API";
         String isInterim = "Y";
         String declarationConfirmation = "Y";
         String signatureRequired = "sig_physical_signature";
-        String reviewResource = String.format("application/%s/declaration/", applicationNumber);
-
-        do {
+        do{
+            String reviewResource = String.format("application/%s/declaration/", applicationNumber);
             DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings().withId(applicationNumber).withVersion(String.valueOf(version)).withInterimRequested(isInterim)
                     .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
-            apiResponse = RestUtils.put(undertakings, baseURL.concat(reviewResource), getHeaders());
+            apiResponse = RestUtils.put(undertakings,baseURL.concat(reviewResource),getHeaders());
             version++;
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
-    public void submitApplication() {
+    public void submitApplication(){
         String submitResource = String.format("application/%s/submit", applicationNumber);
 
-        do {
+        do{
             GenericBuilder genericBuilder = new GenericBuilder().withId(applicationNumber).withVersion(version);
-            apiResponse = RestUtils.put(genericBuilder, baseURL.concat(submitResource), getHeaders());
+            apiResponse = RestUtils.put(genericBuilder,baseURL.concat(submitResource),getHeaders());
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }

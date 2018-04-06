@@ -11,7 +11,7 @@ import org.dvsa.testing.lib.utils.ApplicationType;
 import org.dvsa.testing.lib.utils.EnvironmentType;
 import org.dvsa.testing.lib.pages.BasePage;
 
-import static org.dvsa.testing.framework.stepdefs.Utils.APICreateInterimGoodsLicence.*;
+import static org.dvsa.testing.framework.stepdefs.Utils.CreateInterimGoodsLicenceAPI.*;
 
 public class LoginInternalUser extends BasePage implements En {
 
@@ -22,7 +22,7 @@ public class LoginInternalUser extends BasePage implements En {
 
         Given("^I have logged in to internal$", () -> {
             if (getApplicationNumber() == null) {
-                APICreateInterimGoodsLicence goodsApp = new APICreateInterimGoodsLicence();
+                CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
                 goodsApp.createGoodsApp();
             }
 
