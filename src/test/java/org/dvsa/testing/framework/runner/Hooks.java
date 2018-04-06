@@ -6,7 +6,7 @@ import org.dvsa.testing.lib.browser.Browser;
 public class Hooks {
 
     @After
-    public void tearDown() {
+    public void afterScenario() {
         Browser.quit();
     }
 }
