@@ -1,19 +1,15 @@
 package org.dvsa.testing.framework.stepdefs.Utils;
 
-import activesupport.string.Str;
 import activesupport.system.Properties;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.Environment;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.URI;
 import org.dvsa.testing.lib.browser.Browser;
-import org.dvsa.testing.lib.internal.*;
-import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.pages.internal.SearchNavBar;
 import org.dvsa.testing.lib.utils.ApplicationType;
 import org.dvsa.testing.lib.utils.EnvironmentType;
 import org.dvsa.testing.lib.pages.BasePage;
-import org.openqa.selenium.By;
 
 import static org.dvsa.testing.framework.stepdefs.Utils.APICreateInterimGoodsLicence.*;
 
@@ -25,25 +21,32 @@ public class LoginInternalUser extends BasePage implements En {
     public LoginInternalUser() {
 
         Given("^I have logged in to internal$", () -> {
-            APICreateInterimGoodsLicence goodsApp = new APICreateInterimGoodsLicence();
-            goodsApp.createGoodsApp();
+            if (getApplicationNumber() == null) {
+                APICreateInterimGoodsLicence goodsApp = new APICreateInterimGoodsLicence();
+                goodsApp.createGoodsApp();
+            }
 
             EnvironmentType env = Environment.enumType(Properties.get("env", true));
             String URL = URI.build(ApplicationType.INTERNAL, env);
 
             Browser.go(URL);
-            Login.signIn(USER_EMAIL, USER_PASSWORD);
-        });
-//TODO: Make search element using table instead of text
-        And("^I have an internal application$", () -> {
-        do {
-            SearchNavBar.search(applicationNumber);
-            SearchNavBar.applications();
-        } while (isTextPresent("There were no results for your search.", 60));
-        clickByLinkText(applicationNumber);
-       if (isLinkPresent("Interim", 60))
-        clickByLinkText("Interim ");
-    });
 
-}
+            if(isTextPresent("Username",60))
+               Login.signIn(USER_EMAIL, USER_PASSWORD);
+            else{
+                //TODO Replace with logger
+                System.out.println("Already logged In");
+            }
+        });
+                //TODO: Make search element using table instead of text
+        And("^I have an internal application$", () -> {
+            do {
+                SearchNavBar.search(getApplicationNumber());
+                SearchNavBar.applications();
+            } while (isTextPresent("There were no results for your search.", 60));
+            clickByLinkText(getApplicationNumber());
+            if (isLinkPresent("Interim", 60))
+                clickByLinkText("Interim ");
+        });
+    }
 }
