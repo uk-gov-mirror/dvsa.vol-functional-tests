@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
@@ -24,21 +25,11 @@ public class InterimLicense extends BasePage implements En {
             InterimPage.vehicleAuthority(getNoOfVehiclesRequired()+ 1);
         });
 
-        Then("^I should get an error when i save the application$", () -> {
-            InterimPage.save();
-            assertTrue(isTextPresent(VehicleErrorMessage,60));
-        });
-
         When("^I have an interim vehicle authority equal to my application vehicle authority$", () -> {
             InterimPage.addInterim();
             InterimPage.startDate(LocalDate.now().getDayOfWeek(), LocalDate.now().getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.endDate(LocalDate.now().plusDays(7).getDayOfWeek(), LocalDate.now().plusMonths(2).getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.vehicleAuthority(getNoOfVehiclesRequired());
-        });
-
-        Then("^I should be able to save the application without any errors$", () -> {
-            InterimPage.save();
-            assertFalse(isTextPresent(VehicleErrorMessage,60));
         });
 
         When("^I have an interim vehicle authority less than my application vehicle authority$", () -> {
@@ -53,6 +44,23 @@ public class InterimLicense extends BasePage implements En {
             InterimPage.trailerAuthority(getNoOfVehiclesRequired());
         });
 
+        When("^I create an interim application with zero vehicle authority$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
+        });
+
+        Then("^I should get an error when i save the application$", () -> {
+            InterimPage.save();
+            assertTrue(isTextPresent(VehicleErrorMessage,60));
+        });
+
+
+        Then("^I should be able to save the application without any errors$", () -> {
+            InterimPage.save();
+            assertFalse(isTextPresent(VehicleErrorMessage,60));
+        });
+
+
         Then("^I should not error when i save the application$", () -> {
             InterimPage.save();
             assertFalse(isTextPresent(noDatesErrorMessage,60));
@@ -61,6 +69,15 @@ public class InterimLicense extends BasePage implements En {
         Then("^I should not error when i attempt to grant the application$", () -> {
             InterimPage.grant();
             assertTrue(isTextPresent(noDatesErrorMessage,60));
+        });
+        And("^I have an internal application with a variation$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
+        });
+
+        And("^trailer authority greater than one$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
         });
     }
 }
