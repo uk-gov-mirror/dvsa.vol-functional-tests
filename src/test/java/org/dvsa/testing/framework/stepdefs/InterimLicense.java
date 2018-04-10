@@ -70,15 +70,6 @@ public class InterimLicense extends BasePage implements En {
             InterimPage.grant();
             assertTrue(isTextPresent(noDatesErrorMessage,60));
         });
-        And("^I have an internal application with a variation$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
-        });
-
-        And("^trailer authority greater than one$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
-        });
     }
 }
 
