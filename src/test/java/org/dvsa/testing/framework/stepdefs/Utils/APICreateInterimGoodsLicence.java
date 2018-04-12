@@ -32,7 +32,7 @@ public class APICreateInterimGoodsLicence {
     private String town = "Nottingham";
     private String postcode = "NG23HX";
     private String countryCode = "GB";
-    private String emailAddress = Str.randomWord(6).concat("tester@dvsa.com");
+    private static String emailAddress = Str.randomWord(6).concat("tester@dvsa.com");
     private String organisationName = Str.randomWord(10);
 
 
