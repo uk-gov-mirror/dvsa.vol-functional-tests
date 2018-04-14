@@ -22,7 +22,7 @@ public class APICreateInterimGoodsLicence {
     private static ValidatableResponse apiResponse;
 
     private String niFlag = "N";
-    private String loginId = Str.randomWord(5);
+    private static String loginId = Str.randomWord(5);
     private String title = "title_mr";
     private String foreName = Str.randomWord(5);
     private String familyName = Str.randomWord(8);
@@ -55,6 +55,13 @@ public class APICreateInterimGoodsLicence {
 
     public static String getApplicationNumber() {
         return applicationNumber;
+    }
+    public static String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public static String getLoginId(){
+        return loginId;
     }
 
     public void createGoodsApp() {
