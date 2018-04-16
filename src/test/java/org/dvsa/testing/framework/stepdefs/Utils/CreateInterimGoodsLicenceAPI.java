@@ -33,10 +33,8 @@ public class CreateInterimGoodsLicenceAPI {
     private String emailAddress = Str.randomWord(6).concat(".tester@dvsa.com");
     private String organisationName = Str.randomWord(10);
 
-
     private static String env = System.getProperty("env");
     private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
-
     private static int version = 1;
     private static String applicationNumber;
     private static String userId;
