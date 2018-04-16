@@ -24,6 +24,8 @@ public class OperatingCentreUpdater {
     private Integer totAuthTrailers;
     @JsonProperty("trafficArea")
     private String trafficArea;
+    @JsonProperty("enforcementArea")
+    private String enforcementArea;
     @JsonProperty("totCommunityLicences")
     private Integer totCommunityLicences;
     @JsonProperty("version")
@@ -89,6 +91,20 @@ public class OperatingCentreUpdater {
         return this;
     }
 
+    @JsonProperty("enforcementArea")
+    public String getEnforcementArea() {
+        return enforcementArea;
+    }
+
+    @JsonProperty("enforcementArea")
+    public void setEnforcementArea(String enforcementArea) {
+        this.enforcementArea = enforcementArea;
+    }
+
+    public OperatingCentreUpdater withEnforcementArea(String enforcementArea) {
+        this.enforcementArea = enforcementArea;
+        return this;
+    }
     @JsonProperty("totCommunityLicences")
     public Integer getTotCommunityLicences() {
         return totCommunityLicences;
@@ -122,7 +138,7 @@ public class OperatingCentreUpdater {
     @Override
     public String toString() {
         return "id:" + getId() + ",totAuthVehicles:" + getTotAuthVehicles() + ",totAuthTrailers:" + getTotAuthTrailers() +
-                ",trafficArea:" + getTrafficArea()
+                ",trafficArea:" + getTrafficArea() + ",enforcementArea:" + getEnforcementArea()
         + ",totCommunityLicences:" +  getTotCommunityLicences() + ",version:" + getVersion();
     }
 }

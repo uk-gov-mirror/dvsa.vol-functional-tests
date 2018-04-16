@@ -12,18 +12,22 @@ import static org.junit.Assert.assertNotNull;
 public class InternalApplication extends BasePage implements En {
     public InternalApplication() {
         Then("^The pop up should contain letter details$", () -> {
-            String categoryValue = getAttributeText("//*[@id='generate-document']/div[2]/text()", SelectorType.XPATH);
+
+            waitForTextToBePresent("Amend letter");
+
+            String categoryValue = getElementValueByText("//*[@id='generate-document']/div[2]", SelectorType.XPATH);
             assertNotNull(categoryValue);
 
-            String subCategoryValue = getAttributeText("//*[@id='generate-document']/div[3]/text()", SelectorType.XPATH);
+            String subCategoryValue = getElementValueByText("//*[@id='generate-document']/div[3]", SelectorType.XPATH);
             assertNotNull(subCategoryValue);
 
-            String templateValue = getAttributeText("//*[@id='generate-document']/div[4]/span", SelectorType.XPATH);
+            String templateValue = getElementValueByText("//*[@id='generate-document']/div[4]", SelectorType.XPATH);
             assertNotNull(templateValue);
 
-            String docStoreLink = getAttributeText("//*[@id='generate-document']/div[4]/div/strong/text()", SelectorType.XPATH);
+            String docStoreLink = getElementValueByText("//*[@id='generate-document']/div[4]/div/strong", SelectorType.XPATH);
             assertNotNull(docStoreLink);
         });
+
         When("^I generate a letter$", () -> {
            generateLetter();
         });

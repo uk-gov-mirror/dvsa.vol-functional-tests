@@ -30,7 +30,7 @@ public class CreateInterimGoodsLicenceAPI {
     private String town = "Nottingham";
     private String postcode = "NG23HX";
     private String countryCode = "GB";
-    private String emailAddress = Str.randomWord(6).concat("tester@dvsa.com");
+    private String emailAddress = Str.randomWord(6).concat(".tester@dvsa.com");
     private String organisationName = Str.randomWord(10);
 
 
@@ -163,11 +163,12 @@ public class CreateInterimGoodsLicenceAPI {
 
     public void updateOperatingCentre() {
         String trafficArea = "D";
+        String enforcementArea = "EA-D";
         String updateOperatingCentreResource = String.format("application/%s/operating-centres", applicationNumber);
 
         do {
             OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater().withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
-                    .withTrafficArea(trafficArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
+                    .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
             apiResponse = RestUtils.put(updateOperatingCentre, baseURL.concat(updateOperatingCentreResource), getHeaders());
             version++;
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);

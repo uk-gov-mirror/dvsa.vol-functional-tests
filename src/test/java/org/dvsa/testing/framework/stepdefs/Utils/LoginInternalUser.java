@@ -43,7 +43,7 @@ public class LoginInternalUser extends BasePage implements En {
             do {
                 SearchNavBar.search(getApplicationNumber());
                 SearchNavBar.applications();
-            } while (isTextPresent("There were no results for your search.", 60));
+            } while (!isLinkPresent(getApplicationNumber(), 60));
             clickByLinkText(getApplicationNumber());
             if (isLinkPresent("Interim", 60))
                 clickByLinkText("Interim ");
