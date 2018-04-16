@@ -44,22 +44,15 @@ public class InterimLicense extends BasePage implements En {
             InterimPage.trailerAuthority(getNoOfVehiclesRequired());
         });
 
-        When("^I create an interim application with zero vehicle authority$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
-        });
-
         Then("^I should get an error when i save the application$", () -> {
             InterimPage.save();
             assertTrue(isTextPresent(VehicleErrorMessage,60));
         });
 
-
         Then("^I should be able to save the application without any errors$", () -> {
             InterimPage.save();
             assertFalse(isTextPresent(VehicleErrorMessage,60));
         });
-
 
         Then("^I should not error when i save the application$", () -> {
             InterimPage.save();
