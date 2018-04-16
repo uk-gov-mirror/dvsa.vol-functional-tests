@@ -17,28 +17,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
 
 
-public class APICreateInterimGoodsLicence {
+public class CreateInterimGoodsLicenceAPI {
 
     private static ValidatableResponse apiResponse;
 
-    private String niFlag = "N";
     private String loginId = Str.randomWord(5);
     private String title = "title_mr";
     private String foreName = Str.randomWord(5);
     private String familyName = Str.randomWord(8);
-    private String phoneNumber = "0712345678";
     private String birthDate = String.valueOf(Int.random(1900, 2018) + "-" + Int.random(1, 12) + "-" + Int.random(1, 28));
     private String addressLine1 = "API House";
     private String town = "Nottingham";
     private String postcode = "NG23HX";
     private String countryCode = "GB";
-    private String emailAddress = Str.randomWord(6).concat("tester@dvsa.com");
+    private String emailAddress = Str.randomWord(6).concat(".tester@dvsa.com");
     private String organisationName = Str.randomWord(10);
-
 
     private static String env = System.getProperty("env");
     private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
-
     private static int version = 1;
     private static String applicationNumber;
     private static String userId;
@@ -104,6 +100,7 @@ public class APICreateInterimGoodsLicence {
     }
 
     public void createApplication() {
+        String niFlag = "N";
         String createApplicationResource = "application";
         Headers.headers.put("x-pid", pid);
         HashMap<String, String> headers = getHeaders();
@@ -135,6 +132,7 @@ public class APICreateInterimGoodsLicence {
     }
 
     public void addAddressDetails() {
+        String phoneNumber = "0712345678";
         String applicationAddressResource = String.format("application/%s/addresses/", applicationNumber);
         AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withPhoneNumber(phoneNumber).withEmailAddress(emailAddress);
@@ -163,11 +161,12 @@ public class APICreateInterimGoodsLicence {
 
     public void updateOperatingCentre() {
         String trafficArea = "D";
+        String enforcementArea = "EA-D";
         String updateOperatingCentreResource = String.format("application/%s/operating-centres", applicationNumber);
 
         do {
             OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater().withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
-                    .withTrafficArea(trafficArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
+                    .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
             apiResponse = RestUtils.put(updateOperatingCentre, baseURL.concat(updateOperatingCentreResource), getHeaders());
             version++;
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);

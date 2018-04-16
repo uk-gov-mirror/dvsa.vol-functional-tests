@@ -123,3 +123,6 @@ pom.xml.tag
 # Testing
 target/
 /.gradle/
+/src/test/java/org/dvsa/testing/framework/stepdefs/Utils/AdminGrantInterimAPI.java
+/src/test/resources/features/Internal/interim-zero-vehicles.feature
+/src/test/java/org/dvsa/testing/framework/stepdefs/builders/AdminInterimBuilder.java

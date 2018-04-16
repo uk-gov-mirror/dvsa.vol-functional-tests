@@ -9,15 +9,13 @@ import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.stepdefs.builders.*;
-import org.junit.Test;
 
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
 
-
-public class APICreateInterimPsvLicence {
+public class CreateInterimPsvLicenceAPI {
 
     private static ValidatableResponse apiResponse;
 
@@ -37,7 +35,6 @@ public class APICreateInterimPsvLicence {
 
     private static String env = System.getProperty("env");
     private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
-
     private static int version = 1;
     private static String applicationNumber;
     private static String userId;
