@@ -1,4 +1,4 @@
-package org.dvsa.testing.framework.stepdefs.Utils;
+package org.dvsa.testing.framework.stepdefs.Utils.External;
 
 import activesupport.http.RestUtils;
 import activesupport.number.Int;
@@ -8,6 +8,7 @@ import enums.LicenceType;
 import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
+import org.dvsa.testing.framework.stepdefs.Utils.Headers;
 import org.dvsa.testing.framework.stepdefs.builders.*;
 
 import java.util.HashMap;

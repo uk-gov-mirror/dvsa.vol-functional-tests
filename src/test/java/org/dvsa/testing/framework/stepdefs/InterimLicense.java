@@ -1,12 +1,11 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
 import org.dvsa.testing.lib.pages.BasePage;
 
-import static org.dvsa.testing.framework.stepdefs.Utils.CreateInterimGoodsLicenceAPI.getNoOfVehiclesRequired;
+import static org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI.getNoOfVehiclesRequired;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

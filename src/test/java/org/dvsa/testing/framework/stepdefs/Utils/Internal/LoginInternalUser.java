@@ -1,7 +1,8 @@
-package org.dvsa.testing.framework.stepdefs.Utils;
+package org.dvsa.testing.framework.stepdefs.Utils.Internal;
 
 import activesupport.system.Properties;
 import cucumber.api.java8.En;
+import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
 import org.dvsa.testing.lib.Environment;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.URI;
@@ -11,7 +12,7 @@ import org.dvsa.testing.lib.utils.ApplicationType;
 import org.dvsa.testing.lib.utils.EnvironmentType;
 import org.dvsa.testing.lib.pages.BasePage;
 
-import static org.dvsa.testing.framework.stepdefs.Utils.CreateInterimGoodsLicenceAPI.*;
+import static org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI.*;
 
 public class LoginInternalUser extends BasePage implements En {
 
@@ -38,7 +39,7 @@ public class LoginInternalUser extends BasePage implements En {
                 System.out.println("Already logged In");
             }
         });
-                //TODO: Make search element using table instead of text
+
         And("^I have an internal application$", () -> {
             do {
                 SearchNavBar.search(getApplicationNumber());
