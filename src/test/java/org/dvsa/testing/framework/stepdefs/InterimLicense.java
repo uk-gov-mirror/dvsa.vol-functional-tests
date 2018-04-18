@@ -1,11 +1,11 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import cucumber.api.java8.En;
+import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
 import org.dvsa.testing.lib.pages.BasePage;
 
-import static org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI.getNoOfVehiclesRequired;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -14,6 +14,7 @@ public class InterimLicense extends BasePage implements En {
 
     private static String VehicleErrorMessage = "The interim vehicle authority cannot exceed the total vehicle authority";
     private static String noDatesErrorMessage = "Value is required";
+    private CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
 
     public InterimLicense() {
 
@@ -21,26 +22,26 @@ public class InterimLicense extends BasePage implements En {
             InterimPage.addInterim();
             InterimPage.startDate(LocalDate.now().getDayOfWeek(), LocalDate.now().getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.endDate(LocalDate.now().plusDays(7).getDayOfWeek(), LocalDate.now().plusMonths(2).getMonthOfYear(), LocalDate.now().getYear());
-            InterimPage.vehicleAuthority(getNoOfVehiclesRequired()+ 1);
+            InterimPage.vehicleAuthority(goodsApp.getNoOfVehiclesRequired()+ 1);
         });
 
         When("^I have an interim vehicle authority equal to my application vehicle authority$", () -> {
             InterimPage.addInterim();
             InterimPage.startDate(LocalDate.now().getDayOfWeek(), LocalDate.now().getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.endDate(LocalDate.now().plusDays(7).getDayOfWeek(), LocalDate.now().plusMonths(2).getMonthOfYear(), LocalDate.now().getYear());
-            InterimPage.vehicleAuthority(getNoOfVehiclesRequired());
+            InterimPage.vehicleAuthority(goodsApp.getNoOfVehiclesRequired());
         });
 
         When("^I have an interim vehicle authority less than my application vehicle authority$", () -> {
             InterimPage.addInterim();
             InterimPage.startDate(LocalDate.now().getDayOfWeek(), LocalDate.now().getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.endDate(LocalDate.now().plusDays(7).getDayOfWeek(), LocalDate.now().plusMonths(2).getMonthOfYear(), LocalDate.now().getYear());
-            InterimPage.vehicleAuthority(getNoOfVehiclesRequired() -1);
+            InterimPage.vehicleAuthority(goodsApp.getNoOfVehiclesRequired() -1);
         });
 
         When("^I create an interim application with no start and end dates$", () -> {
-            InterimPage.vehicleAuthority(getNoOfVehiclesRequired());
-            InterimPage.trailerAuthority(getNoOfVehiclesRequired());
+            InterimPage.vehicleAuthority(goodsApp.getNoOfVehiclesRequired());
+            InterimPage.trailerAuthority(goodsApp.getNoOfVehiclesRequired());
         });
 
         Then("^I should get an error when i save the application$", () -> {

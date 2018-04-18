@@ -18,11 +18,12 @@ public class LoginInternalUser extends BasePage implements En {
 
     public static String USER_EMAIL = "usr291";
     public static String USER_PASSWORD = "Password1";
+    private CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
 
     public LoginInternalUser() {
 
         Given("^I have logged in to internal$", () -> {
-            if (getApplicationNumber() == null) {
+            if (goodsApp.getApplicationNumber() == null) {
                 CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
                 goodsApp.createGoodsApp();
             }
@@ -42,10 +43,10 @@ public class LoginInternalUser extends BasePage implements En {
 
         And("^I have an internal application$", () -> {
             do {
-                SearchNavBar.search(getApplicationNumber());
+                SearchNavBar.search(goodsApp.getApplicationNumber());
                 SearchNavBar.applications();
-            } while (!isLinkPresent(getApplicationNumber(), 60));
-            clickByLinkText(getApplicationNumber());
+            } while (!isLinkPresent(goodsApp.getApplicationNumber(), 60));
+            clickByLinkText(goodsApp.getApplicationNumber());
             if (isLinkPresent("Interim", 60))
                 clickByLinkText("Interim ");
         });
