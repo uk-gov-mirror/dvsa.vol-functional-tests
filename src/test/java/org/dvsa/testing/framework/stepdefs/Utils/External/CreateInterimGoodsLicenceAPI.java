@@ -11,16 +11,17 @@ import org.dvsa.testing.framework.stepdefs.builders.*;
 import activesupport.string.Str;
 import activesupport.number.Int;
 
-
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
 
-
 public class CreateInterimGoodsLicenceAPI {
 
     private static ValidatableResponse apiResponse;
+    private static String env = System.getProperty("env");
+    private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
+    private static String businessVersion = "1";
 
     private String title = "title_mr";
     private String foreName = Str.randomWord(5);
@@ -31,12 +32,7 @@ public class CreateInterimGoodsLicenceAPI {
     private String postcode = "NG23HX";
     private String countryCode = "GB";
     private String organisationName = Str.randomWord(10);
-
     private String emailAddress = Str.randomWord(6).concat(".tester@dvsa.com");
-    private static String env = System.getProperty("env");
-    private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
-    private int version = 1;
-    public static String businessVersion = "1";
     private String applicationNumber;
     private String userId;
     private String loginId;
@@ -45,6 +41,8 @@ public class CreateInterimGoodsLicenceAPI {
     private String licenceNumber;
     private String transportManagerApplicationId;
     private String companyNumber = String.valueOf(Int.random(00000000, 99999999));
+
+    private int version = 1;
     private int noOfVehiclesRequired = 5;
 
     public void setLicenceNumber(String licenceNumber) {

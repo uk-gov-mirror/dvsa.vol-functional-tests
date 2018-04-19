@@ -28,7 +28,6 @@ public class GrantApplicationAPI {
     private List outstandingFeesIds;
     private int feeId;
 
-
     public void createOverview(String applicationNumber) {
         int overviewVersion = 1;
         String status = "1";
@@ -84,7 +83,6 @@ public class GrantApplicationAPI {
         String grantApplicationResource = String.format("application/%s/grant/", applicationNumber);
         GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withDuePeriod("9").withCaseworkerNotes("This notes are from the API");
         apiResponse = RestUtils.put(grantApplication, baseURL.concat(grantApplicationResource), getHeaders());
-
         feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
     }
 
