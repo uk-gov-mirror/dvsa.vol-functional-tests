@@ -33,6 +33,7 @@ public class CreateInterimGoodsLicenceAPI {
     private String countryCode = "GB";
     private String organisationName = Str.randomWord(10);
     private String emailAddress = Str.randomWord(6).concat(".tester@dvsa.com");
+    private String transManEmailAddress = Str.randomWord(6).concat(".TM@dvsa.com");
     private String applicationNumber;
     private String userId;
     private String loginId;
@@ -246,7 +247,7 @@ public class CreateInterimGoodsLicenceAPI {
         String hasEmail = "Y";
         String addTransportManager = "transport-manager/create-new-user/";
         TransportManagerBuilder transportManagerBuilder = new TransportManagerBuilder().withApplication(applicationNumber).withFirstName(foreName)
-                .withFamilyName(familyName).withHasEmail(hasEmail).withUsername("api".concat(getLoginId())).withEmailAddress(emailAddress).withBirthDate(birthDate);
+                .withFamilyName(familyName).withHasEmail(hasEmail).withUsername("api".concat(getLoginId())).withEmailAddress(transManEmailAddress).withBirthDate(birthDate);
         apiResponse = RestUtils.post(transportManagerBuilder, baseURL.concat(addTransportManager), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         transportManagerApplicationId = apiResponse.extract().jsonPath().getString("id.transportManagerApplicationId");
