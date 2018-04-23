@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "email",
+        "emailAddress",
         "person",
         "fao",
         "phone_primary",
@@ -14,8 +14,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 public class ContactDetailsBuilder {
 
-    @JsonProperty("email")
-    private String email;
+    @JsonProperty("emailAddress")
+    private String emailAddress;
     @JsonProperty("person")
     private PersonBuilder personBuilder;
     @JsonProperty("fao")
@@ -40,18 +40,18 @@ public class ContactDetailsBuilder {
         return this;
     }
 
-    @JsonProperty("email")
-    public String getEmail() {
-        return email;
+    @JsonProperty("emailAddress")
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    @JsonProperty("email")
-    public void setEmail(String email) {
-        this.email = email;
+    @JsonProperty("emailAddress")
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public ContactDetailsBuilder withEmailAddress(String emailAddress) {
-        this.email = emailAddress;
+        this.emailAddress = emailAddress;
         return this;
     }
 
@@ -102,7 +102,7 @@ public class ContactDetailsBuilder {
 
     @Override
     public String toString() {
-        return "email:" + getEmail() + ",fao:" + getFao() + ",phone_primary:" + getPhoneNumber() + ",person:" + getPersonBuilder()
+        return "emailAddress:" + getEmailAddress() + ",fao:" + getFao() + ",phone_primary:" + getPhoneNumber() + ",person:" + getPersonBuilder()
                 + ",address:" + getAddress();
     }
 }
