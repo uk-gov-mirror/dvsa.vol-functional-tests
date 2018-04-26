@@ -1,4 +1,4 @@
-package org.dvsa.testing.framework.stepdefs.Utils;
+package org.dvsa.testing.framework.stepdefs.Utils.External;
 
 import activesupport.http.RestUtils;
 import activesupport.number.Int;
@@ -8,16 +8,15 @@ import enums.LicenceType;
 import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
+import org.dvsa.testing.framework.stepdefs.Utils.Headers;
 import org.dvsa.testing.framework.stepdefs.builders.*;
-import org.junit.Test;
 
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
 
-
-public class APICreateInterimPsvLicence {
+public class CreateInterimPsvLicenceAPI {
 
     private static ValidatableResponse apiResponse;
 
@@ -37,7 +36,6 @@ public class APICreateInterimPsvLicence {
 
     private static String env = System.getProperty("env");
     private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
-
     private static int version = 1;
     private static String applicationNumber;
     private static String userId;
@@ -138,6 +136,9 @@ public class APICreateInterimPsvLicence {
                    .withTrafficArea(trafficArea).withVersion(version);
             apiResponse = RestUtils.put(updateOperatingCentre, baseURL.concat(updateOperatingCentreResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -148,6 +149,9 @@ public class APICreateInterimPsvLicence {
             FinancialEvidenceBuilder financialEvidenceBuilder = new FinancialEvidenceBuilder().withId(applicationNumber).withVersion(version).withFinancialEvidenceUploaded(0);
             apiResponse = RestUtils.put(financialEvidenceBuilder, baseURL.concat(financialEvidenceResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -175,6 +179,10 @@ public class APICreateInterimPsvLicence {
         do {
             VehiclesBuilder psvVehiclesBuilder = new VehiclesBuilder().withId(applicationNumber).withHasEnteredReg(hasEnteredReg).withVersion(version);
             apiResponse = RestUtils.put(psvVehiclesBuilder, baseURL.concat(psvVehiclesResource), getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
         }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -194,6 +202,9 @@ public class APICreateInterimPsvLicence {
                     .withPsvNoLimousineConfirmation(psvNoLimousineConfirmation).withPsvOnlyLimousinesConfirmation(psvOnlyLimousinesConfirmation).withVersion(version);
             apiResponse = RestUtils.put(vehicleDeclarationBuilder, baseURL.concat(vehicleDeclarationResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -208,6 +219,9 @@ public class APICreateInterimPsvLicence {
                     .withDisqualified(financialHistoryAnswer).withInsolvencyDetails(insolvencyAnswer).withInsolvencyConfirmation(insolvencyAnswer);
             apiResponse = RestUtils.put(financialHistoryBuilder, baseURL.concat(financialHistoryResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -225,6 +239,9 @@ public class APICreateInterimPsvLicence {
                     .withSafetyConfirmation(safetyConfirmationOption).withLicence(licence);
             apiResponse = RestUtils.put(applicationSafetyBuilder, baseURL.concat(applicationSafetyResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -237,7 +254,6 @@ public class APICreateInterimPsvLicence {
                 .withContactDetails(contactDetailsBuilder);
         apiResponse = RestUtils.post(safetyInspectorBuilder, baseURL.concat(safetyInspectorResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
-
     }
 
     public void addConvictionsDetails() {
@@ -247,6 +263,9 @@ public class APICreateInterimPsvLicence {
                     .withPrevConviction("N").withVersion(version);
             apiResponse = RestUtils.put(convictionsPenaltiesBuilder, baseURL.concat(previousConvictionsResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -260,6 +279,9 @@ public class APICreateInterimPsvLicence {
                     .withVersion(version);
             apiResponse = RestUtils.put(licenceHistoryBuilder, baseURL.concat(licenceHistoryResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -275,6 +297,9 @@ public class APICreateInterimPsvLicence {
                     .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
             apiResponse = RestUtils.put(undertakings,baseURL.concat(reviewResource),getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -285,6 +310,10 @@ public class APICreateInterimPsvLicence {
         do{
             GenericBuilder genericBuilder = new GenericBuilder().withId(applicationNumber).withVersion(version);
             apiResponse = RestUtils.put(genericBuilder,baseURL.concat(submitResource),getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }

@@ -6,23 +6,24 @@ import enums.LicenceType;
 import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
+import org.dvsa.testing.framework.stepdefs.Utils.Headers;
 import org.dvsa.testing.framework.stepdefs.builders.*;
 import activesupport.string.Str;
 import activesupport.number.Int;
-
 
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
 
-
-public class APICreateInterimGoodsLicence {
+public class CreateInterimGoodsLicenceAPI {
 
     private static ValidatableResponse apiResponse;
+    private static String env = System.getProperty("env");
+    private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
+    private static String businessVersion = "1";
 
     private String niFlag = "N";
-    private static String loginId = Str.randomWord(5);
     private String title = "title_mr";
     private String foreName = Str.randomWord(5);
     private String familyName = Str.randomWord(8);
@@ -32,36 +33,75 @@ public class APICreateInterimGoodsLicence {
     private String town = "Nottingham";
     private String postcode = "NG23HX";
     private String countryCode = "GB";
-    private static String emailAddress = Str.randomWord(6).concat("tester@dvsa.com");
+    private String emailAddress = Str.randomWord(6).concat("tester@dvsa.com");
     private String organisationName = Str.randomWord(10);
+    private String transManEmailAddress = Str.randomWord(6).concat(".TM@dvsa.com");
+    private String applicationNumber;
+    private String userId;
+    private String loginId;
+    private String pid;
+    private String organisationId;
+    private String licenceNumber;
+    private String transportManagerApplicationId;
+    private String companyNumber = String.valueOf(Int.random(00000000, 99999999));
 
+    private int version = 1;
+    private int noOfVehiclesRequired = 5;
 
-    private static String env = System.getProperty("env");
-    private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
+    public void setLicenceNumber(String licenceNumber) {
+        this.licenceNumber = licenceNumber;
+    }
 
-    private static int version = 1;
-    private static String applicationNumber;
-    private static String userId;
-    private static String pid;
-    private static String organisationId;
-    private static String licenceNumber;
-    private static String transportManagerApplicationId;
-    private static String companyNumber = String.valueOf(Int.random(00000000, 99999999));
-    private static int noOfVehiclesRequired = 5;
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
 
-    public static int getNoOfVehiclesRequired() {
+    public void setNoOfVehiclesRequired(int noOfVehiclesRequired) {
+        this.noOfVehiclesRequired = noOfVehiclesRequired;
+    }
+
+    public int getNoOfVehiclesRequired() {
         return noOfVehiclesRequired;
     }
 
-    public static String getApplicationNumber() {
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getApplicationNumber() {
         return applicationNumber;
     }
+
+    public void setOrganisationId(String organisationId) {
+        this.organisationId = organisationId;
+    }
+
+    public String getOrganisationId() {
+        return organisationId;
+    }
+
+    public void setLoginId(String loginId) {
+        this.loginId = loginId;
+    }
+
+    public String getLoginId() {
+        return loginId;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     public String getEmailAddress() {
         return emailAddress;
     }
 
-    public static String getLoginId(){
-        return loginId;
+    public String getForeName() {
+        return foreName;
+    }
+
+    public String getFamilyName() {
+        return familyName;
     }
 
     public void createGoodsApp() {
@@ -90,10 +130,10 @@ public class APICreateInterimGoodsLicence {
     public void registerUser() {
         String registerResource = "user/selfserve/register";
         Headers.headers.put("api", "dvsa");
-
-        PersonBuilder personBuilder = new PersonBuilder().withTitle(title).withForename(foreName).withFamilyName(familyName).withBirthDate(birthDate);
+        setLoginId(Str.randomWord(8));
+        PersonBuilder personBuilder = new PersonBuilder().withTitle(title).withForename(getForeName()).withFamilyName(getFamilyName()).withBirthDate(birthDate);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withEmailAddress(emailAddress).withPerson(personBuilder);
-        SelfServeUserRegistrationDetailsBuilder selfServeUserRegistrationDetailsBuilder = new SelfServeUserRegistrationDetailsBuilder().withLoginId(loginId).withContactDetails(contactDetailsBuilder)
+        SelfServeUserRegistrationDetailsBuilder selfServeUserRegistrationDetailsBuilder = new SelfServeUserRegistrationDetailsBuilder().withLoginId(getLoginId()).withContactDetails(contactDetailsBuilder)
                 .withOrganisationName(organisationName).withBusinessType(String.valueOf(BusinessType.getEnum("limited_company")));
         apiResponse = RestUtils.post(selfServeUserRegistrationDetailsBuilder, baseURL.concat(registerResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
@@ -108,9 +148,11 @@ public class APICreateInterimGoodsLicence {
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         pid = apiResponse.extract().jsonPath().getString("pid");
         organisationId = apiResponse.extract().jsonPath().prettyPeek().getString("organisationUsers.organisation.id");
+        setOrganisationId(organisationId);
     }
 
     public void createApplication() {
+        String niFlag = "N";
         String createApplicationResource = "application";
         Headers.headers.put("x-pid", pid);
         HashMap<String, String> headers = getHeaders();
@@ -119,29 +161,31 @@ public class APICreateInterimGoodsLicence {
         apiResponse = RestUtils.post(applicationBuilder, baseURL.concat(createApplicationResource), headers);
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         applicationNumber = apiResponse.extract().jsonPath().getString("id.application");
+        setApplicationNumber(applicationNumber);
         licenceNumber = apiResponse.extract().jsonPath().getString("id.licence");
     }
 
     public void updateBusinessType() {
         String updateBusinessTypeResource = String.format("organisation/%s/business-type/", organisationId);
-            BusinessTypeBuilder businessTypeBuilder = new BusinessTypeBuilder().withBusinessType(String.valueOf(BusinessType.getEnum("limited_company"))).withVersion(String.valueOf(version))
-                    .withId(organisationId).withApplication(applicationNumber);
-            apiResponse = RestUtils.put(businessTypeBuilder, baseURL.concat(updateBusinessTypeResource), getHeaders());
+        BusinessTypeBuilder businessTypeBuilder = new BusinessTypeBuilder().withBusinessType(String.valueOf(BusinessType.getEnum("limited_company"))).withVersion(businessVersion)
+                .withId(organisationId).withApplication(applicationNumber);
+        apiResponse = RestUtils.put(businessTypeBuilder, baseURL.concat(updateBusinessTypeResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
     public void updateBusinessDetails() {
         String natureOfBusiness = "apiTesting";
         String updateBusinessDetailsResource = String.format("organisation/business-details/application/%s", licenceNumber);
-            AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
-            UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
-                    .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
-                    .withVersion(String.valueOf(version)).withName(natureOfBusiness).withAddress(address);
-            apiResponse = RestUtils.put(businessDetails, baseURL.concat(updateBusinessDetailsResource), getHeaders());
+        AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
+        UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
+                .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
+                .withVersion(businessVersion).withName(natureOfBusiness).withAddress(address);
+        apiResponse = RestUtils.put(businessDetails, baseURL.concat(updateBusinessDetailsResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
     public void addAddressDetails() {
+        String phoneNumber = "0712345678";
         String applicationAddressResource = String.format("application/%s/addresses/", applicationNumber);
         AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withPhoneNumber(phoneNumber).withEmailAddress(emailAddress);
@@ -170,14 +214,20 @@ public class APICreateInterimGoodsLicence {
 
     public void updateOperatingCentre() {
         String trafficArea = "D";
+        String enforcementArea = "EA-D";
         String updateOperatingCentreResource = String.format("application/%s/operating-centres", applicationNumber);
 
         do {
+            int operatingCentreVersion = version;
             OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater().withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
-                    .withTrafficArea(trafficArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
+                    .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withTotCommunityLicences(noOfVehiclesRequired).withVersion(operatingCentreVersion);
             apiResponse = RestUtils.put(updateOperatingCentre, baseURL.concat(updateOperatingCentreResource), getHeaders());
             version++;
-        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+            if (version > 20) {
+                version = 1;
+            }
+        }
+        while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
@@ -188,6 +238,9 @@ public class APICreateInterimGoodsLicence {
             FinancialEvidenceBuilder financialEvidenceBuilder = new FinancialEvidenceBuilder().withId(applicationNumber).withVersion(version).withFinancialEvidenceUploaded(0);
             apiResponse = RestUtils.put(financialEvidenceBuilder, baseURL.concat(financialEvidenceResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -196,7 +249,7 @@ public class APICreateInterimGoodsLicence {
         String hasEmail = "Y";
         String addTransportManager = "transport-manager/create-new-user/";
         TransportManagerBuilder transportManagerBuilder = new TransportManagerBuilder().withApplication(applicationNumber).withFirstName(foreName)
-                .withFamilyName(familyName).withHasEmail(hasEmail).withUsername("api".concat(foreName)).withEmailAddress(emailAddress).withBirthDate(birthDate);
+                .withFamilyName(familyName).withHasEmail(hasEmail).withUsername("api".concat(getLoginId())).withEmailAddress(transManEmailAddress).withBirthDate(birthDate);
         apiResponse = RestUtils.post(transportManagerBuilder, baseURL.concat(addTransportManager), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         transportManagerApplicationId = apiResponse.extract().jsonPath().getString("id.transportManagerApplicationId");
@@ -216,6 +269,10 @@ public class APICreateInterimGoodsLicence {
         do {
             VehiclesBuilder psvVehiclesBuilder = new VehiclesBuilder().withId(applicationNumber).withHasEnteredReg(hasEnteredReg).withVersion(version);
             apiResponse = RestUtils.put(psvVehiclesBuilder, baseURL.concat(psvVehiclesResource), getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -231,6 +288,9 @@ public class APICreateInterimGoodsLicence {
                     .withDisqualified(financialHistoryAnswer).withInsolvencyDetails(insolvencyAnswer).withInsolvencyConfirmation(insolvencyAnswer);
             apiResponse = RestUtils.put(financialHistoryBuilder, baseURL.concat(financialHistoryResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -248,6 +308,9 @@ public class APICreateInterimGoodsLicence {
                     .withSafetyConfirmation(safetyConfirmationOption).withLicence(licence);
             apiResponse = RestUtils.put(applicationSafetyBuilder, baseURL.concat(applicationSafetyResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -271,6 +334,9 @@ public class APICreateInterimGoodsLicence {
                     .withPrevConviction("N").withVersion(version);
             apiResponse = RestUtils.put(convictionsPenaltiesBuilder, baseURL.concat(previousConvictionsResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -285,6 +351,9 @@ public class APICreateInterimGoodsLicence {
                     .withVersion(version);
             apiResponse = RestUtils.put(licenceHistoryBuilder, baseURL.concat(licenceHistoryResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -301,6 +370,9 @@ public class APICreateInterimGoodsLicence {
                     .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
             apiResponse = RestUtils.put(undertakings, baseURL.concat(reviewResource), getHeaders());
             version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
@@ -311,6 +383,10 @@ public class APICreateInterimGoodsLicence {
         do {
             GenericBuilder genericBuilder = new GenericBuilder().withId(applicationNumber).withVersion(version);
             apiResponse = RestUtils.put(genericBuilder, baseURL.concat(submitResource), getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
