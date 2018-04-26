@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(plugin = {"pretty", "html:target/cucumber"},
 
-        features = {"src/test/resources/features/internal"},
+        features = {"src/test/resources/features/SelfServe/username-change.feature"},
         glue = {"org.dvsa.testing.framework.stepdefs"}
 )
 public class TestRunner {

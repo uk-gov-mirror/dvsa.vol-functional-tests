@@ -56,7 +56,7 @@ public class APICreateInterimGoodsLicence {
     public static String getApplicationNumber() {
         return applicationNumber;
     }
-    public static String getEmailAddress() {
+    public String getEmailAddress() {
         return emailAddress;
     }
 
