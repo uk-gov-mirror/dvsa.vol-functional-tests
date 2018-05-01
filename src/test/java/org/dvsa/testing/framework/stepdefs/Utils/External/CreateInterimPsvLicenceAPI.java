@@ -9,7 +9,9 @@ import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.stepdefs.Utils.Headers;
+import org.dvsa.testing.framework.stepdefs.Utils.Internal.GrantApplicationAPI;
 import org.dvsa.testing.framework.stepdefs.builders.*;
+import org.junit.Test;
 
 import java.util.HashMap;
 
@@ -19,6 +21,9 @@ import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
 public class CreateInterimPsvLicenceAPI {
 
     private static ValidatableResponse apiResponse;
+    private static String env = System.getProperty("env");
+    private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
+    private static int version = 1;
 
     private String niFlag = "N";
     private String loginId = Str.randomWord(5);
@@ -31,21 +36,98 @@ public class CreateInterimPsvLicenceAPI {
     private String town = "Nottingham";
     private String postcode = "NG23HX";
     private String countryCode = "GB";
-    private String emailAddress = Str.randomWord(6).concat("tester@dvsa.com");
+    private String emailAddress = Str.randomWord(6).concat(".Tester@dvsa.com");
+    private String transManEmailAddress = Str.randomWord(6).concat(".TM@dvsa.com");
     private String organisationName = Str.randomWord(10);
+    private String applicationNumber;
+    private String userId;
+    private String pid;
+    private String organisationId;
+    private String licenceNumber;
+    private String transportManagerApplicationId;
+    private String companyNumber = String.valueOf(Int.random(00000000,99999999));
+    private String noOfVehiclesRequired = "5";
 
-    private static String env = System.getProperty("env");
-    private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
-    private static int version = 1;
-    private static String applicationNumber;
-    private static String userId;
-    private static String pid;
-    private static String organisationId;
-    private static String licenceNumber;
-    private static String transportManagerApplicationId;
-    private static String companyNumber = String.valueOf(Int.random(00000000,99999999));
-    private static String noOfVehiclesRequired = "5";
+    public void setLicenceNumber(String licenceNumber) {
+        this.licenceNumber = licenceNumber;
+    }
 
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
+
+    public void setNoOfVehiclesRequired(String noOfVehiclesRequired) {
+        this.noOfVehiclesRequired = noOfVehiclesRequired;
+    }
+
+    public String getNoOfVehiclesRequired() {
+        return noOfVehiclesRequired;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setOrganisationId(String organisationId) {
+        this.organisationId = organisationId;
+    }
+
+    public String getOrganisationId() {
+        return organisationId;
+    }
+
+    public void setLoginId(String loginId) {
+        this.loginId = loginId;
+    }
+
+    public String getLoginId() {
+        return loginId;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public String getForeName() {
+        return foreName;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+
+    public void createAndSubmitPsvApp(){
+        registerUser();
+        getUserDetails();
+        createApplication();
+        updateBusinessType();
+        updateBusinessDetails();
+        addAddressDetails();
+        addPartners();
+        addOperatingCentre();
+        updateOperatingCentre();
+        addFinancialEvidence();
+        addTransportManager();
+        submitTransport();
+        vehicles();
+        submitVehicleDeclaration();
+        addFinancialHistory();
+        addApplicationSafetyAndComplianceDetails();
+        addSafetyInspector();
+        addConvictionsDetails();
+        addLicenceHistory();
+        reviewAndDeclare();
+        submitApplication();
+    }
 
     public void registerUser() {
         String registerResource = "user/selfserve/register";
@@ -54,7 +136,7 @@ public class CreateInterimPsvLicenceAPI {
         PersonBuilder personBuilder = new PersonBuilder().withTitle(title).withForename(foreName).withFamilyName(familyName).withBirthDate(birthDate);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withEmailAddress(emailAddress).withPerson(personBuilder);
         SelfServeUserRegistrationDetailsBuilder selfServeUserRegistrationDetailsBuilder = new SelfServeUserRegistrationDetailsBuilder().withLoginId(loginId).withContactDetails(contactDetailsBuilder)
-                .withOrganisationName(organisationName).withBusinessType(String.valueOf(BusinessType.getEnum("sole_trader")));
+                .withOrganisationName(organisationName).withBusinessType(String.valueOf(BusinessType.getEnum("limited_company")));
         apiResponse = RestUtils.post(selfServeUserRegistrationDetailsBuilder, baseURL.concat(registerResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         userId = apiResponse.extract().jsonPath().getString("id.user");
@@ -80,11 +162,12 @@ public class CreateInterimPsvLicenceAPI {
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         applicationNumber = apiResponse.extract().jsonPath().getString("id.application");
         licenceNumber = apiResponse.extract().jsonPath().getString("id.licence");
+        setApplicationNumber(applicationNumber);
     }
 
     public void updateBusinessType() {
         String updateBusinessTypeResource = String.format("organisation/%s/business-type/", organisationId);
-        BusinessTypeBuilder businessTypeBuilder = new BusinessTypeBuilder().withBusinessType(String.valueOf(BusinessType.getEnum("sole_trader"))).withVersion(String.valueOf(version))
+        BusinessTypeBuilder businessTypeBuilder = new BusinessTypeBuilder().withBusinessType(String.valueOf(BusinessType.getEnum("limited_company"))).withVersion(String.valueOf(version))
                 .withId(organisationId).withApplication(applicationNumber);
         apiResponse = RestUtils.put(businessTypeBuilder, baseURL.concat(updateBusinessTypeResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
@@ -93,11 +176,18 @@ public class CreateInterimPsvLicenceAPI {
     public void updateBusinessDetails() {
         String natureOfBusiness = "apiTesting";
         String updateBusinessDetailsResource = String.format("organisation/business-details/application/%s", licenceNumber);
-        AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
-        UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
-                .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
-                .withVersion(String.valueOf(version)).withName(natureOfBusiness).withAddress(address);
-        apiResponse = RestUtils.put(businessDetails, baseURL.concat(updateBusinessDetailsResource), getHeaders());
+
+        do {
+            AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
+            UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
+                    .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
+                    .withVersion(String.valueOf(version)).withName(natureOfBusiness).withAddress(address);
+            apiResponse = RestUtils.put(businessDetails, baseURL.concat(updateBusinessDetailsResource), getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        }while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
@@ -130,10 +220,11 @@ public class CreateInterimPsvLicenceAPI {
 
     public void updateOperatingCentre() {
         String trafficArea = "D";
+        String enforcementArea = "EA-D";
         String updateOperatingCentreResource = String.format("application/%s/operating-centres", applicationNumber);
         do {
             OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater().withId(applicationNumber).withTotAuthVehicles(Integer.parseInt(noOfVehiclesRequired))
-                   .withTrafficArea(trafficArea).withVersion(version);
+                   .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withVersion(version);
             apiResponse = RestUtils.put(updateOperatingCentre, baseURL.concat(updateOperatingCentreResource), getHeaders());
             version++;
             if (version > 20) {
@@ -160,7 +251,7 @@ public class CreateInterimPsvLicenceAPI {
         String hasEmail = "Y";
         String addTransportManager = "transport-manager/create-new-user/";
         TransportManagerBuilder transportManagerBuilder = new TransportManagerBuilder().withApplication(applicationNumber).withFirstName(foreName)
-                .withFamilyName(familyName).withHasEmail(hasEmail).withUsername("api".concat(foreName)).withEmailAddress(emailAddress).withBirthDate(birthDate);
+                .withFamilyName(familyName).withHasEmail(hasEmail).withUsername("api".concat(foreName)).withEmailAddress(transManEmailAddress).withBirthDate(birthDate);
         apiResponse = RestUtils.post(transportManagerBuilder, baseURL.concat(addTransportManager), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         transportManagerApplicationId = apiResponse.extract().jsonPath().getString("id.transportManagerApplicationId");
@@ -293,8 +384,8 @@ public class CreateInterimPsvLicenceAPI {
         String signatureRequired = "sig_physical_signature";
         do{
             String reviewResource = String.format("application/%s/declaration/", applicationNumber);
-            DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings().withId(applicationNumber).withVersion(String.valueOf(version)).withInterimRequested(isInterim)
-                    .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
+            DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings().withId(applicationNumber).withVersion(String.valueOf(version))
+                  .withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
             apiResponse = RestUtils.put(undertakings,baseURL.concat(reviewResource),getHeaders());
             version++;
             if (version > 20) {
