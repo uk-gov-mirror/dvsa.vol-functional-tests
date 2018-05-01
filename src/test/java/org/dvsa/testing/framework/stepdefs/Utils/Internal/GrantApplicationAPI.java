@@ -41,7 +41,7 @@ public class GrantApplicationAPI {
             Tracking tracking = new Tracking().withId(trackingId).withVersion(overviewVersion).withAddressesStatus(status).withBusinessDetailsStatus(status).withBusinessTypeStatus(status)
                     .withCommunityLicencesStatus(status).withConditionsUndertakingsStatus(status).withConvictionsPenaltiesStatus(status).withFinancialEvidenceStatus(status)
                     .withFinancialHistoryStatus(status).withLicenceHistoryStatus(status).withOperatingCentresStatus(status).withPeopleStatus(status).withSafetyStatus(status)
-                    .withTransportManagersStatus(status).withTypeOfLicenceStatus(status).withDeclarationsInternalStatus(status).withVehiclesDeclarationsStatus(status).withVehiclesStatus(status);
+                    .withTransportManagersStatus(status).withTypeOfLicenceStatus(status).withDeclarationsInternalStatus(status).withVehiclesDeclarationsStatus(status).withVehiclesStatus(status).withVehiclesPsvStatus(status);
             OverviewBuilder overview = new OverviewBuilder().withId(applicationNumber).withVersion(version).withLeadTcArea(transportArea).withOverrideOppositionDate(overrideOption)
                     .withTracking(tracking);
             apiResponse = RestUtils.put(overview, baseURL.concat(overviewResource), getHeaders());
@@ -83,7 +83,9 @@ public class GrantApplicationAPI {
         String grantApplicationResource = String.format("application/%s/grant/", applicationNumber);
         GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withDuePeriod("9").withCaseworkerNotes("This notes are from the API");
         apiResponse = RestUtils.put(grantApplication, baseURL.concat(grantApplicationResource), getHeaders());
-        feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
+        if (apiResponse.extract().response().asString().contains("fee")) {
+            feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
+        }
     }
 
     public void payGrantFees(String organisationId, String applicationNumber) {

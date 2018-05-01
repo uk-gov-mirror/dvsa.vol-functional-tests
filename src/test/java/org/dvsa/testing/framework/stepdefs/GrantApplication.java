@@ -4,7 +4,7 @@ import cucumber.api.java8.En;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
 import org.dvsa.testing.framework.stepdefs.Utils.Internal.GrantApplicationAPI;
 
-import static org.dvsa.testing.framework.stepdefs.Utils.InternalGenericUtils.payFees;
+import static org.dvsa.testing.framework.stepdefs.Utils.Internal.InternalGenericUtils.payGoodsFees;
 
 public class GrantApplication implements En {
     public GrantApplication() {
@@ -12,11 +12,11 @@ public class GrantApplication implements En {
         CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
 
         When("^I pay fees$", () -> {
-            payFees(grantApp, goodsApp);
+            payGoodsFees(grantApp, goodsApp);
         });
         Given("^I have an application which is under consideration$", () -> {
             if (goodsApp.getApplicationNumber() == null) {
-                goodsApp.createGoodsApp();
+                goodsApp.createAndSubmitGoodsApp();
             }
         });
         Then("^the application should be granted$", () -> {

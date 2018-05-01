@@ -12,8 +12,6 @@ import org.dvsa.testing.lib.utils.ApplicationType;
 import org.dvsa.testing.lib.utils.EnvironmentType;
 import org.dvsa.testing.lib.pages.BasePage;
 
-import static org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI.*;
-
 public class LoginInternalUser extends BasePage implements En {
 
     public static String USER_EMAIL = "usr291";
@@ -24,8 +22,7 @@ public class LoginInternalUser extends BasePage implements En {
 
         Given("^I have logged in to internal$", () -> {
             if (goodsApp.getApplicationNumber() == null) {
-                CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
-                goodsApp.createGoodsApp();
+                goodsApp.createAndSubmitGoodsApp();
             }
 
             EnvironmentType env = Environment.enumType(Properties.get("env", true));

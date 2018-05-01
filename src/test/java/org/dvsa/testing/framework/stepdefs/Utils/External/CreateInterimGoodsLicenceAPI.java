@@ -102,7 +102,7 @@ public class CreateInterimGoodsLicenceAPI {
         return familyName;
     }
 
-    public void createGoodsApp() {
+    public void createAndSubmitGoodsApp() {
         registerUser();
         getUserDetails();
         createApplication();
