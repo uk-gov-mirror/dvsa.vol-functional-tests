@@ -17,7 +17,7 @@ Feature: esbr upload
     Given I have a psv application with traffic area "<TrafficArea>" which has been granted
     When I upload an esbr file
     Then A short notice flag should not be displayed in selfserve
-    And  A short notice tab should be displayed in internal
+#    And  A short notice tab should be displayed in internal
     Examples:
       | TrafficArea |
       | B           |
