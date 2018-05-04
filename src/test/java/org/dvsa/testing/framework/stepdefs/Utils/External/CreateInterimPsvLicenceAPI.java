@@ -37,15 +37,22 @@ public class CreateInterimPsvLicenceAPI {
     private static String env = System.getProperty("env");
     private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
     private static int version = 1;
-    private static String applicationNumber;
-    private static String userId;
-    private static String pid;
-    private static String organisationId;
-    private static String licenceNumber;
-    private static String transportManagerApplicationId;
-    private static String companyNumber = String.valueOf(Int.random(00000000,99999999));
-    private static String noOfVehiclesRequired = "5";
+    private String applicationNumber;
+    private String userId;
+    private String pid;
+    private String organisationId;
+    private String licenceNumber;
+    private String transportManagerApplicationId;
+    private String companyNumber = String.valueOf(Int.random(00000000,99999999));
+    private String noOfVehiclesRequired = "5";
 
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
+
+    public void setLicenceNumber(String licenceNumber){
+        this.licenceNumber = licenceNumber;
+    }
 
     public void registerUser() {
         String registerResource = "user/selfserve/register";
@@ -80,6 +87,7 @@ public class CreateInterimPsvLicenceAPI {
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         applicationNumber = apiResponse.extract().jsonPath().getString("id.application");
         licenceNumber = apiResponse.extract().jsonPath().getString("id.licence");
+        setLicenceNumber(licenceNumber);
     }
 
     public void updateBusinessType() {
