@@ -24,7 +24,6 @@ public class LoginInternalUser extends BasePage implements En {
 
         Given("^I have logged in to internal$", () -> {
             if (goodsApp.getApplicationNumber() == null) {
-                CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
                 goodsApp.createGoodsApp();
             }
 
