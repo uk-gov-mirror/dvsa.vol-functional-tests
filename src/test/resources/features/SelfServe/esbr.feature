@@ -7,7 +7,6 @@ Feature: Self-serve ESBR upload short notice for English and Scottish transport 
     Then A short notice flag should be displayed in selfserve
     And  A short notice tab should be displayed in internal
     And Any registrations created in internal should display a short notice tab
-
     Examples:
       | TrafficArea |
       | B           |
