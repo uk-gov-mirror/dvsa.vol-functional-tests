@@ -46,9 +46,9 @@ public class Scenarios extends BasePage {
         grantApp.payGrantFees(psvApp.getOrganisationId(), psvApp.getApplicationNumber());
     }
 
-    public static void uploadAndSubmitESBR(GenericUtils genericUtils, CreateInterimPsvLicenceAPI psvApp, String state, int month) throws MissingRequiredArgument {
+    public static void uploadAndSubmitESBR(GenericUtils genericUtils, CreateInterimPsvLicenceAPI psvApp, String state, int interval) throws MissingRequiredArgument {
         // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
-        genericUtils.modifyXML(psvApp, state, month);
+        genericUtils.modifyXML(psvApp, state, interval);
         zipFolder();
 
         EnvironmentType env = Environment.enumType(Properties.get("env", true));
@@ -78,7 +78,7 @@ public class Scenarios extends BasePage {
         waitAndClick("//*[@name='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public static void internalSiteAddBusNewReg() {
+    public static void internalSiteAddBusNewReg(int day, int month, int year) {
         waitForTextToBePresent("Service details");
         assertTrue(isTextPresent("Service No. & type", 5));
         enterText("serviceNo", "123");
@@ -87,9 +87,9 @@ public class Scenarios extends BasePage {
         enterText("via", Str.randomWord(5));
         selectServiceType("//ul[@class='chosen-choices']", "//*[@id=\"busServiceTypes_chosen\"]/div/ul/li[1]", SelectorType.XPATH);
         enterDate(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
-        enterText("effectiveDate_day", String.valueOf(getCurrentDayOfMonth()));
-        enterText("effectiveDate_month", String.valueOf(getCurrentMonth()));
-        enterText("effectiveDate_year", String.valueOf(getCurrentYear()));
+        enterText("effectiveDate_day", String.valueOf(day));
+        enterText("effectiveDate_month", String.valueOf(month));
+        enterText("effectiveDate_year", String.valueOf(year));
         click(nameAttribute("button", "form-actions[submit]"));
     }
 

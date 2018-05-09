@@ -70,7 +70,7 @@ public class ESBRupload extends BasePage implements En {
         });
         When("^I upload an esbr file$", () -> {
             // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
-            uploadAndSubmitESBR(genericUtils,psvApp,"future",4);
+            uploadAndSubmitESBR(genericUtils,psvApp,"futureDay",50);
         });
         Then("^A short notice flag should not be displayed in selfserve$", () -> {
             do {
@@ -85,7 +85,7 @@ public class ESBRupload extends BasePage implements En {
         And("^Any registrations created in internal should display a short notice tab$", () -> {
             clickByLinkText(psvApp.getLicenceNumber());
             click(nameAttribute("button", "action"));
-            internalSiteAddBusNewReg();
+            internalSiteAddBusNewReg(getCurrentDayOfMonth(),getCurrentMonth(),getCurrentYear());
             do {
                 // Refresh page
                 javaScriptExecutor("location.reload(true)");
@@ -114,7 +114,7 @@ public class ESBRupload extends BasePage implements En {
         And("^Any registrations created in internal should not display a short notice tab$", () -> {
             clickByLinkText(psvApp.getLicenceNumber());
             click(nameAttribute("button", "action"));
-            internalSiteAddBusNewReg();
+            internalSiteAddBusNewReg(getCurrentDayOfMonth(),getFutureMonth(4),getCurrentYear());
             do {
                 // Refresh page
                 javaScriptExecutor("location.reload(true)");

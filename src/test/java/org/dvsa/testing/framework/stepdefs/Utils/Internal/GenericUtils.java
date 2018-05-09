@@ -110,14 +110,15 @@ public class GenericUtils extends BasePage {
         String myDate = null;
 
         switch (state) {
-            case "future":
+            case "futureMonth":
                 myDate = date.format(now.plusMonths(months));
                 break;
-
+            case "futureDay":
+                myDate = date.format(now.plusDays(months));
+                break;
             case "past":
                 myDate = date.format(now.minusMonths(months));
                 break;
-
             case "current":
                 myDate = date.format(now);
                 break;
