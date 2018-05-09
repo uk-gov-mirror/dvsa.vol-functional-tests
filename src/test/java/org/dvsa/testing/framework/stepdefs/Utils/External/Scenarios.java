@@ -2,17 +2,11 @@ package org.dvsa.testing.framework.stepdefs.Utils.External;
 
 import activesupport.MissingRequiredArgument;
 import activesupport.aws.s3.S3;
+import activesupport.string.Str;
 import activesupport.system.Properties;
-import io.restassured.RestAssured;
-import io.restassured.builder.MultiPartSpecBuilder;
-import io.restassured.config.RestAssuredConfig;
-import io.restassured.config.SSLConfig;
-import io.restassured.response.ValidatableResponse;
 
-import org.dvsa.testing.framework.stepdefs.Utils.Headers;
 import org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils;
 import org.dvsa.testing.framework.stepdefs.Utils.Internal.GrantApplicationAPI;
-import org.dvsa.testing.framework.stepdefs.builders.UploadDocumentBuilder;
 import org.dvsa.testing.lib.Environment;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.URI;
@@ -21,36 +15,21 @@ import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.utils.ApplicationType;
 import org.dvsa.testing.lib.utils.EnvironmentType;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.util.Map;
 import java.util.zip.ZipInputStream;
 
-import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
+import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.payPsvFees;
 import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.zipFolder;
 
 public class Scenarios extends BasePage {
 
-    private static ValidatableResponse apiResponse;
-    private static ValidatableResponse response;
     private static String env = System.getProperty("env");
-    private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
+    private static String zipFilePath = "/src/test/resources/ESBR.zip";
 
-    public void esbrUpload(CreateInterimPsvLicenceAPI psvLicence) throws IOException {
-        Headers.headers.put("x-pid", "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1");
-
-        String docUploadResource = "document/upload";
-        UploadDocumentBuilder docUpload = new UploadDocumentBuilder().withFilename("PB2007625.zip").withContent("content")
-                .withIsExternal("1").withIsEbsrPack("1").withApplication(psvLicence.getApplicationNumber()).withLicence(psvLicence.getLicenceNumber());
-        apiResponse = multiPartPost(docUpload, baseURL.concat(docUploadResource), getHeaders());
-        System.out.println(apiResponse.extract().response().asString());
-//        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
-    }
-
-    public InputStream stream() throws IOException {
-        File initialFile = new File("./src/test/resources/ESBR.zip");
+    public InputStream stream() {
+        File initialFile = new File(zipFilePath);
         ZipInputStream zipInputStream = null;
         try {
             zipInputStream = new ZipInputStream(new FileInputStream(initialFile));
@@ -58,19 +37,6 @@ public class Scenarios extends BasePage {
             e.printStackTrace();
         }
         return zipInputStream;
-    }
-
-
-    public ValidatableResponse multiPartPost(@NotNull Object requestBody, @NotNull String serviceEndPoint, @NotNull Map<String, String> headers) throws IOException {
-
-        response = RestAssured.given()
-                .headers(headers)
-                .config(RestAssuredConfig.config().sslConfig((new SSLConfig()).relaxedHTTPSValidation().allowAllHostnames()))
-                .multiPart(new MultiPartSpecBuilder(stream()).build())
-                .multiPart("ZIP", requestBody, "application/json")
-                .when()
-                .post(serviceEndPoint).then();
-        return response;
     }
 
     public static void generateAndGrantPsvApplicationPerTrafficArea(CreateInterimPsvLicenceAPI psvApp, GrantApplicationAPI grantApp, String trafficArea) {
@@ -108,8 +74,28 @@ public class Scenarios extends BasePage {
         waitAndClick("//*[@id='main']/div[2]/ul/li[2]/a", SelectorType.XPATH);
         click(nameAttribute("button", "action"));
         String workingDir = System.getProperty("user.dir");
-        uploadFile("//*[@id='fields[files][file]']", workingDir + "/src/test/resources/ESBR.zip", "document.getElementById('fields[files][file]').style.left = 0", SelectorType.XPATH);
+        uploadFile("//*[@id='fields[files][file]']", workingDir + zipFilePath, "document.getElementById('fields[files][file]').style.left = 0", SelectorType.XPATH);
         waitAndClick("//*[@name='form-actions[submit]']", SelectorType.XPATH);
     }
-}
 
+    public static void internalSiteAddBusNewReg() {
+        waitForTextToBePresent("Service details");
+        assertTrue(isTextPresent("Service No. & type", 5));
+        enterText("serviceNo", "123");
+        enterText("startPoint", Str.randomWord(9));
+        enterText("finishPoint", Str.randomWord(11));
+        enterText("via", Str.randomWord(5));
+        selectServiceType("//ul[@class='chosen-choices']", "//*[@id=\"busServiceTypes_chosen\"]/div/ul/li[1]", SelectorType.XPATH);
+        enterDate(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
+        enterText("effectiveDate_day", String.valueOf(getCurrentDayOfMonth()));
+        enterText("effectiveDate_month", String.valueOf(getCurrentMonth()));
+        enterText("effectiveDate_year", String.valueOf(getCurrentYear()));
+        click(nameAttribute("button", "form-actions[submit]"));
+    }
+
+    public static void enterDate(int day, int month, int year) {
+        enterText("receivedDate_day", String.valueOf(day));
+        enterText("receivedDate_month", String.valueOf(month));
+        enterText("receivedDate_year", String.valueOf(year));
+    }
+}

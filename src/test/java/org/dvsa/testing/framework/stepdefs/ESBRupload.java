@@ -7,7 +7,6 @@ import org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils;
 import org.dvsa.testing.framework.stepdefs.Utils.Internal.GrantApplicationAPI;
 import org.dvsa.testing.lib.Environment;
 import org.dvsa.testing.lib.Login;
-import org.dvsa.testing.lib.URI;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -17,6 +16,7 @@ import org.dvsa.testing.lib.utils.EnvironmentType;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.stepdefs.Utils.External.Scenarios.generateAndGrantPsvApplicationPerTrafficArea;
+import static org.dvsa.testing.framework.stepdefs.Utils.External.Scenarios.internalSiteAddBusNewReg;
 import static org.dvsa.testing.framework.stepdefs.Utils.External.Scenarios.uploadAndSubmitESBR;
 import static org.junit.Assert.assertFalse;
 
@@ -59,6 +59,7 @@ public class ESBRupload extends BasePage implements En {
                 Browser.quit();
             }
             Browser.go(URL);
+
             Login.signIn(USER_EMAIL, USER_PASSWORD);
             selectValueFromDropDown("//select[@id='search-select']",SelectorType.XPATH,"Bus registrations");
             do {
@@ -80,6 +81,46 @@ public class ESBRupload extends BasePage implements En {
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
             assertFalse(isTextPresent("short notice", 60));
+        });
+        And("^Any registrations created in internal should display a short notice tab$", () -> {
+            clickByLinkText(psvApp.getLicenceNumber());
+            click(nameAttribute("button", "action"));
+            internalSiteAddBusNewReg();
+            do {
+                // Refresh page
+                javaScriptExecutor("location.reload(true)");
+            }
+            while (!isTextPresent("Service details", 2));//condition
+            assertTrue(isTextPresent("Short notice", 30));
+        });
+        And("^A short notice tab should not be displayed in internal$", () -> {
+            EnvironmentType env = Environment.enumType(Properties.get("env", true));
+            String URL = org.dvsa.testing.lib.URI.build(ApplicationType.INTERNAL, env);
+
+            if (Browser.isInitialised()) {
+                //Quit Browser and open a new window
+                Browser.quit();
+            }
+            Browser.go(URL);
+
+            Login.signIn(USER_EMAIL, USER_PASSWORD);
+            selectValueFromDropDown("//select[@id='search-select']",SelectorType.XPATH,"Bus registrations");
+            do {
+                SearchNavBar.search(psvApp.getLicenceNumber());
+            } while (!isLinkPresent(psvApp.getLicenceNumber(), 60));
+            clickByLinkText(psvApp.getLicenceNumber());
+            assertFalse(isTextPresent("Short notice", 60));
+        });
+        And("^Any registrations created in internal should not display a short notice tab$", () -> {
+            clickByLinkText(psvApp.getLicenceNumber());
+            click(nameAttribute("button", "action"));
+            internalSiteAddBusNewReg();
+            do {
+                // Refresh page
+                javaScriptExecutor("location.reload(true)");
+            }
+            while (!isTextPresent("Service details", 2));//condition
+            assertFalse(isTextPresent("Short notice", 30));
         });
     }
 }

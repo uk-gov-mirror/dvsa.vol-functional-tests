@@ -1,12 +1,9 @@
 package org.dvsa.testing.framework.stepdefs.Utils.Internal;
 
-import activesupport.MissingRequiredArgument;
-import activesupport.aws.s3.S3;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimPsvLicenceAPI;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
-import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
