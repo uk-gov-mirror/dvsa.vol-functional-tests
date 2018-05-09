@@ -25,19 +25,7 @@ import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.zi
 
 public class Scenarios extends BasePage {
 
-    private static String env = System.getProperty("env");
     private static String zipFilePath = "/src/test/resources/ESBR.zip";
-
-    public InputStream stream() {
-        File initialFile = new File(zipFilePath);
-        ZipInputStream zipInputStream = null;
-        try {
-            zipInputStream = new ZipInputStream(new FileInputStream(initialFile));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return zipInputStream;
-    }
 
     public static void generateAndGrantPsvApplicationPerTrafficArea(CreateInterimPsvLicenceAPI psvApp, GrantApplicationAPI grantApp, String trafficArea) {
         psvApp.setTrafficArea(trafficArea);

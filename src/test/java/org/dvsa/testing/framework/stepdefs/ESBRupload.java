@@ -37,7 +37,7 @@ public class ESBRupload extends BasePage implements En {
 
         When("^I upload a short notice esbr file$", () -> {
             // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
-            uploadAndSubmitESBR(genericUtils,psvApp,"future",1);
+            uploadAndSubmitESBR(genericUtils,psvApp,"futureDay",1);
         });
 
         Then("^A short notice flag should be displayed in selfserve$", () -> {
