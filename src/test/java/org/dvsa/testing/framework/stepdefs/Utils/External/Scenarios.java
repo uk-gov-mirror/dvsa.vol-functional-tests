@@ -16,9 +16,6 @@ import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.utils.ApplicationType;
 import org.dvsa.testing.lib.utils.EnvironmentType;
 
-import java.io.*;
-import java.util.zip.ZipInputStream;
-
 import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.payPsvFees;
 import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.zipFolder;

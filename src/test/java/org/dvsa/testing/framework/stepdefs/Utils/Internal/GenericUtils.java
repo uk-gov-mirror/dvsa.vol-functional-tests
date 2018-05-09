@@ -64,8 +64,6 @@ public class GenericUtils extends BasePage {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder xmlBuilder = documentBuilderFactory.newDocumentBuilder();
             Document xmlDoc = xmlBuilder.parse(xmlFile);
-
-
             //update licence number
             NodeList nodeList = xmlDoc.getElementsByTagName("*");
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -87,7 +85,6 @@ public class GenericUtils extends BasePage {
                     }
                 }
             }
-
             // write the content on console
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
