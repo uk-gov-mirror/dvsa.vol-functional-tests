@@ -5,7 +5,6 @@ import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.generateLetter;
-
 import static org.junit.Assert.assertNotNull;
 
 public class InternalApplication extends BasePage implements En {
