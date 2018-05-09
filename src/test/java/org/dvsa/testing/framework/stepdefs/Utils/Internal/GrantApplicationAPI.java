@@ -9,9 +9,6 @@ import org.dvsa.testing.framework.stepdefs.builders.GrantApplicationBuilder;
 import org.dvsa.testing.framework.stepdefs.builders.OverviewBuilder;
 import org.dvsa.testing.framework.stepdefs.builders.Tracking;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -60,12 +57,6 @@ public class GrantApplicationAPI {
         outstandingFeesIds = apiResponse.extract().response().body().jsonPath().getList("outstandingFees.id");
     }
 
-    private String dateTimeCreate() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDateTime now = LocalDateTime.now();
-        return dtf.format(now);
-    }
-
     public void payOutstandingFees(String organisationId, String applicationNumber) {
         int feesAmount = 405;
         String payer = "apiUser";
@@ -74,7 +65,7 @@ public class GrantApplicationAPI {
 
         String payOutstandingFeesResource = "transaction/pay-outstanding-fees/";
         FeesBuilder feesBuilder = new FeesBuilder().withFeeIds(outstandingFeesIds).withOrganisationId(organisationId).withApplicationId(applicationNumber)
-                .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(dateTimeCreate()).withPayer(payer).withSlipNo(slipNo);
+                .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(GenericUtils.getDates("current",0)).withPayer(payer).withSlipNo(slipNo);
         apiResponse = RestUtils.post(feesBuilder, baseURL.concat(payOutstandingFeesResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
     }
@@ -83,7 +74,8 @@ public class GrantApplicationAPI {
         String grantApplicationResource = String.format("application/%s/grant/", applicationNumber);
         GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withDuePeriod("9").withCaseworkerNotes("This notes are from the API");
         apiResponse = RestUtils.put(grantApplication, baseURL.concat(grantApplicationResource), getHeaders());
-        if (apiResponse.extract().response().asString().contains("fee")) {
+        System.out.println(apiResponse.extract().response().asString().contains("id.fee"));
+        if (apiResponse.extract().response().asString().contains("id.fee")) {
             feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
         }
     }
@@ -96,7 +88,7 @@ public class GrantApplicationAPI {
 
         String payOutstandingFeesResource = "transaction/pay-outstanding-fees/";
         FeesBuilder feesBuilder = new FeesBuilder().withFeeIds(Collections.singletonList(feeId)).withOrganisationId(organisationId).withApplicationId(applicationNumber)
-                .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(dateTimeCreate()).withPayer(payer).withSlipNo(slipNo);
+                .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(GenericUtils.getDates("current",0)).withPayer(payer).withSlipNo(slipNo);
         apiResponse = RestUtils.post(feesBuilder, baseURL.concat(payOutstandingFeesResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
     }
