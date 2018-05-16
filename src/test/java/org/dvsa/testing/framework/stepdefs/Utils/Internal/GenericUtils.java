@@ -1,9 +1,13 @@
 package org.dvsa.testing.framework.stepdefs.Utils.Internal;
 
 import activesupport.MissingRequiredArgument;
+import activesupport.http.RestUtils;
 import activesupport.system.Properties;
+import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimPsvLicenceAPI;
+import org.dvsa.testing.framework.stepdefs.Utils.Headers;
+import org.dvsa.testing.framework.stepdefs.builders.GenericBuilder;
 import org.dvsa.testing.lib.Environment;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.browser.Browser;
@@ -27,7 +31,10 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.stepdefs.ESBRupload.DA_USER;
+import static org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimPsvLicenceAPI.adminUserHeader;
+import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
 import static org.dvsa.testing.framework.stepdefs.Utils.Internal.LoginInternalUser.USER_PASSWORD;
 
 public class GenericUtils extends BasePage {
@@ -41,10 +48,11 @@ public class GenericUtils extends BasePage {
     private String getRegistrationNumber() {
         return registrationNumber;
     }
-
     private void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
+
+    CreateInterimPsvLicenceAPI psvLicenceAPI = new CreateInterimPsvLicenceAPI();
 
     public static void generateLetter() {
         clickByLinkText("Docs & attachments");
@@ -165,5 +173,13 @@ public class GenericUtils extends BasePage {
 
     public void getLicenceTrafficArea(){
 
+        Headers.headers.put("x-pid", psvLicenceAPI.getAdminUserHeader());
+
+        String getApplicationResource = String.format("application/%s", psvLicenceAPI.getApplicationNumber());
+//        apiResponse = RestUtils.get(baseURL.concat(getApplicationResource), getHeaders());
+//        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+//        setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
+//        setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
+    }
     }
 }

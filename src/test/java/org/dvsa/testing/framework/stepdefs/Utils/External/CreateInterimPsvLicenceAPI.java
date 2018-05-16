@@ -95,6 +95,11 @@ public class CreateInterimPsvLicenceAPI {
     public void setTrafficArea(String trafficArea) { this.trafficArea = trafficArea; }
     public String getEnforcementArea() { return enforcementArea; }
     public void setEnforcementArea(String enforcementArea) { this.enforcementArea = enforcementArea; }
+    public String licenceId;
+    public String getLicenceId() { return licenceId; }
+    public void setLicenceId(String licenceId) { this.licenceId = licenceId; }
+    public String getAdminUserHeader() { return adminUserHeader; }
+    public static void setAdminUserHeader(String adminUserHeader) { CreateInterimPsvLicenceAPI.adminUserHeader = adminUserHeader; }
 
     public void createAndSubmitPsvApp() {
         registerUser();
@@ -412,5 +417,6 @@ public class CreateInterimPsvLicenceAPI {
         apiResponse = RestUtils.get(baseURL.concat(getApplicationResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
+        setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
     }
 }
