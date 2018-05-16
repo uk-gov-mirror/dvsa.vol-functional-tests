@@ -1,9 +1,17 @@
 package org.dvsa.testing.framework.stepdefs.Utils.Internal;
 
+import activesupport.MissingRequiredArgument;
+import activesupport.system.Properties;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimPsvLicenceAPI;
+import org.dvsa.testing.lib.Environment;
+import org.dvsa.testing.lib.Login;
+import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
+import org.dvsa.testing.lib.pages.internal.SearchNavBar;
+import org.dvsa.testing.lib.utils.ApplicationType;
+import org.dvsa.testing.lib.utils.EnvironmentType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -19,15 +27,22 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.dvsa.testing.framework.stepdefs.ESBRupload.DA_USER;
+import static org.dvsa.testing.framework.stepdefs.Utils.Internal.LoginInternalUser.USER_PASSWORD;
+
 public class GenericUtils extends BasePage {
 
-    public String registrationNumber;
+    private String registrationNumber;
+    private static final String DA_USER = "usr271";
+    private static final String DA_PASSWORD = "password";
+    private static final String USER = "usr336";
+    private static final String USER_PASSWORD = "Password1";
 
-    public String getRegistrationNumber() {
+    private String getRegistrationNumber() {
         return registrationNumber;
     }
 
-    public void setRegistrationNumber(String registrationNumber) {
+    private void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
 
@@ -130,5 +145,25 @@ public class GenericUtils extends BasePage {
         / Uses Open source util zt-zip https://github.com/zeroturnaround/zt-zip
          */
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
+    }
+
+    public void internalUserLogin() throws MissingRequiredArgument {
+        EnvironmentType env = Environment.enumType(Properties.get("env", true));
+        String URL = org.dvsa.testing.lib.URI.build(ApplicationType.INTERNAL, env);
+
+        if (Browser.isInitialised()) {
+            //Quit Browser and open a new window
+            Browser.quit();
+        }
+        Browser.go(URL);
+
+        if(Browser.getURL().contains("da")){
+            Login.signIn(DA_USER, DA_PASSWORD);
+        }
+        else{Login.signIn(USER, USER_PASSWORD);}
+    }
+
+    public void getLicenceTrafficArea(){
+
     }
 }

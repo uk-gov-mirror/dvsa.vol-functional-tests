@@ -24,11 +24,13 @@ public class Scenarios extends BasePage {
 
     private static String zipFilePath = "/src/test/resources/ESBR.zip";
 
-    public static void generateAndGrantPsvApplicationPerTrafficArea(CreateInterimPsvLicenceAPI psvApp, GrantApplicationAPI grantApp, String trafficArea) {
+    public static void generateAndGrantPsvApplicationPerTrafficArea(CreateInterimPsvLicenceAPI psvApp, GrantApplicationAPI grantApp, String trafficArea, String enforcementArea) {
         psvApp.setTrafficArea(trafficArea);
+        psvApp.setEnforcementArea(enforcementArea);
         psvApp.createAndSubmitPsvApp();
         payPsvFees(grantApp, psvApp);
         grantApp.payGrantFees(psvApp.getOrganisationId(), psvApp.getApplicationNumber());
+        System.out.println("--Licence-Number: " + psvApp.getLicenceNumber() + "--");
     }
 
     public static void uploadAndSubmitESBR(GenericUtils genericUtils, CreateInterimPsvLicenceAPI psvApp, String state, int interval) throws MissingRequiredArgument {
