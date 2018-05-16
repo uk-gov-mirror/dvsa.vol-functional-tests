@@ -1,4 +1,5 @@
 @OLCS-19509
+@SS
 Feature: Self-serve ESBR upload short notice for English and Scottish transport areas
 
   Scenario Outline: Short notice ESBR in selfserve

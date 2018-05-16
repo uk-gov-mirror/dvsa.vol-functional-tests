@@ -4,10 +4,7 @@ import activesupport.http.RestUtils;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.stepdefs.Utils.Headers;
-import org.dvsa.testing.framework.stepdefs.builders.FeesBuilder;
-import org.dvsa.testing.framework.stepdefs.builders.GrantApplicationBuilder;
-import org.dvsa.testing.framework.stepdefs.builders.OverviewBuilder;
-import org.dvsa.testing.framework.stepdefs.builders.Tracking;
+import org.dvsa.testing.framework.stepdefs.apiBuilders.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +32,7 @@ public class GrantApplicationAPI {
         Headers.headers.put("x-pid", internalHeader);
 
         do {
-            Tracking tracking = new Tracking().withId(trackingId).withVersion(overviewVersion).withAddressesStatus(status).withBusinessDetailsStatus(status).withBusinessTypeStatus(status)
+            TrackingBuilder tracking = new TrackingBuilder().withId(trackingId).withVersion(overviewVersion).withAddressesStatus(status).withBusinessDetailsStatus(status).withBusinessTypeStatus(status)
                     .withCommunityLicencesStatus(status).withConditionsUndertakingsStatus(status).withConvictionsPenaltiesStatus(status).withFinancialEvidenceStatus(status)
                     .withFinancialHistoryStatus(status).withLicenceHistoryStatus(status).withOperatingCentresStatus(status).withPeopleStatus(status).withSafetyStatus(status)
                     .withTransportManagersStatus(status).withTypeOfLicenceStatus(status).withDeclarationsInternalStatus(status).withVehiclesDeclarationsStatus(status).withVehiclesStatus(status).withVehiclesPsvStatus(status);
@@ -74,8 +71,7 @@ public class GrantApplicationAPI {
         String grantApplicationResource = String.format("application/%s/grant/", applicationNumber);
         GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withDuePeriod("9").withCaseworkerNotes("This notes are from the API");
         apiResponse = RestUtils.put(grantApplication, baseURL.concat(grantApplicationResource), getHeaders());
-        System.out.println(apiResponse.extract().response().asString().contains("id.fee"));
-        if (apiResponse.extract().response().asString().contains("id.fee")) {
+        if (apiResponse.extract().response().asString().contains("fee")) {
             feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
         }
     }
@@ -91,5 +87,12 @@ public class GrantApplicationAPI {
                 .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(GenericUtils.getDates("current",0)).withPayer(payer).withSlipNo(slipNo);
         apiResponse = RestUtils.post(feesBuilder, baseURL.concat(payOutstandingFeesResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+    }
+
+    public void variationGrant(String applicationNumber) {
+        String grantApplicationResource = String.format("variation/%s/grant/", applicationNumber);
+        GenericBuilder grantVariationBuilder = new GenericBuilder().withId(applicationNumber);
+        apiResponse = RestUtils.put(grantVariationBuilder, baseURL.concat(grantApplicationResource), getHeaders());
+        System.out.println(apiResponse.extract().body().asString());
     }
 }

@@ -9,7 +9,7 @@ import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.stepdefs.Utils.Headers;
-import org.dvsa.testing.framework.stepdefs.builders.*;
+import org.dvsa.testing.framework.stepdefs.apiBuilders.*;
 
 import java.util.HashMap;
 
@@ -112,6 +112,25 @@ public class CreateInterimPsvLicenceAPI {
         this.trafficArea = trafficArea;
     }
 
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public String licenceId;
+
+    public String getLicenceId() {
+        return licenceId;
+    }
+
+    public void setLicenceId(String licenceId) {
+        this.licenceId = licenceId;
+    }
+
+
 
     public void createAndSubmitPsvApp() {
         registerUser();
@@ -157,7 +176,7 @@ public class CreateInterimPsvLicenceAPI {
         String userDetailsResource = String.format("user/selfserve/%s", userId);
         apiResponse = RestUtils.get(baseURL.concat(userDetailsResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
-        pid = apiResponse.extract().jsonPath().getString("pid");
+        setPid(apiResponse.extract().jsonPath().getString("pid"));
         organisationId = apiResponse.extract().jsonPath().getString("organisationUsers.organisation.id");
     }
 
@@ -338,7 +357,7 @@ public class CreateInterimPsvLicenceAPI {
         String applicationSafetyResource = String.format("application/%s/safety", applicationNumber);
 
         do {
-            Licence licence = new Licence().withId(licenceNumber).withVersion(version).withSafetyInsVaries(safetyInsVaries).withSafetyInsVehicles(noOfVehiclesRequired)
+            LicenceBuilder licence = new LicenceBuilder().withId(licenceNumber).withVersion(version).withSafetyInsVaries(safetyInsVaries).withSafetyInsVehicles(noOfVehiclesRequired)
                     .withSafetyInsTrailers(noOfVehiclesRequired).withTachographIns(tachographIns);
             ApplicationSafetyBuilder applicationSafetyBuilder = new ApplicationSafetyBuilder().withId(applicationNumber).withVersion(version)
                     .withSafetyConfirmation(safetyConfirmationOption).withLicence(licence);
@@ -392,8 +411,6 @@ public class CreateInterimPsvLicenceAPI {
     }
 
     public void reviewAndDeclare() {
-        String interimReason = "Testing through the API";
-        String isInterim = "Y";
         String declarationConfirmation = "Y";
         String signatureRequired = "sig_physical_signature";
         do {
@@ -430,5 +447,6 @@ public class CreateInterimPsvLicenceAPI {
         apiResponse = RestUtils.get(baseURL.concat(getApplicationResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
+        setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
     }
 }

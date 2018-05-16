@@ -1,7 +1,17 @@
 package org.dvsa.testing.framework.stepdefs.Utils.Internal;
 
+import activesupport.MissingRequiredArgument;
+import activesupport.http.RestUtils;
+import enums.LicenceType;
+import io.restassured.response.ValidatableResponse;
+import org.apache.http.HttpStatus;
+import org.assertj.core.api.Assertions;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimPsvLicenceAPI;
+import org.dvsa.testing.framework.stepdefs.apiBuilders.ApplicationBuilder;
+import org.dvsa.testing.framework.stepdefs.apiBuilders.GenericBuilder;
+import org.dvsa.testing.framework.stepdefs.apiBuilders.OperatingCentreUpdater;
+import org.dvsa.testing.framework.stepdefs.apiBuilders.VariationBuilder;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.w3c.dom.Document;
@@ -19,15 +29,25 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.dvsa.testing.framework.stepdefs.Utils.Headers.getHeaders;
+
 public class GenericUtils extends BasePage {
 
-    public String registrationNumber;
+    private static String env = System.getProperty("env");
+    private static String baseURL = String.format("http://api.olcs.%s.nonprod.dvsa.aws/api/", env);// TODO need to update uri library to include api url
 
-    public String getRegistrationNumber() {
-        return registrationNumber;
+    private ValidatableResponse apiResponse;
+    private String registrationNumber;
+
+    public GenericUtils() throws MissingRequiredArgument {
     }
 
-    public void setRegistrationNumber(String registrationNumber) {
+    public static String variationApplicationNumber;
+    private String getRegistrationNumber() {
+        return registrationNumber;
+    }
+    private void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
 
@@ -44,14 +64,19 @@ public class GenericUtils extends BasePage {
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public static void payGoodsFees(GrantApplicationAPI grantApp, CreateInterimGoodsLicenceAPI goodsApp) {
-        grantApp.createOverview(goodsApp.getApplicationNumber());
-        grantApp.getOutstandingFees(goodsApp.getApplicationNumber());
-        grantApp.payOutstandingFees(goodsApp.getOrganisationId(), goodsApp.getApplicationNumber());
-        grantApp.grant(goodsApp.getApplicationNumber());
+    public static void payGoodsFeesAndGrantLicence(GrantApplicationAPI grantApp, CreateInterimGoodsLicenceAPI goodsApp) {
+        if (variationApplicationNumber != null) {
+            grantApp.createOverview(variationApplicationNumber);
+            grantApp.variationGrant(variationApplicationNumber);
+        } else {
+            grantApp.createOverview(goodsApp.getApplicationNumber());
+            grantApp.getOutstandingFees(goodsApp.getApplicationNumber());
+            grantApp.payOutstandingFees(goodsApp.getOrganisationId(), goodsApp.getApplicationNumber());
+            grantApp.grant(goodsApp.getApplicationNumber());
+        }
     }
 
-    public static void payPsvFees(GrantApplicationAPI grantApp, CreateInterimPsvLicenceAPI psvApp) {
+    public static void payPsvFeesAndGrantLicence(GrantApplicationAPI grantApp, CreateInterimPsvLicenceAPI psvApp) {
         grantApp.createOverview(psvApp.getApplicationNumber());
         grantApp.getOutstandingFees(psvApp.getApplicationNumber());
         grantApp.payOutstandingFees(psvApp.getOrganisationId(), psvApp.getApplicationNumber());
@@ -130,5 +155,31 @@ public class GenericUtils extends BasePage {
         / Uses Open source util zt-zip https://github.com/zeroturnaround/zt-zip
          */
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
+    }
+
+    public void createVariation(String licenceId) {
+        String licenceHistoryResource = String.format("licence/%s/variation", licenceId);
+
+        VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withLicenceType("ltyp_si").withAppliedVia("applied_via_phone");
+        apiResponse = RestUtils.post(variation, baseURL.concat(licenceHistoryResource), getHeaders());
+        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        variationApplicationNumber = String.valueOf(apiResponse.extract().jsonPath().getInt("id.application"));
+    }
+
+    public void updateLicenceType(String licenceId) {
+        Integer version = 1;
+        String typeOfLicenceResource = String.format("variation/%s/type-of-licence", licenceId);
+
+        do {
+        GenericBuilder genericBuilder = new GenericBuilder().withId(variationApplicationNumber).withVersion(version).withLicenceType(String.valueOf(LicenceType.getEnum("standard_national")));
+        apiResponse = RestUtils.put(genericBuilder,baseURL.concat(typeOfLicenceResource), getHeaders());
+        System.out.println(apiResponse.extract().body().asString());
+         version++;
+            if (version > 20) {
+                version = 1;
+            }
+        }
+        while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 }

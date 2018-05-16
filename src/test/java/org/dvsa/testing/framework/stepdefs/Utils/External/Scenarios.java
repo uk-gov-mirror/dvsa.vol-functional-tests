@@ -7,17 +7,18 @@ import activesupport.system.Properties;
 
 import org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils;
 import org.dvsa.testing.framework.stepdefs.Utils.Internal.GrantApplicationAPI;
-import org.dvsa.testing.lib.Environment;
 import org.dvsa.testing.lib.Login;
-import org.dvsa.testing.lib.URI;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
-import org.dvsa.testing.lib.utils.ApplicationType;
-import org.dvsa.testing.lib.utils.EnvironmentType;
+import org.dvsa.testing.lib.url.utils.EnvironmentType;
+import org.dvsa.testing.lib.url.webapp.URL;
+import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
+
+import java.net.MalformedURLException;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.payPsvFees;
+import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.payPsvFeesAndGrantLicence;
 import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.zipFolder;
 
 public class Scenarios extends BasePage {
@@ -27,23 +28,23 @@ public class Scenarios extends BasePage {
     public static void generateAndGrantPsvApplicationPerTrafficArea(CreateInterimPsvLicenceAPI psvApp, GrantApplicationAPI grantApp, String trafficArea) {
         psvApp.setTrafficArea(trafficArea);
         psvApp.createAndSubmitPsvApp();
-        payPsvFees(grantApp, psvApp);
+        payPsvFeesAndGrantLicence(grantApp, psvApp);
         grantApp.payGrantFees(psvApp.getOrganisationId(), psvApp.getApplicationNumber());
     }
 
-    public static void uploadAndSubmitESBR(GenericUtils genericUtils, CreateInterimPsvLicenceAPI psvApp, String state, int interval) throws MissingRequiredArgument {
+    public static void uploadAndSubmitESBR(GenericUtils genericUtils, CreateInterimPsvLicenceAPI psvApp, String state, int interval) throws MissingRequiredArgument, MalformedURLException {
         // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
         genericUtils.modifyXML(psvApp, state, interval);
         zipFolder();
 
-        EnvironmentType env = Environment.enumType(Properties.get("env", true));
-        String URL = URI.build(ApplicationType.EXTERNAL, env);
+        EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+        String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
 
         if (Browser.isInitialised()) {
             //Quit Browser and open a new window
             Browser.quit();
         }
-        Browser.go(URL);
+        Browser.go(myURL);
         String password = S3.getTempPassword(psvApp.getEmailAddress());
 
         if (isTextPresent("Username", 60))

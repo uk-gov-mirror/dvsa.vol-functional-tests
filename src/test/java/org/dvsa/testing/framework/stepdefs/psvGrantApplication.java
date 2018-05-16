@@ -4,7 +4,7 @@ package org.dvsa.testing.framework.stepdefs;
         import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimPsvLicenceAPI;
         import org.dvsa.testing.framework.stepdefs.Utils.Internal.GrantApplicationAPI;
 
-        import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.payPsvFees;
+        import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.payPsvFeesAndGrantLicence;
 
 public class psvGrantApplication implements En {
     public psvGrantApplication() {
@@ -17,7 +17,7 @@ public class psvGrantApplication implements En {
             }
         });
         When("^I pay my application fees$", () -> {
-            payPsvFees(grantApp, psvApp);
+            payPsvFeesAndGrantLicence(grantApp, psvApp);
         });
         Then("^my application should be granted$", () -> {
             grantApp.payGrantFees(psvApp.getOrganisationId(), psvApp.getApplicationNumber());

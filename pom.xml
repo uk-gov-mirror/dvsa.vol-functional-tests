@@ -121,8 +121,7 @@
         <dependency>
             <groupId>org.dvsa.testing.lib</groupId>
             <artifactId>uri-constructor</artifactId>
-            <version>1.4.1</version>
-            <scope>test</scope>
+            <version>${uri-constructor.version}</version>
         </dependency>
         <dependency>
             <groupId>org.zeroturnaround</groupId>

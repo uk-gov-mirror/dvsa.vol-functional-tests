@@ -2,12 +2,11 @@ package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.system.Properties;
 import cucumber.api.java8.En;
-import org.dvsa.testing.lib.Environment;
-import org.dvsa.testing.lib.URI;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.external.RegisterConfirmationPage;
-import org.dvsa.testing.lib.utils.ApplicationType;
-import org.dvsa.testing.lib.utils.EnvironmentType;
+import org.dvsa.testing.lib.url.utils.EnvironmentType;
+import org.dvsa.testing.lib.url.webapp.URL;
+import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.dvsa.testing.lib.external.Register;
 import org.junit.Assert;
 
@@ -17,10 +16,10 @@ public class UserRegAccount implements En {
 
     public UserRegAccount() {
         Given("I am on the VOL external registration", () -> {
-            EnvironmentType env = Environment.enumType(Properties.get("env", true));
-            String URL = URI.build(ApplicationType.EXTERNAL, env, "register") ;
+            EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+            String myURL = URL.build(ApplicationType.EXTERNAL, env, "register").toString() ;
 
-            Browser.go(URL);
+            Browser.go(myURL);
         });
 
         When("I successfully register an account", () -> {
