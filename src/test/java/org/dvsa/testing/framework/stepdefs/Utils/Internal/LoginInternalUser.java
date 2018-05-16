@@ -14,8 +14,8 @@ import org.dvsa.testing.lib.pages.BasePage;
 
 public class LoginInternalUser extends BasePage implements En {
 
-    public static String USER_EMAIL = "usr291";
-    public static String USER_PASSWORD = "Password1";
+    public static String USER_EMAIL = "usr271";
+    public static String USER_PASSWORD = "password";
     private CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
 
     public LoginInternalUser() throws Exception{

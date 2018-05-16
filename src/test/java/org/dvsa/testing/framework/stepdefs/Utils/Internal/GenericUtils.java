@@ -173,7 +173,6 @@ public class GenericUtils extends BasePage {
         do {
         GenericBuilder genericBuilder = new GenericBuilder().withId(variationApplicationNumber).withVersion(version).withLicenceType(String.valueOf(LicenceType.getEnum("standard_national")));
         apiResponse = RestUtils.put(genericBuilder,baseURL.concat(typeOfLicenceResource), getHeaders());
-        System.out.println(apiResponse.extract().body().asString());
          version++;
             if (version > 20) {
                 version = 1;
