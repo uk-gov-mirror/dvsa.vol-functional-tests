@@ -4,7 +4,7 @@ import cucumber.api.java8.En;
 import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
 import org.dvsa.testing.framework.stepdefs.Utils.Internal.GrantApplicationAPI;
 
-import static org.dvsa.testing.framework.stepdefs.Utils.Internal.InternalGenericUtils.payGoodsFees;
+import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.payGoodsFees;
 
 public class GrantApplication implements En {
     public GrantApplication() {

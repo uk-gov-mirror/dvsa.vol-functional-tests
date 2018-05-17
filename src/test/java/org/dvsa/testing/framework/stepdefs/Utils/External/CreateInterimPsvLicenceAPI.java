@@ -47,71 +47,59 @@ public class CreateInterimPsvLicenceAPI {
     private String companyNumber = String.valueOf(Int.random(00000000, 99999999));
     private String noOfVehiclesRequired = "5";
     private String trafficArea;
+    private String enforcementArea = "EA-D";
 
     public void setLicenceNumber(String licenceNumber) {
         this.licenceNumber = licenceNumber;
     }
-
     public String getLicenceNumber() {
         return licenceNumber;
     }
-
-    public void setNoOfVehiclesRequired(String noOfVehiclesRequired) {
-        this.noOfVehiclesRequired = noOfVehiclesRequired;
-    }
-
+    public void setNoOfVehiclesRequired(String noOfVehiclesRequired) { this.noOfVehiclesRequired = noOfVehiclesRequired; }
     public String getNoOfVehiclesRequired() {
         return noOfVehiclesRequired;
     }
-
     public void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
-
     public String getApplicationNumber() {
         return applicationNumber;
     }
-
     public void setOrganisationId(String organisationId) {
         this.organisationId = organisationId;
     }
-
     public String getOrganisationId() {
         return organisationId;
     }
-
     public void setLoginId(String loginId) {
         this.loginId = loginId;
     }
-
     public String getLoginId() {
         return loginId;
     }
-
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
-
     public String getEmailAddress() {
         return emailAddress;
     }
-
     public String getForeName() {
         return foreName;
     }
-
     public String getFamilyName() {
         return familyName;
     }
-
     public String getTrafficArea() {
         return trafficArea;
     }
-
-    public void setTrafficArea(String trafficArea) {
-        this.trafficArea = trafficArea;
-    }
-
+    public void setTrafficArea(String trafficArea) { this.trafficArea = trafficArea; }
+    public String getEnforcementArea() { return enforcementArea; }
+    public void setEnforcementArea(String enforcementArea) { this.enforcementArea = enforcementArea; }
+    public String licenceId;
+    public String getLicenceId() { return licenceId; }
+    public void setLicenceId(String licenceId) { this.licenceId = licenceId; }
+    public String getAdminUserHeader() { return adminUserHeader; }
+    public static void setAdminUserHeader(String adminUserHeader) { CreateInterimPsvLicenceAPI.adminUserHeader = adminUserHeader; }
 
     public void createAndSubmitPsvApp() {
         registerUser();
@@ -234,7 +222,6 @@ public class CreateInterimPsvLicenceAPI {
     }
 
     public void updateOperatingCentre() {
-        String enforcementArea = "EA-D";
         String updateOperatingCentreResource = String.format("application/%s/operating-centres", applicationNumber);
         do {
             OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater().withId(applicationNumber).withTotAuthVehicles(Integer.parseInt(noOfVehiclesRequired))
@@ -430,5 +417,6 @@ public class CreateInterimPsvLicenceAPI {
         apiResponse = RestUtils.get(baseURL.concat(getApplicationResource), getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
+        setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
     }
 }
