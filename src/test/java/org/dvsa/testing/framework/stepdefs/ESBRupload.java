@@ -16,11 +16,6 @@ import static org.junit.Assert.assertFalse;
 
 public class ESBRupload extends BasePage implements En {
 
-    private static String DA_USER = "usr271";
-    private static String USER = "usr291";
-    private static String DA_PASSWORD = "password";
-    private static String USER_PASSWORD = "Password1";
-
     private CreateInterimPsvLicenceAPI psvApp = new CreateInterimPsvLicenceAPI();
     private GrantApplicationAPI grantApp = new GrantApplicationAPI();
     private GenericUtils genericUtils = new GenericUtils();
@@ -28,7 +23,7 @@ public class ESBRupload extends BasePage implements En {
     public ESBRupload() {
 
         Given("^I have a psv application with traffic area \"([^\"]*)\" and enforcement area \"([^\"]*)\" which has been granted$", (String arg0, String arg1) -> {
-            generateAndGrantPsvApplicationPerTrafficArea(psvApp, grantApp, arg0, arg1);
+            generateAndGrantPsvApplicationPerTrafficArea(psvApp, grantApp, arg0, arg1, genericUtils);
         });
 
         Then("^A short notice flag should be displayed in selfserve$", () -> {
