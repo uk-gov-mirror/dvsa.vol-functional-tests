@@ -1,13 +1,10 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import activesupport.MissingRequiredArgument;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
+import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateInterimGoodsLicenceAPI;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
 import org.dvsa.testing.lib.pages.BasePage;
-
-import java.net.MalformedURLException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

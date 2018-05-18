@@ -1,14 +1,14 @@
 package org.dvsa.testing.framework.stepdefs;
 
         import cucumber.api.java8.En;
-        import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimPsvLicenceAPI;
-        import org.dvsa.testing.framework.stepdefs.Utils.Internal.GrantApplicationAPI;
+        import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateInterimPsvLicenceAPI;
+        import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 
-        import static org.dvsa.testing.framework.stepdefs.Utils.Internal.GenericUtils.payPsvFeesAndGrantLicence;
+        import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.payPsvFeesAndGrantLicence;
 
 public class psvGrantApplication implements En {
     public psvGrantApplication() {
-        GrantApplicationAPI grantApp = new GrantApplicationAPI();
+        GrantLicenceAPI grantApp = new GrantLicenceAPI();
         CreateInterimPsvLicenceAPI psvApp = new CreateInterimPsvLicenceAPI();
 
         Given("^I have a psv application which is under consideration$", () -> {

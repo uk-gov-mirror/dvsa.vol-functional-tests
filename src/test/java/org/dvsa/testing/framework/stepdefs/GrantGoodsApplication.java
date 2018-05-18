@@ -1,18 +1,18 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.stepdefs.Utils.External.CreateInterimGoodsLicenceAPI;
-import org.dvsa.testing.framework.stepdefs.Utils.Internal.GrantApplicationAPI;
+import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateInterimGoodsLicenceAPI;
+import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 
-import static org.dvsa.testing.framework.stepdefs.Utils.Internal.InternalGenericUtils.payGoodsFees;
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.payGoodsFeesAndGrantLicence;
 
 public class GrantGoodsApplication implements En {
     public GrantGoodsApplication() throws Exception{
-        GrantApplicationAPI grantApp = new GrantApplicationAPI();
+        GrantLicenceAPI grantApp = new GrantLicenceAPI();
         CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
 
         When("^I pay fees$", () -> {
-            payGoodsFees(grantApp, goodsApp);
+            payGoodsFeesAndGrantLicence(grantApp, goodsApp);
         });
         Given("^I have an application which is under consideration$", () -> {
             if (goodsApp.getApplicationNumber() == null) {
