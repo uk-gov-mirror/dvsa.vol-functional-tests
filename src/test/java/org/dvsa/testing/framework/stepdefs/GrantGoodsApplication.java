@@ -1,7 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateInterimGoodsLicenceAPI;
+import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.payGoodsFeesAndGrantLicence;
@@ -9,18 +9,18 @@ import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.payGoodsFees
 public class GrantGoodsApplication implements En {
     public GrantGoodsApplication() throws Exception{
         GrantLicenceAPI grantApp = new GrantLicenceAPI();
-        CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
+        CreateLicenceAPI app = new CreateLicenceAPI();
 
         When("^I pay fees$", () -> {
-            payGoodsFeesAndGrantLicence(grantApp, goodsApp);
+            payGoodsFeesAndGrantLicence(grantApp, app);
         });
         Given("^I have an application which is under consideration$", () -> {
-            if (goodsApp.getApplicationNumber() == null) {
-                goodsApp.createAndSubmitGoodsApp();
+            if (app.getApplicationNumber() == null) {
+                app.createAndSubmitApp();
             }
         });
         Then("^the application should be granted$", () -> {
-            grantApp.payGrantFees(goodsApp.getOrganisationId(),goodsApp.getApplicationNumber());
+            grantApp.payGrantFees(app.getOrganisationId(),app.getApplicationNumber());
         });
     }
 }

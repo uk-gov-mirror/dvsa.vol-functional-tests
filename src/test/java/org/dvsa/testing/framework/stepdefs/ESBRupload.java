@@ -15,7 +15,7 @@ import static org.junit.Assert.assertFalse;
 
 public class ESBRupload extends BasePage implements En {
 
-    private CreateInterimPsvLicenceAPI psvApp = new CreateInterimPsvLicenceAPI();
+    private CreateLicenceAPI psvApp = new CreateLicenceAPI();
     private GrantLicenceAPI grantApp = new GrantLicenceAPI();
     private GenericUtils genericUtils = new GenericUtils();
 

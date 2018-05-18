@@ -2,7 +2,7 @@ package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.aws.s3.S3;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateInterimGoodsLicenceAPI;
+import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 import org.dvsa.testing.lib.Login;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertFalse;
 
 public class RemoveTM extends BasePage implements En {
 
-    private CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
+    private CreateLicenceAPI goodsApp = new CreateLicenceAPI();
     private GrantLicenceAPI grantApp = new GrantLicenceAPI();
 
     private static String oldAlertValue = "You are removing your last Transport Manager. If you haven't yet made an application to appoint a replacement, " +
@@ -32,7 +32,7 @@ public class RemoveTM extends BasePage implements En {
     public RemoveTM() throws Exception {
         Given("^i have an application with a transport manager$", () -> {
             if (goodsApp.getApplicationNumber() == null) {
-                goodsApp.createAndSubmitGoodsApp();
+                goodsApp.createAndSubmitApp();
             }
         });
         When("^the transport manager has been removed by an internal user$", () -> {

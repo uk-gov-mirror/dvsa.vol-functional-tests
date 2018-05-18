@@ -21,7 +21,7 @@ import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 
-public class CreateInterimGoodsLicenceAPI {
+public class CreateLicenceAPI {
 
     private static ValidatableResponse apiResponse;
 
@@ -48,20 +48,30 @@ public class CreateInterimGoodsLicenceAPI {
     private String licenceNumber;
     private String transportManagerApplicationId;
     private String companyNumber = String.valueOf(Int.random(00000000, 99999999));
-    private String licenceType = String.valueOf(LicenceType.getEnum("standard_international"));
+    private String licenceType = System.getProperty("licenceType"); //"standard_international"
+    private String businessType = System.getProperty("businessType"); //"limited_company"
+    private String operatorType = System.getProperty("operatorType"); //goods
+    private String niFlag = System.getProperty("ni"); //"Y|N"
+    private String trafficArea = "D";
+    private String enforcementArea = "EA-D";
+    private String interimReason = "Interim through the API";
+    private String isInterim = "Y";
 
-    private int version = 1;
+    private static int version = 1;
     private int noOfVehiclesRequired = 5;
 
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
-    public CreateInterimGoodsLicenceAPI() throws MissingRequiredArgument { }
+    public CreateLicenceAPI() throws MissingRequiredArgument {
+    }
 
-    public void setLicenceNumber(String licenceNumber) {
+    private void setLicenceNumber(String licenceNumber) {
         this.licenceNumber = licenceNumber;
     }
 
-    public String getLicenceNumber() { return licenceNumber; }
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
 
     public void setNoOfVehiclesRequired(int noOfVehiclesRequired) {
         this.noOfVehiclesRequired = noOfVehiclesRequired;
@@ -71,7 +81,7 @@ public class CreateInterimGoodsLicenceAPI {
         return noOfVehiclesRequired;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
+    private void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
@@ -79,7 +89,7 @@ public class CreateInterimGoodsLicenceAPI {
         return applicationNumber;
     }
 
-    public void setOrganisationId(String organisationId) {
+    private void setOrganisationId(String organisationId) {
         this.organisationId = organisationId;
     }
 
@@ -87,7 +97,7 @@ public class CreateInterimGoodsLicenceAPI {
         return organisationId;
     }
 
-    public void setLoginId(String loginId) {
+    private void setLoginId(String loginId) {
         this.loginId = loginId;
     }
 
@@ -103,11 +113,11 @@ public class CreateInterimGoodsLicenceAPI {
         return emailAddress;
     }
 
-    public String getForeName() {
+    private String getForeName() {
         return foreName;
     }
 
-    public String getFamilyName() {
+    private String getFamilyName() {
         return familyName;
     }
 
@@ -123,17 +133,17 @@ public class CreateInterimGoodsLicenceAPI {
         return pid;
     }
 
-    public void setPid(String pid) {
+    private void setPid(String pid) {
         this.pid = pid;
     }
 
-    public String licenceId;
+    private String licenceId;
 
     public String getLicenceId() {
         return licenceId;
     }
 
-    public void setLicenceId(String licenceId) {
+    private void setLicenceId(String licenceId) {
         this.licenceId = licenceId;
     }
 
@@ -143,9 +153,20 @@ public class CreateInterimGoodsLicenceAPI {
 
     public String getTransportManagerApplicationId() { return transportManagerApplicationId; }
 
-    public void setTransportManagerApplicationId(String transportManagerApplicationId) { this.transportManagerApplicationId = transportManagerApplicationId; }
+    private void setTransportManagerApplicationId(String transportManagerApplicationId) {
+        this.transportManagerApplicationId = transportManagerApplicationId; }
 
-    public void createAndSubmitGoodsApp() throws Exception {
+    public void setTrafficArea(String trafficArea) { this.trafficArea = trafficArea; }
+
+    public String getEnforcementArea() { return enforcementArea; }
+
+    public void setEnforcementArea(String enforcementArea) { this.enforcementArea = enforcementArea; }
+
+    public static String getAdminUserHeader() { return adminUserHeader; }
+
+    public static void setAdminUserHeader(String adminUserHeader) { CreateLicenceAPI.adminUserHeader = adminUserHeader; }
+
+    public void createAndSubmitApp() throws Exception {
         registerUser();
         getUserDetails();
         createApplication();
@@ -159,25 +180,26 @@ public class CreateInterimGoodsLicenceAPI {
         addTransportManager();
         submitTransport();
         vehicles();
+        submitVehicleDeclaration();
         addFinancialHistory();
         addApplicationSafetyAndComplianceDetails();
         addSafetyInspector();
         addConvictionsDetails();
         addLicenceHistory();
-        reviewAndDeclare();
+        applicationReviewAndDeclare();
         submitApplication();
         getApplicationLicenceDetails();
     }
 
     public void registerUser() throws MalformedURLException {
-        String registerResource = URL.build(env,"user/selfserve/register").toString();
-
+        String registerResource = URL.build(env, "user/selfserve/register").toString();
         Headers.headers.put("api", "dvsa");
         setLoginId(Str.randomWord(8));
+
         PersonBuilder personBuilder = new PersonBuilder().withTitle(title).withForename(getForeName()).withFamilyName(getFamilyName()).withBirthDate(birthDate);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withEmailAddress(emailAddress).withPerson(personBuilder);
         SelfServeUserRegistrationDetailsBuilder selfServeUserRegistrationDetailsBuilder = new SelfServeUserRegistrationDetailsBuilder().withLoginId(getLoginId()).withContactDetails(contactDetailsBuilder)
-                .withOrganisationName(organisationName).withBusinessType(String.valueOf(BusinessType.getEnum("limited_company")));
+                .withOrganisationName(organisationName).withBusinessType(String.valueOf(BusinessType.getEnum(businessType)));
         apiResponse = RestUtils.post(selfServeUserRegistrationDetailsBuilder, registerResource, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         userId = apiResponse.extract().jsonPath().getString("id.user");
@@ -186,7 +208,7 @@ public class CreateInterimGoodsLicenceAPI {
     public void getUserDetails() throws MalformedURLException {
         Headers.headers.put("x-pid", adminUserHeader);
 
-        String userDetailsResource = URL.build(env,String.format("user/selfserve/%s",userId)).toString();
+        String userDetailsResource = URL.build(env, String.format("user/selfserve/%s", userId)).toString();
         apiResponse = RestUtils.get(userDetailsResource, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         setPid(apiResponse.extract().jsonPath().getString("pid"));
@@ -195,41 +217,52 @@ public class CreateInterimGoodsLicenceAPI {
     }
 
     public void createApplication() throws MalformedURLException {
-        String niFlag = "N";
-        String createApplicationResource = URL.build(env,"application").toString();
+        String createApplicationResource = URL.build(env, "application").toString();
         Headers.headers.put("x-pid", pid);
         HashMap<String, String> headers = getHeaders();
-        ApplicationBuilder applicationBuilder = new ApplicationBuilder().withOperatorType(String.valueOf(OperatorType.getEnum("goods")))
-                .withLicenceType(licenceType).withNiFlag(niFlag).withOrganisation(organisationId);
+        ApplicationBuilder applicationBuilder = new ApplicationBuilder().withOperatorType(String.valueOf(OperatorType.getEnum(operatorType)))
+                .withLicenceType(String.valueOf(LicenceType.getEnum(licenceType))).withNiFlag(niFlag).withOrganisation(organisationId);
         apiResponse = RestUtils.post(applicationBuilder, createApplicationResource, headers);
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         applicationNumber = apiResponse.extract().jsonPath().getString("id.application");
-        setApplicationNumber(applicationNumber);
         licenceNumber = apiResponse.extract().jsonPath().getString("id.licence");
+        setApplicationNumber(applicationNumber);
     }
 
     public void updateBusinessType() throws MalformedURLException {
-        String updateBusinessTypeResource = URL.build(env,String.format("organisation/%s/business-type/", organisationId)).toString();
-        BusinessTypeBuilder businessTypeBuilder = new BusinessTypeBuilder().withBusinessType(String.valueOf(BusinessType.getEnum("limited_company"))).withVersion(businessVersion)
-                .withId(organisationId).withApplication(applicationNumber);
-        apiResponse = RestUtils.put(businessTypeBuilder, updateBusinessTypeResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        String updateBusinessTypeResource = URL.build(env, String.format("organisation/%s/business-type/", organisationId)).toString();
+        do {
+            BusinessTypeBuilder businessTypeBuilder = new BusinessTypeBuilder().withBusinessType(String.valueOf(BusinessType.getEnum(businessType))).withVersion(businessVersion)
+                    .withId(organisationId).withApplication(applicationNumber);
+            apiResponse = RestUtils.put(businessTypeBuilder, updateBusinessTypeResource, getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
     }
 
     public void updateBusinessDetails() throws MalformedURLException {
         String natureOfBusiness = "apiTesting";
-        String updateBusinessDetailsResource = URL.build(env,String.format("organisation/business-details/application/%s", licenceNumber)).toString();
-        AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
-        UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
-                .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
-                .withVersion(businessVersion).withName(natureOfBusiness).withAddress(address);
-        apiResponse = RestUtils.put(businessDetails, updateBusinessDetailsResource, getHeaders());
+        String updateBusinessDetailsResource = URL.build(env, String.format("organisation/business-details/application/%s", licenceNumber)).toString();
+
+        do {
+            AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
+            UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
+                    .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
+                    .withVersion(businessVersion).withName(natureOfBusiness).withAddress(address);
+            apiResponse = RestUtils.put(businessDetails, updateBusinessDetailsResource, getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
     public void addAddressDetails() throws MalformedURLException {
         String phoneNumber = "0712345678";
-        String applicationAddressResource = URL.build(env,String.format("application/%s/addresses/", applicationNumber)).toString();
+        String applicationAddressResource = URL.build(env, String.format("application/%s/addresses/", applicationNumber)).toString();
         AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withPhoneNumber(phoneNumber).withEmailAddress(emailAddress);
         ApplicationAddressBuilder addressBuilder = new ApplicationAddressBuilder().withId(applicationNumber).withConsultant("Consult").withContact(contactDetailsBuilder)
@@ -239,14 +272,14 @@ public class CreateInterimGoodsLicenceAPI {
     }
 
     public void addPartners() throws MalformedURLException {
-        String addPersonResource = URL.build(env,String.format("application/%s/people/", applicationNumber)).toString();
+        String addPersonResource = URL.build(env, String.format("application/%s/people/", applicationNumber)).toString();
         PersonBuilder addPerson = new PersonBuilder().withId(applicationNumber).withTitle(title).withForename(foreName).withFamilyName(familyName).withBirthDate(birthDate);
         apiResponse = RestUtils.post(addPerson, addPersonResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        assertThat(apiResponse.extract().statusCode() == HttpStatus.SC_CREATED);
     }
 
     public void addOperatingCentre() throws MalformedURLException {
-        String operatingCentreResource = URL.build(env,String.format("application/%s/operating-centre/", applicationNumber)).toString();
+        String operatingCentreResource = URL.build(env, String.format("application/%s/operating-centre/", applicationNumber)).toString();
         String permissionOption = "Y";
         AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder().withApplication(applicationNumber).withNoOfVehiclesRequired(String.valueOf(noOfVehiclesRequired))
@@ -256,26 +289,22 @@ public class CreateInterimGoodsLicenceAPI {
     }
 
     public void updateOperatingCentre() throws MalformedURLException {
-        String trafficArea = "D";
-        String enforcementArea = "EA-D";
-        String updateOperatingCentreResource = URL.build(env,String.format("application/%s/operating-centres", applicationNumber)).toString();
+        String updateOperatingCentreResource = URL.build(env, String.format("application/%s/operating-centres", applicationNumber)).toString();
 
-        do {
-            int operatingCentreVersion = version;
+        do{
             OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater().withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
-                    .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withTotCommunityLicences(noOfVehiclesRequired).withVersion(operatingCentreVersion);
-            apiResponse = RestUtils.put(updateOperatingCentre, updateOperatingCentreResource, getHeaders());
-            version++;
+                        .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
+                apiResponse = RestUtils.put(updateOperatingCentre, updateOperatingCentreResource, getHeaders());
+                version++;
             if (version > 20) {
                 version = 1;
             }
-        }
-        while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
     public void addFinancialEvidence() throws MalformedURLException {
-        String financialEvidenceResource = URL.build(env,String.format("application/%s/financial-evidence", applicationNumber)).toString();
+        String financialEvidenceResource = URL.build(env, String.format("application/%s/financial-evidence", applicationNumber)).toString();
 
         do {
             FinancialEvidenceBuilder financialEvidenceBuilder = new FinancialEvidenceBuilder().withId(applicationNumber).withVersion(version).withFinancialEvidenceUploaded(0);
@@ -290,7 +319,7 @@ public class CreateInterimGoodsLicenceAPI {
 
     public void addTransportManager() throws MalformedURLException {
         String hasEmail = "Y";
-        String addTransportManager = URL.build(env,"transport-manager/create-new-user/").toString();
+        String addTransportManager = URL.build(env, "transport-manager/create-new-user/").toString();
         TransportManagerBuilder transportManagerBuilder = new TransportManagerBuilder().withApplication(applicationNumber).withFirstName(foreName)
                 .withFamilyName(familyName).withHasEmail(hasEmail).withUsername(username.concat(getLoginId())).withEmailAddress(transManEmailAddress).withBirthDate(birthDate);
         apiResponse = RestUtils.post(transportManagerBuilder, addTransportManager, getHeaders());
@@ -299,7 +328,7 @@ public class CreateInterimGoodsLicenceAPI {
     }
 
     public void submitTransport() throws MalformedURLException {
-        String submitTransportManager = URL.build(env,String.format("transport-manager-application/%s/submit", applicationNumber)).toString();
+        String submitTransportManager = URL.build(env, String.format("transport-manager-application/%s/submit", applicationNumber)).toString();
         GenericBuilder genericBuilder = new GenericBuilder().withId(transportManagerApplicationId).withVersion(1);
         apiResponse = RestUtils.put(genericBuilder, submitTransportManager, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
@@ -307,11 +336,40 @@ public class CreateInterimGoodsLicenceAPI {
 
     public void vehicles() throws MalformedURLException {
         String hasEnteredReg = "N";
-        String psvVehiclesResource = URL.build(env,String.format("application/%s/vehicles", applicationNumber)).toString();
+        String vehiclesResource = null;
+
+        if (operatorType.equals("goods")) {
+            vehiclesResource = URL.build(env, String.format("application/%s/vehicles", applicationNumber)).toString();
+        }
+        if (operatorType.equals("public")) {
+            vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", applicationNumber)).toString();
+        }
 
         do {
-            VehiclesBuilder psvVehiclesBuilder = new VehiclesBuilder().withId(applicationNumber).withHasEnteredReg(hasEnteredReg).withVersion(version);
-            apiResponse = RestUtils.put(psvVehiclesBuilder, psvVehiclesResource, getHeaders());
+            VehiclesBuilder vehiclesBuilder = new VehiclesBuilder().withId(applicationNumber).withHasEnteredReg(hasEnteredReg).withVersion(version);
+            apiResponse = RestUtils.put(vehiclesBuilder, vehiclesResource, getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+    }
+
+    public void submitVehicleDeclaration() throws MalformedURLException {
+        String psvVehicleSize = "psvvs_both";
+        String psvNoSmallVhlConfirmation = "Y";
+        String psvOperateSmallVhl = "Y";
+        String psvSmallVhlNotes = "submitted through the API";
+        String psvLimousines = "Y";
+        String psvNoLimousineConfirmation = "Y";
+        String psvOnlyLimousinesConfirmation = "Y";
+        String vehicleDeclarationResource = URL.build(env, String.format(String.format("application/%s/vehicle-declaration", applicationNumber))).toString();
+        do {
+            VehicleDeclarationBuilder vehicleDeclarationBuilder = new VehicleDeclarationBuilder().withId(applicationNumber).withPsvVehicleSize(psvVehicleSize)
+                    .withPsvLimousines(psvLimousines).withPsvNoSmallVhlConfirmation(psvNoSmallVhlConfirmation).withPsvOperateSmallVhl(psvOperateSmallVhl).withPsvSmallVhlNotes(psvSmallVhlNotes)
+                    .withPsvNoLimousineConfirmation(psvNoLimousineConfirmation).withPsvOnlyLimousinesConfirmation(psvOnlyLimousinesConfirmation).withVersion(version);
+            apiResponse = RestUtils.put(vehicleDeclarationBuilder, vehicleDeclarationResource, getHeaders());
             version++;
             if (version > 20) {
                 version = 1;
@@ -323,7 +381,7 @@ public class CreateInterimGoodsLicenceAPI {
     public void addFinancialHistory() throws MalformedURLException {
         String financialHistoryAnswer = "N";
         String insolvencyAnswer = "false";
-        String financialHistoryResource = URL.build(env,String.format("application/%s/financial-history", applicationNumber)).toString();
+        String financialHistoryResource = URL.build(env, String.format("application/%s/financial-history", applicationNumber)).toString();
 
         do {
             FinancialHistoryBuilder financialHistoryBuilder = new FinancialHistoryBuilder().withId(applicationNumber).withVersion(String.valueOf(version)).withBankrupt(financialHistoryAnswer)
@@ -342,7 +400,7 @@ public class CreateInterimGoodsLicenceAPI {
         String tachographIns = "tach_na";
         String safetyInsVaries = "N";
         String safetyConfirmationOption = "Y";
-        String applicationSafetyResource = URL.build(env,String.format("application/%s/safety", applicationNumber)).toString();
+        String applicationSafetyResource = URL.build(env, String.format("application/%s/safety", applicationNumber)).toString();
 
         do {
             LicenceBuilder licence = new LicenceBuilder().withId(licenceNumber).withVersion(version).withSafetyInsVaries(safetyInsVaries).withSafetyInsVehicles(String.valueOf(noOfVehiclesRequired))
@@ -359,7 +417,7 @@ public class CreateInterimGoodsLicenceAPI {
     }
 
     public void addSafetyInspector() throws MalformedURLException {
-        String safetyInspectorResource = URL.build(env,String.format("application/%s/workshop", applicationNumber)).toString();
+        String safetyInspectorResource = URL.build(env, String.format("application/%s/workshop", applicationNumber)).toString();
         AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withFao(foreName).withAddress(addressBuilder);
         SafetyInspectorBuilder safetyInspectorBuilder = new SafetyInspectorBuilder().withApplication(applicationNumber).withLicence(licenceNumber).withIsExternal("N")
@@ -369,7 +427,7 @@ public class CreateInterimGoodsLicenceAPI {
     }
 
     public void addConvictionsDetails() throws MalformedURLException {
-        String previousConvictionsResource = URL.build(env,String.format("application/%s/previous-convictions", applicationNumber)).toString();
+        String previousConvictionsResource = URL.build(env, String.format("application/%s/previous-convictions", applicationNumber)).toString();
 
         do {
             ConvictionsPenaltiesBuilder convictionsPenaltiesBuilder = new ConvictionsPenaltiesBuilder().withId(applicationNumber).withConvictionsConfirmation("Y")
@@ -385,7 +443,7 @@ public class CreateInterimGoodsLicenceAPI {
 
     public void addLicenceHistory() throws MalformedURLException {
         String optionResponse = "N";
-        String licenceHistoryResource = URL.build(env,String.format("application/%s/licence-history", applicationNumber)).toString();
+        String licenceHistoryResource = URL.build(env, String.format("application/%s/licence-history", applicationNumber)).toString();
 
         do {
             LicenceHistoryBuilder licenceHistoryBuilder = new LicenceHistoryBuilder().withId(applicationNumber).withPrevHadLicence(optionResponse).withPrevHasLicence(optionResponse)
@@ -400,16 +458,21 @@ public class CreateInterimGoodsLicenceAPI {
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
-    public void reviewAndDeclare() throws MalformedURLException {
-        String interimReason = "Testing through the API";
-        String isInterim = "Y";
+    public void applicationReviewAndDeclare() throws MalformedURLException {
         String declarationConfirmation = "Y";
         String signatureRequired = "sig_physical_signature";
-        String reviewResource = URL.build(env,String.format("application/%s/declaration/", applicationNumber)).toString();
+        DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings();
+        String reviewResource = URL.build(env, String.format("application/%s/declaration/", applicationNumber)).toString();
 
         do {
-            DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings().withId(applicationNumber).withVersion(String.valueOf(version)).withInterimRequested(isInterim)
-                    .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
+            if (operatorType.equals("goods")) {
+                undertakings.withId(applicationNumber).withVersion(String.valueOf(version)).withInterimRequested(isInterim)
+                        .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
+            }
+            else{
+                undertakings.withId(applicationNumber).withVersion(String.valueOf(version))
+                        .withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
+            }
             apiResponse = RestUtils.put(undertakings, reviewResource, getHeaders());
             version++;
             if (version > 20) {
@@ -419,8 +482,9 @@ public class CreateInterimGoodsLicenceAPI {
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
+
     public void submitApplication() throws MalformedURLException {
-        String submitResource = URL.build(env,String.format("application/%s/submit", applicationNumber)).toString();
+        String submitResource = URL.build(env, String.format("application/%s/submit", applicationNumber)).toString();
 
         do {
             GenericBuilder genericBuilder = new GenericBuilder().withId(applicationNumber).withVersion(version);
@@ -436,7 +500,7 @@ public class CreateInterimGoodsLicenceAPI {
     public void getApplicationLicenceDetails() throws MalformedURLException {
         Headers.headers.put("x-pid", adminUserHeader);
 
-        String getApplicationResource = URL.build(env,String.format("application/%s", applicationNumber)).toString();
+        String getApplicationResource = URL.build(env, String.format("application/%s", applicationNumber)).toString();
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));

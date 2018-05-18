@@ -1,19 +1,20 @@
 package org.dvsa.testing.framework.stepdefs;
 
+        import activesupport.MissingRequiredArgument;
         import cucumber.api.java8.En;
-        import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateInterimPsvLicenceAPI;
+        import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
         import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 
         import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.payPsvFeesAndGrantLicence;
 
 public class psvGrantApplication implements En {
-    public psvGrantApplication() {
+    public psvGrantApplication() throws MissingRequiredArgument {
         GrantLicenceAPI grantApp = new GrantLicenceAPI();
-        CreateInterimPsvLicenceAPI psvApp = new CreateInterimPsvLicenceAPI();
+        CreateLicenceAPI psvApp = new CreateLicenceAPI();
 
         Given("^I have a psv application which is under consideration$", () -> {
             if (psvApp.getApplicationNumber() == null) {
-                psvApp.createAndSubmitPsvApp();
+                psvApp.createAndSubmitApp();
             }
         });
         When("^I pay my application fees$", () -> {

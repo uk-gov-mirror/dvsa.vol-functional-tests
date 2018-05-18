@@ -1,7 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateInterimGoodsLicenceAPI;
+import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
 import org.dvsa.testing.lib.pages.BasePage;
@@ -14,7 +14,7 @@ public class InterimLicense extends BasePage implements En {
 
     private static String VehicleErrorMessage = "The interim vehicle authority cannot exceed the total vehicle authority";
     private static String noDatesErrorMessage = "Value is required";
-    private CreateInterimGoodsLicenceAPI goodsApp = new CreateInterimGoodsLicenceAPI();
+    private CreateLicenceAPI goodsApp = new CreateLicenceAPI();
 
     public InterimLicense() throws Exception {
 

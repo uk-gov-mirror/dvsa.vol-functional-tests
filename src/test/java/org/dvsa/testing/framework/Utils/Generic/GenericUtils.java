@@ -9,8 +9,7 @@ import enums.LicenceType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
-import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateInterimGoodsLicenceAPI;
-import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateInterimPsvLicenceAPI;
+import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.framework.Utils.API_Builders.GenericBuilder;
 import org.dvsa.testing.framework.Utils.API_Builders.VariationBuilder;
@@ -94,7 +93,7 @@ public class GenericUtils extends BasePage {
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public static void payGoodsFeesAndGrantLicence(GrantLicenceAPI grantApp, CreateInterimGoodsLicenceAPI goodsApp) {
+    public static void payGoodsFeesAndGrantLicence(GrantLicenceAPI grantApp, CreateLicenceAPI goodsApp) {
         if (variationApplicationNumber != null) {
             grantApp.createOverview(variationApplicationNumber);
             grantApp.variationGrant(variationApplicationNumber);
@@ -106,14 +105,14 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public static void payPsvFeesAndGrantLicence(GrantLicenceAPI grantApp, CreateInterimPsvLicenceAPI psvApp) {
+    public static void payPsvFeesAndGrantLicence(GrantLicenceAPI grantApp, CreateLicenceAPI psvApp) {
         grantApp.createOverview(psvApp.getApplicationNumber());
         grantApp.getOutstandingFees(psvApp.getApplicationNumber());
         grantApp.payOutstandingFees(psvApp.getOrganisationId(), psvApp.getApplicationNumber());
         grantApp.grant(psvApp.getApplicationNumber());
     }
 
-    public void modifyXML(CreateInterimPsvLicenceAPI psvApp, String dateState, int months) {
+    public void modifyXML(CreateLicenceAPI psvApp, String dateState, int months) {
         try {
             String xmlFile = "./src/test/resources/ESBR/ESBR.xml";
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -252,7 +251,7 @@ public class GenericUtils extends BasePage {
         Browser.go(myURL);
     }
 
-    public void getLicenceTrafficArea(CreateInterimPsvLicenceAPI psvApp) throws MalformedURLException {
+    public void getLicenceTrafficArea(CreateLicenceAPI psvApp) throws MalformedURLException {
         Headers.headers.put("x-pid", psvApp.getAdminUserHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env,String.format("licence/%s", psvApp.getLicenceId())).toString();
 
@@ -281,17 +280,17 @@ public class GenericUtils extends BasePage {
         click(nameAttribute("button", "form-actions[submit]"));
     }
 
-    public static void generateAndGrantPsvApplicationPerTrafficArea(CreateInterimPsvLicenceAPI psvApp, GrantLicenceAPI grantApp, String trafficArea, String enforcementArea, GenericUtils genericUtils) throws MalformedURLException {
+    public static void generateAndGrantPsvApplicationPerTrafficArea(CreateLicenceAPI psvApp, GrantLicenceAPI grantApp, String trafficArea, String enforcementArea, GenericUtils genericUtils) throws Exception {
         psvApp.setTrafficArea(trafficArea);
         psvApp.setEnforcementArea(enforcementArea);
-        psvApp.createAndSubmitPsvApp();
+        psvApp.createAndSubmitApp();
         payPsvFeesAndGrantLicence(grantApp, psvApp);
         grantApp.payGrantFees(psvApp.getOrganisationId(), psvApp.getApplicationNumber());
         genericUtils.getLicenceTrafficArea(psvApp);
         System.out.println("--Licence-Number: " + psvApp.getLicenceNumber() + "--");
     }
 
-    public static void uploadAndSubmitESBR(GenericUtils genericUtils, CreateInterimPsvLicenceAPI psvApp, String state, int interval) throws MissingRequiredArgument, MalformedURLException {
+    public static void uploadAndSubmitESBR(GenericUtils genericUtils, CreateLicenceAPI psvApp, String state, int interval) throws MissingRequiredArgument, MalformedURLException {
         // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
         genericUtils.modifyXML(psvApp, state, interval);
         zipFolder();
@@ -323,7 +322,7 @@ public class GenericUtils extends BasePage {
         waitAndClick("//*[@name='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public static void removeInternalTransportManager(CreateInterimGoodsLicenceAPI goodsApp) {
+    public static void removeInternalTransportManager(CreateLicenceAPI goodsApp) {
         assertTrue(isTextPresent("Overview", 60));
         if (!isLinkPresent("Transport", 60) && isTextPresent("Granted",60)) {
             clickByLinkText(goodsApp.getLicenceNumber());
