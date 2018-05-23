@@ -14,10 +14,12 @@ import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.framework.Utils.API_Builders.GenericBuilder;
 import org.dvsa.testing.framework.Utils.API_Builders.VariationBuilder;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
+import org.dvsa.testing.framework.stepdefs.World;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
+import org.dvsa.testing.lib.pages.internal.SearchNavBar;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
@@ -37,6 +39,7 @@ import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
@@ -53,6 +56,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
+    private World world;
     private ValidatableResponse apiResponse;
     private String registrationNumber;
     private static final String DA_USER = "usr271";
@@ -61,23 +65,31 @@ public class GenericUtils extends BasePage {
     private static final String USER_PASSWORD = "Password1";
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
     private String trafficAreaName;
-    public static String variationApplicationNumber;
+    private static String variationApplicationNumber;
+    private static String operatorType = System.getProperty("operatorType");
 
     public static int tmCount;
 
-    public GenericUtils() throws MissingRequiredArgument {
+    private String getRegistrationNumber() {
+        return registrationNumber;
     }
 
-    private String getRegistrationNumber() { return registrationNumber; }
     private String getTrafficAreaName() {
         return trafficAreaName;
     }
+
     private void setTrafficAreaName(String trafficAreaName) {
         this.trafficAreaName = trafficAreaName;
     }
 
     private void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
+    }
+
+    public GenericUtils(World world) throws MissingRequiredArgument {
+        this.world = world;
+        world.createLicence = new CreateLicenceAPI();
+        world.grantLicence = new GrantLicenceAPI();
     }
 
     public static void generateLetter() {
@@ -93,26 +105,26 @@ public class GenericUtils extends BasePage {
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public static void payGoodsFeesAndGrantLicence(GrantLicenceAPI grantApp, CreateLicenceAPI goodsApp) {
+    public void payGoodsFeesAndGrantLicence() throws MissingRequiredArgument, MalformedURLException {
         if (variationApplicationNumber != null) {
-            grantApp.createOverview(variationApplicationNumber);
-            grantApp.variationGrant(variationApplicationNumber);
+            world.grantLicence.createOverview(variationApplicationNumber);
+            world.grantLicence.variationGrant(variationApplicationNumber);
         } else {
-            grantApp.createOverview(goodsApp.getApplicationNumber());
-            grantApp.getOutstandingFees(goodsApp.getApplicationNumber());
-            grantApp.payOutstandingFees(goodsApp.getOrganisationId(), goodsApp.getApplicationNumber());
-            grantApp.grant(goodsApp.getApplicationNumber());
+            world.grantLicence.createOverview(createApp().getApplicationNumber());
+            world.grantLicence.getOutstandingFees(createApp().getApplicationNumber());
+            world.grantLicence.payOutstandingFees(createApp().getOrganisationId(), createApp().getApplicationNumber());
+            world.grantLicence.grant(createApp().getApplicationNumber());
         }
     }
 
-    public static void payPsvFeesAndGrantLicence(GrantLicenceAPI grantApp, CreateLicenceAPI psvApp) {
-        grantApp.createOverview(psvApp.getApplicationNumber());
-        grantApp.getOutstandingFees(psvApp.getApplicationNumber());
-        grantApp.payOutstandingFees(psvApp.getOrganisationId(), psvApp.getApplicationNumber());
-        grantApp.grant(psvApp.getApplicationNumber());
+    public void payPsvFeesAndGrantLicence() throws MalformedURLException, MissingRequiredArgument {
+        world.grantLicence.createOverview(world.createLicence.getApplicationNumber());
+        world.grantLicence.getOutstandingFees(world.createLicence.getApplicationNumber());
+        world.grantLicence.payOutstandingFees(world.createLicence.getOrganisationId(), world.createLicence.getApplicationNumber());
+        world.grantLicence.grant(world.createLicence.getApplicationNumber());
     }
 
-    public void modifyXML(CreateLicenceAPI psvApp, String dateState, int months) {
+    public void modifyXML(String dateState, int months) {
         try {
             String xmlFile = "./src/test/resources/ESBR/ESBR.xml";
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -129,7 +141,7 @@ public class GenericUtils extends BasePage {
                         node.setTextContent(getDates(dateState, months));
                     }
                     if ("LicenceNumber".equals(node.getNodeName())) {
-                        node.setTextContent(psvApp.getLicenceNumber());
+                        node.setTextContent(world.createLicence.getLicenceNumber());
                     }
                     if ("RegistrationNumber".equals(node.getNodeName())) {
                         String getContent = node.getTextContent();
@@ -201,7 +213,7 @@ public class GenericUtils extends BasePage {
     }
 
     public void createVariation(String licenceId) throws MalformedURLException {
-        String licenceHistoryResource = org.dvsa.testing.lib.url.api.URL.build(env,String.format("licence/%s/variation", licenceId)).toString();
+        String licenceHistoryResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/variation", licenceId)).toString();
 
         VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withLicenceType("ltyp_si").withAppliedVia("applied_via_phone");
         apiResponse = RestUtils.post(variation, licenceHistoryResource, getHeaders());
@@ -211,12 +223,12 @@ public class GenericUtils extends BasePage {
 
     public void updateLicenceType(String licenceId) throws MalformedURLException {
         Integer version = 1;
-        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env,String.format("variation/%s/type-of-licence", licenceId)).toString();
+        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("variation/%s/type-of-licence", licenceId)).toString();
 
         do {
-        GenericBuilder genericBuilder = new GenericBuilder().withId(variationApplicationNumber).withVersion(version).withLicenceType(String.valueOf(LicenceType.getEnum("standard_national")));
-        apiResponse = RestUtils.put(genericBuilder,typeOfLicenceResource, getHeaders());
-         version++;
+            GenericBuilder genericBuilder = new GenericBuilder().withId(variationApplicationNumber).withVersion(version).withLicenceType(String.valueOf(LicenceType.getEnum("standard_national")));
+            apiResponse = RestUtils.put(genericBuilder, typeOfLicenceResource, getHeaders());
+            version++;
             if (version > 20) {
                 version = 1;
             }
@@ -251,9 +263,9 @@ public class GenericUtils extends BasePage {
         Browser.go(myURL);
     }
 
-    public void getLicenceTrafficArea(CreateLicenceAPI psvApp) throws MalformedURLException {
-        Headers.headers.put("x-pid", psvApp.getAdminUserHeader());
-        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env,String.format("licence/%s", psvApp.getLicenceId())).toString();
+    public void getLicenceTrafficArea() throws MalformedURLException {
+        Headers.headers.put("x-pid", world.createLicence.getAdminUserHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
         setTrafficAreaName(apiResponse.extract().jsonPath().getString("trafficArea.name"));
@@ -280,33 +292,26 @@ public class GenericUtils extends BasePage {
         click(nameAttribute("button", "form-actions[submit]"));
     }
 
-    public static void generateAndGrantPsvApplicationPerTrafficArea(CreateLicenceAPI psvApp, GrantLicenceAPI grantApp, String trafficArea, String enforcementArea, GenericUtils genericUtils) throws Exception {
-        psvApp.setTrafficArea(trafficArea);
-        psvApp.setEnforcementArea(enforcementArea);
-        psvApp.createAndSubmitApp();
-        payPsvFeesAndGrantLicence(grantApp, psvApp);
-        grantApp.payGrantFees(psvApp.getOrganisationId(), psvApp.getApplicationNumber());
-        genericUtils.getLicenceTrafficArea(psvApp);
-        System.out.println("--Licence-Number: " + psvApp.getLicenceNumber() + "--");
+    public void generateAndGrantPsvApplicationPerTrafficArea(String trafficArea, String enforcementArea) throws Exception {
+        world.createLicence.setTrafficArea(trafficArea);
+        world.createLicence.setEnforcementArea(enforcementArea);
+        world.createLicence.setOperatorType("public");
+        world.createLicence.createAndSubmitApp();
+        payPsvFeesAndGrantLicence();
+        world.grantLicence.payGrantFees(world.createLicence.getOrganisationId(), world.createLicence.getApplicationNumber());
+        getLicenceTrafficArea();
+        System.out.println("--Licence-Number: " + world.createLicence.getLicenceNumber() + "--");
     }
 
-    public static void uploadAndSubmitESBR(GenericUtils genericUtils, CreateLicenceAPI psvApp, String state, int interval) throws MissingRequiredArgument, MalformedURLException {
+    public void uploadAndSubmitESBR(String state, int interval) throws MissingRequiredArgument, MalformedURLException {
         // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
-        genericUtils.modifyXML(psvApp, state, interval);
+        modifyXML(state, interval);
         zipFolder();
-
-        EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
-        String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
-
-        if (Browser.isInitialised()) {
-            //Quit Browser and open a new window
-            Browser.quit();
-        }
-        Browser.go(myURL);
-        String password = S3.getTempPassword(psvApp.getEmailAddress());
+        externalUserLogin();
+        String password = S3.getTempPassword(world.createLicence.getEmailAddress());
 
         if (isTextPresent("Username", 60))
-            Login.signIn(psvApp.getLoginId(), password);
+            Login.signIn(world.createLicence.getLoginId(), password);
         if (isTextPresent("Current password", 60)) {
             enterField(nameAttribute("input", "oldPassword"), password);
             enterField(nameAttribute("input", "newPassword"), "Password1");
@@ -322,14 +327,65 @@ public class GenericUtils extends BasePage {
         waitAndClick("//*[@name='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public static void removeInternalTransportManager(CreateLicenceAPI goodsApp) {
+    public void removeInternalTransportManager() {
         assertTrue(isTextPresent("Overview", 60));
-        if (!isLinkPresent("Transport", 60) && isTextPresent("Granted",60)) {
-            clickByLinkText(goodsApp.getLicenceNumber());
+        if (!isLinkPresent("Transport", 60) && isTextPresent("Granted", 60)) {
+            clickByLinkText(world.createLicence.getLicenceNumber());
             tmCount = returnTableRows("//*[@id='lva-transport-managers']/fieldset/div/div[2]/table/tbody/tr", SelectorType.XPATH);
         }
         clickByLinkText("Transport");
         isTextPresent("TransPort Managers", 60);
         click("//*[@value='Remove']", SelectorType.XPATH);
+    }
+
+    public void updateLicenceStatus(String licenceId, String status) throws MalformedURLException {
+        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/curtail", licenceId, status)).toString();
+
+        GenericBuilder genericBuilder = new GenericBuilder().withId(licenceId);
+        apiResponse = RestUtils.put(genericBuilder, typeOfLicenceResource, getHeaders());
+        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+
+        if (status.equals("curtail")) {
+            assertEquals(apiResponse.extract().response().jsonPath().getString("messages"), "Licence ID '%s' curtailed", licenceId);
+        } else {
+            assertEquals(apiResponse.extract().response().jsonPath().getString("messages"), "Licence ID '%s' suspended", licenceId);
+        }
+    }
+
+    public void searchAndViewApplication() throws MissingRequiredArgument {
+        selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Applications");
+        if (variationApplicationNumber != null) {
+            do {
+                SearchNavBar.search(variationApplicationNumber);
+            } while (!isLinkPresent(variationApplicationNumber, 60));
+            clickByLinkText(variationApplicationNumber);
+            assertTrue(Boolean.parseBoolean(String.valueOf(Browser.getURL().contains("variation"))));
+        } else {
+            do {
+                SearchNavBar.search(String.valueOf(world.createLicence.getApplicationNumber()));
+            } while (!isLinkPresent(world.createLicence.getApplicationNumber(), 60));
+            clickByLinkText(createApp().getApplicationNumber());
+        }
+    }
+
+    public CreateLicenceAPI createApp() throws MissingRequiredArgument {
+        CreateLicenceAPI api = new CreateLicenceAPI();
+        return api;
+    }
+
+    public GrantLicenceAPI grantLicence() throws MissingRequiredArgument {
+        GrantLicenceAPI grantLicenceAPI = new GrantLicenceAPI();
+        return grantLicenceAPI;
+    }
+
+    public void createApplication(String arg0) throws Exception {
+        if (world.createLicence.getApplicationNumber() == null) {
+            if (String.valueOf(arg0).equals(operatorType) || String.valueOf(arg0) == null) {
+                world.createLicence.createAndSubmitApp();
+            } else {
+                operatorType = System.setProperty("operatorType", String.valueOf(arg0));
+                world.createLicence.createAndSubmitApp();
+            }
+        }
     }
 }

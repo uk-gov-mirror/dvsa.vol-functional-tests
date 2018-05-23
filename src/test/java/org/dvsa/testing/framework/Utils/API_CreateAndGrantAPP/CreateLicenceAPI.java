@@ -164,6 +164,10 @@ public class CreateLicenceAPI {
 
     public static String getAdminUserHeader() { return adminUserHeader; }
 
+    public String getOperatorType() { return operatorType; }
+
+    public void setOperatorType(String operatorType) { this.operatorType = operatorType; }
+
     public static void setAdminUserHeader(String adminUserHeader) { CreateLicenceAPI.adminUserHeader = adminUserHeader; }
 
     public void createAndSubmitApp() throws Exception {

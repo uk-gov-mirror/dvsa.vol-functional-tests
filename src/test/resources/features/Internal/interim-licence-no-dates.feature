@@ -2,8 +2,8 @@
 Feature: Change Date Validation On Interim Applications
 
   Background:
-    Given I have logged in to internal
-    And I have an internal application
+    Given i have a valid "public" licence
+    And i have logged in to internal
 
   Scenario: Date not required when creating an interim application
     When  I create an interim application with no start and end dates

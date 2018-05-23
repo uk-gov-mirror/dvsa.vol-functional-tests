@@ -1,7 +1,7 @@
 Feature: Grant an application
 
   Background:
-    Given I have an application which is under consideration
+    Given I have a "goods" application which is under consideration
 
   Scenario:
     When I pay fees

@@ -1,8 +1,8 @@
 Feature: Grant an application
 
   Background:
-    Given I have a psv application which is under consideration
+    Given I have a "public" application which is under consideration
 
   Scenario:
-    When I pay my application fees
-    Then my application should be granted
+    When I pay fees
+    Then the application should be granted
