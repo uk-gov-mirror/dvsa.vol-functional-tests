@@ -5,7 +5,6 @@ import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.generateLetter;
-import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.internalUserLogin;
 import static org.junit.Assert.assertNotNull;
 
 public class InternalApplication extends BasePage implements En {
@@ -28,7 +27,6 @@ public class InternalApplication extends BasePage implements En {
         });
 
         When("^I generate a letter$", () -> {
-            internalUserLogin();
             generateLetter();
         });
     }

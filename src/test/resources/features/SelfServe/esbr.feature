@@ -1,5 +1,6 @@
-@SS-BUS-REG
-Feature: Self-serve ESBR upload short notice for English and Scottish transport areas
+@SS
+@ESBR
+Feature: Bus Reg upload for English, Welsh and Scottish transport areas
 
   Scenario Outline: Short notice ESBR in self-serve
     Given I have a psv application with traffic area "<TrafficArea>" and enforcement area "<EnforcementArea>" which has been granted

@@ -1,3 +1,5 @@
+@INT
+@GRANT-GOODS-APP
 Feature: Grant an application
 
   Background:

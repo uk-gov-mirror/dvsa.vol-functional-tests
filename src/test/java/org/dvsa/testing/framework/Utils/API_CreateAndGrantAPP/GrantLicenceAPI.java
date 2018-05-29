@@ -8,6 +8,7 @@ import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.framework.Utils.API_Builders.*;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
+import org.dvsa.testing.framework.stepdefs.World;
 import org.dvsa.testing.lib.url.api.URL;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
@@ -25,10 +26,12 @@ public class GrantLicenceAPI {
     int version = 1;
     private List outstandingFeesIds;
     private int feeId;
+    private World world;
 
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
-    public GrantLicenceAPI() throws MissingRequiredArgument {
+    public GrantLicenceAPI(World world) throws MissingRequiredArgument {
+        this.world = world;
     }
 
     public void createOverview(String applicationNumber) throws MalformedURLException {
@@ -83,14 +86,16 @@ public class GrantLicenceAPI {
         if (apiResponse.extract().response().asString().contains("fee")) {
             feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
         }
-        System.out.println(apiResponse.extract().response().asString());
     }
 
-    public void payGrantFees(String organisationId, String applicationNumber) throws MalformedURLException {
+    public void payGrantFees() throws MalformedURLException {
         int feesAmount = 405;
         String payer = "apiUser";
         String paymentMethod = "fpm_cash";
         String slipNo = "123456";
+        String organisationId = world.createLicence.getOrganisationId();
+        String applicationNumber = world.createLicence.getApplicationNumber();
+        feeId = world.grantLicence.feeId;
 
         String payOutstandingFeesResource = URL.build(env,"transaction/pay-outstanding-fees/").toString();
         FeesBuilder feesBuilder = new FeesBuilder().withFeeIds(Collections.singletonList(feeId)).withOrganisationId(organisationId).withApplicationId(applicationNumber)

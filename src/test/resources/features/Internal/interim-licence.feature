@@ -1,8 +1,10 @@
 @OLCS-13203
+@INT
+@INTERIM
 Feature: Change Validation On Interim Vehicle Authority
 
   Background:
-    Given i have a valid "public" licence
+    Given i have a valid "goods" licence
     And i have logged in to internal
 
   Scenario: Interim Vehicle Authority Greater than Application Vehicle Authority

@@ -1,7 +1,10 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.system.Properties;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java8.En;
+import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.external.RegisterConfirmationPage;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
@@ -39,5 +42,17 @@ public class UserRegAccount implements En {
             Assert.assertEquals(RegisterConfirmationPage.signingInProblems(),
                                 RegisterConfirmationPage.getEmailNotRecivevedMessage());
         });
+    }
+
+    @Before
+    public static void setup() {
+        Hooks hooks = new Hooks();
+        hooks.setup();
+    }
+
+    @After
+    public void tearDown(){
+        Hooks hooks = new Hooks();
+        hooks.attach();
     }
 }

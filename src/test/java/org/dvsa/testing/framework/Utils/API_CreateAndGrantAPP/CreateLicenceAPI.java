@@ -54,8 +54,6 @@ public class CreateLicenceAPI {
     private String niFlag = System.getProperty("ni"); //"Y|N"
     private String trafficArea = "D";
     private String enforcementArea = "EA-D";
-    private String interimReason = "Interim through the API";
-    private String isInterim = "Y";
 
     private static int version = 1;
     private int noOfVehiclesRequired = 5;
@@ -266,8 +264,9 @@ public class CreateLicenceAPI {
 
     public void addAddressDetails() throws MalformedURLException {
         String phoneNumber = "0712345678";
+        String establishmentAddress = "establishment";
         String applicationAddressResource = URL.build(env, String.format("application/%s/addresses/", applicationNumber)).toString();
-        AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+        AddressBuilder address = new AddressBuilder().withAddressLine1(establishmentAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withPhoneNumber(phoneNumber).withEmailAddress(emailAddress);
         ApplicationAddressBuilder addressBuilder = new ApplicationAddressBuilder().withId(applicationNumber).withConsultant("Consult").withContact(contactDetailsBuilder)
                 .withCorrespondenceAddress(address).withEstablishmentAddress(address);
@@ -285,7 +284,8 @@ public class CreateLicenceAPI {
     public void addOperatingCentre() throws MalformedURLException {
         String operatingCentreResource = URL.build(env, String.format("application/%s/operating-centre/", applicationNumber)).toString();
         String permissionOption = "Y";
-        AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+        String operatingCentreAddress = "API_Operating_Centre";
+        AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder().withApplication(applicationNumber).withNoOfVehiclesRequired(String.valueOf(noOfVehiclesRequired))
                 .withNoOfTrailersRequired(String.valueOf(noOfVehiclesRequired)).withPermission(permissionOption).withAddress(address);
         apiResponse = RestUtils.post(operatingCentreBuilder, operatingCentreResource, getHeaders());
@@ -463,6 +463,8 @@ public class CreateLicenceAPI {
     }
 
     public void applicationReviewAndDeclare() throws MalformedURLException {
+        String interimReason = "Testing through the API";
+        String isInterim = "Y";
         String declarationConfirmation = "Y";
         String signatureRequired = "sig_physical_signature";
         DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings();

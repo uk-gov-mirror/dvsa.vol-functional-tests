@@ -1,4 +1,5 @@
-@INT-PSV-GENERATE-TM-LETTER
+@INT
+@PSV-GENERATE-TM-LETTER
 @-OLCS-19479
 Feature: Set and check criteria for triggering automatic letter
 

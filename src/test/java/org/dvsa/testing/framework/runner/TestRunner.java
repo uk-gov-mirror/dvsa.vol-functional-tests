@@ -5,13 +5,14 @@ import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"org.dvsa.testing.framework.runner.Hooks"},
-
-        features = {"src/test/resources/features/internal"},
-        glue = {"org.dvsa.testing.framework.stepdefs"}
+@CucumberOptions(plugin = {"io.qameta.allure.cucumber2jvm.AllureCucumber2Jvm"},
+        features = {"src/test/resources/features/internal/remove-tm-pop-up.feature"},
+        glue = {"org.dvsa.testing.framework.stepdefs"},
+        format = {"json:cucumber.json"}
 )
 
 public class TestRunner {
 
 }
+
 

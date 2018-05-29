@@ -1,3 +1,5 @@
+@SS
+@USER-ACCOUNT-REG
 Feature: User account registration
 
   Scenario: User notified of temp password email

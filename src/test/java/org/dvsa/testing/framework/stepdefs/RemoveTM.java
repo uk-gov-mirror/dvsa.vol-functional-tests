@@ -17,9 +17,8 @@ public class RemoveTM extends BasePage implements En {
 
     private static String oldAlertValue = "You are removing your last Transport Manager. If you haven't yet made an application to appoint a replacement, " +
             "you must contact us on 0300 123 9000 or at notifications@vehicle-operator-licensing.service.gov.uk";
-    private static String newAlertValue = "'You are about to remove the last transport manager for this licence.\n" +
-            "Do you want to send a letter about this to the operator to all known addresses?\n" +
-            "\n" + "If yes, this will be automatically issued tomorrow.'";
+    private static String newAlertValue = "You are about to remove the last transport manager for this licence. Do you want to send a letter about this to the operator to all known addresses?\n" +
+            "If yes, this will be automatically issued tomorrow.";
     private static String alertHeaderValue = "Are you sure you want to remove this Transport Manager?";
     private static String applicationVariationTMAlertContent = "This action is permanent and cannot be undone.";
     private World world;
@@ -28,7 +27,7 @@ public class RemoveTM extends BasePage implements En {
         this.world = world;
         Given("^i have an application with a transport manager$", () -> {
             world.genericUtils = new GenericUtils(world);
-            world.genericUtils.createApplication("public");
+            world.genericUtils.createApplication();
         });
         When("^the transport manager has been removed by an internal user$", () -> {
             internalUserLogin();
@@ -37,8 +36,8 @@ public class RemoveTM extends BasePage implements En {
         });
         Then("^a pop up message should be displayed$", () -> {
             waitForTextToBePresent(alertHeaderValue);
-            String alertContent = getElementValueByText("//*[@class='js-content']/p", SelectorType.XPATH);
-            assertEquals(alertContent, oldAlertValue);
+            String alertContent = getElementValueByText("//*[@id=\"pg:lva-licence/transport_managers:index\"]/div[2]/div/div[2]/div/p", SelectorType.XPATH);
+            assertEquals(alertContent, newAlertValue);
         });
         Given("^i add a transport manager to an existing licence$", () -> {
             world.createLicence.setUsername("newTmApi");
@@ -52,10 +51,10 @@ public class RemoveTM extends BasePage implements En {
                 assertTrue(isTextPresent(applicationVariationTMAlertContent, 60));
             }
             if (Browser.getURL().contains("ssap1")) {
-                assertFalse(isTextPresent(newAlertValue, 60));
-                assertTrue(isTextPresent(oldAlertValue, 60));
+                String alertContent = getElementValueByText("//div[@class='modal__content']/p", SelectorType.XPATH);
+                assertEquals(alertContent, oldAlertValue);
             }
-            if(tmCount > 1){
+            if (tmCount > 1) {
                 assertFalse(isTextPresent(newAlertValue, 60));
                 assertTrue(isTextPresent(applicationVariationTMAlertContent, 60));
             }
@@ -72,17 +71,25 @@ public class RemoveTM extends BasePage implements En {
                 enterField(nameAttribute("input", "confirmPassword"), "Password1");
                 click(nameAttribute("input", "submit"));
             }
-            clickByLinkText( world.createLicence.getLicenceNumber());
+            clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Transport Managers");
             click("//*[@value='Remove']", SelectorType.XPATH);
         });
         Given("^the licence has been granted$", () -> {
             world.genericUtils.payGoodsFeesAndGrantLicence();
-            world.genericUtils.grantLicence().payGrantFees(world.genericUtils.createApp().getOrganisationId(), world.genericUtils.createApp().getApplicationNumber());
+            world.genericUtils.grantLicence().payGrantFees();
         });
         When("^i create a variation$", () -> {
-            world.genericUtils.createVariation(world.genericUtils.createApp().getLicenceId());
+            world.genericUtils.createVariation();
             world.genericUtils.updateLicenceType(world.genericUtils.createApp().getLicenceId());
+        });
+        And("^user attempts to remove the last TM without selecting an option$", () -> {
+            waitForTextToBePresent(alertHeaderValue);
+            click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+        });
+        Then("^an error message should be displayed$", () -> {
+            waitForTextToBePresent(alertHeaderValue);
+            isLinkPresent("You must select an option",60);
         });
     }
 }

@@ -3,6 +3,8 @@ package org.dvsa.testing.framework.Utils.Generic;
 import activesupport.MissingRequiredArgument;
 import activesupport.aws.s3.S3;
 import activesupport.http.RestUtils;
+import activesupport.jenkins.Jenkins;
+import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import enums.LicenceType;
@@ -38,6 +40,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -89,7 +92,7 @@ public class GenericUtils extends BasePage {
     public GenericUtils(World world) throws MissingRequiredArgument {
         this.world = world;
         world.createLicence = new CreateLicenceAPI();
-        world.grantLicence = new GrantLicenceAPI();
+        world.grantLicence = new GrantLicenceAPI(world);
     }
 
     public static void generateLetter() {
@@ -105,19 +108,19 @@ public class GenericUtils extends BasePage {
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public void payGoodsFeesAndGrantLicence() throws MissingRequiredArgument, MalformedURLException {
+    public void payGoodsFeesAndGrantLicence() throws MalformedURLException {
         if (variationApplicationNumber != null) {
             world.grantLicence.createOverview(variationApplicationNumber);
             world.grantLicence.variationGrant(variationApplicationNumber);
         } else {
-            world.grantLicence.createOverview(createApp().getApplicationNumber());
-            world.grantLicence.getOutstandingFees(createApp().getApplicationNumber());
-            world.grantLicence.payOutstandingFees(createApp().getOrganisationId(), createApp().getApplicationNumber());
-            world.grantLicence.grant(createApp().getApplicationNumber());
+            world.grantLicence.createOverview(world.createLicence.getApplicationNumber());
+            world.grantLicence.getOutstandingFees(world.createLicence.getApplicationNumber());
+            world.grantLicence.payOutstandingFees(world.createLicence.getOrganisationId(), world.createLicence.getApplicationNumber());
+            world.grantLicence.grant(world.createLicence.getApplicationNumber());
         }
     }
 
-    public void payPsvFeesAndGrantLicence() throws MalformedURLException, MissingRequiredArgument {
+    public void payPsvFeesAndGrantLicence() throws MalformedURLException {
         world.grantLicence.createOverview(world.createLicence.getApplicationNumber());
         world.grantLicence.getOutstandingFees(world.createLicence.getApplicationNumber());
         world.grantLicence.payOutstandingFees(world.createLicence.getOrganisationId(), world.createLicence.getApplicationNumber());
@@ -212,7 +215,8 @@ public class GenericUtils extends BasePage {
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
     }
 
-    public void createVariation(String licenceId) throws MalformedURLException {
+    public void createVariation() throws MalformedURLException {
+        String licenceId = world.createLicence.getLicenceId();
         String licenceHistoryResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/variation", licenceId)).toString();
 
         VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withLicenceType("ltyp_si").withAppliedVia("applied_via_phone");
@@ -298,7 +302,7 @@ public class GenericUtils extends BasePage {
         world.createLicence.setOperatorType("public");
         world.createLicence.createAndSubmitApp();
         payPsvFeesAndGrantLicence();
-        world.grantLicence.payGrantFees(world.createLicence.getOrganisationId(), world.createLicence.getApplicationNumber());
+        world.grantLicence.payGrantFees();
         getLicenceTrafficArea();
         System.out.println("--Licence-Number: " + world.createLicence.getLicenceNumber() + "--");
     }
@@ -352,7 +356,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void searchAndViewApplication() throws MissingRequiredArgument {
+    public void searchAndViewApplication() {
         selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Applications");
         if (variationApplicationNumber != null) {
             do {
@@ -364,7 +368,9 @@ public class GenericUtils extends BasePage {
             do {
                 SearchNavBar.search(String.valueOf(world.createLicence.getApplicationNumber()));
             } while (!isLinkPresent(world.createLicence.getApplicationNumber(), 60));
-            clickByLinkText(createApp().getApplicationNumber());
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            if (isLinkPresent("Interim", 60))
+                clickByLinkText("Interim ");
         }
     }
 
@@ -374,18 +380,21 @@ public class GenericUtils extends BasePage {
     }
 
     public GrantLicenceAPI grantLicence() throws MissingRequiredArgument {
-        GrantLicenceAPI grantLicenceAPI = new GrantLicenceAPI();
+        GrantLicenceAPI grantLicenceAPI = new GrantLicenceAPI(world);
         return grantLicenceAPI;
     }
 
-    public void createApplication(String arg0) throws Exception {
+    public void createApplication() throws Exception {
         if (world.createLicence.getApplicationNumber() == null) {
-            if (String.valueOf(arg0).equals(operatorType) || String.valueOf(arg0) == null) {
-                world.createLicence.createAndSubmitApp();
-            } else {
-                operatorType = System.setProperty("operatorType", String.valueOf(arg0));
                 world.createLicence.createAndSubmitApp();
             }
         }
+
+    public void executeJenkinsBatchJob(String command) throws Exception {
+        HashMap<String, String> jenkinsParams = new HashMap<>();
+        jenkinsParams.put(JenkinsParameterKey.NODE.toString(), String.format("api&&%s&&olcs", Properties.get("env", true)));
+        jenkinsParams.put(JenkinsParameterKey.JOB.toString(), command);
+
+        Jenkins.trigger(Jenkins.Job.BATCH_PROCESS_QUEQUE, jenkinsParams);
     }
 }

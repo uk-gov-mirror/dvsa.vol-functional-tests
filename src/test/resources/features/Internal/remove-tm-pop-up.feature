@@ -1,5 +1,6 @@
 @OLCS-19478
-@INT-LAST-TM
+@INT
+@REMOVE-LAST-TM
 Feature: Remove last Transport Manager (TM) pop up
 
   Background:

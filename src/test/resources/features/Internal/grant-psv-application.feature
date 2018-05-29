@@ -1,3 +1,5 @@
+@INT
+@GRANT-PSV-APP
 Feature: Grant an application
 
   Background:

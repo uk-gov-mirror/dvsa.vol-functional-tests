@@ -62,7 +62,7 @@ public class InterimLicense extends BasePage implements En {
             assertFalse(isTextPresent(noDatesErrorMessage,60));
         });
 
-        Then("^I should not error when i attempt to grant the application$", () -> {
+        Then("^I should error when i attempt to grant the application$", () -> {
             InterimPage.grant();
             assertTrue(isTextPresent(noDatesErrorMessage,60));
         });

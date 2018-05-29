@@ -1,0 +1,164 @@
+{
+  "uid" : "d8088a78535ba106",
+  "name" : "Short notice ESBR in self-serve",
+  "historyId" : "24a22ea288d0ab8e9ce5b006aa8cfe92",
+  "time" : {
+    "start" : 1527187133473,
+    "stop" : 1527187139944,
+    "duration" : 6471
+  },
+  "status" : "failed",
+  "statusDetails" : {
+    "message" : "junit.framework.AssertionFailedError",
+    "trace" : "junit.framework.AssertionFailedError\r\n\tat junit.framework.Assert.fail(Assert.java:55)\r\n\tat junit.framework.Assert.assertTrue(Assert.java:22)\r\n\tat junit.framework.Assert.assertTrue(Assert.java:31)\r\n\tat junit.framework.TestCase.assertTrue(TestCase.java:201)\r\n\tat org.dvsa.testing.framework.stepdefs.ESBRupload.lambda$new$7(ESBRupload.java:105)\r\n\tat ✽.I upload an esbr file with \"41\" days notice(src/test/resources/features/SelfServe/esbr.feature:6)\r\n",
+    "flaky" : false
+  },
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "failed",
+    "statusDetails" : {
+      "message" : "junit.framework.AssertionFailedError",
+      "trace" : "junit.framework.AssertionFailedError\r\n\tat junit.framework.Assert.fail(Assert.java:55)\r\n\tat junit.framework.Assert.assertTrue(Assert.java:22)\r\n\tat junit.framework.Assert.assertTrue(Assert.java:31)\r\n\tat junit.framework.TestCase.assertTrue(TestCase.java:201)\r\n\tat org.dvsa.testing.framework.stepdefs.ESBRupload.lambda$new$7(ESBRupload.java:105)\r\n\tat ✽.I upload an esbr file with \"41\" days notice(src/test/resources/features/SelfServe/esbr.feature:6)\r\n",
+      "flaky" : false
+    },
+    "steps" : [ {
+      "name" : "before",
+      "time" : {
+        "start" : 1527187133478,
+        "stop" : 1527187133536,
+        "duration" : 58
+      },
+      "status" : "passed",
+      "hasContent" : false,
+      "attachmentsCount" : 0,
+      "stepsCount" : 0,
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ]
+    }, {
+      "name" : "When  I upload an esbr file with \"41\" days notice",
+      "time" : {
+        "start" : 1527187133537,
+        "stop" : 1527187139637,
+        "duration" : 6100
+      },
+      "status" : "failed",
+      "hasContent" : false,
+      "attachmentsCount" : 0,
+      "stepsCount" : 0,
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ]
+    }, {
+      "name" : "Then  A short notice flag should be displayed in selfserve",
+      "time" : {
+        "start" : 1527187139638,
+        "stop" : 1527187139638,
+        "duration" : 0
+      },
+      "status" : "skipped",
+      "hasContent" : false,
+      "attachmentsCount" : 0,
+      "stepsCount" : 0,
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ]
+    }, {
+      "name" : "And  A short notice tab should be displayed in internal",
+      "time" : {
+        "start" : 1527187139639,
+        "stop" : 1527187139639,
+        "duration" : 0
+      },
+      "status" : "skipped",
+      "hasContent" : false,
+      "attachmentsCount" : 0,
+      "stepsCount" : 0,
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ]
+    }, {
+      "name" : "And  Any registrations created in internal should display a short notice tab",
+      "time" : {
+        "start" : 1527187139639,
+        "stop" : 1527187139639,
+        "duration" : 0
+      },
+      "status" : "skipped",
+      "hasContent" : false,
+      "attachmentsCount" : 0,
+      "stepsCount" : 0,
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ]
+    }, {
+      "name" : "after",
+      "time" : {
+        "start" : 1527187139640,
+        "stop" : 1527187139942,
+        "duration" : 302
+      },
+      "status" : "passed",
+      "hasContent" : true,
+      "attachmentsCount" : 1,
+      "stepsCount" : 0,
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "39ccf64111d236d6",
+        "name" : "Screenshot on failure",
+        "source" : "39ccf64111d236d6.png",
+        "type" : "image/png",
+        "size" : 55470
+      } ],
+      "parameters" : [ ]
+    } ],
+    "attachments" : [ ],
+    "hasContent" : true,
+    "attachmentsCount" : 1,
+    "stepsCount" : 6
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "feature",
+    "value" : "Bus Reg upload for English, Welsh and Scottish transport areas"
+  }, {
+    "name" : "story",
+    "value" : "Short notice ESBR in self-serve"
+  }, {
+    "name" : "tag",
+    "value" : "SS-BUS-REG"
+  }, {
+    "name" : "host",
+    "value" : "LPT3056"
+  }, {
+    "name" : "package",
+    "value" : "Bus Reg upload for English, Welsh and Scottish transport areas"
+  }, {
+    "name" : "suite",
+    "value" : "Bus Reg upload for English, Welsh and Scottish transport areas"
+  }, {
+    "name" : "testClass",
+    "value" : "Short notice ESBR in self-serve"
+  }, {
+    "name" : "thread",
+    "value" : "3572@LPT3056.main(1)"
+  } ],
+  "parameters" : [ {
+    "name" : "TrafficArea",
+    "value" : "B"
+  }, {
+    "name" : "EnforcementArea",
+    "value" : "EA-B"
+  }, {
+    "name" : "Days",
+    "value" : "41"
+  } ],
+  "links" : [ ],
+  "hidden" : false,
+  "extra" : {
+    "severity" : "normal",
+    "categories" : [ {
+      "name" : "Product defects"
+    } ]
+  }
+}
