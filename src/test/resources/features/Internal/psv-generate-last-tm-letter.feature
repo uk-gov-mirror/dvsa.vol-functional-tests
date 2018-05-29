@@ -7,7 +7,8 @@ Feature: Set and check criteria for triggering automatic letter
     Given i have a valid "public" licence
 
   Scenario: Generate letter for valid licence
-    When the transport manager has been removed by an internal user
+    Given the transport manager has been removed by an internal user
+    And the user confirms they want to send letter
     Then a flag should be set in the DB
 
 #  Scenario: Generate letter for suspended licence

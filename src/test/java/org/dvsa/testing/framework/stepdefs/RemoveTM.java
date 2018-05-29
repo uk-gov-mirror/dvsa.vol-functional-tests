@@ -19,7 +19,7 @@ public class RemoveTM extends BasePage implements En {
             "you must contact us on 0300 123 9000 or at notifications@vehicle-operator-licensing.service.gov.uk";
     private static String newAlertValue = "You are about to remove the last transport manager for this licence. Do you want to send a letter about this to the operator to all known addresses?\n" +
             "If yes, this will be automatically issued tomorrow.";
-    private static String alertHeaderValue = "Are you sure you want to remove this Transport Manager?";
+    public static String alertHeaderValue = "Are you sure you want to remove this Transport Manager?";
     private static String applicationVariationTMAlertContent = "This action is permanent and cannot be undone.";
     private World world;
 

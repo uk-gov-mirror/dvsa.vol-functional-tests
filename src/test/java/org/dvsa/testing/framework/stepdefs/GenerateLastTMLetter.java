@@ -7,12 +7,15 @@ import cucumber.api.java.Before;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.framework.runner.Hooks;
+import org.dvsa.testing.lib.pages.BasePage;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 import java.sql.ResultSet;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.dvsa.testing.framework.stepdefs.RemoveTM.alertHeaderValue;
 
-public class GenerateLastTMLetter implements En {
+public class GenerateLastTMLetter extends BasePage implements En {
 
     private World world;
 
@@ -43,6 +46,11 @@ public class GenerateLastTMLetter implements En {
         });
         Given("^the licence status is \"([^\"]*)\"$", (String arg0) -> {
             world.genericUtils.updateLicenceStatus(world.createLicence.getLicenceId(), arg0);
+        });
+        And("^the user confirms they want to send letter$", () -> {
+            waitForTextToBePresent(alertHeaderValue);
+            click("//*[@class='form-control form-control--radio form-control--inline'][1]");
+            click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
         });
     }
 
