@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.Utils.API_Builders;
 
+import activesupport.string.Str;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -18,6 +19,8 @@ public class GenericBuilder {
     private Integer version;
     @JsonProperty("licenceType")
     private String licenceType;
+    @JsonProperty("Address")
+    private AddressBuilder address;
 
     @JsonProperty("id")
     public String getId() {
@@ -64,8 +67,23 @@ public class GenericBuilder {
         return this;
     }
 
+    @JsonProperty("Address")
+    public AddressBuilder getAddress() {
+        return address;
+    }
+
+    @JsonProperty("Address")
+    public void setAddress(AddressBuilder address) {
+        this.address = address;
+    }
+
+    public GenericBuilder withAddress(AddressBuilder address) {
+        this.address = address;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return "id" + getId() + ",version:" + getVersion() + ",licenceType:" + getLicenceType();
+        return "id" + getId() + ",version:" + getVersion() + ",licenceType:" + getLicenceType() + ",registeredAddress:" + getAddress();
     }
 }

@@ -367,7 +367,7 @@ public class CreateLicenceAPI {
     }
 
     public void addFinancialEvidence() throws MalformedURLException {
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit financial details
         }
 
@@ -385,8 +385,7 @@ public class CreateLicenceAPI {
     }
 
     public void addTransportManager() throws MalformedURLException {
-
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         }
 
@@ -400,8 +399,7 @@ public class CreateLicenceAPI {
     }
 
     public void submitTransport() throws MalformedURLException {
-
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
             String submitTransportManager = URL.build(env, String.format("transport-manager-application/%s/submit", applicationNumber)).toString();
@@ -413,7 +411,7 @@ public class CreateLicenceAPI {
 
     public void vehicles() throws MalformedURLException {
 
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
             String hasEnteredReg = "N";
@@ -467,7 +465,7 @@ public class CreateLicenceAPI {
 
     public void addFinancialHistory() throws MalformedURLException {
 
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
             String financialHistoryAnswer = "N";
@@ -490,7 +488,7 @@ public class CreateLicenceAPI {
 
     public void addApplicationSafetyAndComplianceDetails() throws MalformedURLException {
 
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
             String tachographIns = "tach_na";
@@ -514,7 +512,7 @@ public class CreateLicenceAPI {
     }
 
     public void addSafetyInspector() throws MalformedURLException {
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
             String safetyInspectorResource = URL.build(env, String.format("application/%s/workshop", applicationNumber)).toString();
@@ -528,7 +526,7 @@ public class CreateLicenceAPI {
     }
 
     public void addConvictionsDetails() throws MalformedURLException {
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
             String previousConvictionsResource = URL.build(env, String.format("application/%s/previous-convictions", applicationNumber)).toString();
@@ -548,7 +546,7 @@ public class CreateLicenceAPI {
 
     public void addLicenceHistory() throws MalformedURLException {
 
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
             String optionResponse = "N";
@@ -619,12 +617,14 @@ public class CreateLicenceAPI {
     }
 
     public void submitTaxiPhv() throws MalformedURLException {
-
-        if (operatorType.equals("public") && (licenceType.equals("special restricted"))) {
+        String phLicenceNumber = "phv123456";
+        String councilName = "nottinghamshire";
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             String submitResource = URL.build(env, String.format("application/%s/taxi-phv", applicationNumber)).toString();
             do {
-                GenericBuilder genericBuilder = new GenericBuilder().withId(applicationNumber).withVersion(version);
-                apiResponse = RestUtils.put(genericBuilder, submitResource, getHeaders());
+                AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+                PhvTaxiBuilder taxiBuilder = new PhvTaxiBuilder().withId(applicationNumber).withPrivateHireLicenceNo(phLicenceNumber).withCouncilName(councilName).withLicence(licenceNumber).withAddress(addressBuilder);
+                apiResponse = RestUtils.put(taxiBuilder, submitResource, getHeaders());
                 version++;
                 if (version > 20) {
                     version = 1;
