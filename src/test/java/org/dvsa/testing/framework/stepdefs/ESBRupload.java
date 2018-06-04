@@ -47,7 +47,7 @@ public class ESBRupload extends BasePage implements En {
 
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
-            assertFalse(isTextPresent("short notice", 60));
+            assertTrue(isTextPresent("short notice", 60));
         });
         And("^A short notice tab should be displayed in internal$", () -> {
             internalUserLogin();
@@ -91,7 +91,7 @@ public class ESBRupload extends BasePage implements En {
         And("^Any registrations created in internal should not display a short notice tab$", () -> {
             clickByLinkText(world.createLicence.getLicenceNumber());
             click(nameAttribute("button", "action"));
-            internalSiteAddBusNewReg(getCurrentDayOfMonth(), getFutureMonth(4), getCurrentYear());
+            internalSiteAddBusNewReg(getCurrentDayOfMonth(), getFutureMonth(5), getCurrentYear());
             do {
                 // Refresh page
                 javaScriptExecutor("location.reload(true)");
@@ -101,15 +101,8 @@ public class ESBRupload extends BasePage implements En {
         });
         When("^I upload an esbr file with \"([^\"]*)\" days notice$", (String arg0) -> {
             // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
-            assertTrue(isTextPresent("I love google",60));
             world.genericUtils.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
         });
-    }
-
-    @Before
-    public static void setup() {
-        Hooks hooks = new Hooks();
-        hooks.setup();
     }
 
     @After

@@ -27,7 +27,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "declarationsInternalStatus",
         "vehiclesDeclarationsStatus",
         "vehiclesPsvStatus",
-        "vehiclesStatus"
+        "vehiclesStatus",
+        "taxiPhvStatus"
 })
 public class TrackingBuilder {
     @JsonProperty("id")
@@ -60,8 +61,6 @@ public class TrackingBuilder {
     private String peopleStatus;
     @JsonProperty("safetyStatus")
     private String safetyStatus;
-    @JsonProperty("taxiPhvStatus")
-    private Object taxiPhvStatus;
     @JsonProperty("transportManagersStatus")
     private String transportManagersStatus;
     @JsonProperty("typeOfLicenceStatus")
@@ -74,6 +73,8 @@ public class TrackingBuilder {
     private Object vehiclesPsvStatus;
     @JsonProperty("vehiclesStatus")
     private String vehiclesStatus;
+    @JsonProperty("taxiPhvStatus")
+    private String taxiPhvStatus;
 
     @JsonProperty("id")
     public String getId() {
@@ -301,16 +302,16 @@ public class TrackingBuilder {
     }
 
     @JsonProperty("taxiPhvStatus")
-    public Object getTaxiPhvStatus() {
+    public String getTaxiPhvStatus() {
         return taxiPhvStatus;
     }
 
     @JsonProperty("taxiPhvStatus")
-    public void setTaxiPhvStatus(Object taxiPhvStatus) {
+    public void setTaxiPhvStatus(String taxiPhvStatus) {
         this.taxiPhvStatus = taxiPhvStatus;
     }
 
-    public TrackingBuilder withTaxiPhvStatus(Object taxiPhvStatus) {
+    public TrackingBuilder withTaxiPhvStatus(String taxiPhvStatus) {
         this.taxiPhvStatus = taxiPhvStatus;
         return this;
     }
@@ -405,6 +406,7 @@ public class TrackingBuilder {
         return this;
     }
 
+
     @Override
     public String toString() {
         return "id:" + getId() + ",version:" + getVersion() + ",addressesStatus:" + getAddressesStatus() + ",businessDetailsStatus:"
@@ -412,6 +414,8 @@ public class TrackingBuilder {
                 + "convictionsPenaltiesStatus:" + getConvictionsPenaltiesStatus() + ",discsStatus:" + getDiscsStatus() + ",financialEvidenceStatus:" + getFinancialEvidenceStatus() + ",financialHistoryStatus:" + getFinancialEvidenceStatus()
                 + ",licenceHistoryStatus:" + getLicenceHistoryStatus() + ",operatingCentresStatus:" + getOperatingCentresStatus() + ",peopleStatus:" + getPeopleStatus()
                 + ",safetyStatus:" + getSafetyStatus() + ",taxiPhvStatus:" + getTaxiPhvStatus() + ",transportManagersStatus:" + getTransportManagersStatus()
-                + "typeOfLicenceStatus:" + getTypeOfLicenceStatus() + ",declarationsInternalStatus:" + getDeclarationsInternalStatus() + ",vehiclesDeclarationsStatus:" + getVehiclesDeclarationsStatus() + ",vehiclesPsvStatus:" + getVehiclesPsvStatus() + ",vehiclesStatus:" + getVehiclesStatus();
+                + "typeOfLicenceStatus:" + getTypeOfLicenceStatus() + ",declarationsInternalStatus:" + getDeclarationsInternalStatus() + ",vehiclesDeclarationsStatus:" + getVehiclesDeclarationsStatus() + ",vehiclesPsvStatus:" + getVehiclesPsvStatus()
+                + ",vehiclesStatus:" + getVehiclesStatus() + "taxiPhvStatus:" + getTaxiPhvStatus();
     }
+
 }

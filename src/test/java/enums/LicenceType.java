@@ -32,7 +32,7 @@ public enum LicenceType {
             case "standard_national":
                 licenceTypeEnum = ltyp_sn;
                 break;
-            case "standard_restricted":
+            case "special_restricted":
                 licenceTypeEnum = ltyp_sr;
                 break;
             default:

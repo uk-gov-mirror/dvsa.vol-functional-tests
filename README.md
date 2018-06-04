@@ -13,5 +13,5 @@ The following technologies should be installed on your system.
 * Maven
 
 ## Reports
-``dsfsdfsdf``
+``mvn allure:report``
 ## Executing

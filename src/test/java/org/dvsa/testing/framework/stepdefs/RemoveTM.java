@@ -60,7 +60,7 @@ public class RemoveTM extends BasePage implements En {
             }
         });
         Given("^a self-serve user removes the last TM$", () -> {
-            externalUserLogin();
+            world.genericUtils.externalUserLogin();
             String password = S3.getTempPassword(world.createLicence.getEmailAddress());
 
             if (isTextPresent("Username", 60))

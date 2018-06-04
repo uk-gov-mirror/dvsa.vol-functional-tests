@@ -47,7 +47,8 @@ public class GrantLicenceAPI {
             TrackingBuilder tracking = new TrackingBuilder().withId(trackingId).withVersion(overviewVersion).withAddressesStatus(status).withBusinessDetailsStatus(status).withBusinessTypeStatus(status)
                     .withCommunityLicencesStatus(status).withConditionsUndertakingsStatus(status).withConvictionsPenaltiesStatus(status).withFinancialEvidenceStatus(status)
                     .withFinancialHistoryStatus(status).withLicenceHistoryStatus(status).withOperatingCentresStatus(status).withPeopleStatus(status).withSafetyStatus(status)
-                    .withTransportManagersStatus(status).withTypeOfLicenceStatus(status).withDeclarationsInternalStatus(status).withVehiclesDeclarationsStatus(status).withVehiclesStatus(status).withVehiclesPsvStatus(status);
+                    .withTransportManagersStatus(status).withTypeOfLicenceStatus(status).withDeclarationsInternalStatus(status).withVehiclesDeclarationsStatus(status).withVehiclesStatus(status).withVehiclesPsvStatus(status)
+                    .withTaxiPhvStatus(status);
             OverviewBuilder overview = new OverviewBuilder().withId(applicationNumber).withVersion(version).withLeadTcArea(transportArea).withOverrideOppositionDate(overrideOption)
                     .withTracking(tracking);
             apiResponse = RestUtils.put(overview, overviewResource, getHeaders());
@@ -102,6 +103,10 @@ public class GrantLicenceAPI {
                 .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(GenericUtils.getDates("current",0)).withPayer(payer).withSlipNo(slipNo);
         apiResponse = RestUtils.post(feesBuilder,payOutstandingFeesResource, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void variationGrant(String applicationNumber) throws MalformedURLException {

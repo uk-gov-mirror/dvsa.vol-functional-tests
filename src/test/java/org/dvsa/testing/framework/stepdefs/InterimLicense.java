@@ -3,11 +3,13 @@ package org.dvsa.testing.framework.stepdefs;
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
 import org.dvsa.testing.lib.pages.BasePage;
 
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.internalUserLogin;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -64,7 +66,7 @@ public class InterimLicense extends BasePage implements En {
 
         Then("^I should error when i attempt to grant the application$", () -> {
             InterimPage.grant();
-            assertTrue(isTextPresent(noDatesErrorMessage,60));
+            isTextPresent(noDatesErrorMessage,60);
         });
         And("^i have logged in to internal$", () -> {
             internalUserLogin();

@@ -42,7 +42,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
@@ -257,7 +256,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public static void externalUserLogin() throws MalformedURLException, MissingRequiredArgument {
+    public void externalUserLogin() throws MalformedURLException, MissingRequiredArgument {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
 
         if (Browser.isInitialised()) {
@@ -265,6 +264,17 @@ public class GenericUtils extends BasePage {
             Browser.quit();
         }
         Browser.go(myURL);
+        String password = S3.getTempPassword(world.createLicence.getEmailAddress());
+
+        if (isTextPresent("Username", 60))
+            Login.signIn(world.createLicence.getLoginId(), password);
+        if (isTextPresent("Current password", 60)) {
+            enterField(nameAttribute("input", "oldPassword"), password);
+            enterField(nameAttribute("input", "newPassword"), "Password1");
+            enterField(nameAttribute("input", "confirmPassword"), "Password1");
+            click(nameAttribute("input", "submit"));
+        }
+
     }
 
     public void getLicenceTrafficArea() throws MalformedURLException {
@@ -312,17 +322,6 @@ public class GenericUtils extends BasePage {
         modifyXML(state, interval);
         zipFolder();
         externalUserLogin();
-        String password = S3.getTempPassword(world.createLicence.getEmailAddress());
-
-        if (isTextPresent("Username", 60))
-            Login.signIn(world.createLicence.getLoginId(), password);
-        if (isTextPresent("Current password", 60)) {
-            enterField(nameAttribute("input", "oldPassword"), password);
-            enterField(nameAttribute("input", "newPassword"), "Password1");
-            enterField(nameAttribute("input", "confirmPassword"), "Password1");
-            click(nameAttribute("input", "submit"));
-        }
-
         clickByLinkText("Bus");
         waitAndClick("//*[@id='main']/div[2]/ul/li[2]/a", SelectorType.XPATH);
         click(nameAttribute("button", "action"));
@@ -343,17 +342,11 @@ public class GenericUtils extends BasePage {
     }
 
     public void updateLicenceStatus(String licenceId, String status) throws MalformedURLException {
-        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/curtail", licenceId, status)).toString();
+        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/%s", licenceId, status)).toString();
 
         GenericBuilder genericBuilder = new GenericBuilder().withId(licenceId);
-        apiResponse = RestUtils.put(genericBuilder, typeOfLicenceResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
-
-        if (status.equals("curtail")) {
-            assertEquals(apiResponse.extract().response().jsonPath().getString("messages"), "Licence ID '%s' curtailed", licenceId);
-        } else {
-            assertEquals(apiResponse.extract().response().jsonPath().getString("messages"), "Licence ID '%s' suspended", licenceId);
-        }
+        apiResponse = RestUtils.post(genericBuilder, typeOfLicenceResource, getHeaders());
+        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
     }
 
     public void searchAndViewApplication() {
@@ -397,4 +390,5 @@ public class GenericUtils extends BasePage {
 
         Jenkins.trigger(Jenkins.Job.BATCH_PROCESS_QUEQUE, jenkinsParams);
     }
+
 }

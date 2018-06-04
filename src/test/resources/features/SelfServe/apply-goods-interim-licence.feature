@@ -7,4 +7,4 @@ Feature: Grant an application
 
   Scenario:
     When I pay fees
-    Then the licence should be granted
+    Then the application should be granted

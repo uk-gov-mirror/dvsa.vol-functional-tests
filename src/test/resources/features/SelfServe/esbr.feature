@@ -1,6 +1,6 @@
 @SS
 @ESBR
-Feature: Bus Reg upload for English, Welsh and Scottish transport areas
+Feature: ESBR for English, Welsh and Scottish Areas
 
   Scenario Outline: Short notice ESBR in self-serve
     Given I have a psv application with traffic area "<TrafficArea>" and enforcement area "<EnforcementArea>" which has been granted
@@ -15,7 +15,6 @@ Feature: Bus Reg upload for English, Welsh and Scottish transport areas
       | G           | EA-E            | 55   |
       | F           | EA-F            | 41   |
       | H           | EA-H            | 41   |
-      | K           | EA-K            | 41   |
   Scenario Outline: ESBR in self-serve
     Given I have a psv application with traffic area "<TrafficArea>" and enforcement area "<EnforcementArea>" which has been granted
     When I upload an esbr file with "<Days>" days notice
@@ -29,4 +28,3 @@ Feature: Bus Reg upload for English, Welsh and Scottish transport areas
       | G           | EA-E            | 56   |
       | F           | EA-F            | 42   |
       | H           | EA-H            | 42   |
-      | K           | EA-K            | 42   |

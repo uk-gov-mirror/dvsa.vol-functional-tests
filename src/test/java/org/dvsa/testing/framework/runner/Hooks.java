@@ -14,19 +14,9 @@ public class Hooks {
 
     static File directory = new File("img");
 
-    public static void setup(){
-        if (System.getProperty("env").isEmpty()){
-            System.setProperty("env","da");
-            System.setProperty("browser","chrome");
-            System.setProperty("licenceType","standard_international");
-            System.setProperty("businessType","limited_company");
-            System.setProperty("operatorType","goods");
-        }
-    }
-
     @Attachment(value = "Screenshot on failure", type = "image/png")
     public byte[] attach() {
-        File screenshot = new File(String.format(directory+"/errorScreenShot%s.png",Instant.now().getEpochSecond()));
+        File screenshot = new File(String.format(directory + "/errorScreenShot%s.png", Instant.now().getEpochSecond()));
         try {
             FileOutputStream screenshotStream = new FileOutputStream(screenshot);
             byte[] bytes = ((TakesScreenshot) Browser.getDriver())
@@ -42,11 +32,11 @@ public class Hooks {
         return null;
     }
 
-    public static void teardown(){
-        if(directory.exists()){
+    public static void teardown() {
+        if (directory.exists()) {
             try {
                 directory.delete();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

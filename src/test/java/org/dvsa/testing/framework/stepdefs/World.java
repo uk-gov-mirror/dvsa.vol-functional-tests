@@ -7,5 +7,5 @@ import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 public class World {
     public CreateLicenceAPI createLicence;
     public GrantLicenceAPI grantLicence;
-    GenericUtils genericUtils;
+    public GenericUtils genericUtils;
 }
