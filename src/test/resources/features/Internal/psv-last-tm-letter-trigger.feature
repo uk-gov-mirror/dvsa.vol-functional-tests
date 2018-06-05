@@ -18,7 +18,7 @@ Feature: Set and check criteria for triggering automatic letter
     And the user confirms they want to send letter
     Then a flag should be set in the DB
 
-  Scenario:
+  Scenario: Generate letter for curtail licence
     Given the licence status is "curtail"
     When the transport manager has been removed by an internal user
     And the user confirms they want to send letter

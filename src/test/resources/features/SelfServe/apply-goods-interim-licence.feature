@@ -3,8 +3,8 @@
 Feature: Grant an application
 
   Background:
-    Given I have a "goods" application which is under consideration
+    Given I have a "goods" "standard_national" application which is under consideration
 
   Scenario:
     When I pay fees
-    Then the application should be granted
+    Then the licence should be granted

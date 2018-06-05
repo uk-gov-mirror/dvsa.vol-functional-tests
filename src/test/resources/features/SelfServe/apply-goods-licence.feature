@@ -3,7 +3,7 @@
 Feature: Self Serve Apply for goods licence
 
   Background:
-    Given I have a "goods" application which is under consideration
+    Given I have a "goods" "standard_national" application which is under consideration
 
   Scenario: Pay application and grant fees
     When I pay fees on self serve

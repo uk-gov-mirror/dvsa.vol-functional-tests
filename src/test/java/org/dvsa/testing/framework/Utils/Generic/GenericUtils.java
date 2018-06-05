@@ -52,7 +52,7 @@ public class GenericUtils extends BasePage {
 
     static {
         try {
-            env = EnvironmentType.getEnum(Properties.get("env", true));
+            env = EnvironmentType.getEnum(Properties.get("env", false));
         } catch (MissingRequiredArgument missingRequiredArgument) {
             missingRequiredArgument.printStackTrace();
         }
@@ -286,23 +286,23 @@ public class GenericUtils extends BasePage {
     }
 
     public static void enterDate(int day, int month, int year) {
-        enterText("receivedDate_day", String.valueOf(day));
-        enterText("receivedDate_month", String.valueOf(month));
-        enterText("receivedDate_year", String.valueOf(year));
+        enterText("receivedDate_day", String.valueOf(day),SelectorType.ID);
+        enterText("receivedDate_month", String.valueOf(month),SelectorType.ID);
+        enterText("receivedDate_year", String.valueOf(year),SelectorType.ID);
     }
 
     public static void internalSiteAddBusNewReg(int day, int month, int year) {
         waitForTextToBePresent("Service details");
         assertTrue(isTextPresent("Service No. & type", 5));
-        enterText("serviceNo", "123");
-        enterText("startPoint", Str.randomWord(9));
-        enterText("finishPoint", Str.randomWord(11));
-        enterText("via", Str.randomWord(5));
+        enterText("serviceNo", "123",SelectorType.ID);
+        enterText("startPoint", Str.randomWord(9),SelectorType.ID);
+        enterText("finishPoint", Str.randomWord(11),SelectorType.ID);
+        enterText("via", Str.randomWord(5),SelectorType.ID);
         selectServiceType("//ul[@class='chosen-choices']", "//*[@id=\"busServiceTypes_chosen\"]/div/ul/li[1]", SelectorType.XPATH);
         enterDate(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
-        enterText("effectiveDate_day", String.valueOf(day));
-        enterText("effectiveDate_month", String.valueOf(month));
-        enterText("effectiveDate_year", String.valueOf(year));
+        enterText("effectiveDate_day", String.valueOf(day),SelectorType.ID);
+        enterText("effectiveDate_month", String.valueOf(month),SelectorType.ID);
+        enterText("effectiveDate_year", String.valueOf(year),SelectorType.ID);
         click(nameAttribute("button", "form-actions[submit]"));
     }
 

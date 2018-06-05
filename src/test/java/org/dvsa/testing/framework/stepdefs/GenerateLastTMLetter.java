@@ -6,10 +6,8 @@ import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
 import cucumber.api.PendingException;
 import cucumber.api.java.After;
-import cucumber.api.java.Before;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
-import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
@@ -44,8 +42,6 @@ public class GenerateLastTMLetter extends BasePage implements En {
                 int columnValue = Integer.parseInt(resultSet.getString("opt_out_tm_letter"));
                 assertEquals(0, columnValue);
             }
-            //reset licence to valid to be used by next scenario
-//            world.genericUtils.updateLicenceStatus(world.createLicence.getLicenceId(),"reset-to-valid");
 
         });
         Given("^the licence status is \"([^\"]*)\"$", (String arg0) -> {
@@ -67,13 +63,5 @@ public class GenerateLastTMLetter extends BasePage implements En {
             // Write code here that turns the phrase above into concrete actions
             throw new PendingException();
         });
-    }
-
-
-    @After
-    public void tearDown(){
-        Hooks hooks = new Hooks();
-        hooks.attach();
-        Hooks.teardown();
     }
 }

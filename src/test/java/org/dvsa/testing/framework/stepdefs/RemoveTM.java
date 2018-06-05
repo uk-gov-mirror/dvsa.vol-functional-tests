@@ -89,7 +89,7 @@ public class RemoveTM extends BasePage implements En {
         });
         Then("^an error message should be displayed$", () -> {
             waitForTextToBePresent(alertHeaderValue);
-            isLinkPresent("You must select an option",60);
+            isLinkPresent("You must select an option", 60);
         });
     }
 }

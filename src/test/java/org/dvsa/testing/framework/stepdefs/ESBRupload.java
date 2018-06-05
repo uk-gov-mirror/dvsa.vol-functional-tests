@@ -1,26 +1,13 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.MissingRequiredArgument;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
+import cucumber.api.Scenario;
 import cucumber.api.java8.En;
-import io.qameta.allure.Attachment;
-import io.qameta.allure.Feature;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.framework.runner.Hooks;
-import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.pages.internal.SearchNavBar;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.*;
@@ -33,6 +20,11 @@ public class ESBRupload extends BasePage implements En {
     public ESBRupload(World world) throws MissingRequiredArgument {
         this.world = world;
         world.genericUtils = new GenericUtils(world);
+
+        Before(new String[]{"@ESBR"}, 0, 1, (Scenario scenario) -> {
+            String[] args = new String[0];
+            Hooks.main(args);
+        });
 
         Given("^I have a psv application with traffic area \"([^\"]*)\" and enforcement area \"([^\"]*)\" which has been granted$", (String arg0, String arg1) -> {
             world.genericUtils.generateAndGrantPsvApplicationPerTrafficArea(arg0, arg1);
@@ -103,11 +95,5 @@ public class ESBRupload extends BasePage implements En {
             // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
             world.genericUtils.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
         });
-    }
-
-    @After
-    public void tearDown(){
-        Hooks hooks = new Hooks();
-        hooks.attach();
     }
 }

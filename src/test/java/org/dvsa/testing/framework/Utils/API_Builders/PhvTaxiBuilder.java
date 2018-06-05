@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
         "privateHireLicenceNo",
         "councilName",
         "licence",
-        "Address"
+        "address"
 })
 public class PhvTaxiBuilder {
 
@@ -23,7 +23,7 @@ public class PhvTaxiBuilder {
     private String councilName;
     @JsonProperty("licence")
     private String licence;
-    @JsonProperty("Address")
+    @JsonProperty("address")
     private AddressBuilder address;
 
     @JsonProperty("id")
@@ -86,7 +86,7 @@ public class PhvTaxiBuilder {
         return this;
     }
 
-    @JsonProperty("Address")
+    @JsonProperty("address")
     public AddressBuilder getAddress() {
         return address;
     }

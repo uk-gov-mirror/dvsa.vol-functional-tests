@@ -3,7 +3,7 @@
 Feature: Grant an application
 
   Background:
-    Given I have a "goods" application which is under consideration
+    Given I have a "goods" "standard_international" application which is under consideration
 
   Scenario:
     When I pay fees

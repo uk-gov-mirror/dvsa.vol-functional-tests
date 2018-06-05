@@ -1,11 +1,19 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import cucumber.api.Scenario;
 import cucumber.api.java8.En;
+import org.dvsa.testing.framework.runner.Hooks;
 
 public class PSVapplication implements En {
     private World world;
 
     public PSVapplication(World world) {
+
+        Before(new String[]{"@GRANT-GOODS-APP"}, 0, 1, (Scenario scenario) -> {
+            String[] args = new String[0];
+            Hooks.main(args);
+        });
+
         Given("^I have applied for a \"([^\"]*)\" \"([^\"]*)\" licence$", (String arg0, String arg1) -> {
             world.createLicence.setOperatorType(arg0);
             world.createLicence.setLicenceType(arg1);
@@ -20,6 +28,10 @@ public class PSVapplication implements En {
             if (world.createLicence.getApplicationNumber() == null) {
                 world.genericUtils.createApplication();
             }
+        });
+
+        After(new String[]{"@GRANT-GOODS-APP"}, (Scenario scenario) -> {
+            Hooks.teardown();
         });
     }
 }

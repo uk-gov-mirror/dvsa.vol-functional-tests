@@ -207,6 +207,7 @@ public class CreateLicenceAPI {
         updateBusinessDetails();
         addAddressDetails();
         addPartners();
+        submitTaxiPhv();
         addOperatingCentre();
         updateOperatingCentre();
         addFinancialEvidence();
@@ -219,7 +220,6 @@ public class CreateLicenceAPI {
         addSafetyInspector();
         addConvictionsDetails();
         addLicenceHistory();
-        submitTaxiPhv();
         applicationReviewAndDeclare();
         submitApplication();
         getApplicationLicenceDetails();
@@ -332,7 +332,7 @@ public class CreateLicenceAPI {
             AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(applicationNumber).withNoOfVehiclesRequired(restrictedVehicles).withPermission(permissionOption).withAddress(address);
         }
-        if (!operatorType.equals("public") && (!licenceType.equals(" special_restricted"))) {
+        if (!licenceType.equals("special_restricted")) {
             apiResponse = RestUtils.post(operatingCentreBuilder, operatingCentreResource, getHeaders());
             assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         }
@@ -367,35 +367,34 @@ public class CreateLicenceAPI {
     }
 
     public void addFinancialEvidence() throws MalformedURLException {
+        String financialEvidenceResource = URL.build(env, String.format("application/%s/financial-evidence", applicationNumber)).toString();
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit financial details
+        } else {
+            do {
+                FinancialEvidenceBuilder financialEvidenceBuilder = new FinancialEvidenceBuilder().withId(applicationNumber).withVersion(version).withFinancialEvidenceUploaded(0);
+                apiResponse = RestUtils.put(financialEvidenceBuilder, financialEvidenceResource, getHeaders());
+                version++;
+                if (version > 20) {
+                    version = 1;
+                }
+            } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+            assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         }
-
-        String financialEvidenceResource = URL.build(env, String.format("application/%s/financial-evidence", applicationNumber)).toString();
-
-        do {
-            FinancialEvidenceBuilder financialEvidenceBuilder = new FinancialEvidenceBuilder().withId(applicationNumber).withVersion(version).withFinancialEvidenceUploaded(0);
-            apiResponse = RestUtils.put(financialEvidenceBuilder, financialEvidenceResource, getHeaders());
-            version++;
-            if (version > 20) {
-                version = 1;
-            }
-        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
     public void addTransportManager() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
+        } else {
+            String hasEmail = "Y";
+            String addTransportManager = URL.build(env, "transport-manager/create-new-user/").toString();
+            TransportManagerBuilder transportManagerBuilder = new TransportManagerBuilder().withApplication(applicationNumber).withFirstName(foreName)
+                    .withFamilyName(familyName).withHasEmail(hasEmail).withUsername(username.concat(getLoginId())).withEmailAddress(transManEmailAddress).withBirthDate(birthDate);
+            apiResponse = RestUtils.post(transportManagerBuilder, addTransportManager, getHeaders());
+            assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+            setTransportManagerApplicationId(apiResponse.extract().jsonPath().getString("id.transportManagerApplicationId"));
         }
-
-        String hasEmail = "Y";
-        String addTransportManager = URL.build(env, "transport-manager/create-new-user/").toString();
-        TransportManagerBuilder transportManagerBuilder = new TransportManagerBuilder().withApplication(applicationNumber).withFirstName(foreName)
-                .withFamilyName(familyName).withHasEmail(hasEmail).withUsername(username.concat(getLoginId())).withEmailAddress(transManEmailAddress).withBirthDate(birthDate);
-        apiResponse = RestUtils.post(transportManagerBuilder, addTransportManager, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
-        setTransportManagerApplicationId(apiResponse.extract().jsonPath().getString("id.transportManagerApplicationId"));
     }
 
     public void submitTransport() throws MalformedURLException {
@@ -410,7 +409,6 @@ public class CreateLicenceAPI {
     }
 
     public void vehicles() throws MalformedURLException {
-
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -437,7 +435,6 @@ public class CreateLicenceAPI {
     }
 
     public void submitVehicleDeclaration() throws MalformedURLException {
-
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -464,7 +461,6 @@ public class CreateLicenceAPI {
     }
 
     public void addFinancialHistory() throws MalformedURLException {
-
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -487,7 +483,6 @@ public class CreateLicenceAPI {
     }
 
     public void addApplicationSafetyAndComplianceDetails() throws MalformedURLException {
-
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -624,13 +619,12 @@ public class CreateLicenceAPI {
             do {
                 AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
                 PhvTaxiBuilder taxiBuilder = new PhvTaxiBuilder().withId(applicationNumber).withPrivateHireLicenceNo(phLicenceNumber).withCouncilName(councilName).withLicence(licenceNumber).withAddress(addressBuilder);
-                apiResponse = RestUtils.put(taxiBuilder, submitResource, getHeaders());
+                apiResponse = RestUtils.post(taxiBuilder, submitResource, getHeaders());
                 version++;
                 if (version > 20) {
                     version = 1;
                 }
             } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-            assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         } else {
             // do nothing"
         }
