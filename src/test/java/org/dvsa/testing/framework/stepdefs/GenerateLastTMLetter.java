@@ -64,10 +64,6 @@ public class GenerateLastTMLetter extends BasePage implements En {
 
             Jenkins.trigger(Jenkins.Job.BATCH_RUN_CLI, jenkinsParams);
         });
-        Then("^last tm letters should be generated$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
-        });
 
         After(new String[]{"@INT"}, (Scenario scenario) -> {
            String[] args = new String[0];

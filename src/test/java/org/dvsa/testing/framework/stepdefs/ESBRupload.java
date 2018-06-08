@@ -92,8 +92,9 @@ public class ESBRupload extends BasePage implements En {
         });
 
         After(new String[]{"@SS"}, 0, 1, (Scenario scenario) -> {
-            Hooks hooks = null;
-            hooks.attach();
+            String[] args = new String[0];
+            Hooks hooks = new Hooks();
+            hooks.main(args);
         });
     }
 }

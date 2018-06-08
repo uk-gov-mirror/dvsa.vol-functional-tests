@@ -18,6 +18,7 @@ public class Hooks {
         teardown();
     }
 
+
     @Attachment(value = "Screenshot on failure", type = "image/png")
     public byte[] attach() {
 
