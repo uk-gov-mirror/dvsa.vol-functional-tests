@@ -1,4 +1,4 @@
-@ignore @WIP
+@INT
 Feature: Northern Ireland Goods Vehicles Data Export
   Scenario: All goods vehicles from Northern Ireland are exported to CSV
     Given Northern Ireland goods vehicles data has been exported
