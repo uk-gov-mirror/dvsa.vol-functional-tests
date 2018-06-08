@@ -18,11 +18,6 @@ public class Hooks {
         teardown();
     }
 
-    @Test
-    public void r(){
-        System.out.println(System.getProperty("user.dir"));
-    }
-
     @Attachment(value = "Screenshot on failure", type = "image/png")
     public byte[] attach() {
 

@@ -6,12 +6,12 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(plugin = {"io.qameta.allure.cucumber2jvm.AllureCucumber2Jvm"},
-        features = {"src/test/resources/features/SelfServe"},
+        features = {"src/test/resources/features/"},
         glue = {"org.dvsa.testing.framework.stepdefs"},
         format = {"json:cucumber.json"}
 )
 
-public class TestRunner {
+public class Runner {
 
 }
 
