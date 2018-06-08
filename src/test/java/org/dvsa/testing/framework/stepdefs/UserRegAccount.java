@@ -2,10 +2,9 @@ package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.aws.s3.S3;
 import activesupport.system.Properties;
-import cucumber.api.PendingException;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
+import cucumber.api.Scenario;
 import cucumber.api.java8.En;
+import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
@@ -58,8 +57,11 @@ public class UserRegAccount extends BasePage implements En {
                 enterField(nameAttribute("input", "confirmPassword"), "Password1");
                 click(nameAttribute("input", "submit"));
             }
+        });
 
-
+        After(new String[]{"@SS"}, (Scenario scenario) -> {
+            Hooks hooks = null;
+            hooks.attach();
         });
     }
 

@@ -107,7 +107,7 @@ public class GenericUtils extends BasePage {
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public void payGoodsFeesAndGrantLicence() throws MalformedURLException {
+    public void payFeesAndGrantLicence() throws MalformedURLException {
         if (variationApplicationNumber != null) {
             world.grantLicence.createOverview(variationApplicationNumber);
             world.grantLicence.variationGrant(variationApplicationNumber);
@@ -117,13 +117,6 @@ public class GenericUtils extends BasePage {
             world.grantLicence.payOutstandingFees(world.createLicence.getOrganisationId(), world.createLicence.getApplicationNumber());
             world.grantLicence.grant(world.createLicence.getApplicationNumber());
         }
-    }
-
-    public void payPsvFeesAndGrantLicence() throws MalformedURLException {
-        world.grantLicence.createOverview(world.createLicence.getApplicationNumber());
-        world.grantLicence.getOutstandingFees(world.createLicence.getApplicationNumber());
-        world.grantLicence.payOutstandingFees(world.createLicence.getOrganisationId(), world.createLicence.getApplicationNumber());
-        world.grantLicence.grant(world.createLicence.getApplicationNumber());
     }
 
     public void modifyXML(String dateState, int months) {
@@ -311,7 +304,7 @@ public class GenericUtils extends BasePage {
         world.createLicence.setEnforcementArea(enforcementArea);
         world.createLicence.setOperatorType("public");
         world.createLicence.createAndSubmitApp();
-        payPsvFeesAndGrantLicence();
+        payFeesAndGrantLicence();
         world.grantLicence.payGrantFees();
         getLicenceTrafficArea();
         System.out.println("--Licence-Number: " + world.createLicence.getLicenceNumber() + "--");
@@ -360,7 +353,7 @@ public class GenericUtils extends BasePage {
         } else {
             do {
                 SearchNavBar.search(String.valueOf(world.createLicence.getApplicationNumber()));
-            } while (!isLinkPresent(world.createLicence.getApplicationNumber(), 60));
+            } while (!isLinkPresent(world.createLicence.getApplicationNumber(), 200));
             clickByLinkText(world.createLicence.getApplicationNumber());
             if (isLinkPresent("Interim", 60))
                 clickByLinkText("Interim ");

@@ -1,6 +1,6 @@
 @INT
-@GRANT-GOODS-APP
-Feature: Grant an application
+@GRANT-GOODS-INTERIM-APP
+Feature: apply for interim goods licence
 
   Background:
     Given I have a "goods" "standard_national" application which is under consideration

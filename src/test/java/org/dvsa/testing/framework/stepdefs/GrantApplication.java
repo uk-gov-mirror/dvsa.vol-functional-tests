@@ -11,14 +11,10 @@ public class GrantApplication implements En {
         this.world = world;
 
         When("^I pay fees$", () -> {
-            if (String.valueOf(licenceType).equals("public")) {
-                world.genericUtils.payPsvFeesAndGrantLicence();
-            } else {
-                world.genericUtils.payGoodsFeesAndGrantLicence();
-            }
+                world.genericUtils.payFeesAndGrantLicence();
         });
         Then("^the licence should be granted$", () -> {
-            world.genericUtils.grantLicence().payGrantFees();
+            world.grantLicence.payGrantFees();
         });
     }
 }

@@ -21,11 +21,6 @@ public class ESBRupload extends BasePage implements En {
         this.world = world;
         world.genericUtils = new GenericUtils(world);
 
-        Before(new String[]{"@ESBR"}, 0, 1, (Scenario scenario) -> {
-            String[] args = new String[0];
-            Hooks.main(args);
-        });
-
         Given("^I have a psv application with traffic area \"([^\"]*)\" and enforcement area \"([^\"]*)\" which has been granted$", (String arg0, String arg1) -> {
             world.genericUtils.generateAndGrantPsvApplicationPerTrafficArea(arg0, arg1);
         });
@@ -94,6 +89,11 @@ public class ESBRupload extends BasePage implements En {
         When("^I upload an esbr file with \"([^\"]*)\" days notice$", (String arg0) -> {
             // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
             world.genericUtils.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
+        });
+
+        After(new String[]{"@SS"}, 0, 1, (Scenario scenario) -> {
+            Hooks hooks = null;
+            hooks.attach();
         });
     }
 }

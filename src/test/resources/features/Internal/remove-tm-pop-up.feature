@@ -26,15 +26,17 @@ Feature: Remove last Transport Manager (TM) pop up
     When the transport manager has been removed by an internal user
     Then the remove TM popup should not be displaying new TM remove text
 
-  Scenario: Pop up should not displayed when a licence contains multiple TM's
+    Scenario: Error message should be displayed if no option is chosen
+    Given the licence has been granted
+    When the transport manager has been removed by an internal user
+    And user attempts to remove the last TM without selecting an option
+    Then an error message should be displayed
+
+  Scenario: Pop up should not displayed when removed from a variation
     Given the licence has been granted
     When i create a variation
     And the transport manager has been removed by an internal user
     Then the remove TM popup should not be displaying new TM remove text
 
-  Scenario: Error message should be displayed if no option is chosen
-    Given the licence has been granted
-    When the transport manager has been removed by an internal user
-    And user attempts to remove the last TM without selecting an option
-    Then an error message should be displayed
+
 

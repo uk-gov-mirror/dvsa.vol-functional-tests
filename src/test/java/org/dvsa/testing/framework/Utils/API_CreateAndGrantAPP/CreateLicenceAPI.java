@@ -237,6 +237,9 @@ public class CreateLicenceAPI {
         apiResponse = RestUtils.post(selfServeUserRegistrationDetailsBuilder, registerResource, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         userId = apiResponse.extract().jsonPath().getString("id.user");
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_CREATED){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void getUserDetails() throws MalformedURLException {
@@ -248,6 +251,9 @@ public class CreateLicenceAPI {
         setPid(apiResponse.extract().jsonPath().getString("pid"));
         organisationId = apiResponse.extract().jsonPath().prettyPeek().getString("organisationUsers.organisation.id");
         setOrganisationId(organisationId);
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void createApplication() throws MalformedURLException {
@@ -261,6 +267,9 @@ public class CreateLicenceAPI {
         applicationNumber = apiResponse.extract().jsonPath().getString("id.application");
         licenceNumber = apiResponse.extract().jsonPath().getString("id.licence");
         setApplicationNumber(applicationNumber);
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_CREATED){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void updateBusinessType() throws MalformedURLException {
@@ -274,6 +283,9 @@ public class CreateLicenceAPI {
                 version = 1;
             }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void updateBusinessDetails() throws MalformedURLException {
@@ -292,6 +304,9 @@ public class CreateLicenceAPI {
             }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void addAddressDetails() throws MalformedURLException {
@@ -304,6 +319,9 @@ public class CreateLicenceAPI {
                 .withCorrespondenceAddress(address).withEstablishmentAddress(address);
         apiResponse = RestUtils.put(addressBuilder, applicationAddressResource, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void addPartners() throws MalformedURLException {
@@ -311,6 +329,9 @@ public class CreateLicenceAPI {
         PersonBuilder addPerson = new PersonBuilder().withId(applicationNumber).withTitle(title).withForename(foreName).withFamilyName(familyName).withBirthDate(birthDate);
         apiResponse = RestUtils.post(addPerson, addPersonResource, getHeaders());
         assertThat(apiResponse.extract().statusCode() == HttpStatus.SC_CREATED);
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_CREATED){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void addOperatingCentre() throws MalformedURLException {
@@ -319,12 +340,12 @@ public class CreateLicenceAPI {
         String operatingCentreAddress = "API_Operating_Centre";
         OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder();
 
-        if (operatorType.equals("goods")) {
+        if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))) {
             AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(applicationNumber).withNoOfVehiclesRequired(String.valueOf(noOfVehiclesRequired))
                     .withNoOfTrailersRequired(String.valueOf(noOfVehiclesRequired)).withPermission(permissionOption).withAddress(address);
         }
-        if (operatorType.equals("public") || (operatorType.equals("public") && (licenceType.equals("standard_international")) || (licenceType.equals("standard_national")))) {
+        if (operatorType.equals("public") && (!licenceType.equals("special_restricted"))) {
             AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(applicationNumber).withNoOfVehiclesRequired(String.valueOf(noOfVehiclesRequired)).withPermission(permissionOption).withAddress(address);
         }
@@ -336,6 +357,9 @@ public class CreateLicenceAPI {
             apiResponse = RestUtils.post(operatingCentreBuilder, operatingCentreResource, getHeaders());
             assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_CREATED){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void updateOperatingCentre() throws MalformedURLException {
@@ -343,11 +367,11 @@ public class CreateLicenceAPI {
         OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater();
 
         do {
-            if (operatorType.equals("goods")) {
+            if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))) {
                 updateOperatingCentre.withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
                         .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withVersion(version);
             }
-            if (operatorType.equals("public") ||(operatorType.equals("public") && (licenceType.equals("standard_international")) || (licenceType.equals("standard_national")))) {
+            if (operatorType.equals("public") && (!licenceType.equals("special_restricted"))) {
                 updateOperatingCentre.withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
                         .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
             }
@@ -364,6 +388,9 @@ public class CreateLicenceAPI {
             }
         }
         while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void addFinancialEvidence() throws MalformedURLException {
@@ -381,6 +408,9 @@ public class CreateLicenceAPI {
             } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
             assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void addTransportManager() throws MalformedURLException {
@@ -395,6 +425,9 @@ public class CreateLicenceAPI {
             assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
             setTransportManagerApplicationId(apiResponse.extract().jsonPath().getString("id.transportManagerApplicationId"));
         }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_CREATED){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void submitTransport() throws MalformedURLException {
@@ -405,6 +438,9 @@ public class CreateLicenceAPI {
             GenericBuilder genericBuilder = new GenericBuilder().withId(transportManagerApplicationId).withVersion(1);
             apiResponse = RestUtils.put(genericBuilder, submitTransportManager, getHeaders());
             assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
         }
     }
 
@@ -432,6 +468,9 @@ public class CreateLicenceAPI {
             } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
             assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void submitVehicleDeclaration() throws MalformedURLException {
@@ -458,6 +497,9 @@ public class CreateLicenceAPI {
             } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
             assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void addFinancialHistory() throws MalformedURLException {
@@ -479,6 +521,9 @@ public class CreateLicenceAPI {
                 }
             } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
             assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
         }
     }
 
@@ -504,6 +549,9 @@ public class CreateLicenceAPI {
             } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
             assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void addSafetyInspector() throws MalformedURLException {
@@ -517,6 +565,9 @@ public class CreateLicenceAPI {
                     .withContactDetails(contactDetailsBuilder);
             apiResponse = RestUtils.post(safetyInspectorBuilder, safetyInspectorResource, getHeaders());
             assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_CREATED){
+            System.out.println(apiResponse.extract().response().asString());
         }
     }
 
@@ -536,6 +587,9 @@ public class CreateLicenceAPI {
                 }
             } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
             assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
         }
     }
 
@@ -558,6 +612,9 @@ public class CreateLicenceAPI {
                 }
             } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
             assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        }
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
         }
     }
 
@@ -584,6 +641,9 @@ public class CreateLicenceAPI {
             }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void submitApplication() throws MalformedURLException {
@@ -598,6 +658,9 @@ public class CreateLicenceAPI {
             }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void getApplicationLicenceDetails() throws MalformedURLException {
@@ -609,6 +672,9 @@ public class CreateLicenceAPI {
         setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
         setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
         setLicenceStatus(apiResponse.extract().jsonPath().getString("licenceType.status.olbsKey"));
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
     }
 
     public void submitTaxiPhv() throws MalformedURLException {

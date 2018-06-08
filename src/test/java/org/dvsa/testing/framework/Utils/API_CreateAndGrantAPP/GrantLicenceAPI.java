@@ -90,7 +90,7 @@ public class GrantLicenceAPI {
     }
 
     public void payGrantFees() throws MalformedURLException {
-        int feesAmount = 405;
+        int feesAmount = 450;
         String payer = "apiUser";
         String paymentMethod = "fpm_cash";
         String slipNo = "123456";

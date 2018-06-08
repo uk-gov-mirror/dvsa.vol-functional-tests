@@ -1,8 +1,9 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.aws.s3.S3;
+import cucumber.api.Scenario;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
+import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
@@ -25,8 +26,11 @@ public class RemoveTM extends BasePage implements En {
 
     public RemoveTM(World world) throws Exception {
         this.world = world;
+
         Given("^i have an application with a transport manager$", () -> {
-            world.genericUtils = new GenericUtils(world);
+            if (world.createLicence.getOperatorType() == null) {
+                world.createLicence.setOperatorType("public");
+            }
             world.genericUtils.createApplication();
         });
         When("^the transport manager has been removed by an internal user$", () -> {
@@ -76,8 +80,9 @@ public class RemoveTM extends BasePage implements En {
             click("//*[@value='Remove']", SelectorType.XPATH);
         });
         Given("^the licence has been granted$", () -> {
-            world.genericUtils.payGoodsFeesAndGrantLicence();
+            world.genericUtils.payFeesAndGrantLicence();
             world.genericUtils.grantLicence().payGrantFees();
+
         });
         When("^i create a variation$", () -> {
             world.genericUtils.createVariation();
@@ -89,7 +94,16 @@ public class RemoveTM extends BasePage implements En {
         });
         Then("^an error message should be displayed$", () -> {
             waitForTextToBePresent(alertHeaderValue);
+            do {
+                // do nothing
+            } while (!isTextPresent("You must select an option", 60));
             isLinkPresent("You must select an option", 60);
+        });
+
+        After(new String[]{"@INT"}, (Scenario scenario) -> {
+            String[] args = new String[0];
+            Hooks hooks = new Hooks();
+            hooks.main(args);
         });
     }
 }

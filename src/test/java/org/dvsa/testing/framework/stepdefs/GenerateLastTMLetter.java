@@ -5,9 +5,10 @@ import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
 import cucumber.api.PendingException;
-import cucumber.api.java.After;
+import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
+import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
@@ -29,10 +30,14 @@ public class GenerateLastTMLetter extends BasePage implements En {
             world.createLicence.setOperatorType(arg0);
             world.genericUtils.createApplication();
             if(String.valueOf(arg0).equals("public")){
-                world.genericUtils.payPsvFeesAndGrantLicence();
+                world.genericUtils.payFeesAndGrantLicence();
+                world.genericUtils.grantLicence().payGrantFees();
+                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
             else {
-                world.genericUtils.payGoodsFeesAndGrantLicence();
+                world.genericUtils.payFeesAndGrantLicence();
+                world.genericUtils.grantLicence().payGrantFees();
+                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
         });
         Then("^a flag should be set in the DB$", () -> {
@@ -62,6 +67,12 @@ public class GenerateLastTMLetter extends BasePage implements En {
         Then("^last tm letters should be generated$", () -> {
             // Write code here that turns the phrase above into concrete actions
             throw new PendingException();
+        });
+
+        After(new String[]{"@INT"}, (Scenario scenario) -> {
+           String[] args = new String[0];
+           Hooks hooks = new Hooks();
+           hooks.main(args);
         });
     }
 }

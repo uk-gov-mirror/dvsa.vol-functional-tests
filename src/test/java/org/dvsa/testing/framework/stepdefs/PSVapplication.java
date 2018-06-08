@@ -9,11 +9,6 @@ public class PSVapplication implements En {
 
     public PSVapplication(World world) {
 
-        Before(new String[]{"@GRANT-GOODS-APP"}, 0, 1, (Scenario scenario) -> {
-            String[] args = new String[0];
-            Hooks.main(args);
-        });
-
         Given("^I have applied for a \"([^\"]*)\" \"([^\"]*)\" licence$", (String arg0, String arg1) -> {
             world.createLicence.setOperatorType(arg0);
             world.createLicence.setLicenceType(arg1);
@@ -30,8 +25,10 @@ public class PSVapplication implements En {
             }
         });
 
-        After(new String[]{"@GRANT-GOODS-APP"}, (Scenario scenario) -> {
-            Hooks.teardown();
+        After(new String[]{"@INT"}, (Scenario scenario) -> {
+            String[] args = new String[0];
+            Hooks hooks = new Hooks();
+            hooks.main(args);
         });
     }
 }

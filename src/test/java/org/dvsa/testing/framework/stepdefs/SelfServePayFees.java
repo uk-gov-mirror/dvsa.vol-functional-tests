@@ -8,9 +8,7 @@ import org.dvsa.testing.framework.stepdefs.World;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class SelfServePayFees extends BasePage implements En {
     private World world;
@@ -40,11 +38,12 @@ public class SelfServePayFees extends BasePage implements En {
             waitForTextToBePresent("There are currently no outstanding fees to pay");
         });
         And("^an internal user has granted my application$", () -> {
-            world.grantLicence.grant(world.createLicence.getLicenceNumber());
+            world.grantLicence.grant(world.createLicence.getApplicationNumber());
+            world.grantLicence.payGrantFees();
         });
         Then("^my licence should valid$", () -> {
-            assertNotNull(world.createLicence.getLicenceNumber());
-            System.out.println("Licence Number =========== :" + world.createLicence.getLicenceNumber());
+            clickByLinkText("Home");
+            assertTrue(isTextPresent("Valid",80));
         });
     }
 }

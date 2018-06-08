@@ -5,6 +5,6 @@ Feature: Generate letter pop up should contain letter details
     Given i have a valid "goods" licence
     And i have logged in to internal
 
-  Scenario:
+  Scenario: Check generate letter pop up
     When I generate a letter
     Then The pop up should contain letter details
