@@ -1,7 +1,6 @@
 @INT
 @PSV-LAST-TM-TRIGGER
 @-OLCS-19479
-@WIP
 Feature: Set and check criteria for triggering automatic letter
 
   Background:
