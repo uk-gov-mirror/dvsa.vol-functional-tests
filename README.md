@@ -16,6 +16,6 @@ The following technologies should be installed on your system.
 To produce the reports run the following command in your terminal
 ``mvn allure:report``
 ## Executing
-``mvn clean test -Denv= -Dbrowser= -DlicenceType= -DbusinessType= -Dni= -DJENKINS_USERNAME= -DJENKINS_PASSWORD= -DdbUsername=
+``mvn clean verify -Denv= -Dbrowser= -DlicenceType= -DbusinessType= -Dni= -DJENKINS_USERNAME= -DJENKINS_PASSWORD= -DdbUsername=
   -DdbPassword=
 ``

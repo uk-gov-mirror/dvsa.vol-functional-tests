@@ -27,6 +27,9 @@
         <allure-cucumber2-jvm>2.6.0</allure-cucumber2-jvm>
         <aspectj.version>1.8.10</aspectj.version>
         <allure-mvn-version>2.9</allure-mvn-version>
+        <cucable-plugin.version>1.0.0</cucable-plugin.version>
+        <build.helper.plugin.version>3.0.0</build.helper.plugin.version>
+        <maven.failsafe.plugin.version>2.20.1</maven.failsafe.plugin.version>
     </properties>
 
     <repositories>
@@ -86,6 +89,63 @@
                 <configuration>
                     <reportDirectory>allure-report</reportDirectory>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.trivago.rta</groupId>
+                <artifactId>cucable-plugin</artifactId>
+                <version>${cucable-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>parallel</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Required properties -->
+                    <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
+                    <sourceFeatures>src/test/resources/features</sourceFeatures>
+                    <generatedFeatureDirectory>${project.basedir}/src/test/resources/parallel/features</generatedFeatureDirectory>
+                    <generatedRunnerDirectory>${project.basedir}/src/test/java/runners</generatedRunnerDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build.helper.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sources>
+                        <source>${project.build.directory}/parallel/runners</source>
+                    </sources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>5</forkCount>
+                            <reuseFolks>true</reuseFolks>
+                            <testFailureIgnore>true</testFailureIgnore>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
