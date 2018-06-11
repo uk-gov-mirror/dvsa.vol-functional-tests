@@ -1,9 +1,11 @@
 @OLCS-13203
+@INT
+@INTERIM
 Feature: Change Validation On Interim Vehicle Authority
 
   Background:
-    Given I have logged in to internal
-    And I have an internal application
+    Given i have a valid "goods" licence
+    And i have logged in to internal
 
   Scenario: Interim Vehicle Authority Greater than Application Vehicle Authority
     When  I have an interim vehicle authority greater than my application vehicle authority

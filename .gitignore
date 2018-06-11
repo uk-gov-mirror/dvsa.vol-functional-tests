@@ -127,3 +127,6 @@ target/
 /src/test/resources/features/Internal/interim-zero-vehicles.feature
 /src/test/java/org/dvsa/testing/framework/stepdefs/builders/AdminInterimBuilder.java
 /src/test/resources/ESBR.zip
+/.allure/
+/allure-report/
+/img/

@@ -14,15 +14,19 @@
         <cucumber-java.version>2.4.0</cucumber-java.version>
         <cucumber-junit.version>2.4.0</cucumber-junit.version>
         <junit.version>4.12</junit.version>
-        <active-support.version>1.2.4</active-support.version>
+        <active-support.version>1.2.5</active-support.version>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-log4j12.version>1.7.5</slf4j-log4j12.version>
         <commons-lang3.version>3.7</commons-lang3.version>
-        <page-objects.version>0.6.7.6</page-objects.version>
+        <page-objects.version>0.6.7.8</page-objects.version>
         <page-action.version>0.2</page-action.version>
-        <uri-constructor.version>1.4.1</uri-constructor.version>
+        <uri-constructor.version>1.4.4</uri-constructor.version>
         <assertj-core-version>3.9.1</assertj-core-version>
         <hamcrest-version>1.3</hamcrest-version>
+        <pico-container-version>2.4.0</pico-container-version>
+        <allure-cucumber2-jvm>2.6.0</allure-cucumber2-jvm>
+        <aspectj.version>1.8.10</aspectj.version>
+        <allure-mvn-version>2.9</allure-mvn-version>
     </properties>
 
     <repositories>
@@ -55,6 +59,32 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        -Dcucumber.options="--plugin io.qameta.allure.cucumber2jvm.AllureCucumber2Jvm"
+                    </argLine>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure-mvn-version}</version>
+                <configuration>
+                    <reportDirectory>allure-report</reportDirectory>
                 </configuration>
             </plugin>
         </plugins>
@@ -128,6 +158,22 @@
             <artifactId>zt-zip</artifactId>
             <version>1.13</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <version>${pico-container-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-cucumber2-jvm</artifactId>
+            <version>${allure-cucumber2-jvm}</version>
         </dependency>
     </dependencies>
 </project>

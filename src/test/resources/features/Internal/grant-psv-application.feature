@@ -1,8 +1,10 @@
-Feature: Grant an application
+@INT
+@GRANT-PSV-APP
+Feature: Grant under consideration application
 
   Background:
-    Given I have a psv application which is under consideration
+    Given I have a "public" "standard_national" application which is under consideration
 
-  Scenario:
-    When I pay my application fees
-    Then my application should be granted
+  Scenario: Grant a public standard national licence
+    When I pay fees
+    Then the licence should be granted
