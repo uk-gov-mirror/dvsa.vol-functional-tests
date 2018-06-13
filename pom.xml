@@ -141,8 +141,6 @@
                         </goals>
                         <configuration>
                             <forkCount>5</forkCount>
-                            <reuseFolks>true</reuseFolks>
-                            <testFailureIgnore>true</testFailureIgnore>
                         </configuration>
                     </execution>
                 </executions>
