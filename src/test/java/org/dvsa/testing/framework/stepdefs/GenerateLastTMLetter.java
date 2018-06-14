@@ -4,7 +4,6 @@ import activesupport.database.DBUnit;
 import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
-import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;

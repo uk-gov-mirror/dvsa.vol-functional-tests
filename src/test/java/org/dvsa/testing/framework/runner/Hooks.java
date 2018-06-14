@@ -2,7 +2,6 @@ package org.dvsa.testing.framework.runner;
 
 import io.qameta.allure.Attachment;
 import org.dvsa.testing.lib.browser.Browser;
-import org.junit.Test;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 

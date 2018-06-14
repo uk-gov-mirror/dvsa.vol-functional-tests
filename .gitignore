@@ -130,3 +130,5 @@ target/
 /.allure/
 /allure-report/
 /img/
+/src/test/resources/parallel/features/
+/src/test/java/runners/
