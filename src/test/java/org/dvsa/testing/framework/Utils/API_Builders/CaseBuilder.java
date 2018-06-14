@@ -1,16 +1,18 @@
 package org.dvsa.testing.framework.Utils.API_Builders;
 
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "caseType",
-        "categorys][]",
+        "categorys",
         "description",
         "ecmsNo",
-        "outcome",
+        "outcomes",
         "id",
         "application",
         "version"
@@ -19,14 +21,14 @@ public class CaseBuilder {
 
     @JsonProperty("caseType")
     private String caseType;
-    @JsonProperty("categorys][]")
-    private String categorys;
+    @JsonProperty("categorys")
+    private List<String> categorys = null;
     @JsonProperty("description")
     private String description;
     @JsonProperty("ecmsNo")
-    private String ecmsNo;
-    @JsonProperty("outcome")
-    private String outcome;
+    private Object ecmsNo;
+    @JsonProperty("outcomes")
+    private List<String> outcomes = null;
     @JsonProperty("id")
     private String id;
     @JsonProperty("application")
@@ -49,17 +51,17 @@ public class CaseBuilder {
         return this;
     }
 
-    @JsonProperty("categorys][]")
-    public String getCategorys() {
+    @JsonProperty("categorys")
+    public List<String> getCategorys() {
         return categorys;
     }
 
-    @JsonProperty("categorys][]")
-    public void setCategorys(String categorys) {
+    @JsonProperty("categorys")
+    public void setCategorys(List<String> categorys) {
         this.categorys = categorys;
     }
 
-    public CaseBuilder withCategorys(String categorys) {
+    public CaseBuilder withCategorys(List<String> categorys) {
         this.categorys = categorys;
         return this;
     }
@@ -80,32 +82,32 @@ public class CaseBuilder {
     }
 
     @JsonProperty("ecmsNo")
-    public String getEcmsNo() {
+    public Object getEcmsNo() {
         return ecmsNo;
     }
 
     @JsonProperty("ecmsNo")
-    public void setEcmsNo(String ecmsNo) {
+    public void setEcmsNo(Object ecmsNo) {
         this.ecmsNo = ecmsNo;
     }
 
-    public CaseBuilder withEcmsNo(String ecmsNo) {
+    public CaseBuilder withEcmsNo(Object ecmsNo) {
         this.ecmsNo = ecmsNo;
         return this;
     }
 
-    @JsonProperty("outcome")
-    public String getOutcome() {
-        return outcome;
+    @JsonProperty("outcomes")
+    public List<String> getOutcomes() {
+        return outcomes;
     }
 
-    @JsonProperty("outcome")
-    public void setOutcome(String outcome) {
-        this.outcome = outcome;
+    @JsonProperty("outcomes")
+    public void setOutcomes(List<String> outcomes) {
+        this.outcomes = outcomes;
     }
 
-    public CaseBuilder withOutcome(String outcome) {
-        this.outcome = outcome;
+    public CaseBuilder withOutcomes(List<String> outcomes) {
+        this.outcomes = outcomes;
         return this;
     }
 
@@ -157,6 +159,6 @@ public class CaseBuilder {
     @Override
     public String toString() {
         return "caseType:" + getCaseType() + ",categorys:" + getCategorys() + ",description:" + getDescription()
-        + ",ecmsNo:" + getEcmsNo() + ",outcome:" + getOutcome() + ",id:" +  getId() + ",application:" +getApplication() + ",version:" + getVersion();
+        + ",ecmsNo:" + getEcmsNo() + ",outcomes:" + getOutcomes() + ",id:" +  getId() + ",application:" +getApplication() + ",version:" + getVersion();
     }
 }
