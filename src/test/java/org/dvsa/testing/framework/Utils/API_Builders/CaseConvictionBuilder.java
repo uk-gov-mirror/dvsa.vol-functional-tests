@@ -3,7 +3,6 @@ package org.dvsa.testing.framework.Utils.API_Builders;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -338,7 +337,10 @@ public class CaseConvictionBuilder {
     @Override
     public String toString() {
         return "_case:" +  getCase()
-        + ", defendantType" + getDefendantType()).append("personFirstname", personFirstname).append("personLastname", personLastname).append("birthDate", birthDate).append("convictionCategory", convictionCategory).append("categoryText", categoryText).append("offenceDate", offenceDate).append("convictionDate", convictionDate).append("msi", msi).append("court", court).append("penalty", penalty).append("costs", costs).append("notes", notes).append("takenIntoConsideration", takenIntoConsideration).append("isDeclared", isDeclared).append("isDealtWith", isDealtWith).append("version", version).toString();
+        + ", defendantType" + getDefendantType() + ",personFirstname:" + getPersonFirstname() + ",personLastname:" + getPersonLastname()
+        + ",birthDate:" + getBirthDate() + ",convictionCategory:" + getConvictionCategory() + ",categoryText:" + getCategoryText()
+        + ",offenceDate:" + getOffenceDate() + ",convictionDate:" + getConvictionDate() + ",msi:" + getMsi() + ",court:" + getCourt()
+        + ",penalty:" + getPenalty() + ",costs:" + getCosts() + ",notes:" + getNotes() + ",takenIntoConsideration:" + getTakenIntoConsideration()
+        + ",isDeclared:" + getIsDeclared() + ",isDealtWith:" + getIsDealtWith() + ",version:" + getVersion();
     }
-
 }
