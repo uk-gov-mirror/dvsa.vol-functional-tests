@@ -85,8 +85,8 @@ public class RemoveTM extends BasePage implements En {
 
         });
         When("^i create a variation$", () -> {
-            world.genericUtils.createVariation();
-            world.genericUtils.updateLicenceType(world.genericUtils.createApp().getLicenceId());
+            world.updateLicence.createVariation();
+            world.updateLicence.updateLicenceType(world.genericUtils.createApp().getLicenceId());
         });
         And("^user attempts to remove the last TM without selecting an option$", () -> {
             waitForTextToBePresent(alertHeaderValue);

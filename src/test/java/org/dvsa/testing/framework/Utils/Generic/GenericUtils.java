@@ -7,15 +7,12 @@ import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.string.Str;
 import activesupport.system.Properties;
-import enums.LicenceType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
-import org.assertj.core.api.Assertions;
-import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
-import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.framework.Utils.API_Builders.GenericBuilder;
-import org.dvsa.testing.framework.Utils.API_Builders.VariationBuilder;
+import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
+import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.framework.stepdefs.World;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.browser.Browser;
@@ -205,32 +202,6 @@ public class GenericUtils extends BasePage {
         / Uses Open source util zt-zip https://github.com/zeroturnaround/zt-zip
          */
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
-    }
-
-    public void createVariation() throws MalformedURLException {
-        String licenceId = world.createLicence.getLicenceId();
-        String licenceHistoryResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/variation", licenceId)).toString();
-
-        VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withLicenceType("ltyp_si").withAppliedVia("applied_via_phone");
-        apiResponse = RestUtils.post(variation, licenceHistoryResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
-        variationApplicationNumber = String.valueOf(apiResponse.extract().jsonPath().getInt("id.application"));
-    }
-
-    public void updateLicenceType(String licenceId) throws MalformedURLException {
-        Integer version = 1;
-        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("variation/%s/type-of-licence", licenceId)).toString();
-
-        do {
-            GenericBuilder genericBuilder = new GenericBuilder().withId(variationApplicationNumber).withVersion(version).withLicenceType(String.valueOf(LicenceType.getEnum("standard_national")));
-            apiResponse = RestUtils.put(genericBuilder, typeOfLicenceResource, getHeaders());
-            version++;
-            if (version > 20) {
-                version = 1;
-            }
-        }
-        while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
     }
 
     public static void internalUserLogin() throws MissingRequiredArgument, MalformedURLException {
