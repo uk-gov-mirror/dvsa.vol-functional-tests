@@ -45,7 +45,7 @@ public class UpdateLicenceAPI {
     }
 
     public UpdateLicenceAPI(World world){
-        this.world = world;
+        world.updateLicence = new UpdateLicenceAPI(world);
     }
 
     public void createVariation() throws MalformedURLException {
@@ -94,6 +94,7 @@ public class UpdateLicenceAPI {
             }
         }
         while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        System.out.println(apiResponse.extract().response().asString());
         setCaseId(apiResponse.extract().body().jsonPath().get("id.case"));
         Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
     }
