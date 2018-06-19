@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class CaseConvictionBuilder {
 
     @JsonProperty("case")
-    private String _case;
+    private int _case;
     @JsonProperty("defendantType")
     private String defendantType;
     @JsonProperty("personFirstname")
@@ -65,16 +65,16 @@ public class CaseConvictionBuilder {
     private Integer version;
 
     @JsonProperty("case")
-    public String getCase() {
+    public int getCase() {
         return _case;
     }
 
     @JsonProperty("case")
-    public void setCase(String _case) {
+    public void setCase(int _case) {
         this._case = _case;
     }
 
-    public CaseConvictionBuilder withCase(String _case) {
+    public CaseConvictionBuilder withCase(int _case) {
         this._case = _case;
         return this;
     }

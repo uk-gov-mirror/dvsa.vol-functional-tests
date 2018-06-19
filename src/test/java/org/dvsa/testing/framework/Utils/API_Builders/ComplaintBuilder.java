@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class ComplaintBuilder {
 
     @JsonProperty("case")
-    private String _case;
+    private int _case;
     @JsonProperty("complainantForename")
     private String complainantForename;
     @JsonProperty("complainantFamilyName")
@@ -47,16 +47,16 @@ public class ComplaintBuilder {
     private String driverFamilyName;
 
     @JsonProperty("case")
-    public String getCase() {
+    public int getCase() {
         return _case;
     }
 
     @JsonProperty("case")
-    public void setCase(String _case) {
+    public void setCase(int _case) {
         this._case = _case;
     }
 
-    public ComplaintBuilder withCase(String _case) {
+    public ComplaintBuilder withCase(int _case) {
         this._case = _case;
         return this;
     }

@@ -1,7 +1,5 @@
 @INT
-  @CASE-CREATION
-
-
+@CASE-CREATION
 Feature: Create a new case
 
   Background:
