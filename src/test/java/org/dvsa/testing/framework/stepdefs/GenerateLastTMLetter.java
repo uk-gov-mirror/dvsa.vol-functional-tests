@@ -19,10 +19,7 @@ import static org.dvsa.testing.framework.stepdefs.RemoveTM.alertHeaderValue;
 
 public class GenerateLastTMLetter extends BasePage implements En {
 
-    private World world;
-
     public GenerateLastTMLetter(World world) {
-        this.world = world;
 
         Given("^i have a valid \"([^\"]*)\" licence$", (String arg0) -> {
             world.genericUtils = new GenericUtils(world);

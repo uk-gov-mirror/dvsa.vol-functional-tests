@@ -132,3 +132,4 @@ target/
 /img/
 /src/test/resources/parallel/features/
 /src/test/java/runners/
+/allure-report.zip

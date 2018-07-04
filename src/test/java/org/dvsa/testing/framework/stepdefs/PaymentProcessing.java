@@ -6,6 +6,8 @@ import cucumber.api.java8.En;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
+import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
@@ -34,7 +36,11 @@ public class PaymentProcessing extends BasePage implements En {
         });
     }
 
+
     public void createAdminFee(String amount) {
+        String bankCardNumber = "4006000000000600";
+        String cardExpiryMonth = "10";
+        String cardExpiryYear = "50";
         waitAndClick("//button[@id='new']", SelectorType.XPATH);
         waitForTextToBePresent("Create new fee");
         selectValueFromDropDown("fee-details[feeType]", SelectorType.NAME, "NETA Bus Fine");
@@ -46,32 +52,84 @@ public class PaymentProcessing extends BasePage implements En {
         waitAndClick("//tbody/tr[1]/td[7]", SelectorType.XPATH);
         waitAndClick("//*[@value='Pay']", SelectorType.XPATH);
         waitForTextToBePresent("Pay fee");
-        payFee(amount);
+        payFee(amount, "Card",bankCardNumber,cardExpiryMonth,cardExpiryYear);
     }
 
-    public void payFee(String amount){
+    public void payFee(@NotNull String amount, @NotNull String paymentMethod, String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) {
+        if (paymentMethod.toLowerCase().trim().equals("cash") ||paymentMethod.toLowerCase().trim().equals("cheque") ||paymentMethod.toLowerCase().trim().equals("postal")) {
+            enterText("details[received]", amount, SelectorType.NAME);
+            enterText("details[payer]", "Automation payer", SelectorType.NAME);
+            enterText("details[slipNo]", "1234567", SelectorType.NAME);
+            enterText("details[customerName]", "Jane Doe", SelectorType.NAME);
+        }
+        switch (paymentMethod.toLowerCase().trim()) {
+            case "cash":
+                selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Cash");
+                enterText("details[customerReference]", "AutomationCashCustomerRef", SelectorType.NAME);
+                findAddress();
+                break;
+            case "cheque":
+                selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Cheque");
+                enterText("details[chequeNo]", "12345", SelectorType.NAME);
+                enterText("details[customerReference]", "AutomationChequeCustomerRef", SelectorType.NAME);
+                enterText("details[chequeDate][day]", String.valueOf(getCurrentDayOfMonth()), SelectorType.NAME);
+                enterText("details[chequeDate][month]", String.valueOf(getCurrentMonth()), SelectorType.NAME);
+                enterText("details[chequeDate][year]", String.valueOf(getCurrentYear()), SelectorType.NAME);
+                findAddress();
+                break;
+            case "postal":
+                selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Postal Order");
+                enterText("details[customerReference]", "AutomationPostalOrderCustomerRef", SelectorType.NAME);
+                enterText("details[poNo]", "123456", SelectorType.NAME);
+                findAddress();
+                break;
+            case "card":
+                selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Card Payment");
+                enterText("details[customerName]", "Veena Skish", SelectorType.NAME);
+                enterText("details[customerReference]", "AutomationCardCustomerRef", SelectorType.NAME);
+                findAddress();
+                customerPaymentModule(bankCardNumber,cardExpiryMonth,cardExpiryYear);
+                break;
+        }
 
-        enterText("details[received]", amount, SelectorType.NAME);
-        enterText("details[payer]", "Automation payer", SelectorType.NAME);
-        enterText("details[slipNo]", "1234567", SelectorType.NAME);
-        enterText("details[customerReference]", "AutomationCustomerRef", SelectorType.NAME);
-        enterText("details[customerName]", "Jane Doe", SelectorType.NAME);
+    }
+
+    public void customerPaymentModule(String bankCardNumber, String cardExpiryMonth, String cardExpiryYear){
+        waitForTextToBePresent("Card Number*");
+        enterText("//*[@id='scp_cardPage_cardNumber_input']", bankCardNumber, SelectorType.XPATH);
+        enterText("//*[@id='scp_cardPage_expiryDate_input']", cardExpiryMonth, SelectorType.XPATH);
+        enterText("//*[@id='scp_cardPage_expiryDate_input2']", cardExpiryYear, SelectorType.XPATH);
+        enterText("//*[@id='scp_cardPage_csc_input']", "123", SelectorType.XPATH);
+        click("//*[@id='scp_cardPage_buttonsNoBack_continue_button']", SelectorType.XPATH);
+        enterText("//*[@id='scp_additionalInformationPage_cardholderName_input']", "Mr Regression Test", SelectorType.XPATH);
+        click("//*[@id='scp_additionalInformationPage_buttons_continue_button']", SelectorType.XPATH);
+        waitForTextToBePresent("Online Payments");
+        click("//*[@id='scp_confirmationPage_buttons_payment_button']", SelectorType.XPATH);
+        waitForTextToBePresent("Online Payments");
+        click("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH);
+        waitForTextToBePresent("Payment successful");
+        clickByLinkText("Back");
+        waitForTextToBePresent("There are currently no outstanding fees to pay");
+    }
+
+    public void findAddress() {
         enterText("address[searchPostcode][postcode]", "NG1 5FW", SelectorType.NAME);
         waitAndClick("address[searchPostcode][search]", SelectorType.NAME);
-        clickByLinkText("Enter");
         waitAndSelectByIndex("", "//*[@id='fee_payment']/fieldset[2]/fieldset/div[3]/select[@name='address[searchPostcode][addresses]']", SelectorType.XPATH, 1);
-        retryingFindClick(By.xpath("//*[@id='form-actions[pay]']"));
+        do {
+            retryingFindClick(By.xpath("//*[@id='form-actions[pay]']"));
+        } while (getAttribute("//*[@name='address[addressLine1]']", SelectorType.XPATH, "value").isEmpty());
     }
 
     public boolean retryingFindClick(By by) {
         boolean result = false;
         int attempts = 0;
-        while(attempts < 2) {
+        while (attempts < 10) {
             try {
                 Browser.getDriver().findElement(by).click();
                 result = true;
                 break;
-            } catch(Exception e) {
+            } catch (Exception e) {
             }
             attempts++;
         }

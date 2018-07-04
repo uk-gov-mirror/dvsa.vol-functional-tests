@@ -17,19 +17,18 @@ public class Hooks {
         teardown();
     }
 
-
     @Attachment(value = "Screenshot on failure", type = "image/png")
     public byte[] attach() {
-
         File screenshot = new File(String.format(directory + "/errorScreenShot%s.png", Instant.now().getEpochSecond()));
         try {
+            if(Browser.isInitialised()){
             FileOutputStream screenshotStream = new FileOutputStream(screenshot);
             byte[] bytes = ((TakesScreenshot) Browser.getDriver())
                     .getScreenshotAs(OutputType.BYTES);
             screenshotStream.write(bytes);
             screenshotStream.close();
             return bytes;
-        } catch (Exception e) {
+        } } catch (Exception e) {
             System.err.println("Unable to write "
                     + screenshot.getAbsolutePath());
             e.printStackTrace();
@@ -45,6 +44,9 @@ public class Hooks {
                 e.printStackTrace();
             }
         }
-//        Browser.quit();
+
+        if (Browser.isInitialised()) {
+            Browser.quit();
+        }
     }
 }
