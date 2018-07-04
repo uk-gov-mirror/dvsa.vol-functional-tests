@@ -30,6 +30,3 @@ Feature: Add case details
   Scenario: Add a case note
     When I add notes
     Then case notes should be created
-
-
-
