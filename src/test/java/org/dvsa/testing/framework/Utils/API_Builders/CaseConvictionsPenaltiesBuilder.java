@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "convictionsConfirmation",
         "version"
 })
-public class ConvictionsPenaltiesBuilder {
+public class CaseConvictionsPenaltiesBuilder {
 
     @JsonProperty("id")
     private String id;
@@ -32,7 +32,7 @@ public class ConvictionsPenaltiesBuilder {
         this.id = id;
     }
 
-    public ConvictionsPenaltiesBuilder withId(String id) {
+    public CaseConvictionsPenaltiesBuilder withId(String id) {
         this.id = id;
         return this;
     }
@@ -47,7 +47,7 @@ public class ConvictionsPenaltiesBuilder {
         this.prevConviction = prevConviction;
     }
 
-    public ConvictionsPenaltiesBuilder withPrevConviction(String prevConviction) {
+    public CaseConvictionsPenaltiesBuilder withPrevConviction(String prevConviction) {
         this.prevConviction = prevConviction;
         return this;
     }
@@ -62,7 +62,7 @@ public class ConvictionsPenaltiesBuilder {
         this.convictionsConfirmation = convictionsConfirmation;
     }
 
-    public ConvictionsPenaltiesBuilder withConvictionsConfirmation(String convictionsConfirmation) {
+    public CaseConvictionsPenaltiesBuilder withConvictionsConfirmation(String convictionsConfirmation) {
         this.convictionsConfirmation = convictionsConfirmation;
         return this;
     }
@@ -77,7 +77,7 @@ public class ConvictionsPenaltiesBuilder {
         this.version = version;
     }
 
-    public ConvictionsPenaltiesBuilder withVersion(Integer version) {
+    public CaseConvictionsPenaltiesBuilder withVersion(Integer version) {
         this.version = version;
         return this;
     }
