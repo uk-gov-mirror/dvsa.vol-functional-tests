@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "driverForename",
         "driverFamilyName"
 })
-public class ComplaintBuilder {
+public class CaseComplaintBuilder {
 
     @JsonProperty("case")
     private int _case;
@@ -56,7 +56,7 @@ public class ComplaintBuilder {
         this._case = _case;
     }
 
-    public ComplaintBuilder withCase(int _case) {
+    public CaseComplaintBuilder withCase(int _case) {
         this._case = _case;
         return this;
     }
@@ -71,7 +71,7 @@ public class ComplaintBuilder {
         this.complainantForename = complainantForename;
     }
 
-    public ComplaintBuilder withComplainantForename(String complainantForename) {
+    public CaseComplaintBuilder withComplainantForename(String complainantForename) {
         this.complainantForename = complainantForename;
         return this;
     }
@@ -86,7 +86,7 @@ public class ComplaintBuilder {
         this.complainantFamilyName = complainantFamilyName;
     }
 
-    public ComplaintBuilder withComplainantFamilyName(String complainantFamilyName) {
+    public CaseComplaintBuilder withComplainantFamilyName(String complainantFamilyName) {
         this.complainantFamilyName = complainantFamilyName;
         return this;
     }
@@ -101,7 +101,7 @@ public class ComplaintBuilder {
         this.complaintType = complaintType;
     }
 
-    public ComplaintBuilder withComplaintType(String complaintType) {
+    public CaseComplaintBuilder withComplaintType(String complaintType) {
         this.complaintType = complaintType;
         return this;
     }
@@ -116,7 +116,7 @@ public class ComplaintBuilder {
         this.status = status;
     }
 
-    public ComplaintBuilder withStatus(String status) {
+    public CaseComplaintBuilder withStatus(String status) {
         this.status = status;
         return this;
     }
@@ -131,7 +131,7 @@ public class ComplaintBuilder {
         this.isCompliance = isCompliance;
     }
 
-    public ComplaintBuilder withIsCompliance(String isCompliance) {
+    public CaseComplaintBuilder withIsCompliance(String isCompliance) {
         this.isCompliance = isCompliance;
         return this;
     }
@@ -146,7 +146,7 @@ public class ComplaintBuilder {
         this.complaintDate = complaintDate;
     }
 
-    public ComplaintBuilder withComplaintDate(String complaintDate) {
+    public CaseComplaintBuilder withComplaintDate(String complaintDate) {
         this.complaintDate = complaintDate;
         return this;
     }
@@ -161,7 +161,7 @@ public class ComplaintBuilder {
         this.infringementDate = infringementDate;
     }
 
-    public ComplaintBuilder withInfringementDate(String infringementDate) {
+    public CaseComplaintBuilder withInfringementDate(String infringementDate) {
         this.infringementDate = infringementDate;
         return this;
     }
@@ -176,7 +176,7 @@ public class ComplaintBuilder {
         this.description = description;
     }
 
-    public ComplaintBuilder withDescription(String description) {
+    public CaseComplaintBuilder withDescription(String description) {
         this.description = description;
         return this;
     }
@@ -191,7 +191,7 @@ public class ComplaintBuilder {
         this.vrm = vrm;
     }
 
-    public ComplaintBuilder withVrm(Object vrm) {
+    public CaseComplaintBuilder withVrm(Object vrm) {
         this.vrm = vrm;
         return this;
     }
@@ -206,7 +206,7 @@ public class ComplaintBuilder {
         this.driverForename = driverForename;
     }
 
-    public ComplaintBuilder withDriverForename(String driverForename) {
+    public CaseComplaintBuilder withDriverForename(String driverForename) {
         this.driverForename = driverForename;
         return this;
     }
@@ -221,7 +221,7 @@ public class ComplaintBuilder {
         this.driverFamilyName = driverFamilyName;
     }
 
-    public ComplaintBuilder withDriverFamilyName(String driverFamilyName) {
+    public CaseComplaintBuilder withDriverFamilyName(String driverFamilyName) {
         this.driverFamilyName = driverFamilyName;
         return this;
     }

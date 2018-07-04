@@ -22,6 +22,7 @@ public class UpdateLicenceAPI {
     private ValidatableResponse apiResponse;
     private static String variationApplicationNumber;
     private World world;
+    private int caseId;
 
     public int getCaseId() {
         return caseId;
@@ -31,8 +32,58 @@ public class UpdateLicenceAPI {
         this.caseId = caseId;
     }
 
+    private int complaintId;
+
+    public int getComplaintId() {
+        return complaintId;
+    }
+
+    public void setComplaintId(int complaintId) {
+        this.complaintId = complaintId;
+    }
+
+    private int convictionId;
+
+    public int getConvictionId() {
+        return convictionId;
+    }
+
+    public void setConvictionId(int convictionId) {
+        this.convictionId = convictionId;
+    }
+
+    private int conditionUndertaking;
+
+    public int getConditionUndertaking() {
+        return conditionUndertaking;
+    }
+
+    public void setConditionUndertaking(int conditionUndertaking) {
+        this.conditionUndertaking = conditionUndertaking;
+    }
+
+    private int submissionsId;
+
+    public int getSubmissionsId() {
+        return submissionsId;
+    }
+
+    public void setSubmissionsId(int submissionsId) {
+        this.submissionsId = submissionsId;
+    }
+
+    private int caseNoteId;
+
+    public int getCaseNoteId() {
+        return caseNoteId;
+    }
+
+    public void setCaseNoteId(int caseNoteId) {
+        this.caseNoteId = caseNoteId;
+    }
+
     private static int version = 1;
-    private int caseId;
+
 
     private static EnvironmentType env;
 
@@ -44,7 +95,7 @@ public class UpdateLicenceAPI {
         }
     }
 
-    public UpdateLicenceAPI(World world){
+    public UpdateLicenceAPI(World world) {
         this.world = world;
     }
 
@@ -79,7 +130,7 @@ public class UpdateLicenceAPI {
         List<String> categories = new ArrayList<>();
         categories.add("case_cat_compl_conv");
         categories.add("case_cat_compl_proh");
-        String description = "Sent thorugh the API";
+        String description = "Sent through the API";
         List<String> outcomes = new ArrayList<>();
         outcomes.add("case_o_other");
         outcomes.add("case_o_cur");
@@ -100,7 +151,7 @@ public class UpdateLicenceAPI {
 
     public void addConviction() throws MalformedURLException {
         String defendantType = "def_t_dir";
-        String personFirstname ="API";
+        String personFirstname = "API";
         String personLastname = "Director";
         String birthDate = "99-6-10";
         String convictionCategory = "conv_c_cat_1065";
@@ -110,7 +161,7 @@ public class UpdateLicenceAPI {
         String msi = "Y";
         String court = "CourtAPI";
         String penalty = "Heavy";
-        String costs= "1000";
+        String costs = "1000";
         String notes = "This has been submitted";
         String isDeclared = "Y";
         String isDealtWith = "Y";
@@ -127,8 +178,8 @@ public class UpdateLicenceAPI {
             }
         }
         while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        setConvictionId(apiResponse.extract().jsonPath().getInt("id.conviction"));
         Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
-
     }
 
     public void addComplaint() throws MalformedURLException {
@@ -140,14 +191,57 @@ public class UpdateLicenceAPI {
         String complaintDate = "18-4-1";
         String infringementDate = "17-4-1";
         String description = "Driver correcting entry in driver's record book in wrong fashion";
-        String driverForename = "John";
-        String driverFamilyName = "Skishan";
+        String driverForename = "Skish";
+        String driverFamilyName = "Dotell";
         String complaintResource = org.dvsa.testing.lib.url.api.URL.build(env, "complaint").toString();
-            ComplaintBuilder complaintBuilder = new ComplaintBuilder().withCase(caseId).withComplainantForename(complainantForename).withComplainantFamilyName(complainantFamilyName).withComplaintType(complaintType).withStatus(status).withIsCompliance(isCompliance)
-                    .withComplaintDate(complaintDate).withInfringementDate(infringementDate).withDescription(description).withDriverForename(driverForename).withDriverFamilyName(driverFamilyName);
-            apiResponse = RestUtils.post(complaintBuilder, complaintResource, getHeaders());
+        CaseComplaintBuilder complaintBuilder = new CaseComplaintBuilder().withCase(caseId).withComplainantForename(complainantForename).withComplainantFamilyName(complainantFamilyName).withComplaintType(complaintType).withStatus(status).withIsCompliance(isCompliance)
+                .withComplaintDate(complaintDate).withInfringementDate(infringementDate).withDescription(description).withDriverForename(driverForename).withDriverFamilyName(driverFamilyName);
+        apiResponse = RestUtils.post(complaintBuilder, complaintResource, getHeaders());
 
         Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        setComplaintId(apiResponse.extract().jsonPath().getInt("id.complaint"));
+    }
 
+    public void addConditionsUndertakings() throws MalformedURLException {
+        String type = "cdt_con";
+        String conditionCategory = "cu_cat_fin";
+        String fulfilled = "N";
+        String attachedTo = "cat_lic";
+        String description = "This undertaken has not been fulfilled";
+        String conditionsUndertaking = org.dvsa.testing.lib.url.api.URL.build(env, "condition-undertaking").toString();
+        CaseConditionsBuilder conditionsBuilder = new CaseConditionsBuilder().withLicence(world.createLicence.getLicenceId()).withApplication(world.createLicence.getApplicationNumber()).withCase(Integer.toString(caseId)).withType(type).withConditionCategory(conditionCategory)
+                .withFulfilled(fulfilled).withAttachedTo(attachedTo).withNotes(description);
+        apiResponse = RestUtils.post(conditionsBuilder, conditionsUndertaking, getHeaders());
+
+        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        setConditionUndertaking(apiResponse.extract().jsonPath().getInt("id.conditionUndertaking"));
+    }
+
+    public void createSubmission() throws MalformedURLException {
+        String submissionType = "submission_type_o_env";
+        String submissionResource = org.dvsa.testing.lib.url.api.URL.build(env, "submission").toString();
+        CaseSubmissionBuilder submissionBuilder = new CaseSubmissionBuilder().withCase(Integer.toString(caseId)).withSubmissionType(submissionType);
+        apiResponse = RestUtils.post(submissionBuilder, submissionResource, getHeaders());
+
+        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        setSubmissionsId(apiResponse.extract().jsonPath().getInt("id.submission"));
+    }
+
+    public void createCaseNote() throws MalformedURLException {
+        String comment = "case note submitted through the API";
+        String priority = "Y";
+        String caseNoteResource = org.dvsa.testing.lib.url.api.URL.build(env, "processing/note").toString();
+        CaseNotesBuilder caseNotesBuilder = new CaseNotesBuilder().withCase(Integer.toString(caseId)).withLicence(world.createLicence.getLicenceId()).withApplication(world.createLicence.getApplicationNumber())
+                .withComment(comment).withPriority(priority);
+        apiResponse = RestUtils.post(caseNotesBuilder, caseNoteResource, getHeaders());
+
+        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        setCaseNoteId(apiResponse.extract().jsonPath().getInt("id.note"));
+    }
+
+    public ValidatableResponse getCaseDetails(String resource, int id) throws MalformedURLException {
+        String caseResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("%s/%s", resource,id)).toString();
+        apiResponse = RestUtils.get(caseResource, getHeaders());
+        return apiResponse;
     }
 }

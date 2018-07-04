@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "attachedTo",
         "notes"
 })
-public class ConditionsBuilder {
+public class CaseConditionsBuilder {
 
     @JsonProperty("licence")
     private String licence;
@@ -44,7 +44,7 @@ public class ConditionsBuilder {
         this.licence = licence;
     }
 
-    public ConditionsBuilder withLicence(String licence) {
+    public CaseConditionsBuilder withLicence(String licence) {
         this.licence = licence;
         return this;
     }
@@ -59,7 +59,7 @@ public class ConditionsBuilder {
         this.application = application;
     }
 
-    public ConditionsBuilder withApplication(String application) {
+    public CaseConditionsBuilder withApplication(String application) {
         this.application = application;
         return this;
     }
@@ -74,7 +74,7 @@ public class ConditionsBuilder {
         this._case = _case;
     }
 
-    public ConditionsBuilder withCase(String _case) {
+    public CaseConditionsBuilder withCase(String _case) {
         this._case = _case;
         return this;
     }
@@ -89,7 +89,7 @@ public class ConditionsBuilder {
         this.type = type;
     }
 
-    public ConditionsBuilder withType(String type) {
+    public CaseConditionsBuilder withType(String type) {
         this.type = type;
         return this;
     }
@@ -104,7 +104,7 @@ public class ConditionsBuilder {
         this.conditionCategory = conditionCategory;
     }
 
-    public ConditionsBuilder withConditionCategory(String conditionCategory) {
+    public CaseConditionsBuilder withConditionCategory(String conditionCategory) {
         this.conditionCategory = conditionCategory;
         return this;
     }
@@ -119,7 +119,7 @@ public class ConditionsBuilder {
         this.fulfilled = fulfilled;
     }
 
-    public ConditionsBuilder withFulfilled(String fulfilled) {
+    public CaseConditionsBuilder withFulfilled(String fulfilled) {
         this.fulfilled = fulfilled;
         return this;
     }
@@ -134,7 +134,7 @@ public class ConditionsBuilder {
         this.attachedTo = attachedTo;
     }
 
-    public ConditionsBuilder withAttachedTo(String attachedTo) {
+    public CaseConditionsBuilder withAttachedTo(String attachedTo) {
         this.attachedTo = attachedTo;
         return this;
     }
@@ -149,7 +149,7 @@ public class ConditionsBuilder {
         this.notes = notes;
     }
 
-    public ConditionsBuilder withNotes(String notes) {
+    public CaseConditionsBuilder withNotes(String notes) {
         this.notes = notes;
         return this;
     }
