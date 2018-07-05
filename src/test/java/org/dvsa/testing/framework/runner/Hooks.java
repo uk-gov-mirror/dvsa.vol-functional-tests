@@ -44,6 +44,7 @@ public class Hooks {
                 e.printStackTrace();
             }
         }
+
         if (Browser.isInitialised()) {
             Browser.quit();
         }

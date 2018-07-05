@@ -22,6 +22,8 @@ import org.dvsa.testing.lib.pages.internal.SearchNavBar;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
+import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.By;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -250,23 +252,23 @@ public class GenericUtils extends BasePage {
     }
 
     public static void enterDate(int day, int month, int year) {
-        enterText("receivedDate_day", String.valueOf(day),SelectorType.ID);
-        enterText("receivedDate_month", String.valueOf(month),SelectorType.ID);
-        enterText("receivedDate_year", String.valueOf(year),SelectorType.ID);
+        enterText("receivedDate_day", String.valueOf(day), SelectorType.ID);
+        enterText("receivedDate_month", String.valueOf(month), SelectorType.ID);
+        enterText("receivedDate_year", String.valueOf(year), SelectorType.ID);
     }
 
     public static void internalSiteAddBusNewReg(int day, int month, int year) {
         waitForTextToBePresent("Service details");
         assertTrue(isTextPresent("Service No. & type", 5));
-        enterText("serviceNo", "123",SelectorType.ID);
-        enterText("startPoint", Str.randomWord(9),SelectorType.ID);
-        enterText("finishPoint", Str.randomWord(11),SelectorType.ID);
-        enterText("via", Str.randomWord(5),SelectorType.ID);
+        enterText("serviceNo", "123", SelectorType.ID);
+        enterText("startPoint", Str.randomWord(9), SelectorType.ID);
+        enterText("finishPoint", Str.randomWord(11), SelectorType.ID);
+        enterText("via", Str.randomWord(5), SelectorType.ID);
         selectServiceType("//ul[@class='chosen-choices']", "//*[@id=\"busServiceTypes_chosen\"]/div/ul/li[1]", SelectorType.XPATH);
         enterDate(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
-        enterText("effectiveDate_day", String.valueOf(day),SelectorType.ID);
-        enterText("effectiveDate_month", String.valueOf(month),SelectorType.ID);
-        enterText("effectiveDate_year", String.valueOf(year),SelectorType.ID);
+        enterText("effectiveDate_day", String.valueOf(day), SelectorType.ID);
+        enterText("effectiveDate_month", String.valueOf(month), SelectorType.ID);
+        enterText("effectiveDate_year", String.valueOf(year), SelectorType.ID);
         click(nameAttribute("button", "form-actions[submit]"));
     }
 
@@ -343,9 +345,9 @@ public class GenericUtils extends BasePage {
 
     public void createApplication() throws Exception {
         if (world.createLicence.getApplicationNumber() == null) {
-                world.createLicence.createAndSubmitApp();
-            }
+            world.createLicence.createAndSubmitApp();
         }
+    }
 
     public void executeJenkinsBatchJob(String command) throws Exception {
         HashMap<String, String> jenkinsParams = new HashMap<>();
@@ -355,4 +357,111 @@ public class GenericUtils extends BasePage {
         Jenkins.trigger(Jenkins.Job.BATCH_PROCESS_QUEQUE, jenkinsParams);
     }
 
+    public void createAdminFee(String amount, String feeType) {
+        waitAndClick("//button[@id='new']", SelectorType.XPATH);
+        waitForTextToBePresent("Create new fee");
+        selectValueFromDropDown("fee-details[feeType]", SelectorType.NAME, feeType);
+        waitAndEnterText("amount", SelectorType.ID, amount);
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public void payFee(String amount, @NotNull String paymentMethod, String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) {
+
+        do {
+            //nothing
+        } while (isElementPresent("//button[@id='form-actions[submit]']", SelectorType.XPATH));
+        waitAndClick("//tbody/tr[2]/td[7]", SelectorType.XPATH);
+        waitAndClick("//*[@value='Pay']", SelectorType.XPATH);
+        waitForTextToBePresent("Pay fee");
+
+        if (paymentMethod.toLowerCase().trim().equals("cash") || paymentMethod.toLowerCase().trim().equals("cheque") || paymentMethod.toLowerCase().trim().equals("postal")) {
+            enterText("details[received]", amount, SelectorType.NAME);
+            enterText("details[payer]", "Automation payer", SelectorType.NAME);
+            enterText("details[slipNo]", "1234567", SelectorType.NAME);
+            enterText("details[customerName]", "Jane Doe", SelectorType.NAME);
+        }
+        if (paymentMethod.toLowerCase().trim().equals("card") && (isTextPresent("Pay fee", 10))) {
+            selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Card Payment");
+            enterText("details[customerName]", "Veena Skish", SelectorType.NAME);
+            enterText("details[customerReference]", "AutomationCardCustomerRef", SelectorType.NAME);
+            findAddress();
+        }
+        switch (paymentMethod.toLowerCase().trim()) {
+            case "cash":
+                selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Cash");
+                enterText("details[customerReference]", "AutomationCashCustomerRef", SelectorType.NAME);
+                findAddress();
+                break;
+            case "cheque":
+                selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Cheque");
+                enterText("details[chequeNo]", "12345", SelectorType.NAME);
+                enterText("details[customerReference]", "AutomationChequeCustomerRef", SelectorType.NAME);
+                enterText("details[chequeDate][day]", String.valueOf(getCurrentDayOfMonth()), SelectorType.NAME);
+                enterText("details[chequeDate][month]", String.valueOf(getCurrentMonth()), SelectorType.NAME);
+                enterText("details[chequeDate][year]", String.valueOf(getCurrentYear()), SelectorType.NAME);
+                findAddress();
+                break;
+            case "postal":
+                selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Postal Order");
+                enterText("details[customerReference]", "AutomationPostalOrderCustomerRef", SelectorType.NAME);
+                enterText("details[poNo]", "123456", SelectorType.NAME);
+                findAddress();
+                break;
+            case "card":
+                customerPaymentModule(bankCardNumber, cardExpiryMonth, cardExpiryYear);
+                break;
+        }
+    }
+
+    public void customerPaymentModule(String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) {
+        waitForTextToBePresent("Card Number*");
+        enterText("//*[@id='scp_cardPage_cardNumber_input']", bankCardNumber, SelectorType.XPATH);
+        enterText("//*[@id='scp_cardPage_expiryDate_input']", cardExpiryMonth, SelectorType.XPATH);
+        enterText("//*[@id='scp_cardPage_expiryDate_input2']", cardExpiryYear, SelectorType.XPATH);
+        enterText("//*[@id='scp_cardPage_csc_input']", "123", SelectorType.XPATH);
+        click("//*[@id='scp_cardPage_buttonsNoBack_continue_button']", SelectorType.XPATH);
+        enterText("//*[@id='scp_additionalInformationPage_cardholderName_input']", "Mr Regression Test", SelectorType.XPATH);
+        click("//*[@id='scp_additionalInformationPage_buttons_continue_button']", SelectorType.XPATH);
+        waitForTextToBePresent("Online Payments");
+        click("//*[@id='scp_confirmationPage_buttons_payment_button']", SelectorType.XPATH);
+        if (isElementPresent("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH)){
+            waitForTextToBePresent("Online Payments");
+            click("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH);
+            waitForTextToBePresent("Payment successful");
+            clickByLinkText("Back");
+            waitForTextToBePresent("There are currently no outstanding fees to pay");
+        }
+    }
+
+    public void findAddress() {
+        enterText("address[searchPostcode][postcode]", "NG1 5FW", SelectorType.NAME);
+        waitAndClick("address[searchPostcode][search]", SelectorType.NAME);
+        waitAndSelectByIndex("", "//*[@id='fee_payment']/fieldset[2]/fieldset/div[3]/select[@name='address[searchPostcode][addresses]']", SelectorType.XPATH, 1);
+        do {
+            retryingFindClick(By.xpath("//*[@id='form-actions[pay]']"));
+        } while (getAttribute("//*[@name='address[addressLine1]']", SelectorType.XPATH, "value").isEmpty());
+    }
+
+    public boolean retryingFindClick(By by) {
+        boolean result = false;
+        int attempts = 0;
+        while (attempts < 10) {
+            try {
+                Browser.getDriver().findElement(by).click();
+                result = true;
+                break;
+            } catch (Exception e) {
+            }
+            attempts++;
+        }
+        return result;
+    }
+
+    public String stripNonAlphanumericCharacters(String value){
+        return value.replaceAll("[^A-Za-z0-9]", "");
+
+    }
+    public String stripAlphaCharacters(String value){
+        return value.replaceAll("[^0-9]", "");
+    }
 }

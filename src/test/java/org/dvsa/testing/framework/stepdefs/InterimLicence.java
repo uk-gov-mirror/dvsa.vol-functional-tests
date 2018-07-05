@@ -14,13 +14,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
-public class InterimLicense extends BasePage implements En {
+public class InterimLicence extends BasePage implements En {
 
     private static String VehicleErrorMessage = "The interim vehicle authority cannot exceed the total vehicle authority";
     private static String noDatesErrorMessage = "Value is required";
     private World world;
 
-    public InterimLicense(World world) throws Exception {
+    public InterimLicence(World world) throws Exception {
         this.world = world;
 
         When("^I have an interim vehicle authority greater than my application vehicle authority$", () -> {
@@ -70,6 +70,8 @@ public class InterimLicense extends BasePage implements En {
         });
         And("^i have logged in to internal$", () -> {
             internalUserLogin();
+        });
+        And("^i search for my licence$", () -> {
             world.genericUtils.searchAndViewApplication();
         });
     }
