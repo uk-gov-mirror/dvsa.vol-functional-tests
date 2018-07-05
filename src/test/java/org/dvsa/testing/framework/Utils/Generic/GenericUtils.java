@@ -411,7 +411,6 @@ public class GenericUtils extends BasePage {
                 customerPaymentModule(bankCardNumber, cardExpiryMonth, cardExpiryYear);
                 break;
         }
-
     }
 
     public void customerPaymentModule(String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) {
