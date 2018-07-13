@@ -16,6 +16,19 @@ The following technologies should be installed on your system.
 To produce the reports run the following command in your terminal
 ``mvn allure:report``
 ## Executing
+<<<<<<< HEAD
 ``mvn clean verify -Denv= -Dbrowser= -DlicenceType= -DbusinessType= -Dni=(Defaults to GB) -DJENKINS_USERNAME= -DJENKINS_PASSWORD= -DdbUsername=
   -DdbPassword=
 ``
+=======
+``mvn clean verify -Denv= -Dbrowser= -DlicenceType= -DbusinessType= -Dni=`` 
+
+The environment and browser properties need to be set otherwise the test will not execute. If only environment and browser properties are set, the harness will
+create by default ``a GB goods standard national limited company licence``
+
+``@PSV-LAST-TM-TRIGGER`` test requires access to the Jenkins api and database, so for this test the following properties 
+``-DJENKINS_USERNAME= -DJENKINS_PASSWORD= -DdbUsername= -DdbPassword=`` need to be set
+
+
+
+>>>>>>> 82e7ffd79be17dcd402317e95ac10c4d5574c3a7

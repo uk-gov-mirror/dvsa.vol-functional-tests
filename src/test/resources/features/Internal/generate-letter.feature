@@ -1,4 +1,5 @@
 @INT
+@Generate-Letter
 Feature: Generate letter pop up should contain letter details
 
   Background:
