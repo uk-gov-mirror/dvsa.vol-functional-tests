@@ -15,9 +15,9 @@ import org.dvsa.testing.lib.pages.enums.SelectorType;
 import java.net.MalformedURLException;
 
 
-public class CheckPresenceOfPDFs extends BasePage implements En {
+public class PDFLinks extends BasePage implements En {
 
-    public CheckPresenceOfPDFs() throws MissingRequiredArgument {
+    public PDFLinks() throws MissingRequiredArgument {
         World world = new World();
 
         Given("^I have a valid \"([^\"]*)\" \"([^\"]*)\" licence$", (String arg0, String arg1) -> {
