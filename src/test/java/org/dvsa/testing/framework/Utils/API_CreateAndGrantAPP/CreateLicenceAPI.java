@@ -96,7 +96,8 @@ public class CreateLicenceAPI {
     }
     private void setLoginId(String loginId) {
         this.loginId = loginId;
-    }public String getLoginId() {
+    }
+    public String getLoginId() {
         return loginId;
     }
     public void setEmailAddress(String emailAddress) {
