@@ -77,6 +77,10 @@ public class CreateLicenceAPI {
         this.noOfVehiclesRequired = noOfVehiclesRequired;
     }
 
+    public void setNiFlag(String niFlag) {
+        this.niFlag = niFlag;
+    }
+
     public int getNoOfVehiclesRequired() {
         return noOfVehiclesRequired;
     }
