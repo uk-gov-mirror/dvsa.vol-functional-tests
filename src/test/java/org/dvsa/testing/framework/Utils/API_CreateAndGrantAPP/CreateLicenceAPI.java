@@ -81,19 +81,9 @@ public class CreateLicenceAPI {
     public void setNoOfVehiclesRequired(int noOfVehiclesRequired) {
         this.noOfVehiclesRequired = noOfVehiclesRequired;
     }
-<<<<<<< HEAD
 
-    public void setNiFlag(String niFlag) {
-        this.niFlag = niFlag;
-    }
-
-    public int getNoOfVehiclesRequired() {
-        return noOfVehiclesRequired;
-    }
-
-=======
     public int getNoOfVehiclesRequired() { return noOfVehiclesRequired; }
->>>>>>> 82e7ffd79be17dcd402317e95ac10c4d5574c3a7
+
     private void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
