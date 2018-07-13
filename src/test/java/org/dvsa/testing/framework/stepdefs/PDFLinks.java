@@ -17,18 +17,14 @@ import java.net.MalformedURLException;
 
 public class CheckPresenceOfPDFs extends BasePage implements En {
 
-
     public CheckPresenceOfPDFs() throws MissingRequiredArgument {
         World world = new World();
-        Browser browser = new Browser();
-        String env = System.getProperty("env");
-        String uri = String.format("https://ssap1.olcs.%s.nonprod.dvsa.aws/auth/login/", env);
 
         Given("^I have a valid \"([^\"]*)\" \"([^\"]*)\" licence$", (String arg0, String arg1) -> {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(arg0);
-            if (arg1 =="NI") {
-                world.createLicence.setNiFlag("Y");
+            if (arg1.equals("NI")) {
+             world.genericUtils.nIAddressBuilder();
             }
             world.genericUtils.createApplication();
             world.genericUtils.payFeesAndGrantLicence();
@@ -43,7 +39,6 @@ public class CheckPresenceOfPDFs extends BasePage implements En {
             clickByLinkText("change your licence");
             waitAndClick("button[name='form-actions[submit]'", SelectorType.CSS);
         });
-
 
         Then("^I open TM(\\d+) Form$", (Integer arg0) -> {
             waitAndClick("//*[@id=\"add\"]", SelectorType.XPATH);

@@ -72,6 +72,7 @@ public class CreateLicenceAPI {
             enforcementArea = "EA-D";
         }
     }
+
     private void setLicenceNumber(String licenceNumber) {
         this.licenceNumber = licenceNumber;
     }
@@ -107,6 +108,30 @@ public class CreateLicenceAPI {
     }
     public String getEmailAddress() {
         return emailAddress;
+    }
+
+    public String getTown() {
+        return town;
+    }
+
+    public void setTown(String town) {
+        this.town = town;
+    }
+
+    public String getPostcode() {
+        return postcode;
+    }
+
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
     private String getForeName() {
         return foreName;
@@ -313,7 +338,7 @@ public class CreateLicenceAPI {
         String operatingCentreAddress = "API_Operating_Centre";
         OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder();
 
-        if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))) {
+        if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))|| (getNiFlag().equals("Y"))) {
             AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(applicationNumber).withNoOfVehiclesRequired(String.valueOf(noOfVehiclesRequired))
                     .withNoOfTrailersRequired(String.valueOf(noOfVehiclesRequired)).withPermission(permissionOption).withAddress(address);
@@ -340,7 +365,7 @@ public class CreateLicenceAPI {
         OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater();
 
         do {
-            if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))) {
+            if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))|| (getNiFlag().equals("Y"))) {
                 updateOperatingCentre.withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
                         .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withVersion(version);
             }

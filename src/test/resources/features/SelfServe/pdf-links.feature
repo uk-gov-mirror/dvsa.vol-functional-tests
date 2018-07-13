@@ -1,7 +1,5 @@
 @OLCS-19510-GB
 Feature: Provide downloadable PDFs to signed-in Self Serve users(GB)
-  Background:
-#    Given I have logged into Selfserve GB
 
   Scenario Outline: Check presence of TM1 Form
     Given I have a valid "public" "<Flag>" licence
