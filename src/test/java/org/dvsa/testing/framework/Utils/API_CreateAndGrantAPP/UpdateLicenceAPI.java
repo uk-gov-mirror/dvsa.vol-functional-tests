@@ -9,6 +9,7 @@ import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
 import org.dvsa.testing.framework.Utils.API_Builders.*;
 import org.dvsa.testing.framework.stepdefs.World;
+import org.dvsa.testing.lib.url.api.URL;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import java.net.MalformedURLException;
@@ -103,7 +104,7 @@ public class UpdateLicenceAPI {
         String licenceId = world.createLicence.getLicenceId();
         String licenceHistoryResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/variation", licenceId)).toString();
 
-        VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withLicenceType("ltyp_si").withAppliedVia("applied_via_phone");
+        VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withAppliedVia("applied_via_phone");
         apiResponse = RestUtils.post(variation, licenceHistoryResource, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
         variationApplicationNumber = String.valueOf(apiResponse.extract().jsonPath().getInt("id.application"));
@@ -242,6 +243,41 @@ public class UpdateLicenceAPI {
     public ValidatableResponse getCaseDetails(String resource, int id) throws MalformedURLException {
         String caseResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("%s/%s", resource,id)).toString();
         apiResponse = RestUtils.get(caseResource, getHeaders());
+        return apiResponse;
+    }
+
+    public ValidatableResponse variationUpdateOperatingCentre() throws MalformedURLException {
+        String noOfVehiclesRequired = "5";
+        String licenceId = world.createLicence.getLicenceId();
+        String updateOperatingCentreResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/variation-operating-centre/%s",licenceId,variationApplicationNumber)).toString();
+        OperatingCentreVariationBuilder updateOperatingCentre = new OperatingCentreVariationBuilder();
+
+        do {
+            if (world.createLicence.getOperatorType().equals("goods") && (!world.createLicence.getLicenceType().equals("special_restricted"))) {
+                updateOperatingCentre.withId(variationApplicationNumber).withApplication(variationApplicationNumber)
+                        .withNoOfVehiclesRequired(noOfVehiclesRequired).withVersion(version);
+            }
+            if (world.createLicence.getOperatorType().equals("public") && (!world.createLicence.getLicenceType().equals("special_restricted"))) {
+                updateOperatingCentre.withId(variationApplicationNumber).withApplication(variationApplicationNumber)
+                        .withNoOfVehiclesRequired(noOfVehiclesRequired).withVersion(version);
+            }
+            if (world.createLicence.getOperatorType().equals("public") && (world.createLicence.getLicenceType().equals("restricted"))) {
+                updateOperatingCentre.withId(variationApplicationNumber).withApplication(variationApplicationNumber)
+                        .withNoOfVehiclesRequired(noOfVehiclesRequired).withVersion(version);
+            }
+            if  (!world.createLicence.getLicenceType().equals("special_restricted")) {
+                apiResponse = RestUtils.put(updateOperatingCentre, updateOperatingCentreResource, getHeaders());
+                version++;
+                if (version > 20) {
+                    version = 1;
+                }
+            }
+        }
+        while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+            System.out.println(apiResponse.extract().response().asString());
+        }
+
         return apiResponse;
     }
 }
