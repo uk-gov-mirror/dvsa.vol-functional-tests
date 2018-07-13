@@ -53,8 +53,8 @@ public class CreateLicenceAPI {
     private String operatorType = System.getProperty("operatorType"); //goods
     private String niFlag = System.getProperty("ni"); //"Y|N"
     private String trafficArea = "D";
-    private String enforcementArea = "EA-D";
-    private String restrictedVehicles = "2";
+    private String enforcementArea;
+    private String restrictedVehicles;
     private String licenceStatus;
 
     private static int version = 1;
@@ -63,141 +63,112 @@ public class CreateLicenceAPI {
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
     public CreateLicenceAPI() throws MissingRequiredArgument {
+        if (licenceType == null){
+            operatorType = "goods";
+            licenceType = "standard_national";
+            businessType = "limited_company";
+            niFlag = "N";
+            trafficArea = "D";
+            enforcementArea = "EA-D";
+        }
     }
-
     private void setLicenceNumber(String licenceNumber) {
         this.licenceNumber = licenceNumber;
     }
-
     public String getLicenceNumber() {
         return licenceNumber;
     }
-
     public void setNoOfVehiclesRequired(int noOfVehiclesRequired) {
         this.noOfVehiclesRequired = noOfVehiclesRequired;
     }
-
-    public int getNoOfVehiclesRequired() {
-        return noOfVehiclesRequired;
-    }
-
+    public int getNoOfVehiclesRequired() { return noOfVehiclesRequired; }
     private void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
-
     public String getApplicationNumber() {
         return applicationNumber;
     }
-
     private void setOrganisationId(String organisationId) {
         this.organisationId = organisationId;
     }
-
     public String getOrganisationId() {
         return organisationId;
     }
-
     private void setLoginId(String loginId) {
         this.loginId = loginId;
     }
-
     public String getLoginId() {
         return loginId;
     }
-
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
-
     public String getEmailAddress() {
         return emailAddress;
     }
-
     private String getForeName() {
         return foreName;
     }
-
     private String getFamilyName() {
         return familyName;
     }
-
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }
-
     public String getPid() {
         return pid;
     }
-
     private void setPid(String pid) {
         this.pid = pid;
     }
-
     private String licenceId;
-
-    public String getLicenceId() {
-        return licenceId;
-    }
-
-    private void setLicenceId(String licenceId) {
-        this.licenceId = licenceId;
-    }
-
+    public String getLicenceId() { return licenceId; }
+    private void setLicenceId(String licenceId) { this.licenceId = licenceId; }
     public String getLicenceType() {
         return licenceType;
     }
-
     public void setLicenceType(String licenceType) {
         this.licenceType = licenceType;
     }
-
     public String getTransportManagerApplicationId() {
         return transportManagerApplicationId;
     }
-
-    private void setTransportManagerApplicationId(String transportManagerApplicationId) {
-        this.transportManagerApplicationId = transportManagerApplicationId;
-    }
-
+    private void setTransportManagerApplicationId(String transportManagerApplicationId) { this.transportManagerApplicationId = transportManagerApplicationId; }
     public void setTrafficArea(String trafficArea) {
         this.trafficArea = trafficArea;
     }
-
+    public String getTrafficArea() { return trafficArea; }
     public String getEnforcementArea() {
         return enforcementArea;
     }
-
     public void setEnforcementArea(String enforcementArea) {
         this.enforcementArea = enforcementArea;
     }
-
     public static String getAdminUserHeader() {
         return adminUserHeader;
     }
-
     public String getOperatorType() {
         return operatorType;
     }
-
     public void setOperatorType(String operatorType) {
         this.operatorType = operatorType;
     }
-
-    public static void setAdminUserHeader(String adminUserHeader) {
-        CreateLicenceAPI.adminUserHeader = adminUserHeader;
-    }
-
+    public static void setAdminUserHeader(String adminUserHeader) { CreateLicenceAPI.adminUserHeader = adminUserHeader; }
     public String getLicenceStatus() {
         return licenceStatus;
     }
-
     public void setLicenceStatus(String licenceStatus) {
         this.licenceStatus = licenceStatus;
     }
+    public String getRestrictedVehicles() { return restrictedVehicles; }
+    public void setRestrictedVehicles(String restrictedVehicles) { this.restrictedVehicles = restrictedVehicles; }
+    public String getBusinessType() { return businessType; }
+    public void setBusinessType(String businessType) { this.businessType = businessType; }
+    public String getNiFlag() { return niFlag; }
+    public void setNiFlag(String niFlag) { this.niFlag = niFlag; }
 
     public void createAndSubmitApp() throws Exception {
         registerUser();
@@ -388,7 +359,7 @@ public class CreateLicenceAPI {
             }
         }
         while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+        if(apiResponse.extract().statusCode() == HttpStatus.SC_OK){
             System.out.println(apiResponse.extract().response().asString());
         }
     }
