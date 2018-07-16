@@ -1,16 +1,11 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.UpdateLicenceAPI;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.hasItems;
 
 public class CreateCase implements En {
 
@@ -25,7 +20,7 @@ public class CreateCase implements En {
             world.updateLicence.createCase();
         });
         Then("^I should be able to view the case details$", () -> {
-           response = world.updateLicence.getCaseDetails("case",world.updateLicence.getCaseId());
+           response = world.updateLicence.getCaseDetails("cases",world.updateLicence.getCaseId());
            assertThat(response.body("description", Matchers.equalTo("Sent through the API"),
                    "caseType.id",  Matchers.equalTo("case_t_lic")));
         });
