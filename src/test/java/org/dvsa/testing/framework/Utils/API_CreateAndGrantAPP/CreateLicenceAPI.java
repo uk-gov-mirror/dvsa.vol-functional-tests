@@ -53,7 +53,7 @@ public class CreateLicenceAPI {
     private String operatorType = System.getProperty("operatorType"); //goods
     private String niFlag = System.getProperty("ni"); //"Y|N"
     private String trafficArea = "D";
-    private String enforcementArea;
+    private String enforcementArea = "EA-D";
     private String restrictedVehicles;
     private String licenceStatus;
 
