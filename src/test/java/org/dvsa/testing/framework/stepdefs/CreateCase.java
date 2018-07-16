@@ -1,16 +1,11 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.UpdateLicenceAPI;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.hasItems;
 
 public class CreateCase implements En {
 
