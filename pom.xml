@@ -29,7 +29,7 @@
         <allure-mvn-version>2.9</allure-mvn-version>
         <cucable-plugin.version>1.0.0</cucable-plugin.version>
         <build.helper.plugin.version>3.0.0</build.helper.plugin.version>
-        <maven.failsafe.plugin.version>2.20.1</maven.failsafe.plugin.version>
+        <maven.failsafe.plugin.version>2.22.0</maven.failsafe.plugin.version>
     </properties>
 
     <repositories>

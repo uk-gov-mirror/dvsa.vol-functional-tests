@@ -4,10 +4,10 @@ import activesupport.system.out.Output;
 import org.jetbrains.annotations.NotNull;
 
 public enum BusinessType {
-    org_t_rc("limited company"),
-    org_t_st("sole trader"),
+    org_t_rc("limited_company"),
+    org_t_st("sole_trader"),
     org_t_p("partnership"),
-    org_t_llp("limited partnership"),
+    org_t_llp("limited_partnership"),
     org_t_pa("other");
 
     private String name;
@@ -42,7 +42,6 @@ public enum BusinessType {
             default:
                 throw new IllegalArgumentException(Output.printColoredLog("[ERROR] Unable to convert " + businessType + " into a BusinessType enum"));
         }
-
         return businessTypeEnum;
     }
 }

@@ -240,7 +240,6 @@ public class GenericUtils extends BasePage {
             enterField(nameAttribute("input", "confirmPassword"), "Password1");
             click(nameAttribute("input", "submit"));
         }
-
     }
 
     public void getLicenceTrafficArea() throws MalformedURLException {

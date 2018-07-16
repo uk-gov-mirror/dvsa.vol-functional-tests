@@ -9,8 +9,10 @@ import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
 import org.dvsa.testing.framework.Utils.API_Builders.*;
 import org.dvsa.testing.framework.stepdefs.World;
+import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.url.api.URL;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
+import org.junit.Test;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -19,11 +21,12 @@ import java.util.List;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 
-public class UpdateLicenceAPI {
+public class UpdateLicenceAPI extends BasePage {
     private ValidatableResponse apiResponse;
     private static String variationApplicationNumber;
     private World world;
     private int caseId;
+    public String adminUserEmailAddress = "adminUser@dvsa.vol";
 
     public int getCaseId() {
         return caseId;
@@ -277,7 +280,25 @@ public class UpdateLicenceAPI {
         if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
             System.out.println(apiResponse.extract().response().asString());
         }
-
         return apiResponse;
+    }
+
+    public void createInternalAdminUser() throws MalformedURLException {
+        String loginId = "volAdminUser1";
+        List<String> roles = new ArrayList<>();
+        roles.add("internal-admin");
+        String team = "1";
+        String userType = "internal";
+
+        String internalAdminUserResource = org.dvsa.testing.lib.url.api.URL.build(env, "user/internal").toString();
+
+        AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1("AXIS Building").withTown("Nottingham").withPostcode("LS28 5LY").withCountryCode("GB");
+        PersonBuilder personBuilder = new PersonBuilder().withForename("Kish").withFamilyName("Ann").withBirthDate(getPastYear(30)+"-"+ getCurrentMonth() +"-"+getCurrentDayOfMonth());
+
+        ContactDetailsBuilder contactDetails = new ContactDetailsBuilder().withEmailAddress(adminUserEmailAddress).withAddress(addressBuilder).withPerson(personBuilder);
+        CreateInternalAdminUser internalAdminUser = new CreateInternalAdminUser().withContactDetails(contactDetails).withLoginId(loginId).withRoles(roles).withTeam(team).withUserType(userType);
+        apiResponse = RestUtils.post(internalAdminUser, internalAdminUserResource, getHeaders());
+
+        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
     }
 }

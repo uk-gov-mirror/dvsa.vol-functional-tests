@@ -25,7 +25,7 @@ public class CreateCase implements En {
             world.updateLicence.createCase();
         });
         Then("^I should be able to view the case details$", () -> {
-           response = world.updateLicence.getCaseDetails("case",world.updateLicence.getCaseId());
+           response = world.updateLicence.getCaseDetails("cases",world.updateLicence.getCaseId());
            assertThat(response.body("description", Matchers.equalTo("Sent through the API"),
                    "caseType.id",  Matchers.equalTo("case_t_lic")));
         });
