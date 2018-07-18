@@ -7,6 +7,7 @@ import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.string.Str;
 import activesupport.system.Properties;
+import cucumber.api.Scenario;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.Utils.API_Builders.GenericBuilder;
@@ -222,6 +223,52 @@ public class GenericUtils extends BasePage {
         }
     }
 
+    private String emailAddress() {
+        Scenario scenario = null;
+        String loginEmailAddress;
+        if (scenario.getName().contains("internal system admin user")) {
+            loginEmailAddress = world.updateLicence.adminUserEmailAddress;
+        } else {
+            loginEmailAddress = world.createLicence.getEmailAddress();
+        }
+        return loginEmailAddress;
+    }
+
+    private String loginId() {
+        Scenario scenario = null;
+        String loginId;
+
+        if (scenario.getName().contains("internal system admin user")) {
+            loginId = world.updateLicence.adminUserLogin;
+        } else {
+            loginId = world.createLicence.getLoginId();
+        }
+        return loginId;
+    }
+
+    public void newAdminUserLogin() throws MissingRequiredArgument, MalformedURLException {
+        String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
+
+        if (Browser.isInitialised()) {
+            //Quit Browser and open a new window
+            Browser.quit();
+        }
+        Browser.go(myURL);
+        String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
+
+        if (isTextPresent("Username", 60))
+            Login.signIn(world.updateLicence.adminUserLogin, password);
+        if (isTextPresent("There was a problem signing in", 60)) {
+            Login.signIn(world.updateLicence.adminUserLogin, "Password1");
+            if (isTextPresent("Current password", 60)) {
+                enterField(nameAttribute("input", "oldPassword"), password);
+                enterField(nameAttribute("input", "newPassword"), "Password1");
+                enterField(nameAttribute("input", "confirmPassword"), "Password1");
+                click(nameAttribute("input", "submit"));
+            }
+        }
+    }
+
     public void externalUserLogin() throws MalformedURLException, MissingRequiredArgument {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
 
@@ -231,6 +278,7 @@ public class GenericUtils extends BasePage {
         }
         Browser.go(myURL);
         String password = S3.getTempPassword(world.createLicence.getEmailAddress());
+        //check if user exists
 
         if (isTextPresent("Username", 60))
             Login.signIn(world.createLicence.getLoginId(), password);
@@ -423,7 +471,7 @@ public class GenericUtils extends BasePage {
         click("//*[@id='scp_additionalInformationPage_buttons_continue_button']", SelectorType.XPATH);
         waitForTextToBePresent("Online Payments");
         click("//*[@id='scp_confirmationPage_buttons_payment_button']", SelectorType.XPATH);
-        if (isElementPresent("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH)){
+        if (isElementPresent("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH)) {
             waitForTextToBePresent("Online Payments");
             click("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH);
             waitForTextToBePresent("Payment successful");
@@ -456,11 +504,12 @@ public class GenericUtils extends BasePage {
         return result;
     }
 
-    public String stripNonAlphanumericCharacters(String value){
+    public String stripNonAlphanumericCharacters(String value) {
         return value.replaceAll("[^A-Za-z0-9]", "");
 
     }
-    public String stripAlphaCharacters(String value){
+
+    public String stripAlphaCharacters(String value) {
         return value.replaceAll("[^0-9]", "");
     }
 }

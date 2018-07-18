@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "loginId",
+        "adminUserLogin",
         "contactDetails",
         "organisationName",
         "businessType"
 })
 public class SelfServeUserRegistrationDetailsBuilder {
 
-    @JsonProperty("loginId")
+    @JsonProperty("adminUserLogin")
     private String loginId;
     @JsonProperty("contactDetails")
     private ContactDetailsBuilder contactDetailsBuilder;
@@ -22,12 +22,12 @@ public class SelfServeUserRegistrationDetailsBuilder {
     @JsonProperty("businessType")
     private String businessType;
 
-    @JsonProperty("loginId")
+    @JsonProperty("adminUserLogin")
     public String getLoginId() {
         return loginId;
     }
 
-    @JsonProperty("loginId")
+    @JsonProperty("adminUserLogin")
     public void setLoginId(String loginId) {
         this.loginId = loginId;
     }
@@ -84,7 +84,7 @@ public class SelfServeUserRegistrationDetailsBuilder {
 
     @Override
     public String toString() {
-        return "loginId:" + getLoginId()
+        return "adminUserLogin:" + getLoginId()
                 + ",contactDetails:" + getContactDetailsBuilder()
                 + ",organisationName:" + getOrganisationName()
                 + ",businessType:" + getBusinessType();

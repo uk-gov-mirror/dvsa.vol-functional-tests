@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "contactDetails",
         "userType",
-        "loginId",
+        "adminUserLogin",
         "team",
         "roles"
 })
