@@ -290,6 +290,15 @@ public class GenericUtils extends BasePage {
         }
     }
 
+    public void nIAddressBuilder() {
+        world.createLicence.setEnforcementArea("EA-N");
+        world.createLicence.setTrafficArea("N");
+        world.createLicence.setTown("Belfast");
+        world.createLicence.setPostcode("BT28HQ");
+        world.createLicence.setCountryCode("NI");
+        world.createLicence.setNiFlag("Y");
+    }
+
     public void getLicenceTrafficArea() throws MalformedURLException {
         Headers.headers.put("x-pid", world.createLicence.getAdminUserHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
