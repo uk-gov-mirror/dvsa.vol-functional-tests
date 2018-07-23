@@ -34,7 +34,7 @@ public class RemoveTM extends BasePage implements En {
             world.genericUtils.createApplication();
         });
         When("^the transport manager has been removed by an internal user$", () -> {
-            internalUserLogin();
+            world.genericUtils.createAdminUser();
             world.genericUtils.searchAndViewApplication();
             world.genericUtils.removeInternalTransportManager();
         });

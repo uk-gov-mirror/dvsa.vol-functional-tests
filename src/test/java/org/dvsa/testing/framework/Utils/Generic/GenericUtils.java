@@ -7,7 +7,6 @@ import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.string.Str;
 import activesupport.system.Properties;
-import cucumber.api.Scenario;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.Utils.API_Builders.GenericBuilder;
@@ -61,10 +60,6 @@ public class GenericUtils extends BasePage {
     private World world;
     private ValidatableResponse apiResponse;
     private String registrationNumber;
-    private static final String DA_USER = "usr271";
-    private static final String DA_PASSWORD = "password";
-    private static final String USER = "usr336";
-    private static final String USER_PASSWORD = "Password1";
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
     private String trafficAreaName;
     private static String variationApplicationNumber;
@@ -207,65 +202,29 @@ public class GenericUtils extends BasePage {
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
     }
 
-    public static void internalUserLogin() throws MissingRequiredArgument, MalformedURLException {
-        String url = URL.build(ApplicationType.INTERNAL, env).toString();
-
-        if (Browser.isInitialised()) {
-            //Quit Browser and open a new window
-            Browser.quit();
-        }
-        Browser.go(url);
-
-        if (Browser.getURL().contains("da")) {
-            Login.signIn(DA_USER, DA_PASSWORD);
-        } else {
-            Login.signIn(USER, USER_PASSWORD);
-        }
-    }
-
-    private String emailAddress() {
-        Scenario scenario = null;
-        String loginEmailAddress;
-        if (scenario.getName().contains("internal system admin user")) {
-            loginEmailAddress = world.updateLicence.adminUserEmailAddress;
-        } else {
-            loginEmailAddress = world.createLicence.getEmailAddress();
-        }
-        return loginEmailAddress;
-    }
-
-    private String loginId() {
-        Scenario scenario = null;
-        String loginId;
-
-        if (scenario.getName().contains("internal system admin user")) {
-            loginId = world.updateLicence.adminUserLogin;
-        } else {
-            loginId = world.createLicence.getLoginId();
-        }
-        return loginId;
-    }
-
-    public void newAdminUserLogin() throws MissingRequiredArgument, MalformedURLException {
+    public void internalAdminUserLogin(boolean userStatus) throws MissingRequiredArgument, MalformedURLException {
         String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
+        String newPassword = "Password1";
+        String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
 
         if (Browser.isInitialised()) {
             //Quit Browser and open a new window
             Browser.quit();
         }
         Browser.go(myURL);
-        String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
 
-        if (isTextPresent("Username", 60))
+        if (userStatus && Browser.getURL().contains("da")) {
             Login.signIn(world.updateLicence.adminUserLogin, password);
-        if (isTextPresent("There was a problem signing in", 60)) {
-            Login.signIn(world.updateLicence.adminUserLogin, "Password1");
-            if (isTextPresent("Current password", 60)) {
-                enterField(nameAttribute("input", "oldPassword"), password);
-                enterField(nameAttribute("input", "newPassword"), "Password1");
-                enterField(nameAttribute("input", "confirmPassword"), "Password1");
-                click(nameAttribute("input", "submit"));
-            }
+        } else {
+            Login.signIn(world.updateLicence.adminUserLogin, newPassword);
+        }
+        if (isTextPresent("Username", 60))
+            Login.signIn(world.updateLicence.adminUserLogin, newPassword);
+        if (isTextPresent("Current password", 60)) {
+            enterField(nameAttribute("input", "oldPassword"), password);
+            enterField(nameAttribute("input", "newPassword"), newPassword);
+            enterField(nameAttribute("input", "confirmPassword"), newPassword);
+            click(nameAttribute("input", "submit"));
         }
     }
 
@@ -290,6 +249,12 @@ public class GenericUtils extends BasePage {
         }
     }
 
+    public void createAdminUser() throws MalformedURLException, MissingRequiredArgument {
+        apiResponse = world.updateLicence.createInternalAdminUser();
+        boolean itsTrue = apiResponse.extract().response().asString().contains("ERR_USERNAME_EXISTS");
+        world.genericUtils.internalAdminUserLogin(itsTrue);
+    }
+
     public void nIAddressBuilder() {
         world.createLicence.setEnforcementArea("EA-N");
         world.createLicence.setTrafficArea("N");
@@ -300,7 +265,7 @@ public class GenericUtils extends BasePage {
     }
 
     public void getLicenceTrafficArea() throws MalformedURLException {
-        Headers.headers.put("x-pid", world.createLicence.getAdminUserHeader());
+        Headers.getHeaders().put("x-pid", world.createLicence.getAdminUserHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());

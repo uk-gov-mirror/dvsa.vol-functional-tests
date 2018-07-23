@@ -37,7 +37,7 @@ public class ESBRupload extends BasePage implements En {
             assertTrue(isTextPresent("short notice", 60));
         });
         And("^A short notice tab should be displayed in internal$", () -> {
-            internalUserLogin();
+            world.genericUtils.createAdminUser();
             selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
             do {
                 SearchNavBar.search(world.createLicence.getLicenceNumber());
@@ -67,7 +67,7 @@ public class ESBRupload extends BasePage implements En {
             assertTrue(isTextPresent("Short notice", 30));
         });
         And("^A short notice tab should not be displayed in internal$", () -> {
-            internalUserLogin();
+            world.genericUtils.createAdminUser();
             selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
             do {
                 SearchNavBar.search(world.createLicence.getLicenceNumber());

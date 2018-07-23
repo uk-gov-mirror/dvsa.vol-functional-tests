@@ -26,7 +26,7 @@ public class UpdateLicenceAPI extends BasePage {
     private World world;
     private int caseId;
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
-    public String adminUserLogin = "volAdminUser01";
+    public String adminUserLogin = "volAdminUser05";
 
 
     public void setAdminUserLogin(String adminUserLogin) { this.adminUserLogin = adminUserLogin; }
@@ -286,7 +286,7 @@ public class UpdateLicenceAPI extends BasePage {
         return apiResponse;
     }
 
-    public void createInternalAdminUser() throws MalformedURLException {
+    public ValidatableResponse createInternalAdminUser() throws MalformedURLException {
         List<String> roles = new ArrayList<>();
         roles.add("internal-admin");
         String team = "1";
@@ -302,8 +302,9 @@ public class UpdateLicenceAPI extends BasePage {
         CreateInternalAdminUser internalAdminUser = new CreateInternalAdminUser().withContactDetails(contactDetails).withLoginId(adminUserLogin).withRoles(roles).withTeam(team).withUserType(userType);
         apiResponse = RestUtils.post(internalAdminUser, internalAdminUserResource, getHeaders());
 
-        if(apiResponse.extract().statusCode() == HttpStatus.SC_CREATED){
+        if(apiResponse.extract().statusCode() != HttpStatus.SC_CREATED){
             System.out.println("+++ERROR+++" + apiResponse.extract().response().asString());
         }
+        return apiResponse;
     }
 }
