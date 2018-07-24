@@ -1,19 +1,11 @@
 package org.dvsa.testing.framework.stepdefs;
 
-
-
 import activesupport.MissingRequiredArgument;
-import activesupport.aws.s3.S3;
 
-import activesupport.driver.Browser;
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
-
-import java.net.MalformedURLException;
-
 
 public class PDFLinks extends BasePage implements En {
 
@@ -56,7 +48,5 @@ public class PDFLinks extends BasePage implements En {
         Then("^I open Maintenance Form$", () -> {
            checkTextisPresent("sample contract");
         });
-
     }
 }
-

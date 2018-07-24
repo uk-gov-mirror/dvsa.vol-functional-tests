@@ -60,10 +60,6 @@ public class GenericUtils extends BasePage {
     private World world;
     private ValidatableResponse apiResponse;
     private String registrationNumber;
-    private static final String DA_USER = "usr271";
-    private static final String DA_PASSWORD = "password";
-    private static final String USER = "usr336";
-    private static final String USER_PASSWORD = "Password1";
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
     private String trafficAreaName;
     private static String variationApplicationNumber;
@@ -206,19 +202,29 @@ public class GenericUtils extends BasePage {
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
     }
 
-    public static void internalUserLogin() throws MissingRequiredArgument, MalformedURLException {
-        String url = URL.build(ApplicationType.INTERNAL, env).toString();
+    public void internalAdminUserLogin(boolean userStatus) throws MissingRequiredArgument, MalformedURLException {
+        String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
+        String newPassword = "Password1";
+        String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
 
         if (Browser.isInitialised()) {
             //Quit Browser and open a new window
             Browser.quit();
         }
-        Browser.go(url);
+        Browser.go(myURL);
 
-        if (Browser.getURL().contains("da")) {
-            Login.signIn(DA_USER, DA_PASSWORD);
+        if (userStatus && Browser.getURL().contains("da")) {
+            Login.signIn(world.updateLicence.adminUserLogin, password);
         } else {
-            Login.signIn(USER, USER_PASSWORD);
+            Login.signIn(world.updateLicence.adminUserLogin, newPassword);
+        }
+        if (isTextPresent("Username", 60))
+            Login.signIn(world.updateLicence.adminUserLogin, newPassword);
+        if (isTextPresent("Current password", 60)) {
+            enterField(nameAttribute("input", "oldPassword"), password);
+            enterField(nameAttribute("input", "newPassword"), newPassword);
+            enterField(nameAttribute("input", "confirmPassword"), newPassword);
+            click(nameAttribute("input", "submit"));
         }
     }
 
@@ -231,6 +237,7 @@ public class GenericUtils extends BasePage {
         }
         Browser.go(myURL);
         String password = S3.getTempPassword(world.createLicence.getEmailAddress());
+        //check if user exists
 
         if (isTextPresent("Username", 60))
             Login.signIn(world.createLicence.getLoginId(), password);
@@ -240,7 +247,12 @@ public class GenericUtils extends BasePage {
             enterField(nameAttribute("input", "confirmPassword"), "Password1");
             click(nameAttribute("input", "submit"));
         }
+    }
 
+    public void createAdminUser() throws MalformedURLException, MissingRequiredArgument {
+        apiResponse = world.updateLicence.createInternalAdminUser();
+        boolean itsTrue = apiResponse.extract().response().asString().contains("ERR_USERNAME_EXISTS");
+        world.genericUtils.internalAdminUserLogin(itsTrue);
     }
 
     public void nIAddressBuilder() {
@@ -253,7 +265,7 @@ public class GenericUtils extends BasePage {
     }
 
     public void getLicenceTrafficArea() throws MalformedURLException {
-        Headers.headers.put("x-pid", world.createLicence.getAdminUserHeader());
+        Headers.getHeaders().put("x-pid", world.createLicence.getAdminUserHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
@@ -433,7 +445,7 @@ public class GenericUtils extends BasePage {
         click("//*[@id='scp_additionalInformationPage_buttons_continue_button']", SelectorType.XPATH);
         waitForTextToBePresent("Online Payments");
         click("//*[@id='scp_confirmationPage_buttons_payment_button']", SelectorType.XPATH);
-        if (isElementPresent("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH)){
+        if (isElementPresent("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH)) {
             waitForTextToBePresent("Online Payments");
             click("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH);
             waitForTextToBePresent("Payment successful");
@@ -466,11 +478,12 @@ public class GenericUtils extends BasePage {
         return result;
     }
 
-    public String stripNonAlphanumericCharacters(String value){
+    public String stripNonAlphanumericCharacters(String value) {
         return value.replaceAll("[^A-Za-z0-9]", "");
 
     }
-    public String stripAlphaCharacters(String value){
+
+    public String stripAlphaCharacters(String value) {
         return value.replaceAll("[^0-9]", "");
     }
 }

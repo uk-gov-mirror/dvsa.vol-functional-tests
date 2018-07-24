@@ -2,7 +2,7 @@ package org.dvsa.testing.framework.Utils.API_Headers;
 
 import java.util.HashMap;
 
-public class Headers {
+public class Headers{
 
     public static HashMap<String, String> headers = new HashMap<>();
 

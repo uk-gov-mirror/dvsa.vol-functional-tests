@@ -43,7 +43,6 @@ public class GenerateLastTMLetter extends BasePage implements En {
                 int columnValue = Integer.parseInt(resultSet.getString("opt_out_tm_letter"));
                 assertEquals(0, columnValue);
             }
-
         });
         Given("^the licence status is \"([^\"]*)\"$", (String arg0) -> {
             world.genericUtils.updateLicenceStatus(world.createLicence.getLicenceId(), arg0);
