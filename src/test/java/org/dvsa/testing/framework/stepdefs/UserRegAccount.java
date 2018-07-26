@@ -60,7 +60,7 @@ public class UserRegAccount extends BasePage implements En {
         });
 
         After(new String[]{"@SS"}, (Scenario scenario) -> {
-            Hooks hooks = null;
+            Hooks hooks = new Hooks();
             hooks.attach();
         });
     }

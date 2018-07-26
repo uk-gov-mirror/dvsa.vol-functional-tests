@@ -11,8 +11,7 @@ public class CreateAdminUser implements En {
             apiResponse = world.updateLicence.createInternalAdminUser();
         });
         Then("^I should be able to login with my new credentials$", () -> {
-            boolean itsTrue = apiResponse.extract().response().asString().contains("ERR_USERNAME_EXISTS");
-            world.genericUtils.internalAdminUserLogin(itsTrue);
+            world.genericUtils.internalAdminUserLogin();
         });
     }
 }
