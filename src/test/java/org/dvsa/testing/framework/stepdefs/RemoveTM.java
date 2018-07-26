@@ -100,10 +100,5 @@ public class RemoveTM extends BasePage implements En {
             isLinkPresent("You must select an option", 60);
         });
 
-        After(new String[]{"@INT"}, (Scenario scenario) -> {
-            String[] args = new String[0];
-            Hooks hooks = new Hooks();
-            hooks.main(args);
-        });
     }
 }

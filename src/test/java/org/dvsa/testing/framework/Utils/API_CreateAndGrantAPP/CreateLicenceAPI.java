@@ -54,7 +54,7 @@ public class CreateLicenceAPI {
     private String niFlag = System.getProperty("ni"); //"Y|N"
     private String trafficArea = "D";
     private String enforcementArea = "EA-D";
-    private String restrictedVehicles;
+    private String restrictedVehicles = "2";
     private String licenceStatus;
 
     private static int version = 1;
