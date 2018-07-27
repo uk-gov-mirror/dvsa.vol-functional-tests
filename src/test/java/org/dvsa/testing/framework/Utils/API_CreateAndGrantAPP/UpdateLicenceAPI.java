@@ -28,6 +28,9 @@ public class UpdateLicenceAPI extends BasePage {
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
     public String adminUserLogin = "volAdminUser05";
 
+    public static String getVariationApplicationNumber() { return variationApplicationNumber; }
+
+    public static void setVariationApplicationNumber(String variationApplicationNumber) { UpdateLicenceAPI.variationApplicationNumber = variationApplicationNumber; }
 
     public void setAdminUserLogin(String adminUserLogin) { this.adminUserLogin = adminUserLogin; }
 
@@ -113,7 +116,7 @@ public class UpdateLicenceAPI extends BasePage {
         VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withAppliedVia("applied_via_phone");
         apiResponse = RestUtils.post(variation, licenceHistoryResource, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
-        variationApplicationNumber = String.valueOf(apiResponse.extract().jsonPath().getInt("id.application"));
+        setVariationApplicationNumber(String.valueOf(apiResponse.extract().jsonPath().getInt("id.application")));
     }
 
     public void updateLicenceType(String licenceId) throws MalformedURLException {
@@ -307,4 +310,5 @@ public class UpdateLicenceAPI extends BasePage {
         }
         return apiResponse;
     }
+
 }
