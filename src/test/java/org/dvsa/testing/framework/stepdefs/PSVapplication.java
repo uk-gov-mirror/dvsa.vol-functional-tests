@@ -24,11 +24,5 @@ public class PSVapplication implements En {
                 world.genericUtils.createApplication();
             }
         });
-
-        After(new String[]{"@INT"}, (Scenario scenario) -> {
-            String[] args = new String[0];
-            Hooks hooks = new Hooks();
-            hooks.main(args);
-        });
     }
 }

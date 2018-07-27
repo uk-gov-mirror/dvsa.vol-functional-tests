@@ -2,6 +2,7 @@ package org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP;
 
 import activesupport.MissingRequiredArgument;
 import activesupport.http.RestUtils;
+import activesupport.string.Str;
 import activesupport.system.Properties;
 import enums.LicenceType;
 import io.restassured.response.ValidatableResponse;
@@ -26,7 +27,7 @@ public class UpdateLicenceAPI extends BasePage {
     private World world;
     private int caseId;
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
-    public String adminUserLogin = "volAdminUser05";
+    public String adminUserLogin = String.format("volAdminUser"+"%s",Str.randomWord(3));
 
 
     public void setAdminUserLogin(String adminUserLogin) { this.adminUserLogin = adminUserLogin; }

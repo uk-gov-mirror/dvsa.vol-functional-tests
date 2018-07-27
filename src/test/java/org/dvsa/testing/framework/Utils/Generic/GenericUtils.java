@@ -195,14 +195,14 @@ public class GenericUtils extends BasePage {
         return myDate;
     }
 
-    public static void zipFolder() {
+    private static void zipFolder() {
         /*
         / Uses Open source util zt-zip https://github.com/zeroturnaround/zt-zip
          */
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
     }
 
-    public void internalAdminUserLogin(boolean userStatus) throws MissingRequiredArgument, MalformedURLException {
+    public void internalAdminUserLogin() throws MissingRequiredArgument, MalformedURLException {
         String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
         String newPassword = "Password1";
         String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
@@ -212,14 +212,13 @@ public class GenericUtils extends BasePage {
             Browser.quit();
         }
         Browser.go(myURL);
+        System.out.println(password);
 
-        if (userStatus && Browser.getURL().contains("da")) {
+        if (Browser.getURL().contains("da")) {
             Login.signIn(world.updateLicence.adminUserLogin, password);
-        } else {
-            Login.signIn(world.updateLicence.adminUserLogin, newPassword);
         }
         if (isTextPresent("Username", 60))
-            Login.signIn(world.updateLicence.adminUserLogin, newPassword);
+            Login.signIn(world.updateLicence.adminUserLogin, password);
         if (isTextPresent("Current password", 60)) {
             enterField(nameAttribute("input", "oldPassword"), password);
             enterField(nameAttribute("input", "newPassword"), newPassword);
@@ -251,8 +250,7 @@ public class GenericUtils extends BasePage {
 
     public void createAdminUser() throws MalformedURLException, MissingRequiredArgument {
         apiResponse = world.updateLicence.createInternalAdminUser();
-        boolean itsTrue = apiResponse.extract().response().asString().contains("ERR_USERNAME_EXISTS");
-        world.genericUtils.internalAdminUserLogin(itsTrue);
+        world.genericUtils.internalAdminUserLogin();
     }
 
     public void nIAddressBuilder() {
@@ -434,7 +432,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void customerPaymentModule(String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) {
+    private void customerPaymentModule(String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) {
         waitForTextToBePresent("Card Number*");
         enterText("//*[@id='scp_cardPage_cardNumber_input']", bankCardNumber, SelectorType.XPATH);
         enterText("//*[@id='scp_cardPage_expiryDate_input']", cardExpiryMonth, SelectorType.XPATH);
@@ -454,7 +452,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void findAddress() {
+    private void findAddress() {
         enterText("address[searchPostcode][postcode]", "NG1 5FW", SelectorType.NAME);
         waitAndClick("address[searchPostcode][search]", SelectorType.NAME);
         waitAndSelectByIndex("", "//*[@id='fee_payment']/fieldset[2]/fieldset/div[3]/select[@name='address[searchPostcode][addresses]']", SelectorType.XPATH, 1);
@@ -463,7 +461,7 @@ public class GenericUtils extends BasePage {
         } while (getAttribute("//*[@name='address[addressLine1]']", SelectorType.XPATH, "value").isEmpty());
     }
 
-    public boolean retryingFindClick(By by) {
+    private boolean retryingFindClick(By by) {
         boolean result = false;
         int attempts = 0;
         while (attempts < 10) {
