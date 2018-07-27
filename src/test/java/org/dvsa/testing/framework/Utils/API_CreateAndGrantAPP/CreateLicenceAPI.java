@@ -54,7 +54,7 @@ public class CreateLicenceAPI {
     private String niFlag = System.getProperty("ni"); //"Y|N"
     private String trafficArea = "D";
     private String enforcementArea = "EA-D";
-    private String restrictedVehicles;
+    private String restrictedVehicles = "2";
     private String licenceStatus;
 
     private static int version = 1;
@@ -500,7 +500,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addFinancialHistory() throws MalformedURLException {
+    public ValidatableResponse addFinancialHistory() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -523,6 +523,7 @@ public class CreateLicenceAPI {
         if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
             System.out.println(apiResponse.extract().response().asString());
         }
+        return apiResponse;
     }
 
     public void addApplicationSafetyAndComplianceDetails() throws MalformedURLException {
@@ -569,7 +570,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addConvictionsDetails() throws MalformedURLException {
+    public ValidatableResponse addConvictionsDetails() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -589,6 +590,7 @@ public class CreateLicenceAPI {
         if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
             System.out.println(apiResponse.extract().response().asString());
         }
+        return apiResponse;
     }
 
     public void addLicenceHistory() throws MalformedURLException {
