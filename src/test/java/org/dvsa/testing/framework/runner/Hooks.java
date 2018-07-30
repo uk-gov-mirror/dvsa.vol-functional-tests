@@ -16,6 +16,7 @@ public class Hooks {
     public void main(String[] args) {
         attach();
         teardown();
+        closeBrowser();
     }
 
     private void createDirectory() {
@@ -56,9 +57,11 @@ public class Hooks {
                 e.printStackTrace();
             }
         }
+    }
 
-//        if (Browser.isInitialised()) {
-//            Browser.quit();
-//        }
+    private void closeBrowser() {
+        if (Browser.isInitialised()) {
+            Browser.quit();
+        }
     }
 }

@@ -204,7 +204,7 @@ public class GenericUtils extends BasePage {
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
     }
 
-    public void internalAdminUserLogin(boolean userStatus) throws MissingRequiredArgument, MalformedURLException, IllegalBrowserException, MissingDriverException {
+    public void internalAdminUserLogin() throws MissingRequiredArgument, MalformedURLException, IllegalBrowserException {
         String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
         String newPassword = "Password1";
         String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
@@ -217,11 +217,8 @@ public class GenericUtils extends BasePage {
 
         System.out.println(world.updateLicence.adminUserLogin + "UserLogin");
 
-        if (userStatus && activesupport.driver.Browser.navigate().getCurrentUrl().contains("da")) {
-            Login.signIn(world.updateLicence.adminUserLogin, password);
-        } else {
-            Login.signIn(world.updateLicence.adminUserLogin, newPassword);
-        }
+        if (activesupport.driver.Browser.navigate().getCurrentUrl().contains("da")) {
+            Login.signIn(world.updateLicence.adminUserLogin, password);}
         if (isTextPresent("Username", 60))
             Login.signIn(world.updateLicence.adminUserLogin, newPassword);
         if (isTextPresent("Current password", 60)) {
@@ -232,7 +229,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void externalUserLogin() throws MalformedURLException, MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
+    public void externalUserLogin() throws MalformedURLException, MissingRequiredArgument, IllegalBrowserException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
 //
 //        if (Browser.isBrowserOpen()) {
@@ -254,10 +251,10 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void createAdminUser() throws MalformedURLException, MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
+    public void createAdminUser() throws MalformedURLException, MissingRequiredArgument, IllegalBrowserException {
         apiResponse = world.updateLicence.createInternalAdminUser();
         boolean itsTrue = apiResponse.extract().response().asString().contains("ERR_USERNAME_EXISTS");
-        world.genericUtils.internalAdminUserLogin(itsTrue);
+        world.genericUtils.internalAdminUserLogin();
     }
 
     public void nIAddressBuilder() {
@@ -309,7 +306,7 @@ public class GenericUtils extends BasePage {
         System.out.println("--Licence-Number: " + world.createLicence.getLicenceNumber() + "--");
     }
 
-    public void uploadAndSubmitESBR(String state, int interval) throws MissingRequiredArgument, MalformedURLException, IllegalBrowserException, MissingDriverException {
+    public void uploadAndSubmitESBR(String state, int interval) throws MissingRequiredArgument, MalformedURLException, IllegalBrowserException {
         // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
         modifyXML(state, interval);
         zipFolder();
