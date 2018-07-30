@@ -59,11 +59,5 @@ public class GenerateLastTMLetter extends BasePage implements En {
 
             Jenkins.trigger(Jenkins.Job.BATCH_RUN_CLI, jenkinsParams);
         });
-
-        After(new String[]{"@INT"}, (Scenario scenario) -> {
-           String[] args = new String[0];
-           Hooks hooks = new Hooks();
-           hooks.main(args);
-        });
     }
 }

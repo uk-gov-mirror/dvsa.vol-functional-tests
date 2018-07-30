@@ -86,7 +86,7 @@ public class RemoveTM extends BasePage implements En {
 
         });
         When("^i create a variation$", () -> {
-            world.updateLicence.createVariation();
+            world.updateLicence.createVariation(null);
         });
         And("^user attempts to remove the last TM without selecting an option$", () -> {
             waitForTextToBePresent(alertHeaderValue);
@@ -100,11 +100,6 @@ public class RemoveTM extends BasePage implements En {
             isLinkPresent("You must select an option", 60);
         });
 
-        After(new String[]{"@INT"}, (Scenario scenario) -> {
-            String[] args = new String[0];
-            Hooks hooks = new Hooks();
-            hooks.main(args);
-        });
         And("^i update the licence type$", () -> {
             world.updateLicence.updateLicenceType(world.genericUtils.createApp().getLicenceId());
         });
