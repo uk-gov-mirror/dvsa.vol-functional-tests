@@ -12,6 +12,7 @@ import org.dvsa.testing.framework.Utils.API_Builders.*;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.framework.stepdefs.World;
 import org.dvsa.testing.lib.pages.BasePage;
+import org.dvsa.testing.lib.url.api.URL;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import java.net.MalformedURLException;
@@ -28,7 +29,11 @@ public class UpdateLicenceAPI extends BasePage {
     private int caseId;
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
     public String adminUserLogin = String.format("volAdminUser"+"%s",Str.randomWord(3));
+    private String internalAdminHeader = "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
 
+    public String getVariationApplicationNumber() { return variationApplicationNumber; }
+
+    public static void setVariationApplicationNumber(String variationApplicationNumber) { UpdateLicenceAPI.variationApplicationNumber = variationApplicationNumber; }
 
     public void setAdminUserLogin(String adminUserLogin) { this.adminUserLogin = adminUserLogin; }
 
@@ -107,14 +112,14 @@ public class UpdateLicenceAPI extends BasePage {
         this.world = world;
     }
 
-    public void createVariation() throws MalformedURLException {
+    public void createVariation(String variationType) throws MalformedURLException {
         String licenceId = world.createLicence.getLicenceId();
         String licenceHistoryResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/variation", licenceId)).toString();
 
-        VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withAppliedVia("applied_via_phone");
+        VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withAppliedVia("applied_via_phone").withVariationType(variationType);
         apiResponse = RestUtils.post(variation, licenceHistoryResource, getHeaders());
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
-        variationApplicationNumber = String.valueOf(apiResponse.extract().jsonPath().getInt("id.application"));
+        setVariationApplicationNumber(String.valueOf(apiResponse.extract().jsonPath().getInt("id.application")));
     }
 
     public void updateLicenceType(String licenceId) throws MalformedURLException {
@@ -292,7 +297,6 @@ public class UpdateLicenceAPI extends BasePage {
         roles.add("internal-admin");
         String team = "1";
         String userType = "internal";
-        String internalAdminHeader = "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
         Headers.headers.put("x-pid", internalAdminHeader);
         String internalAdminUserResource = org.dvsa.testing.lib.url.api.URL.build(env, "user/internal").toString();
 
@@ -308,4 +312,13 @@ public class UpdateLicenceAPI extends BasePage {
         }
         return apiResponse;
     }
+    public ValidatableResponse grantVariation(String resource) throws MalformedURLException {
+        String grantVariation = org.dvsa.testing.lib.url.api.URL.build(env,String.format("variation/%s/%s",variationApplicationNumber,resource)).toString();
+
+        GenericBuilder genericBuilder = new GenericBuilder().withId(variationApplicationNumber);
+        apiResponse = RestUtils.put(genericBuilder, grantVariation,getHeaders());
+
+        return apiResponse;
+    }
+
 }

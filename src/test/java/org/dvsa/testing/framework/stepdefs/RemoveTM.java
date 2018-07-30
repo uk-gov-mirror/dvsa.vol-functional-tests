@@ -1,6 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.aws.s3.S3;
+import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.runner.Hooks;
@@ -85,8 +86,7 @@ public class RemoveTM extends BasePage implements En {
 
         });
         When("^i create a variation$", () -> {
-            world.updateLicence.createVariation();
-            world.updateLicence.updateLicenceType(world.genericUtils.createApp().getLicenceId());
+            world.updateLicence.createVariation(null);
         });
         And("^user attempts to remove the last TM without selecting an option$", () -> {
             waitForTextToBePresent(alertHeaderValue);
@@ -100,5 +100,8 @@ public class RemoveTM extends BasePage implements En {
             isLinkPresent("You must select an option", 60);
         });
 
+        And("^i update the licence type$", () -> {
+            world.updateLicence.updateLicenceType(world.genericUtils.createApp().getLicenceId());
+        });
     }
 }
