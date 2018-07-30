@@ -1,6 +1,5 @@
 @SS-ADD-DIRECTOR
 Feature: Add a director variation
-
   Background:
     Given i have a valid "public" licence
     And i create a director change variation

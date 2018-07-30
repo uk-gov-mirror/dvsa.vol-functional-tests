@@ -1,23 +1,16 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.string.Str;
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
-import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class AddDirectorVariation extends BasePage implements En {
