@@ -96,8 +96,6 @@ public class GenericUtils extends BasePage {
         isTextPresent("1 Docs & attachments", 60);
         clickByName("New letter");
         findElement("//*[@id='modal-title']", SelectorType.XPATH, 600);
-
-
         waitAndSelectByIndex("Generate letter", "//*[@id='category']", SelectorType.XPATH, 1);
         waitAndSelectByIndex("Generate letter", "//*[@id='documentSubCategory']", SelectorType.XPATH, 1);
         waitAndSelectByIndex("Generate letter", "//*[@id='documentTemplate']", SelectorType.XPATH, 5);
