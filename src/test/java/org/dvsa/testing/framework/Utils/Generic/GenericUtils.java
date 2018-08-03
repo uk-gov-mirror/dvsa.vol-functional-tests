@@ -1,5 +1,8 @@
 package org.dvsa.testing.framework.Utils.Generic;
 
+import activesupport.IllegalBrowserException;
+import activesupport.MissingDriverException;
+import activesupport.driver.Browser;
 import activesupport.MissingRequiredArgument;
 import activesupport.aws.s3.S3;
 import activesupport.http.RestUtils;
@@ -15,7 +18,6 @@ import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.framework.stepdefs.World;
 import org.dvsa.testing.lib.Login;
-import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.pages.internal.SearchNavBar;
@@ -89,13 +91,11 @@ public class GenericUtils extends BasePage {
         world.grantLicence = new GrantLicenceAPI(world);
     }
 
-    public static void generateLetter() {
+    public static void generateLetter() throws IllegalBrowserException {
         clickByLinkText("Docs & attachments");
         isTextPresent("1 Docs & attachments", 60);
         clickByName("New letter");
         findElement("//*[@id='modal-title']", SelectorType.XPATH, 600);
-
-
         waitAndSelectByIndex("Generate letter", "//*[@id='category']", SelectorType.XPATH, 1);
         waitAndSelectByIndex("Generate letter", "//*[@id='documentSubCategory']", SelectorType.XPATH, 1);
         waitAndSelectByIndex("Generate letter", "//*[@id='documentTemplate']", SelectorType.XPATH, 5);
@@ -202,21 +202,22 @@ public class GenericUtils extends BasePage {
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
     }
 
-    public void internalAdminUserLogin() throws MissingRequiredArgument, MalformedURLException {
+    public void internalAdminUserLogin() throws MissingRequiredArgument, MalformedURLException, IllegalBrowserException, MissingDriverException {
+
         String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
         String newPassword = "Password1";
         String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
 
-        if (Browser.isInitialised()) {
+        if (Browser.isBrowserOpen()) {
+
             //Quit Browser and open a new window
             Browser.quit();
         }
-        Browser.go(myURL);
-        System.out.println(password);
+        Browser.navigate().get(myURL);
+        System.out.println(world.updateLicence.adminUserLogin + "UserLogin");
 
-        if (Browser.getURL().contains("da")) {
-            Login.signIn(world.updateLicence.adminUserLogin, password);
-        }
+        if (activesupport.driver.Browser.navigate().getCurrentUrl().contains("da")) {
+            Login.signIn(world.updateLicence.adminUserLogin, password);}
         if (isTextPresent("Username", 60))
             Login.signIn(world.updateLicence.adminUserLogin, password);
         if (isTextPresent("Current password", 60)) {
@@ -227,14 +228,15 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void externalUserLogin() throws MalformedURLException, MissingRequiredArgument {
+    public void externalUserLogin() throws MalformedURLException, MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
+//
+        if (Browser.isBrowserOpen()) {
 
-        if (Browser.isInitialised()) {
             //Quit Browser and open a new window
-            Browser.quit();
+          Browser.quit();
         }
-        Browser.go(myURL);
+        Browser.navigate().get(myURL);
         String password = S3.getTempPassword(world.createLicence.getEmailAddress());
         //check if user exists
 
@@ -248,7 +250,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void createAdminUser() throws MalformedURLException, MissingRequiredArgument {
+    public void createAdminUser() throws MalformedURLException, MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
         apiResponse = world.updateLicence.createInternalAdminUser();
         world.genericUtils.internalAdminUserLogin();
     }
@@ -270,13 +272,13 @@ public class GenericUtils extends BasePage {
         setTrafficAreaName(apiResponse.extract().jsonPath().getString("trafficArea.name"));
     }
 
-    public static void enterDate(int day, int month, int year) {
+    public static void enterDate(int day, int month, int year) throws IllegalBrowserException {
         enterText("receivedDate_day", String.valueOf(day), SelectorType.ID);
         enterText("receivedDate_month", String.valueOf(month), SelectorType.ID);
         enterText("receivedDate_year", String.valueOf(year), SelectorType.ID);
     }
 
-    public static void internalSiteAddBusNewReg(int day, int month, int year) {
+    public static void internalSiteAddBusNewReg(int day, int month, int year) throws IllegalBrowserException {
         waitForTextToBePresent("Service details");
         assertTrue(isTextPresent("Service No. & type", 5));
         enterText("serviceNo", "123", SelectorType.ID);
@@ -302,7 +304,7 @@ public class GenericUtils extends BasePage {
         System.out.println("--Licence-Number: " + world.createLicence.getLicenceNumber() + "--");
     }
 
-    public void uploadAndSubmitESBR(String state, int interval) throws MissingRequiredArgument, MalformedURLException {
+    public void uploadAndSubmitESBR(String state, int interval) throws MissingRequiredArgument, MalformedURLException, IllegalBrowserException, MissingDriverException {
         // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
         modifyXML(state, interval);
         zipFolder();
@@ -315,7 +317,7 @@ public class GenericUtils extends BasePage {
         waitAndClick("//*[@name='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public void removeInternalTransportManager() {
+    public void removeInternalTransportManager() throws IllegalBrowserException {
         assertTrue(isTextPresent("Overview", 60));
         if (!isLinkPresent("Transport", 60) && isTextPresent("Granted", 60)) {
             clickByLinkText(world.createLicence.getLicenceNumber());
@@ -334,14 +336,14 @@ public class GenericUtils extends BasePage {
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
     }
 
-    public void searchAndViewApplication() {
+    public void searchAndViewApplication() throws IllegalBrowserException {
         selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Applications");
         if (variationApplicationNumber != null) {
             do {
                 SearchNavBar.search(variationApplicationNumber);
             } while (!isLinkPresent(variationApplicationNumber, 60));
             clickByLinkText(variationApplicationNumber);
-            assertTrue(Boolean.parseBoolean(String.valueOf(Browser.getURL().contains("variation"))));
+            assertTrue(Boolean.parseBoolean(String.valueOf(Browser.navigate().getCurrentUrl().contains("variation"))));
         } else {
             do {
                 SearchNavBar.search(String.valueOf(world.createLicence.getApplicationNumber()));
@@ -376,7 +378,7 @@ public class GenericUtils extends BasePage {
         Jenkins.trigger(Jenkins.Job.BATCH_PROCESS_QUEQUE, jenkinsParams);
     }
 
-    public void createAdminFee(String amount, String feeType) {
+    public void createAdminFee(String amount, String feeType) throws IllegalBrowserException {
         waitAndClick("//button[@id='new']", SelectorType.XPATH);
         waitForTextToBePresent("Create new fee");
         selectValueFromDropDown("fee-details[feeType]", SelectorType.NAME, feeType);
@@ -384,7 +386,7 @@ public class GenericUtils extends BasePage {
         waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 
-    public void payFee(String amount, @NotNull String paymentMethod, String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) {
+    public void payFee(String amount, @NotNull String paymentMethod, String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) throws IllegalBrowserException {
 
         do {
             //nothing
@@ -432,7 +434,9 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    private void customerPaymentModule(String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) {
+
+  private void customerPaymentModule(String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) throws IllegalBrowserException {
+
         waitForTextToBePresent("Card Number*");
         enterText("//*[@id='scp_cardPage_cardNumber_input']", bankCardNumber, SelectorType.XPATH);
         enterText("//*[@id='scp_cardPage_expiryDate_input']", cardExpiryMonth, SelectorType.XPATH);
@@ -452,7 +456,9 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    private void findAddress() {
+
+    private void findAddress() throws IllegalBrowserException {
+
         enterText("address[searchPostcode][postcode]", "NG1 5FW", SelectorType.NAME);
         waitAndClick("address[searchPostcode][search]", SelectorType.NAME);
         waitAndSelectByIndex("", "//*[@id='fee_payment']/fieldset[2]/fieldset/div[3]/select[@name='address[searchPostcode][addresses]']", SelectorType.XPATH, 1);
@@ -466,7 +472,7 @@ public class GenericUtils extends BasePage {
         int attempts = 0;
         while (attempts < 10) {
             try {
-                Browser.getDriver().findElement(by).click();
+                Browser.navigate().findElement(by).click();
                 result = true;
                 break;
             } catch (Exception e) {
