@@ -487,6 +487,18 @@ public class GenericUtils extends BasePage {
 
     }
 
+    public void changeVehicleAuth(String noOfVehicles) throws IllegalBrowserException {
+        clickByLinkText("Operating centres and authorisation");
+        clickByLinkText("change your licence");
+        waitAndClick("button[name='form-actions[submit]'", SelectorType.CSS);
+        waitAndClick("//*[@id=\"OperatingCentres\"]/fieldset[1]/div/div[2]/table/tbody/tr/td[1]/input", SelectorType.XPATH);
+        enterField(nameAttribute("input", "data[noOfVehiclesRequired]"),noOfVehicles);
+        click(nameAttribute("button", "form-actions[submit]"));
+        click(nameAttribute("button", "form-actions[submit]"));
+        enterField(nameAttribute("input", "data[totAuthVehicles]"),noOfVehicles);
+        click(nameAttribute("button", "form-actions[save]"));
+    }
+
     public String stripAlphaCharacters(String value) {
         return value.replaceAll("[^0-9]", "");
     }
