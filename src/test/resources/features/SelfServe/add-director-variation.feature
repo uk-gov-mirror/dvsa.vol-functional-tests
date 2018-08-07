@@ -1,3 +1,4 @@
+@SS
 @SS-ADD-DIRECTOR
 Feature: Add a director variation
   Background:
