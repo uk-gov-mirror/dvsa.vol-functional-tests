@@ -5,7 +5,7 @@
   Feature: Goods Variation increase vehicle count for an OC
 
     Background:
-      Given I have a valid good licence
+      Given i have a valid "goods" licence
 
      Scenario: Create a variation and increase vehicle count
        When A selfserve user increases the vehicle authority count
