@@ -230,7 +230,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void externalUserLogin() throws  MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
+    public void externalUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException, MalformedURLException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
 //
         if (Browser.isBrowserOpen()) {
@@ -252,7 +252,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void createAdminUser() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
+    public void createAdminUser() throws MissingRequiredArgument, MalformedURLException {
         apiResponse = world.updateLicence.createInternalAdminUser();
     }
 
@@ -494,7 +494,8 @@ public class GenericUtils extends BasePage {
         waitAndClick("button[name='form-actions[submit]'", SelectorType.CSS);
         waitAndClick("//*[@id=\"OperatingCentres\"]/fieldset[1]/div/div[2]/table/tbody/tr/td[1]/input", SelectorType.XPATH);
         enterField(nameAttribute("input", "data[noOfVehiclesRequired]"),noOfVehicles);
-        click(nameAttribute("button", "form-actions[submit]"));
+        if (noOfVehicles == "6") {
+        click(nameAttribute("button", "form-actions[submit]"));}
         click(nameAttribute("button", "form-actions[submit]"));
     }
 
@@ -507,7 +508,7 @@ public class GenericUtils extends BasePage {
         return value.replaceAll("[^0-9]", "");
     }
 
-    public void addPerson(String firstName, String lastName) {
+    public void addPerson(String firstName, String lastName) throws IllegalBrowserException {
         waitForTextToBePresent("Current licences");
         clickByLinkText(world.createLicence.getLicenceNumber());
         waitForTextToBePresent("View your licence");
