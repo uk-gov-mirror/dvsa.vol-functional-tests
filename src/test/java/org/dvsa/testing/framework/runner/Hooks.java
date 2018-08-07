@@ -1,9 +1,11 @@
 package org.dvsa.testing.framework.runner;
 
+import activesupport.IllegalBrowserException;
+import activesupport.MissingDriverException;
 import io.qameta.allure.Attachment;
-import org.dvsa.testing.lib.browser.Browser;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import activesupport.driver.Browser;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,7 +15,7 @@ public class Hooks {
 
     static File directory = new File("img");
 
-    public void main(String[] args) {
+    public void main(String[] args) throws MissingDriverException, IllegalBrowserException {
         attach();
         teardown();
         closeBrowser();
@@ -33,10 +35,10 @@ public class Hooks {
         File screenshot = new File(String.format(directory + "/errorScreenShot%s.png", Instant.now().getEpochSecond()));
         byte[] bytes = new byte[0];
         try {
-            Browser.getDriver();
-            if (Browser.isInitialised()) {
+            Browser.navigate();
+            if (Browser.isBrowserOpen()) {
                 FileOutputStream screenshotStream = new FileOutputStream(screenshot);
-                bytes = ((TakesScreenshot) Browser.getDriver())
+                bytes = ((TakesScreenshot) Browser.navigate())
                         .getScreenshotAs(OutputType.BYTES);
                 screenshotStream.write(bytes);
                 screenshotStream.close();
@@ -59,8 +61,8 @@ public class Hooks {
         }
     }
 
-    private void closeBrowser() {
-        if (Browser.isInitialised()) {
+    private void closeBrowser() throws IllegalBrowserException, MissingDriverException {
+        if (Browser.isBrowserOpen()) {
             Browser.quit();
         }
     }
