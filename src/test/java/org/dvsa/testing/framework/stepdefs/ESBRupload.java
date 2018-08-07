@@ -38,6 +38,7 @@ public class ESBRupload extends BasePage implements En {
         });
         And("^A short notice tab should be displayed in internal$", () -> {
             world.genericUtils.createAdminUser();
+            world.genericUtils.internalAdminUserLogin();
             selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
             do {
                 SearchNavBar.search(world.createLicence.getLicenceNumber());

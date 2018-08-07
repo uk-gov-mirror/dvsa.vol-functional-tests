@@ -24,6 +24,7 @@ import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -40,6 +41,7 @@ import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -202,7 +204,8 @@ public class GenericUtils extends BasePage {
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
     }
 
-    public void internalAdminUserLogin() throws MissingRequiredArgument, MalformedURLException {
+    public void internalAdminUserLogin() throws MissingRequiredArgument {
+        createAdminUser();
         String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
         String newPassword = "Password1";
         String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
@@ -212,7 +215,6 @@ public class GenericUtils extends BasePage {
             Browser.quit();
         }
         Browser.go(myURL);
-        System.out.println(password);
 
         if (Browser.getURL().contains("da")) {
             Login.signIn(world.updateLicence.adminUserLogin, password);
@@ -227,7 +229,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void externalUserLogin() throws MalformedURLException, MissingRequiredArgument {
+    public void externalUserLogin() throws MissingRequiredArgument {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
 
         if (Browser.isInitialised()) {
@@ -248,9 +250,8 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void createAdminUser() throws MalformedURLException, MissingRequiredArgument {
+    public void createAdminUser() {
         apiResponse = world.updateLicence.createInternalAdminUser();
-        world.genericUtils.internalAdminUserLogin();
     }
 
     public void nIAddressBuilder() {
@@ -483,5 +484,27 @@ public class GenericUtils extends BasePage {
 
     public String stripAlphaCharacters(String value) {
         return value.replaceAll("[^0-9]", "");
+    }
+
+    public void addPerson(String firstName, String lastName) {
+        waitForTextToBePresent("Current licences");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+        waitForTextToBePresent("View your licence");
+        clickByLinkText("Directors");
+        waitForTextToBePresent("Directors");
+        clickByName("add");
+        waitForTextToBePresent("Add a director");
+        selectValueFromDropDown("//select[@id='title']", SelectorType.XPATH, "Dr");
+        enterText("forename", firstName, SelectorType.ID);
+        enterText("familyname", lastName, SelectorType.ID);
+        enterText("dob_day", String.valueOf(getPastDayOfMonth(5)), SelectorType.ID);
+        enterText("dob_month", String.valueOf(getCurrentMonth()), SelectorType.ID);
+        enterText("dob_year", String.valueOf(getPastYear(20)), SelectorType.ID);
+        clickByName("form-actions[saveAndContinue]");
+    }
+
+    public void selectAllRadioButtons(String radioButtonValue) {
+        List<WebElement> radioButtons = Browser.getDriver().findElements(By.xpath("//label[@class='form-control form-control--radio form-control--inline']"));
+        radioButtons.stream().filter(s -> s.getText().equals(radioButtonValue)).forEach(x -> x.click());
     }
 }
