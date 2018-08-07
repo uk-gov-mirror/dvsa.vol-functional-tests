@@ -292,7 +292,7 @@ public class UpdateLicenceAPI extends BasePage {
         return apiResponse;
     }
 
-    public ValidatableResponse createInternalAdminUser() throws MalformedURLException {
+    public ValidatableResponse createInternalAdminUser() {
         List<String> roles = new ArrayList<>();
         roles.add("internal-admin");
         String team = "1";

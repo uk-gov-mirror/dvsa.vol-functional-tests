@@ -10,7 +10,7 @@ Feature: Provide downloadable PDFs to signed-in Self Serve users(GB)
     When I open TM1 Form
     Given I am on add Safety Inspectors Page
     Then I open Maintenance Form
-Examples:
-  | Flag |
-  | GB   |
-  | NI   |
+    Examples:
+      | Flag |
+      | GB   |
+      | NI   |

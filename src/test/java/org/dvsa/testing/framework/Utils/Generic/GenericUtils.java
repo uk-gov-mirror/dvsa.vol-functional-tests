@@ -26,6 +26,7 @@ import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -42,6 +43,7 @@ import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -228,7 +230,7 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void externalUserLogin() throws MalformedURLException, MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
+    public void externalUserLogin() throws  MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
 //
         if (Browser.isBrowserOpen()) {
@@ -250,9 +252,8 @@ public class GenericUtils extends BasePage {
         }
     }
 
-    public void createAdminUser() throws MalformedURLException, MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
+    public void createAdminUser() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
         apiResponse = world.updateLicence.createInternalAdminUser();
-        world.genericUtils.internalAdminUserLogin();
     }
 
     public void nIAddressBuilder() {
@@ -504,5 +505,27 @@ public class GenericUtils extends BasePage {
 
     public String stripAlphaCharacters(String value) {
         return value.replaceAll("[^0-9]", "");
+    }
+
+    public void addPerson(String firstName, String lastName) {
+        waitForTextToBePresent("Current licences");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+        waitForTextToBePresent("View your licence");
+        clickByLinkText("Directors");
+        waitForTextToBePresent("Directors");
+        clickByName("add");
+        waitForTextToBePresent("Add a director");
+        selectValueFromDropDown("//select[@id='title']", SelectorType.XPATH, "Dr");
+        enterText("forename", firstName, SelectorType.ID);
+        enterText("familyname", lastName, SelectorType.ID);
+        enterText("dob_day", String.valueOf(getPastDayOfMonth(5)), SelectorType.ID);
+        enterText("dob_month", String.valueOf(getCurrentMonth()), SelectorType.ID);
+        enterText("dob_year", String.valueOf(getPastYear(20)), SelectorType.ID);
+        clickByName("form-actions[saveAndContinue]");
+    }
+
+    public void selectAllRadioButtons(String radioButtonValue) throws IllegalBrowserException {
+        List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//label[@class='form-control form-control--radio form-control--inline']"));
+        radioButtons.stream().filter(s -> s.getText().equals(radioButtonValue)).forEach(x -> x.click());
     }
 }
