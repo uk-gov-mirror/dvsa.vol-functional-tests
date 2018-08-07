@@ -487,7 +487,7 @@ public class GenericUtils extends BasePage {
 
     }
 
-    public void changeVehicleAuth(String noOfVehicles) throws IllegalBrowserException {
+    public void changeVehicleReq(String noOfVehicles) throws IllegalBrowserException {
         clickByLinkText("Operating centres and authorisation");
         clickByLinkText("change your licence");
         waitAndClick("button[name='form-actions[submit]'", SelectorType.CSS);
@@ -495,7 +495,10 @@ public class GenericUtils extends BasePage {
         enterField(nameAttribute("input", "data[noOfVehiclesRequired]"),noOfVehicles);
         click(nameAttribute("button", "form-actions[submit]"));
         click(nameAttribute("button", "form-actions[submit]"));
-        enterField(nameAttribute("input", "data[totAuthVehicles]"),noOfVehicles);
+    }
+
+    public void changeVehicleAuth (String noOfAuthVehicles) throws IllegalBrowserException {
+        enterField(nameAttribute("input", "data[totAuthVehicles]"),noOfAuthVehicles);
         click(nameAttribute("button", "form-actions[save]"));
     }
 
