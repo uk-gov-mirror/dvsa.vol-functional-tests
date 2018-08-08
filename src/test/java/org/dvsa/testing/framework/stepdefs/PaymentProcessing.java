@@ -46,7 +46,7 @@ public class PaymentProcessing extends BasePage implements En {
             javaScriptExecutor("location.reload(true)");
             String feeCountBeforeAddingNewFee = getElementValueByText("//div[@class='table__header']/h3", SelectorType.XPATH);
             setCurrentFeeCount(world.genericUtils.stripAlphaCharacters(feeCountBeforeAddingNewFee));
-            world.genericUtils.createAdminFee(amount,arg0);
+            world.journeySteps.createAdminFee(amount,arg0);
         });
         Then("^the fee should be created$", () -> {
             // Refresh page
@@ -70,9 +70,9 @@ public class PaymentProcessing extends BasePage implements En {
                 String bankCardNumber = "4006000000000600";
                 String cardExpiryMonth = "10";
                 String cardExpiryYear = "50";
-                world.genericUtils.payFee(null, arg0, bankCardNumber, cardExpiryMonth, cardExpiryYear);
+                world.journeySteps.payFee(null, arg0, bankCardNumber, cardExpiryMonth, cardExpiryYear);
             } else {
-                world.genericUtils.payFee("100", arg0, null, null, null);
+                world.journeySteps.payFee("100", arg0, null, null, null);
             }
         });
     }

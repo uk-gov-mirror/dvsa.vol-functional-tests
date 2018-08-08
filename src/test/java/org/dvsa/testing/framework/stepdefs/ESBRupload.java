@@ -10,7 +10,7 @@ import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.pages.internal.SearchNavBar;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.*;
+import static org.dvsa.testing.framework.Journeys.JourneySteps.internalSiteAddBusNewReg;
 import static org.junit.Assert.assertFalse;
 
 public class ESBRupload extends BasePage implements En {
@@ -38,7 +38,7 @@ public class ESBRupload extends BasePage implements En {
         });
         And("^A short notice tab should be displayed in internal$", () -> {
             world.genericUtils.createAdminUser();
-            world.genericUtils.internalAdminUserLogin();
+            world.journeySteps.internalAdminUserLogin();
             selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
             do {
                 SearchNavBar.search(world.createLicence.getLicenceNumber());
@@ -89,7 +89,7 @@ public class ESBRupload extends BasePage implements En {
         });
         When("^I upload an esbr file with \"([^\"]*)\" days notice$", (String arg0) -> {
             // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
-            world.genericUtils.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
+            world.journeySteps.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
         });
 
         After(new String[]{"@SS"}, 0, 1, (Scenario scenario) -> {
