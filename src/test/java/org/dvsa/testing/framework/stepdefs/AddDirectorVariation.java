@@ -5,7 +5,6 @@ import activesupport.driver.Browser;
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Journeys.JourneySteps;
-import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.openqa.selenium.By;
@@ -13,10 +12,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AddDirectorVariation extends BasePage implements En {
@@ -35,7 +31,7 @@ public class AddDirectorVariation extends BasePage implements En {
         });
         Then("^a new director should be added to my licence$", () -> {
             waitForTextToBePresent("Directors");
-            List<WebElement> director = Browser.navigate().findElements(By.xpath("//*/tbody/tr[*]/td[1]/input"));
+            List<WebElement> director = listOfWebElements("//*/tbody/tr[*]/td[1]/input",SelectorType.XPATH);
             long directors = director.size();
             assertEquals(directors, 2);
             assertTrue(director.stream().anyMatch(d -> d.getAttribute("value").contains(firstName)));
@@ -66,7 +62,7 @@ public class AddDirectorVariation extends BasePage implements En {
             world.journeySteps.internalAdminUserLogin();
             world.journeySteps.searchAndViewApplication();
             clickByLinkText("Docs");
-            List<WebElement> docsAttach = Browser.navigate().findElements(By.xpath("//tbody/tr[*]/td[2]"));
+            List<WebElement> docsAttach = listOfWebElements("//tbody/tr[*]/td[2]",SelectorType.XPATH);
             long docsList = docsAttach.size();
             assertEquals(docsList,5);
             assertTrue(docsAttach.stream().anyMatch(d -> d.getText().contains("Application")));
