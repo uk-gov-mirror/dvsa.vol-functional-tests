@@ -2,6 +2,7 @@ package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.string.Str;
 import activesupport.driver.Browser;
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Journeys.JourneySteps;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
@@ -12,7 +13,10 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AddDirectorVariation extends BasePage implements En {
@@ -41,8 +45,8 @@ public class AddDirectorVariation extends BasePage implements En {
         });
         When("^i enter \"([^\"]*)\" previous convictions details question$", (String arg0) -> {
             world.genericUtils.selectAllRadioButtons(arg0);
-            if(arg0.equals("Yes")){
-                click("add",SelectorType.ID);
+            if (arg0.equals("Yes")) {
+                click("add", SelectorType.ID);
                 world.journeySteps.addPreviousConviction();
             }
             clickByName("form-actions[saveAndContinue]");
@@ -52,10 +56,23 @@ public class AddDirectorVariation extends BasePage implements En {
         });
         And("^i enter \"([^\"]*)\" to financial details question$", (String arg0) -> {
             world.genericUtils.selectAllRadioButtons(arg0);
-            if(arg0.equals("Yes")){
-                enterText("data[insolvencyDetails]", Str.randomWord(150),SelectorType.ID);
+            if (arg0.equals("Yes")) {
+                enterText("data[insolvencyDetails]", Str.randomWord(150), SelectorType.ID);
             }
             clickByName("form-actions[saveAndContinue]");
+        });
+        Then("^a snapshot should be created in internal$", () -> {
+            world.genericUtils.createAdminUser();
+            world.journeySteps.internalAdminUserLogin();
+            world.journeySteps.searchAndViewApplication();
+            clickByLinkText("Docs");
+            List<WebElement> docsAttach = Browser.navigate().findElements(By.xpath("//tbody/tr[*]/td[2]"));
+            long docsList = docsAttach.size();
+            assertEquals(docsList,5);
+            assertTrue(docsAttach.stream().anyMatch(d -> d.getText().contains("Application")));
+        });
+        When("^a new director has been added$", () -> {
+            world.journeySteps.addDirectorWithoutConvictions(firstName, lastName);
         });
     }
 }

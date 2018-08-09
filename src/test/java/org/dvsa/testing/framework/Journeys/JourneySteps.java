@@ -297,4 +297,12 @@ public class JourneySteps extends BasePage {
         click("//*[@value='Remove']", SelectorType.XPATH);
     }
 
+    public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException {
+        world.journeySteps.externalUserLogin();
+        world.journeySteps.addPerson(firstName, lastName);
+        world.genericUtils.selectAllRadioButtons("No");
+        clickByName("form-actions[saveAndContinue]");
+        world.genericUtils.selectAllRadioButtons("No");
+        clickByName("form-actions[saveAndContinue]");
+    }
 }
