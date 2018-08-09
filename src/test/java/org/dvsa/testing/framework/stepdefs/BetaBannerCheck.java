@@ -1,21 +1,11 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import activesupport.MissingRequiredArgument;
-import activesupport.aws.s3.S3;
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
-import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
-import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-
-import java.net.MalformedURLException;
 
 public class BetaBannerCheck extends BasePage implements En {
 

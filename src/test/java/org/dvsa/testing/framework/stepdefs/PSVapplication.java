@@ -1,8 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import cucumber.api.Scenario;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.runner.Hooks;
 
 public class PSVapplication implements En {
     private World world;

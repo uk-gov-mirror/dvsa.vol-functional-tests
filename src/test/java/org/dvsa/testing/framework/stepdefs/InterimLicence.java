@@ -67,7 +67,7 @@ public class InterimLicence extends BasePage implements En {
             world.genericUtils.createAdminUser();
         });
         And("^i search for my licence$", () -> {
-            world.genericUtils.searchAndViewApplication();
+            world.journeySteps.searchAndViewApplication();
         });
     }
 }
