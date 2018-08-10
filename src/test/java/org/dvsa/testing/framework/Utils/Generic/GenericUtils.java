@@ -196,7 +196,7 @@ public class GenericUtils extends BasePage {
         world.createLicence.setNiFlag("Y");
     }
 
-    public void getLicenceTrafficArea() {
+    public void getLicenceTrafficArea() throws MalformedURLException {
         Headers.getHeaders().put("x-pid", world.createLicence.getAdminUserHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
@@ -267,42 +267,12 @@ public class GenericUtils extends BasePage {
 
     }
 
-    public void changeVehicleReq(String noOfVehicles) throws IllegalBrowserException {
-        clickByLinkText("Operating centres and authorisation");
-        clickByLinkText("change your licence");
-        waitAndClick("button[name='form-actions[submit]'", SelectorType.CSS);
-        waitAndClick("//*[@id=\"OperatingCentres\"]/fieldset[1]/div/div[2]/table/tbody/tr/td[1]/input", SelectorType.XPATH);
-        enterField(nameAttribute("input", "data[noOfVehiclesRequired]"),noOfVehicles);
-        if (Integer.parseInt(noOfVehicles) > world.createLicence.getNoOfVehiclesRequired()) {
-        click(nameAttribute("button", "form-actions[submit]"));}
-        click(nameAttribute("button", "form-actions[submit]"));
-    }
 
-    public void changeVehicleAuth (String  noOfAuthVehicles) throws IllegalBrowserException {
-        enterField(nameAttribute("input", "data[totAuthVehicles]"),noOfAuthVehicles);
-        click(nameAttribute("button", "form-actions[save]"));
-    }
 
     public String stripAlphaCharacters(String value) {
         return value.replaceAll("[^0-9]", "");
     }
 
-    public void addPerson(String firstName, String lastName) throws IllegalBrowserException {
-        waitForTextToBePresent("Current licences");
-        clickByLinkText(world.createLicence.getLicenceNumber());
-        waitForTextToBePresent("View your licence");
-        clickByLinkText("Directors");
-        waitForTextToBePresent("Directors");
-        clickByName("add");
-        waitForTextToBePresent("Add a director");
-        selectValueFromDropDown("//select[@id='title']", SelectorType.XPATH, "Dr");
-        enterText("forename", firstName, SelectorType.ID);
-        enterText("familyname", lastName, SelectorType.ID);
-        enterText("dob_day", String.valueOf(getPastDayOfMonth(5)), SelectorType.ID);
-        enterText("dob_month", String.valueOf(getCurrentMonth()), SelectorType.ID);
-        enterText("dob_year", String.valueOf(getPastYear(20)), SelectorType.ID);
-        clickByName("form-actions[saveAndContinue]");
-    }
 
     public void selectAllRadioButtons(String radioButtonValue) throws IllegalBrowserException {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//label[@class='form-control form-control--radio form-control--inline']"));
