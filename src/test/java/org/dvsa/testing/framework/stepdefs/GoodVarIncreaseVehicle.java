@@ -12,8 +12,8 @@ public class GoodVarIncreaseVehicle extends BasePage implements En  {
         When("^A selfserve user increases the vehicle authority count$", () -> {
          world.journeySteps.externalUserLogin();
          clickByLinkText(world.createLicence.getLicenceNumber());
-         world.journeySteps.changeVehicleReq("6");
-         world.journeySteps.changeVehicleAuth("6");
+         world.journeySteps.changeVehicleReq(String.valueOf(world.createLicence.getNoOfVehiclesRequired() + 1 ));
+         world.journeySteps.changeVehicleAuth(String.valueOf(world.createLicence.getNoOfVehiclesRequired() + 1 ));
         });
 
         Then("^a status of update required should be shown next to financial evidence$", () -> {
