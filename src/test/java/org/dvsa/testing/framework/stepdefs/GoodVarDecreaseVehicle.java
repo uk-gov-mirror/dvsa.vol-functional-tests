@@ -10,21 +10,21 @@ public class GoodVarDecreaseVehicle extends BasePage implements En {
 
     public GoodVarDecreaseVehicle(World world) {
         When("^A selfserve user decreases the vehicle authority count$", () -> {
-            world.genericUtils.externalUserLogin();
+            world.journeySteps.externalUserLogin();
             clickByLinkText(world.createLicence.getLicenceNumber());
-            world.genericUtils.changeVehicleReq("4");
-            world.genericUtils.changeVehicleAuth("4");
+            world.journeySteps.changeVehicleReq(String.valueOf(world.createLicence.getNoOfVehiclesRequired() - 1));
+            world.journeySteps.changeVehicleAuth(String.valueOf(world.createLicence.getNoOfVehiclesRequired() - 1));
         });
         When("^A selfserve user decreases the vehicle required count by invalid characters$", () -> {
-            world.genericUtils.externalUserLogin();
+            world.journeySteps.externalUserLogin();
             clickByLinkText(world.createLicence.getLicenceNumber());
-            world.genericUtils.changeVehicleReq("-6");
+            world.journeySteps.changeVehicleReq("-6");
         });
         When("^A selfserve user decreases the vehicle authority by invalid charecters$", () -> {
-            world.genericUtils.externalUserLogin();
+            world.journeySteps.externalUserLogin();
             clickByLinkText(world.createLicence.getLicenceNumber());
-            world.genericUtils.changeVehicleReq("6");
-            world.genericUtils.changeVehicleAuth("-6");
+            world.journeySteps.changeVehicleReq("6");
+            world.journeySteps.changeVehicleAuth("-6");
         });
     }
 }
