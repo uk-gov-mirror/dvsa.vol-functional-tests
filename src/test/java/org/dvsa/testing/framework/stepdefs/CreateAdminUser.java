@@ -11,7 +11,7 @@ public class CreateAdminUser implements En {
             apiResponse = world.updateLicence.createInternalAdminUser();
         });
         Then("^I should be able to login with my new credentials$", () -> {
-            world.genericUtils.internalAdminUserLogin();
+            world.journeySteps.internalAdminUserLogin();
         });
     }
 }

@@ -1,10 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.aws.s3.S3;
-import cucumber.api.PendingException;
-import cucumber.api.Scenario;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
@@ -35,9 +32,9 @@ public class RemoveTM extends BasePage implements En {
             world.genericUtils.createApplication();
         });
         When("^the transport manager has been removed by an internal user$", () -> {
-            world.genericUtils.internalAdminUserLogin();
-            world.genericUtils.searchAndViewApplication();
-            world.genericUtils.removeInternalTransportManager();
+            world.journeySteps.internalAdminUserLogin();
+            world.journeySteps.searchAndViewApplication();
+            world.journeySteps.removeInternalTransportManager();
         });
         Then("^a pop up message should be displayed$", () -> {
             waitForTextToBePresent(alertHeaderValue);
@@ -65,7 +62,7 @@ public class RemoveTM extends BasePage implements En {
             }
         });
         Given("^a self-serve user removes the last TM$", () -> {
-            world.genericUtils.externalUserLogin();
+            world.journeySteps.externalUserLogin();
             String password = S3.getTempPassword(world.createLicence.getEmailAddress());
 
             if (isTextPresent("Username", 60))
