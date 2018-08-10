@@ -494,12 +494,12 @@ public class GenericUtils extends BasePage {
         waitAndClick("button[name='form-actions[submit]'", SelectorType.CSS);
         waitAndClick("//*[@id=\"OperatingCentres\"]/fieldset[1]/div/div[2]/table/tbody/tr/td[1]/input", SelectorType.XPATH);
         enterField(nameAttribute("input", "data[noOfVehiclesRequired]"),noOfVehicles);
-        if (noOfVehicles == "6") {
+        if (Integer.parseInt(noOfVehicles) > world.createLicence.getNoOfVehiclesRequired()) {
         click(nameAttribute("button", "form-actions[submit]"));}
         click(nameAttribute("button", "form-actions[submit]"));
     }
 
-    public void changeVehicleAuth (String noOfAuthVehicles) throws IllegalBrowserException {
+    public void changeVehicleAuth (String  noOfAuthVehicles) throws IllegalBrowserException {
         enterField(nameAttribute("input", "data[totAuthVehicles]"),noOfAuthVehicles);
         click(nameAttribute("button", "form-actions[save]"));
     }
