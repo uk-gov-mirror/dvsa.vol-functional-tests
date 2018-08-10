@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ser.Serializers;
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 public class GoodVarDecreaseVehicle extends BasePage implements En {
     World world = new World();
@@ -25,6 +26,9 @@ public class GoodVarDecreaseVehicle extends BasePage implements En {
             clickByLinkText(world.createLicence.getLicenceNumber());
             world.journeySteps.changeVehicleReq("6");
             world.journeySteps.changeVehicleAuth("-6");
+        });
+        Then("^a status of update required should be shown next to Review and declarations$", () -> {
+            untilExpectedTextInElement("//*[@id=\"overview-item__undertakings\"]",  SelectorType.XPATH,"REQUIRES ATTENTION", 10);
         });
     }
 }
