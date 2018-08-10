@@ -267,8 +267,6 @@ public class GenericUtils extends BasePage {
 
     }
 
-
-
     public String stripAlphaCharacters(String value) {
         return value.replaceAll("[^0-9]", "");
     }
