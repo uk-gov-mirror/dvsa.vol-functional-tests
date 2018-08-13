@@ -24,7 +24,7 @@ public class GoodVarDecreaseVehicle extends BasePage implements En {
         When("^A selfserve user decreases the vehicle authority by invalid charecters$", () -> {
             world.journeySteps.externalUserLogin();
             clickByLinkText(world.createLicence.getLicenceNumber());
-            world.journeySteps.changeVehicleReq("6");
+            world.journeySteps.changeVehicleReq(String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
             world.journeySteps.changeVehicleAuth("-6");
         });
         Then("^a status of update required should be shown next to Review and declarations$", () -> {
