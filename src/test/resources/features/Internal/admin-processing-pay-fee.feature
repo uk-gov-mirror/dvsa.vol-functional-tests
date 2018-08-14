@@ -14,5 +14,4 @@ Feature: Admin payment process
 
     Examples:
       | payment-method |
-      | cash           |
       | card           |

@@ -1,4 +1,3 @@
-@INT
 @NI-DATA-EXPORT
 Feature: Northern Ireland Goods Vehicles Data Export
 
