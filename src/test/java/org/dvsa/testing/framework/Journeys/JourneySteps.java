@@ -174,21 +174,6 @@ public class JourneySteps extends BasePage {
         } while (getAttribute("//*[@name='address[addressLine1]']", SelectorType.XPATH, "value").isEmpty());
     }
 
-    public void changeVehicleReq(String noOfVehicles) throws IllegalBrowserException {
-        clickByLinkText("Operating centres and authorisation");
-        clickByLinkText("change your licence");
-        waitAndClick("button[name='form-actions[submit]'", SelectorType.CSS);
-        waitAndClick("//*[@id=\"OperatingCentres\"]/fieldset[1]/div/div[2]/table/tbody/tr/td[1]/input", SelectorType.XPATH);
-        enterField(nameAttribute("input", "data[noOfVehiclesRequired]"),noOfVehicles);
-        click(nameAttribute("button", "form-actions[submit]"));
-        click(nameAttribute("button", "form-actions[submit]"));
-    }
-
-    public void changeVehicleAuth (String noOfAuthVehicles) throws IllegalBrowserException {
-        enterField(nameAttribute("input", "data[totAuthVehicles]"),noOfAuthVehicles);
-        click(nameAttribute("button", "form-actions[save]"));
-    }
-
     public void addPerson(String firstName, String lastName) throws IllegalBrowserException {
         waitForTextToBePresent("Current licences");
         clickByLinkText(world.createLicence.getLicenceNumber());
@@ -206,7 +191,7 @@ public class JourneySteps extends BasePage {
         clickByName("form-actions[saveAndContinue]");
     }
 
-    public String navigateToInternalTask(World world) throws IllegalBrowserException, MissingDriverException {
+    public String navigateToInternalTask(World world) throws IllegalBrowserException, MissingDriverException, MalformedURLException {
         world.genericUtils.createAdminUser();
         world.journeySteps.internalAdminUserLogin();
         world.journeySteps.searchAndViewApplication();
@@ -230,7 +215,7 @@ public class JourneySteps extends BasePage {
         clickByName("form-actions[submit]");
     }
 
-    public void internalAdminUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
+    public void internalAdminUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException, MalformedURLException {
         String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
         String newPassword = "Password1";
         String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
@@ -254,7 +239,7 @@ public class JourneySteps extends BasePage {
         }
     }
 
-    public void externalUserLogin() throws  MissingRequiredArgument, IllegalBrowserException, MissingDriverException {
+    public void externalUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException, MalformedURLException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
         if (Browser.isBrowserOpen()) {
             //Quit Browser and open a new window
@@ -296,7 +281,7 @@ public class JourneySteps extends BasePage {
         click("//*[@value='Remove']", SelectorType.XPATH);
     }
 
-    public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException {
+    public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException, MalformedURLException {
         world.journeySteps.externalUserLogin();
         world.journeySteps.addPerson(firstName, lastName);
         world.genericUtils.selectAllRadioButtons("No");
@@ -304,4 +289,21 @@ public class JourneySteps extends BasePage {
         world.genericUtils.selectAllRadioButtons("No");
         clickByName("form-actions[saveAndContinue]");
     }
+
+    public void changeVehicleReq(String noOfVehicles) throws IllegalBrowserException {
+        clickByLinkText("Operating centres and authorisation");
+        clickByLinkText("change your licence");
+        waitAndClick("button[name='form-actions[submit]'", SelectorType.CSS);
+        waitAndClick("//*[@id=\"OperatingCentres\"]/fieldset[1]/div/div[2]/table/tbody/tr/td[1]/input", SelectorType.XPATH);
+        enterField(nameAttribute("input", "data[noOfVehiclesRequired]"),noOfVehicles);
+        if (Integer.parseInt(noOfVehicles) > world.createLicence.getNoOfVehiclesRequired()) {
+            click(nameAttribute("button", "form-actions[submit]"));}
+        click(nameAttribute("button", "form-actions[submit]"));
+    }
+
+    public void changeVehicleAuth (String  noOfAuthVehicles) throws IllegalBrowserException {
+        enterField(nameAttribute("input", "data[totAuthVehicles]"),noOfAuthVehicles);
+        click(nameAttribute("button", "form-actions[save]"));
+    }
+
 }
