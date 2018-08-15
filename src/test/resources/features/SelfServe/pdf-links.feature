@@ -3,7 +3,6 @@
 @OLCS-19510-GB
 Feature: Provide downloadable PDFs to signed-in Self Serve users(GB)
 
-
   Scenario Outline: Check presence of TM1 Form
     Given I have a valid "public" "<Flag>" licence
     And I am on add Transport Manager Page

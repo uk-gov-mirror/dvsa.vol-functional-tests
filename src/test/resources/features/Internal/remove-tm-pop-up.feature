@@ -38,6 +38,3 @@ Feature: Remove last Transport Manager (TM) pop up
     And i update the licence type
     And the transport manager has been removed by an internal user
     Then the remove TM popup should not be displaying new TM remove text
-
-
-

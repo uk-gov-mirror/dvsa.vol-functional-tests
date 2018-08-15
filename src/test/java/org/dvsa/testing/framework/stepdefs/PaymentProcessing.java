@@ -46,7 +46,8 @@ public class PaymentProcessing extends BasePage implements En {
             javaScriptExecutor("location.reload(true)");
             String feeCountBeforeAddingNewFee = getElementValueByText("//div[@class='table__header']/h3", SelectorType.XPATH);
             setCurrentFeeCount(world.genericUtils.stripAlphaCharacters(feeCountBeforeAddingNewFee));
-            world.journeySteps.createAdminFee(amount,arg0);
+            findElement("status", SelectorType.ID, 30).getAttribute("value").equals("current");
+            world.journeySteps.createAdminFee(amount, arg0);
         });
         Then("^the fee should be created$", () -> {
             // Refresh page

@@ -27,7 +27,6 @@ public class JourneySteps extends BasePage {
 
     private World world;
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
-    static String variationApplicationNumber;
     static int tmCount;
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
@@ -71,6 +70,8 @@ public class JourneySteps extends BasePage {
 
     public void searchAndViewApplication() throws IllegalBrowserException {
         selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Applications");
+
+        String variationApplicationNumber = world.updateLicence.getVariationApplicationNumber();
         if (variationApplicationNumber != null) {
             do {
                 SearchNavBar.search(variationApplicationNumber);
@@ -220,9 +221,8 @@ public class JourneySteps extends BasePage {
         String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
 
         if (Browser.isBrowserOpen()) {
-
             //Quit Browser and open a new window
-            Browser.quit();
+            Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
         System.out.println(world.updateLicence.adminUserLogin + "UserLogin");
@@ -242,9 +242,8 @@ public class JourneySteps extends BasePage {
     public void externalUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException, MalformedURLException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
         if (Browser.isBrowserOpen()) {
-
             //Quit Browser and open a new window
-            Browser.quit();
+            Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
         String password = S3.getTempPassword(world.createLicence.getEmailAddress());

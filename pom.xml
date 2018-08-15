@@ -140,7 +140,7 @@
                             <goal>integration-test</goal>
                         </goals>
                         <configuration>
-                            <forkCount>5</forkCount>
+                            <forkCount>3</forkCount>
                         </configuration>
                     </execution>
                 </executions>
