@@ -1,7 +1,9 @@
 package org.dvsa.testing.framework.runner;
 
+import activesupport.IllegalBrowserException;
+import activesupport.MissingDriverException;
+import activesupport.driver.Browser;
 import io.qameta.allure.Attachment;
-import org.dvsa.testing.lib.browser.Browser;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -13,9 +15,10 @@ public class Hooks {
 
     static File directory = new File("img");
 
-    public void main(String[] args) {
+    public void main(String[] args) throws MissingDriverException, IllegalBrowserException {
         attach();
         teardown();
+        closeBrowser();
     }
 
     private void createDirectory() {
@@ -30,21 +33,23 @@ public class Hooks {
     public byte[] attach() {
         createDirectory();
         File screenshot = new File(String.format(directory + "/errorScreenShot%s.png", Instant.now().getEpochSecond()));
+        byte[] bytes = new byte[0];
         try {
-            if (Browser.isInitialised()) {
+
+            Browser.navigate();
+            if (Browser.isBrowserOpen()) {
                 FileOutputStream screenshotStream = new FileOutputStream(screenshot);
-                byte[] bytes = ((TakesScreenshot) Browser.getDriver())
+                bytes = ((TakesScreenshot) Browser.navigate())
                         .getScreenshotAs(OutputType.BYTES);
                 screenshotStream.write(bytes);
                 screenshotStream.close();
-                return bytes;
             }
         } catch (Exception e) {
             System.err.println("Unable to write "
                     + screenshot.getAbsolutePath());
             e.printStackTrace();
         }
-        return null;
+        return bytes;
     }
 
     private void teardown() {
@@ -55,8 +60,10 @@ public class Hooks {
                 e.printStackTrace();
             }
         }
+    }
 
-        if (Browser.isInitialised()) {
+    private void closeBrowser() throws IllegalBrowserException, MissingDriverException {
+        if (Browser.isBrowserOpen()) {
             Browser.quit();
         }
     }

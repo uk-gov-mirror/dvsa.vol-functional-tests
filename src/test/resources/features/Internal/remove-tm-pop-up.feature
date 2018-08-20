@@ -1,6 +1,6 @@
 @OLCS-19478
 @INT
-@REMOVE-LAST-TM
+@LAST-TM-POP-UP
 Feature: Remove last Transport Manager (TM) pop up
 
   Background:
@@ -35,8 +35,6 @@ Feature: Remove last Transport Manager (TM) pop up
   Scenario: Pop up should not displayed when removed from a variation
     Given the licence has been granted
     When i create a variation
+    And i update the licence type
     And the transport manager has been removed by an internal user
     Then the remove TM popup should not be displaying new TM remove text
-
-
-

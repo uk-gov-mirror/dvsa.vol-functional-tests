@@ -27,5 +27,4 @@ Feature: ESBR for English, Welsh and Scottish Areas
       | M           | EA-A            | 42   |
       | G           | EA-E            | 56   |
       | F           | EA-F            | 42   |
-
       | H           | EA-H            | 42   |

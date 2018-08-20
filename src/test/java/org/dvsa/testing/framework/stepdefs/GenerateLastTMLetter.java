@@ -4,10 +4,8 @@ import activesupport.database.DBUnit;
 import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
-import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
-import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
@@ -43,7 +41,6 @@ public class GenerateLastTMLetter extends BasePage implements En {
                 int columnValue = Integer.parseInt(resultSet.getString("opt_out_tm_letter"));
                 assertEquals(0, columnValue);
             }
-
         });
         Given("^the licence status is \"([^\"]*)\"$", (String arg0) -> {
             world.genericUtils.updateLicenceStatus(world.createLicence.getLicenceId(), arg0);
@@ -59,12 +56,6 @@ public class GenerateLastTMLetter extends BasePage implements En {
             jenkinsParams.put(JenkinsParameterKey.COMMAND.toString(), "last-tm-letter");
 
             Jenkins.trigger(Jenkins.Job.BATCH_RUN_CLI, jenkinsParams);
-        });
-
-        After(new String[]{"@INT"}, (Scenario scenario) -> {
-           String[] args = new String[0];
-           Hooks hooks = new Hooks();
-           hooks.main(args);
         });
     }
 }

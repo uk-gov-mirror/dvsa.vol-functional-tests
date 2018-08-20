@@ -1,11 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import activesupport.aws.s3.S3;
-import cucumber.api.Scenario;
+import activesupport.driver.Browser;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.runner.Hooks;
-import org.dvsa.testing.lib.Login;
-import org.dvsa.testing.lib.browser.Browser;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
@@ -34,9 +30,10 @@ public class RemoveTM extends BasePage implements En {
             world.genericUtils.createApplication();
         });
         When("^the transport manager has been removed by an internal user$", () -> {
-            internalUserLogin();
-            world.genericUtils.searchAndViewApplication();
-            world.genericUtils.removeInternalTransportManager();
+            world.genericUtils.createAdminUser();
+            world.journeySteps.internalAdminUserLogin();
+            world.journeySteps.searchAndViewApplication();
+            world.journeySteps.removeInternalTransportManager();
         });
         Then("^a pop up message should be displayed$", () -> {
             waitForTextToBePresent(alertHeaderValue);
@@ -50,11 +47,11 @@ public class RemoveTM extends BasePage implements En {
         });
         Then("^the remove TM popup should not be displaying new TM remove text$", () -> {
             waitForTextToBePresent(alertHeaderValue);
-            if (Browser.getURL().contains("variation") || Browser.getURL().contains("application")) {
+            if (Browser.navigate().getCurrentUrl().contains("variation") || Browser.navigate().getCurrentUrl().contains("application")) {
                 assertFalse(isTextPresent(newAlertValue, 60));
                 assertTrue(isTextPresent(applicationVariationTMAlertContent, 60));
             }
-            if (Browser.getURL().contains("ssap1")) {
+            if (Browser.navigate().getCurrentUrl().contains("ssap1")) {
                 String alertContent = getElementValueByText("//div[@class='modal__content']/p", SelectorType.XPATH);
                 assertEquals(alertContent, oldAlertValue);
             }
@@ -64,17 +61,7 @@ public class RemoveTM extends BasePage implements En {
             }
         });
         Given("^a self-serve user removes the last TM$", () -> {
-            world.genericUtils.externalUserLogin();
-            String password = S3.getTempPassword(world.createLicence.getEmailAddress());
-
-            if (isTextPresent("Username", 60))
-                Login.signIn(world.createLicence.getLoginId(), password);
-            else if (isTextPresent("Current password", 60)) {
-                enterField(nameAttribute("input", "oldPassword"), password);
-                enterField(nameAttribute("input", "newPassword"), "Password1");
-                enterField(nameAttribute("input", "confirmPassword"), "Password1");
-                click(nameAttribute("input", "submit"));
-            }
+            world.journeySteps.externalUserLogin();
             clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Transport Managers");
             click("//*[@value='Remove']", SelectorType.XPATH);
@@ -85,8 +72,7 @@ public class RemoveTM extends BasePage implements En {
 
         });
         When("^i create a variation$", () -> {
-            world.updateLicence.createVariation();
-            world.updateLicence.updateLicenceType(world.genericUtils.createApp().getLicenceId());
+            world.updateLicence.createVariation(null);
         });
         And("^user attempts to remove the last TM without selecting an option$", () -> {
             waitForTextToBePresent(alertHeaderValue);
@@ -100,10 +86,8 @@ public class RemoveTM extends BasePage implements En {
             isLinkPresent("You must select an option", 60);
         });
 
-        After(new String[]{"@INT"}, (Scenario scenario) -> {
-            String[] args = new String[0];
-            Hooks hooks = new Hooks();
-            hooks.main(args);
+        And("^i update the licence type$", () -> {
+            world.updateLicence.updateLicenceType(world.createLicence.getLicenceId());
         });
     }
 }

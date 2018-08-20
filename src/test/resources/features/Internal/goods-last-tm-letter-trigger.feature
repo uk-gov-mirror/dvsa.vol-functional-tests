@@ -1,3 +1,4 @@
+@INT
 @INT-GOODS-LAST-TM-TRIGGER
 @-OLCS-19479
 Feature: Set and check criteria for triggering automatic letter
@@ -16,7 +17,7 @@ Feature: Set and check criteria for triggering automatic letter
     And the user confirms they want to send letter
     Then a flag should be set in the DB
 
-  Scenario:
+  Scenario: Generate letter for curtailed licence
     Given the licence status is "curtail"
     When the transport manager has been removed by an internal user
     And the user confirms they want to send letter

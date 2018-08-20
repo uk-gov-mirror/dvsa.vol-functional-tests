@@ -42,7 +42,6 @@ public enum BusinessType {
             default:
                 throw new IllegalArgumentException(Output.printColoredLog("[ERROR] Unable to convert " + businessType + " into a BusinessType enum"));
         }
-
         return businessTypeEnum;
     }
 }

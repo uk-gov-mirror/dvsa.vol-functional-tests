@@ -1,15 +1,10 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
-import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
 import org.dvsa.testing.lib.pages.BasePage;
 
-import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.internalUserLogin;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -69,10 +64,11 @@ public class InterimLicence extends BasePage implements En {
             isTextPresent(noDatesErrorMessage,60);
         });
         And("^i have logged in to internal$", () -> {
-            internalUserLogin();
+            world.genericUtils.createAdminUser();
+            world.journeySteps.internalAdminUserLogin();
         });
         And("^i search for my licence$", () -> {
-            world.genericUtils.searchAndViewApplication();
+            world.journeySteps.searchAndViewApplication();
         });
     }
 }

@@ -28,9 +28,9 @@ public class CreateLicenceAPI {
     private static String businessVersion = "1";
     private static String adminUserHeader = "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
 
-    private String title = "title_mr";
-    private String foreName = Str.randomWord(5);
-    private String familyName = Str.randomWord(8);
+    private String title;
+    private String foreName;
+    private String familyName;
     private String birthDate = String.valueOf(Int.random(1900, 2018) + "-" + Int.random(1, 12) + "-" + Int.random(1, 28));
     private String addressLine1 = "API House";
     private String town = "Nottingham";
@@ -54,8 +54,9 @@ public class CreateLicenceAPI {
     private String niFlag = System.getProperty("ni"); //"Y|N"
     private String trafficArea = "D";
     private String enforcementArea = "EA-D";
-    private String restrictedVehicles;
+    private String restrictedVehicles = "2";
     private String licenceStatus;
+    private String licenceId;
 
     private static int version = 1;
     private int noOfVehiclesRequired = 5;
@@ -72,6 +73,23 @@ public class CreateLicenceAPI {
             enforcementArea = "EA-D";
         }
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setForeName(String foreName) {
+        this.foreName = foreName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+
     private void setLicenceNumber(String licenceNumber) {
         this.licenceNumber = licenceNumber;
     }
@@ -81,20 +99,22 @@ public class CreateLicenceAPI {
     public void setNoOfVehiclesRequired(int noOfVehiclesRequired) {
         this.noOfVehiclesRequired = noOfVehiclesRequired;
     }
+
     public int getNoOfVehiclesRequired() { return noOfVehiclesRequired; }
-    private void setApplicationNumber(String applicationNumber) {
+
+    public void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
     public String getApplicationNumber() {
         return applicationNumber;
     }
-    private void setOrganisationId(String organisationId) {
+    public void setOrganisationId(String organisationId) {
         this.organisationId = organisationId;
     }
     public String getOrganisationId() {
         return organisationId;
     }
-    private void setLoginId(String loginId) {
+    public void setLoginId(String loginId) {
         this.loginId = loginId;
     }
     public String getLoginId() {
@@ -106,10 +126,34 @@ public class CreateLicenceAPI {
     public String getEmailAddress() {
         return emailAddress;
     }
-    private String getForeName() {
+
+    public String getTown() {
+        return town;
+    }
+
+    public void setTown(String town) {
+        this.town = town;
+    }
+
+    public String getPostcode() {
+        return postcode;
+    }
+
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+    public String getForeName() {
         return foreName;
     }
-    private String getFamilyName() {
+    public String getFamilyName() {
         return familyName;
     }
     public String getUsername() {
@@ -124,9 +168,8 @@ public class CreateLicenceAPI {
     private void setPid(String pid) {
         this.pid = pid;
     }
-    private String licenceId;
     public String getLicenceId() { return licenceId; }
-    private void setLicenceId(String licenceId) { this.licenceId = licenceId; }
+    public void setLicenceId(String licenceId) { this.licenceId = licenceId; }
     public String getLicenceType() {
         return licenceType;
     }
@@ -197,11 +240,14 @@ public class CreateLicenceAPI {
     }
 
     public void registerUser() throws MalformedURLException {
+        setTitle("title_mr");
+        setForeName("API".concat(Str.randomWord(5).toLowerCase()));
+        setFamilyName("Ann".concat(Str.randomWord(4)));
         String registerResource = URL.build(env, "user/selfserve/register").toString();
         Headers.headers.put("api", "dvsa");
         setLoginId(Str.randomWord(8));
 
-        PersonBuilder personBuilder = new PersonBuilder().withTitle(title).withForename(getForeName()).withFamilyName(getFamilyName()).withBirthDate(birthDate);
+        PersonBuilder personBuilder = new PersonBuilder().withTitle(getTitle()).withForename(getForeName()).withFamilyName(getFamilyName()).withBirthDate(birthDate);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withEmailAddress(emailAddress).withPerson(personBuilder);
         SelfServeUserRegistrationDetailsBuilder selfServeUserRegistrationDetailsBuilder = new SelfServeUserRegistrationDetailsBuilder().withLoginId(getLoginId()).withContactDetails(contactDetailsBuilder)
                 .withOrganisationName(organisationName).withBusinessType(String.valueOf(BusinessType.getEnum(businessType)));
@@ -297,7 +343,7 @@ public class CreateLicenceAPI {
 
     public void addPartners() throws MalformedURLException {
         String addPersonResource = URL.build(env, String.format("application/%s/people/", applicationNumber)).toString();
-        PersonBuilder addPerson = new PersonBuilder().withId(applicationNumber).withTitle(title).withForename(foreName).withFamilyName(familyName).withBirthDate(birthDate);
+        PersonBuilder addPerson = new PersonBuilder().withId(applicationNumber).withTitle(getTitle()).withForename(getForeName()).withFamilyName(getFamilyName()).withBirthDate(birthDate);
         apiResponse = RestUtils.post(addPerson, addPersonResource, getHeaders());
         assertThat(apiResponse.extract().statusCode() == HttpStatus.SC_CREATED);
         if(apiResponse.extract().statusCode() != HttpStatus.SC_CREATED){
@@ -311,7 +357,7 @@ public class CreateLicenceAPI {
         String operatingCentreAddress = "API_Operating_Centre";
         OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder();
 
-        if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))) {
+        if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))|| (getNiFlag().equals("Y"))) {
             AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(applicationNumber).withNoOfVehiclesRequired(String.valueOf(noOfVehiclesRequired))
                     .withNoOfTrailersRequired(String.valueOf(noOfVehiclesRequired)).withPermission(permissionOption).withAddress(address);
@@ -338,7 +384,7 @@ public class CreateLicenceAPI {
         OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater();
 
         do {
-            if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))) {
+            if (operatorType.equals("goods") && (!licenceType.equals("special_restricted"))|| (getNiFlag().equals("Y"))) {
                 updateOperatingCentre.withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
                         .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withVersion(version);
             }
