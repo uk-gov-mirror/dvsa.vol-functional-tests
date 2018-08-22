@@ -10,6 +10,7 @@ Feature: Complete Manual Bus Registration Steps
 
   Scenario: Paying Fees to Complete Bus Registration Manually
     Given i add a new bus registration
+    And it has been paid and granted
 
 
 #    When when i pay for the fee by "card"

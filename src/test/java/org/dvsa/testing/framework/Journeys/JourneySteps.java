@@ -18,8 +18,10 @@ import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -30,7 +32,7 @@ public class JourneySteps extends BasePage {
     static int tmCount;
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
-    public JourneySteps(World world){
+    public JourneySteps(World world) {
         this.world = world;
     }
 
@@ -42,7 +44,17 @@ public class JourneySteps extends BasePage {
         clickByLinkText(world.createLicence.getLicenceNumber());
     }
 
-    public void internalSiteAddBusNewReg(int day, int month, int year) throws IllegalBrowserException {
+    public static java.time.LocalDate getFutureDate(@NotNull int month) {
+        java.time.LocalDate date = java.time.LocalDate.now().plusMonths(month);
+        return date;
+    }
+
+    public void selectInternalRadioButtons(String value) throws IllegalBrowserException {
+        List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//*[@type='radio']"));
+        radioButtons.stream().filter(x -> x.getAttribute("value").equals(value)).forEach(x -> x.click());
+    }
+
+    public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
         clickByLinkText(world.createLicence.getLicenceNumber());
         click(nameAttribute("button", "action"));
         waitForTextToBePresent("Service details");
@@ -53,9 +65,11 @@ public class JourneySteps extends BasePage {
         enterText("via", Str.randomWord(5), SelectorType.ID);
         selectServiceType("//ul[@class='chosen-choices']", "//*[@id=\"busServiceTypes_chosen\"]/div/ul/li[1]", SelectorType.XPATH);
         enterDate(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
-        enterText("effectiveDate_day", String.valueOf(day), SelectorType.ID);
-        enterText("effectiveDate_month", String.valueOf(month), SelectorType.ID);
-        enterText("effectiveDate_year", String.valueOf(year), SelectorType.ID);
+        getFutureDate(month);
+        String[] date = getFutureDate(5).toString().split("-");
+        enterText("effectiveDate_day", date[2], SelectorType.ID);
+        enterText("effectiveDate_month", date[1], SelectorType.ID);
+        enterText("effectiveDate_year", date[0], SelectorType.ID);
         click(nameAttribute("button", "form-actions[submit]"));
         do {
             // Refresh page
@@ -63,6 +77,7 @@ public class JourneySteps extends BasePage {
         }
         while (!isTextPresent("Service details", 2));//condition
     }
+
 
     private static void enterDate(int day, int month, int year) throws IllegalBrowserException {
         enterText("receivedDate_day", String.valueOf(day), SelectorType.ID);
@@ -110,44 +125,47 @@ public class JourneySteps extends BasePage {
         }
     }
 
-        public void createAdminFee(String amount, String feeType) throws IllegalBrowserException {
-            waitAndClick("//button[@id='new']", SelectorType.XPATH);
-            waitForTextToBePresent("Create new fee");
-            selectValueFromDropDown("fee-details[feeType]", SelectorType.NAME, feeType);
-            waitAndEnterText("amount", SelectorType.ID, amount);
-            waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
-        }
+    public void createAdminFee(String amount, String feeType) throws IllegalBrowserException {
+        waitAndClick("//button[@id='new']", SelectorType.XPATH);
+        waitForTextToBePresent("Create new fee");
+        selectValueFromDropDown("fee-details[feeType]", SelectorType.NAME, feeType);
+        waitAndEnterText("amount", SelectorType.ID, amount);
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
 
     public void payFee(String amount, @NotNull String paymentMethod, String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) throws IllegalBrowserException {
-        do {
-            //nothing
-        } while (isElementPresent("//button[@id='form-actions[submit]']", SelectorType.XPATH));
-        waitAndClick("//tbody/tr[2]/td[7]", SelectorType.XPATH);
-        waitAndClick("//*[@value='Pay']", SelectorType.XPATH);
-        waitForTextToBePresent("Pay fee");
-
         if (paymentMethod.toLowerCase().trim().equals("cash") || paymentMethod.toLowerCase().trim().equals("cheque") || paymentMethod.toLowerCase().trim().equals("postal")) {
             enterText("details[received]", amount, SelectorType.NAME);
             enterText("details[payer]", "Automation payer", SelectorType.NAME);
             enterText("details[slipNo]", "1234567", SelectorType.NAME);
-            enterText("details[customerName]", "Jane Doe", SelectorType.NAME);
+
         }
         if (paymentMethod.toLowerCase().trim().equals("card") && (isTextPresent("Pay fee", 10))) {
             selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Card Payment");
-            enterText("details[customerName]", "Veena Skish", SelectorType.NAME);
-            enterText("details[customerReference]", "AutomationCardCustomerRef", SelectorType.NAME);
-            findAddress();
+            if (isTextPresent("Customer reference", 10)) {
+                enterText("details[customerName]", "Veena Skish", SelectorType.NAME);
+                enterText("details[customerReference]", "AutomationCardCustomerRef", SelectorType.NAME);
+                findAddress();
+            }
         }
         switch (paymentMethod.toLowerCase().trim()) {
             case "cash":
                 selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Cash");
-                enterText("details[customerReference]", "AutomationCashCustomerRef", SelectorType.NAME);
-                findAddress();
+                if (isTextPresent("Customer reference", 10)) {
+                    enterText("details[customerName]", "Jane Doe", SelectorType.NAME);
+                    enterText("details[customerReference]", "AutomationCashCustomerRef", SelectorType.NAME);
+                    findAddress();
+                } else {
+                    clickByName("form-actions[pay]");
+                }
                 break;
             case "cheque":
                 selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Cheque");
+                if (isTextPresent("Customer reference", 10)) {
+                    enterText("details[customerReference]", "AutomationChequeCustomerRef", SelectorType.NAME);
+                }
                 enterText("details[chequeNo]", "12345", SelectorType.NAME);
-                enterText("details[customerReference]", "AutomationChequeCustomerRef", SelectorType.NAME);
+                enterText("details[customerName]", "Jane Doe", SelectorType.NAME);
                 enterText("details[chequeDate][day]", String.valueOf(getCurrentDayOfMonth()), SelectorType.NAME);
                 enterText("details[chequeDate][month]", String.valueOf(getCurrentMonth()), SelectorType.NAME);
                 enterText("details[chequeDate][year]", String.valueOf(getCurrentYear()), SelectorType.NAME);
@@ -155,7 +173,11 @@ public class JourneySteps extends BasePage {
                 break;
             case "postal":
                 selectValueFromDropDown("details[paymentType]", SelectorType.NAME, "Postal Order");
+                if (isTextPresent("Payer name", 10)) {
+                    enterText("details[payer]", "Jane Doe", SelectorType.NAME);
+                }
                 enterText("details[customerReference]", "AutomationPostalOrderCustomerRef", SelectorType.NAME);
+                enterText("details[customerName]", "Jane Doe", SelectorType.NAME);
                 enterText("details[poNo]", "123456", SelectorType.NAME);
                 findAddress();
                 break;
@@ -163,6 +185,15 @@ public class JourneySteps extends BasePage {
                 customerPaymentModule(bankCardNumber, cardExpiryMonth, cardExpiryYear);
                 break;
         }
+    }
+
+    public void selectFee() throws IllegalBrowserException {
+        do {
+            //nothing
+        } while (isElementPresent("//button[@id='form-actions[submit]']", SelectorType.XPATH));
+        waitAndClick("//tbody/tr/td[7]/input", SelectorType.XPATH);
+        waitAndClick("//*[@value='Pay']", SelectorType.XPATH);
+        waitForTextToBePresent("Pay fee");
     }
 
     private void customerPaymentModule(String bankCardNumber, String cardExpiryMonth, String cardExpiryYear) throws IllegalBrowserException {
@@ -224,16 +255,16 @@ public class JourneySteps extends BasePage {
     }
 
     public void addPreviousConviction() throws IllegalBrowserException {
-        selectValueFromDropDown("data[title]",SelectorType.ID,"Ms");
-        enterText("data[forename]",Str.randomWord(8),SelectorType.NAME);
-        enterText("data[familyName]",Str.randomWord(8),SelectorType.NAME);
-        enterText("data[notes]",Str.randomWord(30),SelectorType.NAME);
+        selectValueFromDropDown("data[title]", SelectorType.ID, "Ms");
+        enterText("data[forename]", Str.randomWord(8), SelectorType.NAME);
+        enterText("data[familyName]", Str.randomWord(8), SelectorType.NAME);
+        enterText("data[notes]", Str.randomWord(30), SelectorType.NAME);
         enterText("dob_day", String.valueOf(getPastDayOfMonth(5)), SelectorType.ID);
         enterText("dob_month", String.valueOf(getCurrentMonth()), SelectorType.ID);
         enterText("dob_year", String.valueOf(getPastYear(20)), SelectorType.ID);
-        enterText("data[categoryText]",Str.randomWord(50),SelectorType.NAME);
-        enterText("data[courtFpn]","Clown",SelectorType.NAME);
-        enterText("data[penalty]","Severe",SelectorType.NAME);
+        enterText("data[categoryText]", Str.randomWord(50), SelectorType.NAME);
+        enterText("data[courtFpn]", "Clown", SelectorType.NAME);
+        enterText("data[penalty]", "Severe", SelectorType.NAME);
         clickByName("form-actions[submit]");
     }
 
@@ -250,7 +281,8 @@ public class JourneySteps extends BasePage {
         System.out.println(world.updateLicence.adminUserLogin + "UserLogin");
 
         if (activesupport.driver.Browser.navigate().getCurrentUrl().contains("da")) {
-            Login.signIn(world.updateLicence.adminUserLogin, password);}
+            Login.signIn(world.updateLicence.adminUserLogin, password);
+        }
         if (isTextPresent("Username", 60))
             Login.signIn(world.updateLicence.adminUserLogin, password);
         if (isTextPresent("Current password", 60)) {
@@ -317,14 +349,15 @@ public class JourneySteps extends BasePage {
         clickByLinkText("change your licence");
         waitAndClick("button[name='form-actions[submit]'", SelectorType.CSS);
         waitAndClick("//*[@id=\"OperatingCentres\"]/fieldset[1]/div/div[2]/table/tbody/tr/td[1]/input", SelectorType.XPATH);
-        enterField(nameAttribute("input", "data[noOfVehiclesRequired]"),noOfVehicles);
+        enterField(nameAttribute("input", "data[noOfVehiclesRequired]"), noOfVehicles);
         if (Integer.parseInt(noOfVehicles) > world.createLicence.getNoOfVehiclesRequired()) {
-            click(nameAttribute("button", "form-actions[submit]"));}
+            click(nameAttribute("button", "form-actions[submit]"));
+        }
         click(nameAttribute("button", "form-actions[submit]"));
     }
 
-    public void changeVehicleAuth (String  noOfAuthVehicles) throws IllegalBrowserException {
-        enterField(nameAttribute("input", "data[totAuthVehicles]"),noOfAuthVehicles);
+    public void changeVehicleAuth(String noOfAuthVehicles) throws IllegalBrowserException {
+        enterField(nameAttribute("input", "data[totAuthVehicles]"), noOfAuthVehicles);
         click(nameAttribute("button", "form-actions[save]"));
     }
 
