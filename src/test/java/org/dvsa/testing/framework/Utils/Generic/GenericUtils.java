@@ -183,8 +183,8 @@ public class GenericUtils extends BasePage {
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
     }
 
-    public void createAdminUser() throws MissingRequiredArgument, MalformedURLException {
-        apiResponse = world.updateLicence.createInternalAdminUser();
+    public void createAdminUser() throws MissingRequiredArgument {
+        world.updateLicence.createInternalAdminUser();
     }
 
     public void nIAddressBuilder() {
@@ -196,8 +196,8 @@ public class GenericUtils extends BasePage {
         world.createLicence.setNiFlag("Y");
     }
 
-    public void getLicenceTrafficArea() throws MalformedURLException {
-        Headers.getHeaders().put("x-pid", world.createLicence.getAdminUserHeader());
+    public void getLicenceTrafficArea() {
+        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
@@ -266,11 +266,9 @@ public class GenericUtils extends BasePage {
         return value.replaceAll("[^A-Za-z0-9]", "");
 
     }
-
     public String stripAlphaCharacters(String value) {
         return value.replaceAll("[^0-9]", "");
     }
-
 
     public void selectAllRadioButtons(String radioButtonValue) throws IllegalBrowserException {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//label[@class='form-control form-control--radio form-control--inline']"));

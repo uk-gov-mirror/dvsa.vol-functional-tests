@@ -1,4 +1,4 @@
-@SS
+@IGNORE
 @USER-ACCOUNT-REG
 Feature: User account registration
 

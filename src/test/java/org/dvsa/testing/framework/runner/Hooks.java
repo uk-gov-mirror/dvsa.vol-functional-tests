@@ -17,8 +17,7 @@ public class Hooks {
 
     public void main(String[] args) throws MissingDriverException, IllegalBrowserException {
         attach();
-        teardown();
-        closeBrowser();
+        tearDown();
     }
 
     private void createDirectory() {
@@ -35,7 +34,6 @@ public class Hooks {
         File screenshot = new File(String.format(directory + "/errorScreenShot%s.png", Instant.now().getEpochSecond()));
         byte[] bytes = new byte[0];
         try {
-            Browser.navigate();
             if (Browser.isBrowserOpen()) {
                 FileOutputStream screenshotStream = new FileOutputStream(screenshot);
                 bytes = ((TakesScreenshot) Browser.navigate())
@@ -51,7 +49,7 @@ public class Hooks {
         return bytes;
     }
 
-    private void teardown() {
+    private void deleteDirectory() {
         if (directory.exists()) {
             try {
                 directory.delete();
@@ -61,9 +59,10 @@ public class Hooks {
         }
     }
 
-    private void closeBrowser() throws IllegalBrowserException, MissingDriverException {
+    private void tearDown() throws IllegalBrowserException, MissingDriverException {
         if (Browser.isBrowserOpen()) {
             Browser.quit();
+            deleteDirectory();
         }
     }
 }

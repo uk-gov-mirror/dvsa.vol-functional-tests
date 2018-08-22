@@ -1,5 +1,5 @@
 @INT
-@Admin-Payment-Processing
+@Admin-Payment-create-fee
 Feature: Admin payment process
 
   Background:

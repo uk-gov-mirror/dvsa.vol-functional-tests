@@ -37,7 +37,9 @@ public class ESBRupload extends BasePage implements En {
             assertTrue(isTextPresent("short notice", 60));
         });
         And("^A short notice tab should be displayed in internal$", () -> {
-            world.genericUtils.createAdminUser();
+            if(world.updateLicence.getAdminUserLogin() == null) {
+                world.genericUtils.createAdminUser();
+            }
             world.journeySteps.internalAdminUserLogin();
             selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
             do {
@@ -47,6 +49,7 @@ public class ESBRupload extends BasePage implements En {
             assertTrue(isTextPresent("Short notice", 60));
         });
         Then("^A short notice flag should not be displayed in selfserve$", () -> {
+            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
             do {
                 // Refresh page
                 javaScriptExecutor("location.reload(true)");
@@ -68,7 +71,10 @@ public class ESBRupload extends BasePage implements En {
             assertTrue(isTextPresent("Short notice", 30));
         });
         And("^A short notice tab should not be displayed in internal$", () -> {
-            world.genericUtils.createAdminUser();
+            if(world.updateLicence.getAdminUserLogin() == null) {
+                world.genericUtils.createAdminUser();
+            }
+            world.journeySteps.internalAdminUserLogin();
             selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
             do {
                 SearchNavBar.search(world.createLicence.getLicenceNumber());

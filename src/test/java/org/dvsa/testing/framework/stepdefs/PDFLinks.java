@@ -9,8 +9,7 @@ import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 public class PDFLinks extends BasePage implements En {
 
-    public PDFLinks() throws MissingRequiredArgument {
-        World world = new World();
+    public PDFLinks(World world) throws MissingRequiredArgument {
 
         Given("^I have a valid \"([^\"]*)\" \"([^\"]*)\" licence$", (String arg0, String arg1) -> {
             world.genericUtils = new GenericUtils(world);
