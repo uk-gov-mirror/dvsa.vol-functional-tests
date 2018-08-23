@@ -64,10 +64,8 @@ public class ESBRupload extends BasePage implements En {
             clickByLinkText("Service details");
             clickByLinkText("TA's");
             click("//*[@class='chosen-choices']",SelectorType.XPATH);
-            //This will need to be moved into Page Objects//
             world.genericUtils.selectFirstValueInList("//*[@class=\"active-result\"]");
             click("//*[@id='localAuthoritys_chosen']/ul[@class='chosen-choices']",SelectorType.XPATH);
-            //This will need to be moved into Page Objects//
             world.genericUtils.selectFirstValueInList("//*[@class=\"active-result group-option\"]");
             clickByName("form-actions[submit]");
         });
