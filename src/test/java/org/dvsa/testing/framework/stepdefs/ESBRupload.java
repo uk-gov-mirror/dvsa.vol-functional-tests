@@ -7,6 +7,7 @@ import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
+import org.junit.Assert;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -55,32 +56,41 @@ public class ESBRupload extends BasePage implements En {
             // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
             world.journeySteps.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
         });
-
-        After(new String[]{"@SS"}, 0, 1, (Scenario scenario) -> {
-            String[] args = new String[0];
-            Hooks hooks = new Hooks();
-            hooks.main(args);
-        });
         Given("^i add a new bus registration$", () -> {
             world.journeySteps.internalSiteAddBusNewReg(5);
             clickByLinkText("Register");
-            world.journeySteps.selectInternalRadioButtons("Y");
+            world.genericUtils.selectInternalRadioButtons("Y");
             clickByName("form-actions[submit]");
             clickByLinkText("Service details");
             clickByLinkText("TA's");
-            clickByName("Select Some Options");
-            selectValueFromDropDownByIndex("//*[@class='chosen-choices']",SelectorType.XPATH, 1);
-
-
+            click("//*[@class='chosen-choices']",SelectorType.XPATH);
+            //This will need to be moved into Page Objects//
+            world.genericUtils.selectFirstValueInList("//*[@class=\"active-result\"]");
+            click("//*[@id='localAuthoritys_chosen']/ul[@class='chosen-choices']",SelectorType.XPATH);
+            //This will need to be moved into Page Objects//
+            world.genericUtils.selectFirstValueInList("//*[@class=\"active-result group-option\"]");
+            clickByName("form-actions[submit]");
         });
         And("^it has been paid and granted$", () -> {
             clickByLinkText("Fees");
             world.journeySteps.selectFee();
             world.journeySteps.payFee("60", "cash", null, null, null);
-            clickByLinkText("Processing");
+            waitAndClick("//*[contains(text(),'Grant')]",SelectorType.XPATH);
+        });
+        Then("^the bus registration should be granted$", () -> {
+            Assert.assertTrue(isTextPresent("Registered",5));
+        });
+        And("^the traffic areas should be displayed on the service details page$", () -> {
+            clickByLinkText("Service details");
+            clickByLinkText("TA's");
+            String trafficArea = findElement("//*[@id=\"bus-reg-ta\"]/ul/li[1]/dd",SelectorType.XPATH,10).getText();
+            Assert.assertNotNull(trafficArea);
+        });
 
-
-
+        After(new String[]{"@SS"}, 0, 1, (Scenario scenario) -> {
+            String[] args = new String[0];
+            Hooks hooks = new Hooks();
+            hooks.main(args);
         });
     }
 }

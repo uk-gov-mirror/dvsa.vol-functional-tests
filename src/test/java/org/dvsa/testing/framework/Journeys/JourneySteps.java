@@ -18,10 +18,8 @@ import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
-import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -49,11 +47,6 @@ public class JourneySteps extends BasePage {
         return date;
     }
 
-    public void selectInternalRadioButtons(String value) throws IllegalBrowserException {
-        List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//*[@type='radio']"));
-        radioButtons.stream().filter(x -> x.getAttribute("value").equals(value)).forEach(x -> x.click());
-    }
-
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
         clickByLinkText(world.createLicence.getLicenceNumber());
         click(nameAttribute("button", "action"));
@@ -63,7 +56,9 @@ public class JourneySteps extends BasePage {
         enterText("startPoint", Str.randomWord(9), SelectorType.ID);
         enterText("finishPoint", Str.randomWord(11), SelectorType.ID);
         enterText("via", Str.randomWord(5), SelectorType.ID);
-        selectServiceType("//ul[@class='chosen-choices']", "//*[@id=\"busServiceTypes_chosen\"]/div/ul/li[1]", SelectorType.XPATH);
+        click("//*[@class='chosen-choices']",SelectorType.XPATH);
+        //This will need to be moved into Page Objects//
+        Browser.navigate().findElements(By.xpath("//*[@class=\"active-result\"]")).stream().findFirst().get().click();
         enterDate(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
         getFutureDate(month);
         String[] date = getFutureDate(5).toString().split("-");
@@ -338,9 +333,9 @@ public class JourneySteps extends BasePage {
     public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException, MalformedURLException {
         world.journeySteps.externalUserLogin();
         world.journeySteps.addPerson(firstName, lastName);
-        world.genericUtils.selectAllRadioButtons("No");
+        world.genericUtils.selectAllExternalRadioButtons("No");
         clickByName("form-actions[saveAndContinue]");
-        world.genericUtils.selectAllRadioButtons("No");
+        world.genericUtils.selectAllExternalRadioButtons("No");
         clickByName("form-actions[saveAndContinue]");
     }
 
