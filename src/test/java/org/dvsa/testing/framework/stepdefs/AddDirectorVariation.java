@@ -1,13 +1,10 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.string.Str;
-import activesupport.driver.Browser;
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Journeys.JourneySteps;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -40,7 +37,7 @@ public class AddDirectorVariation extends BasePage implements En {
             assertEquals(world.journeySteps.navigateToInternalTask(world), "");
         });
         When("^i enter \"([^\"]*)\" previous convictions details question$", (String arg0) -> {
-            world.genericUtils.selectAllRadioButtons(arg0);
+            world.genericUtils.selectAllExternalRadioButtons(arg0);
             if (arg0.equals("Yes")) {
                 click("add", SelectorType.ID);
                 world.journeySteps.addPreviousConviction();
@@ -51,7 +48,7 @@ public class AddDirectorVariation extends BasePage implements En {
             assertEquals(world.journeySteps.navigateToInternalTask(world), "selected");
         });
         And("^i enter \"([^\"]*)\" to financial details question$", (String arg0) -> {
-            world.genericUtils.selectAllRadioButtons(arg0);
+            world.genericUtils.selectAllExternalRadioButtons(arg0);
             if (arg0.equals("Yes")) {
                 enterText("data[insolvencyDetails]", Str.randomWord(150), SelectorType.ID);
             }
