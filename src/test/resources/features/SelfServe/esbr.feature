@@ -7,7 +7,6 @@ Feature: ESBR for English, Welsh and Scottish Areas
     When I upload an esbr file with "<Days>" days notice
     Then A short notice flag should be displayed in selfserve
     And  A short notice tab should be displayed in internal
-    And Any registrations created in internal should display a short notice tab
     Examples:
       | TrafficArea | EnforcementArea | Days |
       | B           | EA-B            | 41   |
@@ -20,7 +19,6 @@ Feature: ESBR for English, Welsh and Scottish Areas
     When I upload an esbr file with "<Days>" days notice
     Then A short notice flag should not be displayed in selfserve
     And  A short notice tab should not be displayed in internal
-    And Any registrations created in internal should not display a short notice tab
     Examples:
       | TrafficArea | EnforcementArea | Days |
       | B           | EA-B            | 42   |

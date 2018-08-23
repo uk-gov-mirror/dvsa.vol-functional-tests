@@ -27,18 +27,33 @@ public class UpdateLicenceAPI extends BasePage {
     private World world;
     private int caseId;
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
-    public String adminUserLogin = String.format("volAdminUser"+"%s",Str.randomWord(3));
+    public String adminUserLogin = String.format("volAdminUser" + "%s", Str.randomWord(3));
     private String internalAdminHeader = "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
+    private String adminUserId;
 
-    public String getVariationApplicationNumber() { return variationApplicationNumber; }
+    public String getVariationApplicationNumber() {
+        return variationApplicationNumber;
+    }
 
-    public static void setVariationApplicationNumber(String variationApplicationNumber) { UpdateLicenceAPI.variationApplicationNumber = variationApplicationNumber; }
+    public static void setVariationApplicationNumber(String variationApplicationNumber) {
+        UpdateLicenceAPI.variationApplicationNumber = variationApplicationNumber;
+    }
 
-    public void setAdminUserLogin(String adminUserLogin) { this.adminUserLogin = adminUserLogin; }
+    public void setAdminUserId(String adminUserId) {
+        this.adminUserId = adminUserId;
+    }
 
-    public void setAdminUserEmailAddress(String adminUserEmailAddress) { this.adminUserEmailAddress = adminUserEmailAddress; }
+    public String getAdminUserLogin() {
+        return adminUserId;
+    }
 
-    public int getCaseId() { return caseId; }
+    public void setAdminUserEmailAddress(String adminUserEmailAddress) {
+        this.adminUserEmailAddress = adminUserEmailAddress;
+    }
+
+    public int getCaseId() {
+        return caseId;
+    }
 
     private void setCaseId(int caseId) {
         this.caseId = caseId;
@@ -252,7 +267,7 @@ public class UpdateLicenceAPI extends BasePage {
     }
 
     public ValidatableResponse getCaseDetails(String resource, int id) throws MalformedURLException {
-        String caseResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("%s/%s", resource,id)).toString();
+        String caseResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("%s/%s", resource, id)).toString();
         apiResponse = RestUtils.get(caseResource, getHeaders());
         return apiResponse;
     }
@@ -260,7 +275,7 @@ public class UpdateLicenceAPI extends BasePage {
     public ValidatableResponse variationUpdateOperatingCentre() throws MalformedURLException {
         String noOfVehiclesRequired = "5";
         String licenceId = world.createLicence.getLicenceId();
-        String updateOperatingCentreResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/variation-operating-centre/%s",licenceId,variationApplicationNumber)).toString();
+        String updateOperatingCentreResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/variation-operating-centre/%s", licenceId, variationApplicationNumber)).toString();
         OperatingCentreVariationBuilder updateOperatingCentre = new OperatingCentreVariationBuilder();
 
         do {
@@ -276,7 +291,7 @@ public class UpdateLicenceAPI extends BasePage {
                 updateOperatingCentre.withId(variationApplicationNumber).withApplication(variationApplicationNumber)
                         .withNoOfVehiclesRequired(noOfVehiclesRequired).withVersion(version);
             }
-            if  (!world.createLicence.getLicenceType().equals("special_restricted")) {
+            if (!world.createLicence.getLicenceType().equals("special_restricted")) {
                 apiResponse = RestUtils.put(updateOperatingCentre, updateOperatingCentreResource, getHeaders());
                 version++;
                 if (version > 20) {
@@ -285,13 +300,13 @@ public class UpdateLicenceAPI extends BasePage {
             }
         }
         while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-        if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
             System.out.println(apiResponse.extract().response().asString());
         }
         return apiResponse;
     }
 
-    public ValidatableResponse createInternalAdminUser() throws MalformedURLException {
+    public void createInternalAdminUser() {
         List<String> roles = new ArrayList<>();
         roles.add("internal-admin");
         String team = "1";
@@ -300,22 +315,23 @@ public class UpdateLicenceAPI extends BasePage {
         String internalAdminUserResource = org.dvsa.testing.lib.url.api.URL.build(env, "user/internal").toString();
 
         AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1("AXIS Building").withTown("Nottingham").withPostcode("LS28 5LY").withCountryCode("GB");
-        PersonBuilder personBuilder = new PersonBuilder().withForename("Kish").withFamilyName("Ann").withBirthDate(getPastYear(30)+"-"+ getCurrentMonth() +"-"+getCurrentDayOfMonth());
+        PersonBuilder personBuilder = new PersonBuilder().withForename("Kish").withFamilyName("Ann").withBirthDate(getPastYear(30) + "-" + getCurrentMonth() + "-" + getCurrentDayOfMonth());
 
         ContactDetailsBuilder contactDetails = new ContactDetailsBuilder().withEmailAddress(adminUserEmailAddress).withAddress(addressBuilder).withPerson(personBuilder);
         CreateInternalAdminUser internalAdminUser = new CreateInternalAdminUser().withContactDetails(contactDetails).withLoginId(adminUserLogin).withRoles(roles).withTeam(team).withUserType(userType);
         apiResponse = RestUtils.post(internalAdminUser, internalAdminUserResource, getHeaders());
 
-        if(apiResponse.extract().statusCode() != HttpStatus.SC_CREATED){
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
             System.out.println("+++ERROR+++" + apiResponse.extract().response().asString());
         }
-        return apiResponse;
+        setAdminUserId(apiResponse.extract().response().jsonPath().getString("id.user"));
     }
+
     public ValidatableResponse grantVariation(String resource) throws MalformedURLException {
-        String grantVariation = org.dvsa.testing.lib.url.api.URL.build(env,String.format("variation/%s/%s",variationApplicationNumber,resource)).toString();
+        String grantVariation = org.dvsa.testing.lib.url.api.URL.build(env, String.format("variation/%s/%s", variationApplicationNumber, resource)).toString();
 
         GenericBuilder genericBuilder = new GenericBuilder().withId(variationApplicationNumber);
-        apiResponse = RestUtils.put(genericBuilder, grantVariation,getHeaders());
+        apiResponse = RestUtils.put(genericBuilder, grantVariation, getHeaders());
 
         return apiResponse;
     }
