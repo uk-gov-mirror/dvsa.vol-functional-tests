@@ -67,6 +67,7 @@ public class PaymentProcessing extends BasePage implements En {
             assertEquals(String.valueOf(Integer.parseInt(historicalFeeCurrent) + 1), feeCountAfterFeeHasBeenPaid);
         });
         And("^when i pay for the fee by \"([^\"]*)\"$", (String arg0) -> {
+            world.journeySteps.selectFee();
             if (arg0.equals("card")) {
                 String bankCardNumber = "4006000000000600";
                 String cardExpiryMonth = "10";

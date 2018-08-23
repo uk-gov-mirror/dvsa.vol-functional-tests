@@ -1,8 +1,8 @@
 package org.dvsa.testing.framework.Utils.Generic;
 
 import activesupport.IllegalBrowserException;
-import activesupport.driver.Browser;
 import activesupport.MissingRequiredArgument;
+import activesupport.driver.Browser;
 import activesupport.http.RestUtils;
 import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
@@ -61,19 +61,19 @@ public class GenericUtils extends BasePage {
 
     public static int tmCount;
 
-    private String getRegistrationNumber() {
+    public String getRegistrationNumber() {
         return registrationNumber;
     }
 
-    private String getTrafficAreaName() {
+    public String getTrafficAreaName() {
         return trafficAreaName;
     }
 
-    private void setTrafficAreaName(String trafficAreaName) {
+    public void setTrafficAreaName(String trafficAreaName) {
         this.trafficAreaName = trafficAreaName;
     }
 
-    private void setRegistrationNumber(String registrationNumber) {
+    public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
 
@@ -272,8 +272,15 @@ public class GenericUtils extends BasePage {
     }
 
 
-    public void selectAllRadioButtons(String radioButtonValue) throws IllegalBrowserException {
+    public void selectAllExternalRadioButtons(String radioButtonValue) throws IllegalBrowserException {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//label[@class='form-control form-control--radio form-control--inline']"));
         radioButtons.stream().filter(s -> s.getText().equals(radioButtonValue)).forEach(x -> x.click());
+    }
+    public void selectInternalRadioButtons(String value) throws IllegalBrowserException {
+        List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//*[@type='radio']"));
+        radioButtons.stream().filter(x -> x.getAttribute("value").equals(value)).forEach(x -> x.click());
+    }
+    public void selectFirstValueInList(String selector) throws IllegalBrowserException {
+        Browser.navigate().findElements(By.xpath(selector)).stream().findFirst().get().click();
     }
 }

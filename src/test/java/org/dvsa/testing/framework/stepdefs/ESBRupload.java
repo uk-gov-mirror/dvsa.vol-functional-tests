@@ -7,10 +7,9 @@ import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
-import org.dvsa.testing.lib.pages.internal.SearchNavBar;
+import org.junit.Assert;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.dvsa.testing.framework.Journeys.JourneySteps.internalSiteAddBusNewReg;
 import static org.junit.Assert.assertFalse;
 
 public class ESBRupload extends BasePage implements En {
@@ -27,11 +26,7 @@ public class ESBRupload extends BasePage implements En {
 
         Then("^A short notice flag should be displayed in selfserve$", () -> {
             world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
-            do {
-                // Refresh page
-                javaScriptExecutor("location.reload(true)");
-            } while (isTextPresent("processing", 60));
-
+            world.journeySteps.viewESBRInExternal();
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
             assertTrue(isTextPresent("short notice", 60));
@@ -39,57 +34,55 @@ public class ESBRupload extends BasePage implements En {
         And("^A short notice tab should be displayed in internal$", () -> {
             world.genericUtils.createAdminUser();
             world.journeySteps.internalAdminUserLogin();
-            selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
-            do {
-                SearchNavBar.search(world.createLicence.getLicenceNumber());
-            } while (!isLinkPresent(world.createLicence.getLicenceNumber(), 60));
-            clickByLinkText(world.createLicence.getLicenceNumber());
+            world.journeySteps.internalSearchForBusReg();
             assertTrue(isTextPresent("Short notice", 60));
         });
         Then("^A short notice flag should not be displayed in selfserve$", () -> {
-            do {
-                // Refresh page
-                javaScriptExecutor("location.reload(true)");
-            } while (isTextPresent("processing", 60));
-
+            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
+            world.journeySteps.viewESBRInExternal();
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
             assertFalse(isTextPresent("short notice", 60));
         });
-        And("^Any registrations created in internal should display a short notice tab$", () -> {
-            clickByLinkText(world.createLicence.getLicenceNumber());
-            click(nameAttribute("button", "action"));
-            internalSiteAddBusNewReg(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
-            do {
-                // Refresh page
-                javaScriptExecutor("location.reload(true)");
-            }
-            while (!isTextPresent("Service details", 2));//condition
-            assertTrue(isTextPresent("Short notice", 30));
-        });
+
         And("^A short notice tab should not be displayed in internal$", () -> {
             world.genericUtils.createAdminUser();
-            selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
-            do {
-                SearchNavBar.search(world.createLicence.getLicenceNumber());
-            } while (!isLinkPresent(world.createLicence.getLicenceNumber(), 60));
-            clickByLinkText(world.createLicence.getLicenceNumber());
+            world.journeySteps.internalAdminUserLogin();
+            world.journeySteps.internalSearchForBusReg();
             assertFalse(isTextPresent("Short notice", 60));
         });
-        And("^Any registrations created in internal should not display a short notice tab$", () -> {
-            clickByLinkText(world.createLicence.getLicenceNumber());
-            click(nameAttribute("button", "action"));
-            internalSiteAddBusNewReg(getCurrentDayOfMonth(), getFutureMonth(5), getCurrentYear());
-            do {
-                // Refresh page
-                javaScriptExecutor("location.reload(true)");
-            }
-            while (!isTextPresent("Service details", 2));//condition
-            assertFalse(isTextPresent("Short notice", 30));
-        });
+
         When("^I upload an esbr file with \"([^\"]*)\" days notice$", (String arg0) -> {
             // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
             world.journeySteps.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
+        });
+        Given("^i add a new bus registration$", () -> {
+            world.journeySteps.internalSiteAddBusNewReg(5);
+            clickByLinkText("Register");
+            world.genericUtils.selectInternalRadioButtons("Y");
+            clickByName("form-actions[submit]");
+            clickByLinkText("Service details");
+            clickByLinkText("TA's");
+            click("//*[@class='chosen-choices']",SelectorType.XPATH);
+            world.genericUtils.selectFirstValueInList("//*[@class=\"active-result\"]");
+            click("//*[@id='localAuthoritys_chosen']/ul[@class='chosen-choices']",SelectorType.XPATH);
+            world.genericUtils.selectFirstValueInList("//*[@class=\"active-result group-option\"]");
+            clickByName("form-actions[submit]");
+        });
+        And("^it has been paid and granted$", () -> {
+            clickByLinkText("Fees");
+            world.journeySteps.selectFee();
+            world.journeySteps.payFee("60", "cash", null, null, null);
+            waitAndClick("//*[contains(text(),'Grant')]",SelectorType.XPATH);
+        });
+        Then("^the bus registration should be granted$", () -> {
+            Assert.assertTrue(isTextPresent("Registered",5));
+        });
+        And("^the traffic areas should be displayed on the service details page$", () -> {
+            clickByLinkText("Service details");
+            clickByLinkText("TA's");
+            String trafficArea = findElement("//*[@id=\"bus-reg-ta\"]/ul/li[1]/dd",SelectorType.XPATH,10).getText();
+            Assert.assertNotNull(trafficArea);
         });
 
         After(new String[]{"@SS"}, 0, 1, (Scenario scenario) -> {
