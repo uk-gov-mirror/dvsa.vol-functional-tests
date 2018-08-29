@@ -57,7 +57,6 @@ public class CreateLicenceAPI {
     private String restrictedVehicles = "2";
     private String licenceStatus;
     private String licenceId;
-    public String businessName = "API";
 
     private static int version = 1;
     private int noOfVehiclesRequired = 5;
@@ -78,23 +77,31 @@ public class CreateLicenceAPI {
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public void setForeName(String foreName) {
         this.foreName = foreName;
     }
+
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
     }
+
     private void setLicenceNumber(String licenceNumber) {
         this.licenceNumber = licenceNumber;
     }
-    public String getLicenceNumber() { return licenceNumber; }
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
     public void setNoOfVehiclesRequired(int noOfVehiclesRequired) {
         this.noOfVehiclesRequired = noOfVehiclesRequired;
     }
+
     public int getNoOfVehiclesRequired() { return noOfVehiclesRequired; }
+
     public void setApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
@@ -104,7 +111,9 @@ public class CreateLicenceAPI {
     public void setOrganisationId(String organisationId) {
         this.organisationId = organisationId;
     }
-    public String getOrganisationId() { return organisationId; }
+    public String getOrganisationId() {
+        return organisationId;
+    }
     public void setLoginId(String loginId) {
         this.loginId = loginId;
     }
@@ -117,21 +126,27 @@ public class CreateLicenceAPI {
     public String getEmailAddress() {
         return emailAddress;
     }
+
     public String getTown() {
         return town;
     }
+
     public void setTown(String town) {
         this.town = town;
     }
+
     public String getPostcode() {
         return postcode;
     }
+
     public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
+
     public String getCountryCode() {
         return countryCode;
     }
+
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
@@ -197,11 +212,6 @@ public class CreateLicenceAPI {
     public void setBusinessType(String businessType) { this.businessType = businessType; }
     public String getNiFlag() { return niFlag; }
     public void setNiFlag(String niFlag) { this.niFlag = niFlag; }
-    public String getOrganisationName() { return organisationName; }
-    public void setOrganisationName(String organisationName) { this.organisationName = organisationName; }
-    public String getBusinessName() { return businessName; }
-    public void setBusinessName(String businessName) { this.businessName = businessName; }
-
 
     public void createAndSubmitApp() throws Exception {
         registerUser();
@@ -229,10 +239,10 @@ public class CreateLicenceAPI {
         getApplicationLicenceDetails();
     }
 
-    public void registerUser(){
+    public void registerUser() throws MalformedURLException {
         setTitle("title_mr");
-        setForeName("Vol-API-".concat(Str.randomWord(3).toLowerCase()));
-        setFamilyName("Ann");
+        setForeName("API".concat(Str.randomWord(5).toLowerCase()));
+        setFamilyName("Ann".concat(Str.randomWord(4)));
         String registerResource = URL.build(env, "user/selfserve/register").toString();
         Headers.headers.put("api", "dvsa");
         setLoginId(Str.randomWord(8));
@@ -249,7 +259,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void getUserDetails(){
+    public void getUserDetails() throws MalformedURLException {
         Headers.headers.put("x-pid", adminUserHeader);
 
         String userDetailsResource = URL.build(env, String.format("user/selfserve/%s", userId)).toString();
@@ -263,7 +273,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void createApplication(){
+    public void createApplication() throws MalformedURLException {
         String createApplicationResource = URL.build(env, "application").toString();
         Headers.headers.put("x-pid", pid);
         HashMap<String, String> headers = getHeaders();
@@ -279,7 +289,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void updateBusinessType(){
+    public void updateBusinessType() throws MalformedURLException {
         String updateBusinessTypeResource = URL.build(env, String.format("organisation/%s/business-type/", organisationId)).toString();
         do {
             BusinessTypeBuilder businessTypeBuilder = new BusinessTypeBuilder().withBusinessType(String.valueOf(BusinessType.getEnum(businessType))).withVersion(businessVersion)
@@ -295,7 +305,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void updateBusinessDetails(){
+    public void updateBusinessDetails() throws MalformedURLException {
         String natureOfBusiness = "apiTesting";
         String updateBusinessDetailsResource = URL.build(env, String.format("organisation/business-details/application/%s", licenceNumber)).toString();
 
@@ -303,7 +313,7 @@ public class CreateLicenceAPI {
             AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
             UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
                     .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
-                    .withVersion(businessVersion).withName(businessName).withAddress(address);
+                    .withVersion(businessVersion).withName(natureOfBusiness).withAddress(address);
             apiResponse = RestUtils.put(businessDetails, updateBusinessDetailsResource, getHeaders());
             version++;
             if (version > 20) {
@@ -316,7 +326,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addAddressDetails(){
+    public void addAddressDetails() throws MalformedURLException {
         String phoneNumber = "0712345678";
         String establishmentAddress = "establishment";
         String applicationAddressResource = URL.build(env, String.format("application/%s/addresses/", applicationNumber)).toString();
@@ -331,7 +341,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addPartners(){
+    public void addPartners() throws MalformedURLException {
         String addPersonResource = URL.build(env, String.format("application/%s/people/", applicationNumber)).toString();
         PersonBuilder addPerson = new PersonBuilder().withId(applicationNumber).withTitle(getTitle()).withForename(getForeName()).withFamilyName(getFamilyName()).withBirthDate(birthDate);
         apiResponse = RestUtils.post(addPerson, addPersonResource, getHeaders());
@@ -341,7 +351,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addOperatingCentre(){
+    public void addOperatingCentre() throws MalformedURLException {
         String operatingCentreResource = URL.build(env, String.format("application/%s/operating-centre/", applicationNumber)).toString();
         String permissionOption = "Y";
         String operatingCentreAddress = "API_Operating_Centre";
@@ -369,7 +379,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void updateOperatingCentre(){
+    public void updateOperatingCentre() throws MalformedURLException {
         String updateOperatingCentreResource = URL.build(env, String.format("application/%s/operating-centres", applicationNumber)).toString();
         OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater();
 
@@ -400,7 +410,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addFinancialEvidence(){
+    public void addFinancialEvidence() throws MalformedURLException {
         String financialEvidenceResource = URL.build(env, String.format("application/%s/financial-evidence", applicationNumber)).toString();
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit financial details
@@ -420,7 +430,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addTransportManager(){
+    public void addTransportManager() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -437,7 +447,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void submitTransport(){
+    public void submitTransport() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -451,7 +461,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void vehicles(){
+    public void vehicles() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -480,7 +490,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void submitVehicleDeclaration(){
+    public void submitVehicleDeclaration() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -509,7 +519,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addFinancialHistory(){
+    public void addFinancialHistory() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -534,7 +544,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addApplicationSafetyAndComplianceDetails(){
+    public void addApplicationSafetyAndComplianceDetails() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -561,7 +571,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addSafetyInspector(){
+    public void addSafetyInspector() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -578,7 +588,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addConvictionsDetails(){
+    public void addConvictionsDetails() throws MalformedURLException {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
@@ -600,7 +610,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void addLicenceHistory(){
+    public void addLicenceHistory() throws MalformedURLException {
 
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
@@ -625,7 +635,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void applicationReviewAndDeclare(){
+    public void applicationReviewAndDeclare() throws MalformedURLException {
         String interimReason = "Testing through the API";
         String isInterim = "Y";
         String declarationConfirmation = "Y";
@@ -653,7 +663,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void submitApplication(){
+    public void submitApplication() throws MalformedURLException {
         String submitResource = URL.build(env, String.format("application/%s/submit", applicationNumber)).toString();
 
         do {
@@ -670,7 +680,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void getApplicationLicenceDetails(){
+    public void getApplicationLicenceDetails() throws MalformedURLException {
         Headers.headers.put("x-pid", adminUserHeader);
 
         String getApplicationResource = URL.build(env, String.format("application/%s", applicationNumber)).toString();
@@ -684,7 +694,7 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void submitTaxiPhv(){
+    public void submitTaxiPhv() throws MalformedURLException {
         String phLicenceNumber = "phv123456";
         String councilName = "nottinghamshire";
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
