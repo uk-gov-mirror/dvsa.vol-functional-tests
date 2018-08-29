@@ -277,7 +277,7 @@ public class GenericUtils extends BasePage {
     }
     public void findAllRadioButtons(String value) throws IllegalBrowserException {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//*[@type='radio']"));
-        radioButtons.stream().filter(x -> x.getAttribute("value").equals(value)).forEach(x -> x.click());
+        radioButtons.stream().filter(x -> x.getAttribute("value").equals(value)).filter(isChecked -> !isChecked.isSelected()).forEach(x -> x.click());
     }
     public void selectFirstValueInList(String selector) throws IllegalBrowserException {
         Browser.navigate().findElements(By.xpath(selector)).stream().findFirst().get().click();

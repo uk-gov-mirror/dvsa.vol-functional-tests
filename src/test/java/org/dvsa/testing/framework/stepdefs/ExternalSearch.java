@@ -26,7 +26,7 @@ public class ExternalSearch extends BasePage implements En {
                     enterText("search", world.createLicence.getLicenceNumber(), SelectorType.NAME);
                     break;
                 case "person":
-                    enterText("search", world.createLicence.getForeName(), SelectorType.NAME);
+                    enterText("search", world.createLicence.getFamilyName(), SelectorType.NAME);
                     break;
             }
             clickByName("submit");
