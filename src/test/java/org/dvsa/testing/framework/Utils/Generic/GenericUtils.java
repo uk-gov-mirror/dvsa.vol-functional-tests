@@ -223,11 +223,6 @@ public class GenericUtils extends BasePage {
         assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
     }
 
-    public CreateLicenceAPI createApp() throws MissingRequiredArgument {
-        CreateLicenceAPI api = new CreateLicenceAPI();
-        return api;
-    }
-
     public GrantLicenceAPI grantLicence() throws MissingRequiredArgument {
         GrantLicenceAPI grantLicenceAPI = new GrantLicenceAPI(world);
         return grantLicenceAPI;
