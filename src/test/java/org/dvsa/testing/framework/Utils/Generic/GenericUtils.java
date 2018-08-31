@@ -274,6 +274,7 @@ public class GenericUtils extends BasePage {
         setLicenceType(apiResponse.extract().jsonPath().getString("licenceType.description"));
         return licenceType;
     }
+
     public void generateAndGrantPsvApplicationPerTrafficArea(String trafficArea, String enforcementArea) throws Exception {
         world.createLicence.setTrafficArea(trafficArea);
         world.createLicence.setEnforcementArea(enforcementArea);
