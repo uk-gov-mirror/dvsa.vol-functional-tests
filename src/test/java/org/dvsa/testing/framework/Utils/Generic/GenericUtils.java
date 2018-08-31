@@ -59,6 +59,30 @@ public class GenericUtils extends BasePage {
     private static String variationApplicationNumber;
     private static String operatorType = System.getProperty("operatorType");
 
+    public String getGoodOrPsv() {
+        return goodOrPsv;
+    }
+
+    public void setGoodOrPsv(String goodOrPsv) {
+        this.goodOrPsv = goodOrPsv;
+    }
+
+    private String goodOrPsv;
+
+
+
+
+    public void setLicenceStatus(String licenceStatus) {
+        this.licenceStatus = licenceStatus;
+    }
+
+
+    public String getLicenceStatus() {
+        return licenceStatus;
+    }
+
+    public String licenceStatus;
+
     public static int tmCount;
 
     public String getRegistrationNumber() {
@@ -76,6 +100,7 @@ public class GenericUtils extends BasePage {
     public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
+
 
     public GenericUtils(World world) throws MissingRequiredArgument {
         this.world = world;
@@ -196,14 +221,33 @@ public class GenericUtils extends BasePage {
         world.createLicence.setNiFlag("Y");
     }
 
-    public void getLicenceTrafficArea() {
+    public String getLicenceTrafficArea() {
         Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
         setTrafficAreaName(apiResponse.extract().jsonPath().getString("trafficArea.name"));
+        return trafficAreaName;
     }
 
+    public String getLicenceStatusDetails() {
+        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setLicenceStatus(apiResponse.extract().jsonPath().getString("status.description"));
+        return licenceStatus;
+    }
+    public String getOperatorTypeDetails() {
+        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setGoodOrPsv(apiResponse.extract().jsonPath().getString("goodsOrPsv.description"));
+
+        return goodOrPsv;
+
+    }
     public void generateAndGrantPsvApplicationPerTrafficArea(String trafficArea, String enforcementArea) throws Exception {
         world.createLicence.setTrafficArea(trafficArea);
         world.createLicence.setEnforcementArea(enforcementArea);
