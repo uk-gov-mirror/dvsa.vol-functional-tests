@@ -73,7 +73,6 @@ public class GenericUtils extends BasePage {
         this.licenceStatus = licenceStatus;
     }
 
-
     public String getLicenceStatus() {
         return licenceStatus;
     }
@@ -245,6 +244,7 @@ public class GenericUtils extends BasePage {
         return goodOrPsv;
 
     }
+    
     public void generateAndGrantPsvApplicationPerTrafficArea(String trafficArea, String enforcementArea) throws Exception {
         world.createLicence.setTrafficArea(trafficArea);
         world.createLicence.setEnforcementArea(enforcementArea);
