@@ -22,6 +22,8 @@ public class TmVerify extends BasePage implements En {
             String name = world.createLicence.getForeName() + " " + world.createLicence.getFamilyName();
             assertTrue(isTextPresent(name ,30));
             assertTrue(isTextPresent("What happens next" ,30));
+            assertTrue(isTextPresent("Awaiting operator review" ,30));
+            assertTrue(isTextPresent("Declaration signed through GOV.UK Verify" ,30));
             assertTrue(isTextPresent("You've submitted your details to the operator. We'll let you know once they've been reviewed." ,30));
             assertTrue(isElementPresent("//button[@class='govuk-button']" , SelectorType.XPATH));
         });
