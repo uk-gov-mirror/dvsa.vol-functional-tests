@@ -4,8 +4,10 @@
 
 Feature: TM signs through verify
 
-  Scenario: TM who is not Operator / Applicant signs through Verify
-
+  Background:
     Given the self-service user has successfully signed the TM application through Verify
+
+  Scenario: TM who is not Operator / Applicant signs through Verify
+    When the user has been redirected to the awaiting confirmation page
     Then the 'Awaiting operator review' post signature page is displayed showing the correct information
     And the confirmation panel is displaying the correct assets

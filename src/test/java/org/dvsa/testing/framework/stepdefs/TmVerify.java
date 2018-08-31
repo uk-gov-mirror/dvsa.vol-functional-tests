@@ -2,14 +2,19 @@ package org.dvsa.testing.framework.stepdefs;
 
 import activesupport.IllegalBrowserException;
 import activesupport.driver.Browser;
+import activesupport.system.Properties;
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
+import org.dvsa.testing.lib.url.utils.EnvironmentType;
+import org.dvsa.testing.lib.url.webapp.URL;
+import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.Color;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TmVerify extends BasePage implements En {
@@ -19,6 +24,7 @@ public class TmVerify extends BasePage implements En {
             throw new PendingException();
         });
         Then("^the 'Awaiting operator review' post signature page is displayed showing the correct information$", () -> {
+            //need to split out
             String name = world.createLicence.getForeName() + " " + world.createLicence.getFamilyName();
             assertTrue(isTextPresent(name ,30));
             assertTrue(isTextPresent("What happens next" ,30));
@@ -30,6 +36,12 @@ public class TmVerify extends BasePage implements En {
         And("^the confirmation panel is displaying the correct assets$", () -> {
             Assert.assertEquals("#fff",  Color.fromString(confirmationPanel("color")).asHex());
             Assert.assertEquals("#28a197",  Color.fromString(confirmationPanel("background-color")).asHex());
+        });
+        When("^the user has been redirected to the awaiting confirmation page$", () -> {
+            EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+            String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
+            String url = Browser.navigate().getCurrentUrl();
+            assertEquals(myURL,url);
         });
     }
 
