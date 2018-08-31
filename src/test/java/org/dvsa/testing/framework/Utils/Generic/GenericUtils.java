@@ -69,9 +69,6 @@ public class GenericUtils extends BasePage {
 
     private String goodOrPsv;
 
-
-
-
     public void setLicenceStatus(String licenceStatus) {
         this.licenceStatus = licenceStatus;
     }
