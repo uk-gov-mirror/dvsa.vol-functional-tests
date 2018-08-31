@@ -55,7 +55,7 @@ public class CreateLicenceAPI {
     private String trafficArea = "D";
     private String enforcementArea = "EA-D";
     private String restrictedVehicles = "2";
-    private String licenceStatus;
+    private String applicationStatus;
     private String licenceId;
 
     private static int version = 1;
@@ -200,11 +200,11 @@ public class CreateLicenceAPI {
         this.operatorType = operatorType;
     }
     public static void setAdminUserHeader(String adminUserHeader) { CreateLicenceAPI.adminUserHeader = adminUserHeader; }
-    public String getLicenceStatus() {
-        return licenceStatus;
+    public String getApplicationStatus() {
+        return applicationStatus;
     }
-    public void setLicenceStatus(String licenceStatus) {
-        this.licenceStatus = licenceStatus;
+    public void setApplicationStatus(String licenceStatus) {
+        this.applicationStatus = licenceStatus;
     }
     public String getRestrictedVehicles() { return restrictedVehicles; }
     public void setRestrictedVehicles(String restrictedVehicles) { this.restrictedVehicles = restrictedVehicles; }
@@ -688,7 +688,7 @@ public class CreateLicenceAPI {
         assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
         setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
         setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
-        setLicenceStatus(apiResponse.extract().jsonPath().getString("licenceType.status.olbsKey"));
+        setApplicationStatus(apiResponse.extract().jsonPath().getString("licenceType.status.olbsKey"));
         if(apiResponse.extract().statusCode() != HttpStatus.SC_OK){
             System.out.println(apiResponse.extract().response().asString());
         }
