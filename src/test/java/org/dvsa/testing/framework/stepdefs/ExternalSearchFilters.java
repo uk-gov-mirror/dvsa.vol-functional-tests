@@ -22,11 +22,11 @@ public class ExternalSearchFilters extends BasePage implements En {
         });
         Then("^the Organisation Type filter should be displayed$", () -> {
             String opName = getText(String.format("//*[@id='filter[orgTypeDesc]']/option[2]"), SelectorType.XPATH);
-             Assert.assertEquals(world.createLicence.getBusinessType().replace("_", " ").toUpperCase(),opName.toUpperCase());
+             Assert.assertEquals(world.genericUtils.getBusinessTypeDetails().toUpperCase(),opName.toUpperCase());
         });
         Then("^the Licence Type filter should be displayed$", () -> {
             String licType = getText(String.format("//*[@id='filter[licTypeDesc]']/option[2]"), SelectorType.XPATH);
-            Assert.assertEquals(world.createLicence.getLicenceType().replace("_", " ").toUpperCase(),licType.toUpperCase());
+            Assert.assertEquals(world.genericUtils.getLicenceTypeDetails().toUpperCase(),licType.toUpperCase());
         });
         Then("^the Licence Status filter should be displayed$", () -> {
             String licStatus = getText(String.format("//*[@id='filter[licStatusDesc]']/option[2]"), SelectorType.XPATH);

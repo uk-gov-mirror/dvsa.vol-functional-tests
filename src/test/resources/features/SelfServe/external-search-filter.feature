@@ -1,4 +1,5 @@
 @SS
+@External-Search-Filter
   Feature: Using filters on External Search
     Background:
       Given i have a valid "goods" licence
