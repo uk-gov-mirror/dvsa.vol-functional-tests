@@ -58,8 +58,45 @@ public class GenericUtils extends BasePage {
     private String trafficAreaName;
     private static String variationApplicationNumber;
     private static String operatorType = System.getProperty("operatorType");
+    private String goodOrPsv;
+    private String licenceStatus;
+
+    public String getLicenceType() {
+        return licenceType;
+    }
+
+    public void setLicenceType(String licenceType) {
+        this.licenceType = licenceType;
+    }
+
+    private String licenceType;
 
     public static int tmCount;
+
+    public String getBusinessType() {
+        return businessType;
+    }
+
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+
+    private String businessType;
+    public String getGoodOrPsv() {
+        return goodOrPsv;
+    }
+
+    public void setGoodOrPsv(String goodOrPsv) {
+        this.goodOrPsv = goodOrPsv;
+    }
+
+    public void setLicenceStatus(String licenceStatus) {
+        this.licenceStatus = licenceStatus;
+    }
+
+    public String getLicenceStatus() {
+        return licenceStatus;
+    }
 
     public String getRegistrationNumber() {
         return registrationNumber;
@@ -76,6 +113,7 @@ public class GenericUtils extends BasePage {
     public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
+
 
     public GenericUtils(World world) throws MissingRequiredArgument {
         this.world = world;
@@ -196,12 +234,45 @@ public class GenericUtils extends BasePage {
         world.createLicence.setNiFlag("Y");
     }
 
-    public void getLicenceTrafficArea() {
+    public String getLicenceTrafficArea() {
         Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
         setTrafficAreaName(apiResponse.extract().jsonPath().getString("trafficArea.name"));
+        return trafficAreaName;
+    }
+
+    public String getLicenceStatusDetails() {
+        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setLicenceStatus(apiResponse.extract().jsonPath().getString("status.description"));
+        return licenceStatus;
+    }
+    public String getOperatorTypeDetails() {
+        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setGoodOrPsv(apiResponse.extract().jsonPath().getString("goodsOrPsv.description"));
+        return goodOrPsv;
+    }
+    public String getBusinessTypeDetails() {
+        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setBusinessType(apiResponse.extract().jsonPath().getString("organisation.type.description"));
+        return businessType;
+    }  public String getLicenceTypeDetails() {
+        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setLicenceType(apiResponse.extract().jsonPath().getString("licenceType.description"));
+        return licenceType;
     }
 
     public void generateAndGrantPsvApplicationPerTrafficArea(String trafficArea, String enforcementArea) throws Exception {
@@ -270,11 +341,17 @@ public class GenericUtils extends BasePage {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//label[@class='form-control form-control--radio form-control--inline']"));
         radioButtons.stream().filter(s -> s.getText().equals(radioButtonValue)).forEach(x -> x.click());
     }
-    public void selectInternalRadioButtons(String value) throws IllegalBrowserException {
+    public void findAllRadioButtons(String value) throws IllegalBrowserException {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//*[@type='radio']"));
-        radioButtons.stream().filter(x -> x.getAttribute("value").equals(value)).forEach(x -> x.click());
+        radioButtons.stream().
+                filter(x -> x.getAttribute("value").equals(value)).
+                filter(isChecked -> !isChecked.isSelected()).
+                forEach(x -> x.click());
     }
     public void selectFirstValueInList(String selector) throws IllegalBrowserException {
         Browser.navigate().findElements(By.xpath(selector)).stream().findFirst().get().click();
+    }
+    public boolean checkForValuesInTable(String searchTerm) throws IllegalBrowserException {
+        return Browser.navigate().findElements(By.xpath("//table/tbody/tr[*]")).stream().allMatch(w -> w.getText().contains(searchTerm));
     }
 }
