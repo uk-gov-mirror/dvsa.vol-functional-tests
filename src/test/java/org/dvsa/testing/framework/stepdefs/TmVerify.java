@@ -12,7 +12,10 @@ import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.Color;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,26 +29,45 @@ public class TmVerify extends BasePage implements En {
         Then("^the 'Awaiting operator review' post signature page is displayed showing the correct information$", () -> {
             //need to split out
             String name = world.createLicence.getForeName() + " " + world.createLicence.getFamilyName();
-            assertTrue(isTextPresent(name ,30));
-            assertTrue(isTextPresent("What happens next" ,30));
-            assertTrue(isTextPresent("Awaiting operator review" ,30));
-            assertTrue(isTextPresent("Declaration signed through GOV.UK Verify" ,30));
-            assertTrue(isTextPresent("You've submitted your details to the operator. We'll let you know once they've been reviewed." ,30));
-            assertTrue(isElementPresent("//button[@class='govuk-button']" , SelectorType.XPATH));
+            assertTrue(isTextPresent(name, 30));
+            assertTrue(isTextPresent("What happens next", 30));
+            assertTrue(isTextPresent("Awaiting operator review", 30));
+            assertTrue(isTextPresent("Declaration signed through GOV.UK Verify", 30));
+            assertTrue(isTextPresent("You've submitted your details to the operator. We'll let you know once they've been reviewed.", 30));
+            assertTrue(isElementPresent("//button[@class='govuk-button']", SelectorType.XPATH));
         });
         And("^the confirmation panel is displaying the correct assets$", () -> {
-            Assert.assertEquals("#fff",  Color.fromString(confirmationPanel("color")).asHex());
-            Assert.assertEquals("#28a197",  Color.fromString(confirmationPanel("background-color")).asHex());
+            Assert.assertEquals("#fff", Color.fromString(confirmationPanel("color")).asHex());
+            Assert.assertEquals("#28a197", Color.fromString(confirmationPanel("background-color")).asHex());
         });
         When("^the user has been redirected to the awaiting confirmation page$", () -> {
             EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
             String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
             String url = Browser.navigate().getCurrentUrl();
-            assertEquals(myURL,url);
+            assertEquals(myURL, url);
+        });
+        Given("^the operator has chosen to counter sign the application by print$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
+        });
+        When("^the user is on the print sign page$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
+        });
+        Then("^print details like will open in a new tab$", () -> {
+            switchTab(0);
+        });
+        And("^the following \"([^\"]*)\" text will be displayed on the page$", (String arg0) -> {
+            assertTrue(isElementPresent(arg0));
         });
     }
 
     private String confirmationPanel(String cssValue) throws IllegalBrowserException {
         return Browser.navigate().findElement(By.xpath("//div[@class='govuk-panel govuk-panel--confirmation']")).getCssValue(cssValue);
+    }
+
+    private void switchTab(int tab) throws IllegalBrowserException {
+        ArrayList<String> tabs = new ArrayList<>(Browser.navigate().getWindowHandles());
+        Browser.navigate().switchTo().window(tabs.get(tab));
     }
 }
