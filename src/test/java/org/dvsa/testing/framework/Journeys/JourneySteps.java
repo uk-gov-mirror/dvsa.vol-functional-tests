@@ -308,7 +308,7 @@ public class JourneySteps extends BasePage {
         }
     }
 
-    public void externalSearch() throws IllegalBrowserException {
+    public void navigateToExternalSearch() throws IllegalBrowserException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env,"search/find-lorry-bus-operators/").toString();
         Browser.navigate().get(myURL);
     }
