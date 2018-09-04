@@ -25,20 +25,37 @@ Feature: TM signs through verify
       | Signature date               |
 
 
-    Scenario Outline: TM has signed the application via GOV.UK Verify who is not the operator/applicant
-      Given the operator is on check your answers page
-      Then the following "<sections>" text will be displayed on the page
-      And the correct data should be pulled through for "<sections>"
+    Scenario: TM has completed journey and is checking Your details section
+      Given the operator is ona check your answers page
+      Then the correct headings, data and links should be displayed for Your details section
 
+  Scenario: TM has completed journey and is checking Responsibilities section
+    Given the operator is on check your answers page
+    Then the correct headings, data and links should be displayed for Responsibilities section
 
-      Examples:
-        | sections                                  |
-        | Your details                              |
-        | Responsibilities                          |
-        | Other licences                            |
-        | Additional information                    |
-        | Other employment                          |
-        | Convictions & Penalities                  |
-        | Revoked, curtailed or suspended licences  |
+  Scenario: TM has completed journey and is checking Hours per week section
+    Given the operator is on check your answers page
+    Then the correct headings, data and links should be displayed for Hours per week section
+
+  Scenario: TM has completed journey and is checking Other licences   section
+    Given the operator is on check your answers page
+    Then the correct headings, data and links should be displayed for Other licences section
+
+  Scenario: TM has completed journey and is checking Additional information section
+    Given the operator is on check your answers page
+    Then the correct headings, data and links should be displayed for Additional information section
+
+  Scenario: TM has completed journey and is checking Other employment section
+    Given the operator is on check your answers page
+    Then the correct headings, data and links should be displayed for Other employment section
+
+  Scenario: TM has completed journey and is checking Convictions & Penalties section
+    Given the operator is on check your answers page
+    Then the correct headings, data and links should be displayed for Convictions & Penalties section
+
+  Scenario: TM has completed journey and is checking Revoked, curtailed or suspended licences section
+    Given the operator is on check your answers page
+    Then the correct headings, data and links should be displayed for Revoked, curtailed or suspended licences section
+
 
 
