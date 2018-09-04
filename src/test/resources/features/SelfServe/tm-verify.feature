@@ -1,11 +1,12 @@
-@OLCS-19792
 @Business Need: As part of the OTC strategic objects for 2018
+@SS-TM-Verify
 @SS
 
 Feature: TM signs through verify
 
   Background:
-    Given the self-service user has successfully signed the TM application through Verify
+    Given i have a valid "public" licence
+    And the self-service user has successfully signed the TM application through Verify
 
   Scenario: TM who is not Operator / Applicant signs through Verify
     When the user has been redirected to the awaiting confirmation page
@@ -24,5 +25,19 @@ Feature: TM signs through verify
       | Signed by                    |
       | Date of birth                |
       | Signature date               |
+
+  @OLCS-20343
+  Scenario: Operator applicant has confirmed TM details and submitted and now wishes to co-sign using Verify - TM has signed online already using Verify
+    When the user confirms details on the TM 'Review and submit' page
+    Then the correct information is displayed on operator-application declaration page
+    And the users chooses to sign with verify
+    Then the declaration text and verify button are displayed
+
+  @OLCS-20343
+  Scenario: Operator applicant has confirmed TM details and submitted and now wishes to co-sign using Print - TM has signed online already using Verify
+    When the user confirms details on the TM 'Review and submit' page
+    Then the correct information is displayed on operator-application declaration page
+    And the users chooses to sign with verify
+    Then the declaration text and verify button are not displayed
 
 

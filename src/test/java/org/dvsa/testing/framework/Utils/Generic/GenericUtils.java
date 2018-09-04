@@ -31,6 +31,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -276,5 +278,9 @@ public class GenericUtils extends BasePage {
     }
     public void selectFirstValueInList(String selector) throws IllegalBrowserException {
         Browser.navigate().findElements(By.xpath(selector)).stream().findFirst().get().click();
+    }
+    public String readFileAsString(String fileName) throws Exception {
+        String data = new String(Files.readAllBytes(Paths.get(fileName)));
+        return data;
     }
 }
