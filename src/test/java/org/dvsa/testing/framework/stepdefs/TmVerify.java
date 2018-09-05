@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TmVerify extends BasePage implements En {
     public TmVerify(World world) {
-        Given("^the self-service user has successfully signed the TM application through Verify$", () -> {
+        Given("^the TM has successfully signed through verify$", () -> {
             // Write code here that turns the phrase above into concrete actions
             throw new PendingException();
         });
@@ -39,8 +39,8 @@ public class TmVerify extends BasePage implements En {
             assertTrue(isElementPresent("//button[@class='govuk-button']", SelectorType.XPATH));
         });
         And("^the confirmation panel is displaying the correct assets$", () -> {
-            Assert.assertEquals("#fff", Color.fromString(confirmationPanel("color")).asHex());
-            Assert.assertEquals("#28a197", Color.fromString(confirmationPanel("background-color")).asHex());
+            Assert.assertEquals("#fff", Color.fromString(world.genericUtils.confirmationPanel("//div[@class='govuk-panel govuk-panel--confirmation']","color")).asHex());
+            Assert.assertEquals("#28a197", Color.fromString(world.genericUtils.confirmationPanel("//div[@class='govuk-panel govuk-panel--confirmation']","background-color")).asHex());
         });
         When("^the user has been redirected to the awaiting confirmation page$", () -> {
             EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
@@ -57,7 +57,7 @@ public class TmVerify extends BasePage implements En {
             throw new PendingException();
         });
         Then("^print details like will open in a new tab$", () -> {
-            switchTab(0);
+            world.genericUtils.switchTab(0);
         });
         And("^the following \"([^\"]*)\" text will be displayed on the page$", (String arg0) -> {
             assertTrue(isElementPresent(arg0));
@@ -107,15 +107,14 @@ public class TmVerify extends BasePage implements En {
             assertTrue(isTextPresent("Submit", 20));
             assertTrue(isTextPresent(data, 20));
         });
-    }
-
-    private String confirmationPanel(String cssValue) throws IllegalBrowserException {
-        return Browser.navigate().findElement(By.xpath("//div[@class='govuk-panel govuk-panel--confirmation']")).getCssValue(cssValue);
-    }
-
-    //need to move this into page objects
-    private void switchTab(int tab) throws IllegalBrowserException {
-        ArrayList<String> tabs = new ArrayList<>(Browser.navigate().getWindowHandles());
-        Browser.navigate().switchTo().window(tabs.get(tab));
+        When("^i add a new transport manager$", () -> {
+            clickByLinkText(world.createLicence.getLicenceNumber());
+            clickByLinkText("Transport");
+            world.journeySteps.addTransportManager();
+        });
+        Then("^a transport manager has been created banner is displayed$", () -> {
+            assertFalse(isTextPresent("The transport manager's user account has been created and a link sent to them",30));
+            assertTrue(isTextPresent("The user account has been created and form has been emailed to the transport manager",30));
+        });
     }
 }

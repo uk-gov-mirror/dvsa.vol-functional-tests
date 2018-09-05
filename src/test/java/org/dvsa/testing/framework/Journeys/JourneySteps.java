@@ -22,6 +22,8 @@ import org.openqa.selenium.By;
 import java.net.MalformedURLException;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getFutureDate;
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getPastDate;
 
 public class JourneySteps extends BasePage {
 
@@ -42,11 +44,6 @@ public class JourneySteps extends BasePage {
         clickByLinkText(world.createLicence.getLicenceNumber());
     }
 
-    public static java.time.LocalDate getFutureDate(@NotNull int month) {
-        java.time.LocalDate date = java.time.LocalDate.now().plusMonths(month);
-        return date;
-    }
-
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
         clickByLinkText(world.createLicence.getLicenceNumber());
         click(nameAttribute("button", "action"));
@@ -56,7 +53,7 @@ public class JourneySteps extends BasePage {
         enterText("startPoint", Str.randomWord(9), SelectorType.ID);
         enterText("finishPoint", Str.randomWord(11), SelectorType.ID);
         enterText("via", Str.randomWord(5), SelectorType.ID);
-        click("//*[@class='chosen-choices']",SelectorType.XPATH);
+        click("//*[@class='chosen-choices']", SelectorType.XPATH);
         //This will need to be moved into Page Objects//
         Browser.navigate().findElements(By.xpath("//*[@class=\"active-result\"]")).stream().findFirst().get().click();
         enterDate(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
@@ -309,7 +306,7 @@ public class JourneySteps extends BasePage {
     }
 
     public void navigateToExternalSearch() throws IllegalBrowserException {
-        String myURL = URL.build(ApplicationType.EXTERNAL, env,"search/find-lorry-bus-operators/").toString();
+        String myURL = URL.build(ApplicationType.EXTERNAL, env, "search/find-lorry-bus-operators/").toString();
         Browser.navigate().get(myURL);
     }
 
@@ -361,4 +358,25 @@ public class JourneySteps extends BasePage {
         click(nameAttribute("button", "form-actions[save]"));
     }
 
+    public void addTransportManager() throws IllegalBrowserException {
+        String username = Str.randomWord(3);
+        clickByLinkText("change your licence");
+        waitForTextToBePresent("Applying to change a licence");
+        click("form-actions[submit]", SelectorType.ID);
+        waitForTextToBePresent("Transport Managers");
+        waitAndClick("//*[@id='add']", SelectorType.XPATH);
+        waitForTextToBePresent("Add Transport Manager");
+        waitAndClick("addUser", SelectorType.ID);
+        enterText("forename", "Transport", SelectorType.ID);
+        enterText("familyName", "Manager", SelectorType.ID);
+        enterText("forename", "New", SelectorType.ID);
+        String[] date = getPastDate(25).toString().split("-");
+        enterText("dob_day", date[2], SelectorType.ID);
+        enterText("dob_month", date[1], SelectorType.ID);
+        enterText("dob_year", date[0], SelectorType.ID);
+        enterText("username", "TM".concat(username), SelectorType.ID);
+        enterText("emailAddress", "TM@vol.com", SelectorType.ID);
+        enterText("emailConfirm", "TM@vol.com", SelectorType.ID);
+        waitAndClick("form-actions[continue]", SelectorType.ID);
+    }
 }

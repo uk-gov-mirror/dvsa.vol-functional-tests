@@ -16,6 +16,8 @@ import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.framework.stepdefs.World;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
+import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.w3c.dom.Document;
@@ -35,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -361,5 +364,24 @@ public class GenericUtils extends BasePage {
 
     public boolean checkForValuesInTable(String searchTerm) throws IllegalBrowserException {
         return Browser.navigate().findElements(By.xpath("//table/tbody/tr[*]")).stream().allMatch(w -> w.getText().contains(searchTerm));
+    }
+
+    public static java.time.LocalDate getFutureDate(@NotNull int month) {
+        java.time.LocalDate date = java.time.LocalDate.now().plusMonths(month);
+        return date;
+    }
+
+    public static java.time.LocalDate getPastDate(@NotNull int years) {
+        java.time.LocalDate date = java.time.LocalDate.now().minusYears(years);
+        return date;
+    }
+
+    public String confirmationPanel(String locator, String cssValue) throws IllegalBrowserException {
+        return Browser.navigate().findElement(By.xpath(locator)).getCssValue(cssValue);
+    }
+
+    public void switchTab(int tab) throws IllegalBrowserException {
+        ArrayList<String> tabs = new ArrayList<>(Browser.navigate().getWindowHandles());
+        Browser.navigate().switchTo().window(tabs.get(tab));
     }
 }

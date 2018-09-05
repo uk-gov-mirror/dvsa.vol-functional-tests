@@ -5,8 +5,9 @@
 Feature: TM signs through verify
 
   Background:
+    #Needs updating to use new application flow
     Given i have a valid "public" licence
-    And the self-service user has successfully signed the TM application through Verify
+    And the TM has successfully signed through verify
 
   Scenario: TM who is not Operator / Applicant signs through Verify
     When the user has been redirected to the awaiting confirmation page
