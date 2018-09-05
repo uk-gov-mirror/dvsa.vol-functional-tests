@@ -96,7 +96,7 @@ public class TmVerify extends BasePage implements En {
             String data = world.genericUtils.readFileAsString(String.valueOf(fileToRead));
             String dataOnPage = Browser.navigate().findElement(By.xpath("//*[@id='main-content']/div[2]/main/div/div[1]/p")).getText();
             assertEquals(data, dataOnPage);
-            assertTrue(isTextPresent("I agree - continue to GOV.UK Verify", 20));
+            assertTrue(isTextPresent("I agree - continue", 20));
             assertFalse(isTextPresent("Submit", 20));
         });
         Then("^the declaration text and verify button are not displayed$", () -> {

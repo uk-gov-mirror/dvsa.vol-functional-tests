@@ -39,5 +39,3 @@ Feature: TM signs through verify
     Then the correct information is displayed on operator-application declaration page
     And the users chooses to sign with verify
     Then the declaration text and verify button are not displayed
-
-
