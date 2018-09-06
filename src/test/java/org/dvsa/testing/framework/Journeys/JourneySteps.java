@@ -358,7 +358,7 @@ public class JourneySteps extends BasePage {
         click(nameAttribute("button", "form-actions[save]"));
     }
 
-    public void addTransportManager() throws IllegalBrowserException {
+    public void addTransportManager(String forename, String familyName ) throws IllegalBrowserException {
         String username = Str.randomWord(3);
         clickByLinkText("change your licence");
         waitForTextToBePresent("Applying to change a licence");
@@ -367,9 +367,8 @@ public class JourneySteps extends BasePage {
         waitAndClick("//*[@id='add']", SelectorType.XPATH);
         waitForTextToBePresent("Add Transport Manager");
         waitAndClick("addUser", SelectorType.ID);
-        enterText("forename", "Transport", SelectorType.ID);
-        enterText("familyName", "Manager", SelectorType.ID);
-        enterText("forename", "New", SelectorType.ID);
+        enterText("forename", forename, SelectorType.ID);
+        enterText("familyName", familyName, SelectorType.ID);
         String[] date = getPastDate(25).toString().split("-");
         enterText("dob_day", date[2], SelectorType.ID);
         enterText("dob_month", date[1], SelectorType.ID);

@@ -23,6 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TmVerify extends BasePage implements En {
+    String forname = "Transport";
+    String familyName = "Manager";
+
     public TmVerify(World world) {
         Given("^the TM has successfully signed through verify$", () -> {
             // Write code here that turns the phrase above into concrete actions
@@ -39,8 +42,8 @@ public class TmVerify extends BasePage implements En {
             assertTrue(isElementPresent("//button[@class='govuk-button']", SelectorType.XPATH));
         });
         And("^the confirmation panel is displaying the correct assets$", () -> {
-            Assert.assertEquals("#fff", Color.fromString(world.genericUtils.confirmationPanel("//div[@class='govuk-panel govuk-panel--confirmation']","color")).asHex());
-            Assert.assertEquals("#28a197", Color.fromString(world.genericUtils.confirmationPanel("//div[@class='govuk-panel govuk-panel--confirmation']","background-color")).asHex());
+            Assert.assertEquals("#fff", Color.fromString(world.genericUtils.confirmationPanel("//div[@class='govuk-panel govuk-panel--confirmation']", "color")).asHex());
+            Assert.assertEquals("#28a197", Color.fromString(world.genericUtils.confirmationPanel("//div[@class='govuk-panel govuk-panel--confirmation']", "background-color")).asHex());
         });
         When("^the user has been redirected to the awaiting confirmation page$", () -> {
             EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
@@ -66,8 +69,7 @@ public class TmVerify extends BasePage implements En {
             String declarationText;
             if (world.createLicence.getNiFlag().equals("N")) {
                 declarationText = "operator-GB-declaration.txt";
-            }
-            else{
+            } else {
                 declarationText = "operator-NI-declaration.txt";
             }
             Path fileToRead = Paths.get(getClass().getClassLoader()
@@ -110,11 +112,17 @@ public class TmVerify extends BasePage implements En {
         When("^i add a new transport manager$", () -> {
             clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Transport");
-            world.journeySteps.addTransportManager();
+            world.journeySteps.addTransportManager(forname, familyName);
         });
         Then("^a transport manager has been created banner is displayed$", () -> {
-            assertFalse(isTextPresent("The transport manager's user account has been created and a link sent to them",30));
-            assertTrue(isTextPresent("The user account has been created and form has been emailed to the transport manager",30));
+            assertFalse(isTextPresent("The transport manager's user account has been created and a link sent to them", 30));
+            assertTrue(isTextPresent("The user account has been created and form has been emailed to the transport manager", 30));
+        });
+        Then("^the download TM(\\d+) for should not be displayed on the details page$", (Integer arg0) -> {
+            waitAndClick("//a[contains(text(),'" + forname + " " + familyName + "')]", SelectorType.XPATH);
+            waitForTextToBePresent("Details not submitted");
+            assertFalse(isTextPresent("Alternatively they can download a TM1 form (PDF 150KB).", 30));
+            assertFalse(isLinkPresent("download a TM1 form (PDF 150KB).", 30));
         });
     }
 }
