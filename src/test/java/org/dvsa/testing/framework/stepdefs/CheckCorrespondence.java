@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CheckCorrespondence extends BasePage implements En {
     public CheckCorrespondence(World world) {
         And("^i have logged in to self serve$", () -> {
-            world.journeySteps.externalUserLogin();
+            world.UIJourneySteps.externalUserLogin();
         });
         When("^i open the documents tab$", () -> {
            click("//a[@href='/correspondence/']", SelectorType.XPATH);

@@ -26,20 +26,20 @@ public class ESBRupload extends BasePage implements En {
 
         Then("^A short notice flag should be displayed in selfserve$", () -> {
             world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
-            world.journeySteps.viewESBRInExternal();
+            world.UIJourneySteps.viewESBRInExternal();
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
             assertTrue(isTextPresent("short notice", 60));
         });
         And("^A short notice tab should be displayed in internal$", () -> {
             world.genericUtils.createAdminUser();
-            world.journeySteps.internalAdminUserLogin();
-            world.journeySteps.internalSearchForBusReg();
+            world.UIJourneySteps.internalAdminUserLogin();
+            world.UIJourneySteps.internalSearchForBusReg();
             assertTrue(isTextPresent("Short notice", 60));
         });
         Then("^A short notice flag should not be displayed in selfserve$", () -> {
             world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
-            world.journeySteps.viewESBRInExternal();
+            world.UIJourneySteps.viewESBRInExternal();
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
             assertFalse(isTextPresent("short notice", 60));
@@ -47,17 +47,17 @@ public class ESBRupload extends BasePage implements En {
 
         And("^A short notice tab should not be displayed in internal$", () -> {
             world.genericUtils.createAdminUser();
-            world.journeySteps.internalAdminUserLogin();
-            world.journeySteps.internalSearchForBusReg();
+            world.UIJourneySteps.internalAdminUserLogin();
+            world.UIJourneySteps.internalSearchForBusReg();
             assertFalse(isTextPresent("Short notice", 60));
         });
 
         When("^I upload an esbr file with \"([^\"]*)\" days notice$", (String arg0) -> {
             // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
-            world.journeySteps.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
+            world.UIJourneySteps.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
         });
         Given("^i add a new bus registration$", () -> {
-            world.journeySteps.internalSiteAddBusNewReg(5);
+            world.UIJourneySteps.internalSiteAddBusNewReg(5);
             clickByLinkText("Register");
             world.genericUtils.findAllRadioButtons("Y");
             clickByName("form-actions[submit]");
@@ -71,8 +71,8 @@ public class ESBRupload extends BasePage implements En {
         });
         And("^it has been paid and granted$", () -> {
             clickByLinkText("Fees");
-            world.journeySteps.selectFee();
-            world.journeySteps.payFee("60", "cash", null, null, null);
+            world.UIJourneySteps.selectFee();
+            world.UIJourneySteps.payFee("60", "cash", null, null, null);
             waitAndClick("//*[contains(text(),'Grant')]",SelectorType.XPATH);
         });
         Then("^the bus registration should be granted$", () -> {

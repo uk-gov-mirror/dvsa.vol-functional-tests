@@ -21,7 +21,7 @@ public class PDFLinks extends BasePage implements En {
             world.genericUtils.payFeesAndGrantLicence();
             world.genericUtils.grantLicence().payGrantFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
-            world.journeySteps.externalUserLogin();
+            world.UIJourneySteps.externalUserLogin();
             clickByLinkText(world.createLicence.getLicenceNumber());
         });
         And("^I am on add Transport Manager Page$", () -> {

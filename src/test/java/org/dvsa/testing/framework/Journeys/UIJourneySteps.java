@@ -23,14 +23,14 @@ import java.net.MalformedURLException;
 
 import static junit.framework.TestCase.assertTrue;
 
-public class JourneySteps extends BasePage {
+public class UIJourneySteps extends BasePage {
 
     private World world;
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
     static int tmCount;
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
-    public JourneySteps(World world) {
+    public UIJourneySteps(World world) {
         this.world = world;
     }
 
@@ -241,8 +241,8 @@ public class JourneySteps extends BasePage {
 
     public String navigateToInternalTask(World world) throws IllegalBrowserException, MissingDriverException, MalformedURLException {
         world.genericUtils.createAdminUser();
-        world.journeySteps.internalAdminUserLogin();
-        world.journeySteps.searchAndViewApplication();
+        world.UIJourneySteps.internalAdminUserLogin();
+        world.UIJourneySteps.searchAndViewApplication();
         clickByLinkText("Processing");
         clickByLinkText("Add director(s)");
         waitForTextToBePresent("Linked to");
@@ -336,8 +336,8 @@ public class JourneySteps extends BasePage {
     }
 
     public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException, MalformedURLException {
-        world.journeySteps.externalUserLogin();
-        world.journeySteps.addPerson(firstName, lastName);
+        world.UIJourneySteps.externalUserLogin();
+        world.UIJourneySteps.addPerson(firstName, lastName);
         world.genericUtils.selectAllExternalRadioButtons("No");
         clickByName("form-actions[saveAndContinue]");
         world.genericUtils.selectAllExternalRadioButtons("No");

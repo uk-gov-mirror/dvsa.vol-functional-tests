@@ -47,7 +47,7 @@ public class PaymentProcessing extends BasePage implements En {
             String feeCountBeforeAddingNewFee = getElementValueByText("//div[@class='table__header']/h3", SelectorType.XPATH);
             setCurrentFeeCount(world.genericUtils.stripAlphaCharacters(feeCountBeforeAddingNewFee));
             findElement("status", SelectorType.ID, 30).getAttribute("value").equals("current");
-            world.journeySteps.createAdminFee(amount, arg0);
+            world.UIJourneySteps.createAdminFee(amount, arg0);
         });
         Then("^the fee should be created$", () -> {
             // Refresh page
@@ -67,14 +67,14 @@ public class PaymentProcessing extends BasePage implements En {
             assertEquals(String.valueOf(Integer.parseInt(historicalFeeCurrent) + 1), feeCountAfterFeeHasBeenPaid);
         });
         And("^when i pay for the fee by \"([^\"]*)\"$", (String arg0) -> {
-            world.journeySteps.selectFee();
+            world.UIJourneySteps.selectFee();
             if (arg0.equals("card")) {
                 String bankCardNumber = "4006000000000600";
                 String cardExpiryMonth = "10";
                 String cardExpiryYear = "50";
-                world.journeySteps.payFee(null, arg0, bankCardNumber, cardExpiryMonth, cardExpiryYear);
+                world.UIJourneySteps.payFee(null, arg0, bankCardNumber, cardExpiryMonth, cardExpiryYear);
             } else {
-                world.journeySteps.payFee("100", arg0, null, null, null);
+                world.UIJourneySteps.payFee("100", arg0, null, null, null);
             }
         });
     }

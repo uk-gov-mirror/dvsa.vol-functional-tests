@@ -15,7 +15,6 @@ import activesupport.number.Int;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 import org.dvsa.testing.lib.url.api.URL;
 
-import java.net.MalformedURLException;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
