@@ -55,7 +55,7 @@ public class AddDirectorVariation extends BasePage implements En {
             clickByName("form-actions[saveAndContinue]");
         });
         Then("^a snapshot should be created in internal$", () -> {
-            world.genericUtils.createAdminUser();
+            world.APIJourneySteps.createAdminUser();
             world.UIJourneySteps.internalAdminUserLogin();
             world.UIJourneySteps.searchAndViewApplication();
             clickByLinkText("Docs");

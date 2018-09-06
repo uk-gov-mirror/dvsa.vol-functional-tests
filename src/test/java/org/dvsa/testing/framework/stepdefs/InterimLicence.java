@@ -64,7 +64,7 @@ public class InterimLicence extends BasePage implements En {
             isTextPresent(noDatesErrorMessage,60);
         });
         And("^i have logged in to internal$", () -> {
-            world.genericUtils.createAdminUser();
+            world.APIJourneySteps.createAdminUser();
             world.UIJourneySteps.internalAdminUserLogin();
         });
         And("^i search for my licence$", () -> {

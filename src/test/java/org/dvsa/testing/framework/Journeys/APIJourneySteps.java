@@ -124,16 +124,17 @@ public class APIJourneySteps {
         world.createLicence.setNiFlag("Y");
     }
 
-    public void getLicenceTrafficArea() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+    public String getLicenceTrafficArea() {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
         setTrafficAreaName(apiResponse.extract().jsonPath().getString("trafficArea.name"));
+        return trafficAreaName;
     }
 
     public String getLicenceStatusDetails() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
@@ -141,7 +142,7 @@ public class APIJourneySteps {
         return licenceStatus;
     }
     public String getOperatorTypeDetails() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
@@ -149,14 +150,14 @@ public class APIJourneySteps {
         return goodOrPsv;
     }
     public String getBusinessTypeDetails() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
         setBusinessType(apiResponse.extract().jsonPath().getString("organisation.type.description"));
         return businessType;
     }  public String getLicenceTypeDetails() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
+        Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
@@ -168,14 +169,14 @@ public class APIJourneySteps {
         world.createLicence.setTrafficArea(trafficArea);
         world.createLicence.setEnforcementArea(enforcementArea);
         world.createLicence.setOperatorType("public");
-        world.createLicence.createAndSubmitApp();
+        world.APIJourneySteps.createApplication();
         payFeesAndGrantLicence();
         world.grantLicence.payGrantFees();
         getLicenceTrafficArea();
         System.out.println("--Licence-Number: " + world.createLicence.getLicenceNumber() + "--");
     }
 
-    public void updateLicenceStatus(String licenceId, String status) throws MalformedURLException {
+    public void updateLicenceStatus(String licenceId, String status) {
         String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/%s", licenceId, status)).toString();
 
         GenericBuilder genericBuilder = new GenericBuilder().withId(licenceId);
@@ -189,11 +190,10 @@ public class APIJourneySteps {
     }
 
     public GrantLicenceAPI grantLicence() throws MissingRequiredArgument {
-        GrantLicenceAPI grantLicenceAPI = new GrantLicenceAPI(world);
-        return grantLicenceAPI;
+        return new GrantLicenceAPI(world);
     }
 
-    public void createApplication() throws Exception {
+    public void createApplication(){
         if(world.createLicence.getApplicationNumber() == null) {
             world.createLicence.registerUser();
             world.createLicence.getUserDetails();
@@ -223,5 +223,9 @@ public class APIJourneySteps {
     private void submitApplication(){
         world.createLicence.submitApplication();
         world.createLicence.getApplicationLicenceDetails();
+    }
+
+    public String adminApiHeader(){
+        return "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
     }
 }

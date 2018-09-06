@@ -22,26 +22,25 @@ import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 public class GrantLicenceAPI {
 
     private ValidatableResponse apiResponse;
-    private static String internalHeader = "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
-    int version = 1;
+    private int version = 1;
     private List outstandingFeesIds;
     private int feeId;
     private World world;
 
-    EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+    private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
     public GrantLicenceAPI(World world) throws MissingRequiredArgument {
         this.world = world;
     }
 
-    public void createOverview(String applicationNumber) throws MalformedURLException {
+    public void createOverview(String applicationNumber) {
         int overviewVersion = 1;
         String status = "1";
         String overrideOption = "Y";
         String transportArea = "D";
         String trackingId = "12345";
         String overviewResource = URL.build(env,String.format("application/%s/overview/", applicationNumber)).toString();
-        Headers.headers.put("x-pid", internalHeader);
+        Headers.headers.put("x-pid", world.APIJourneySteps.adminApiHeader());
 
         do {
             TrackingBuilder tracking = new TrackingBuilder().withId(trackingId).withVersion(overviewVersion).withAddressesStatus(status).withBusinessDetailsStatus(status).withBusinessTypeStatus(status)

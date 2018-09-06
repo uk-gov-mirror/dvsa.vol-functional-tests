@@ -51,28 +51,15 @@ public class CreateLicenceAPI {
     private String businessType = System.getProperty("businessType"); //"limited_company"
     private String operatorType = System.getProperty("operatorType"); //goods
     private String niFlag = System.getProperty("ni"); //"Y|N"
-    private String trafficArea = "D";
-    private String enforcementArea = "EA-D";
+    private String trafficArea;
+    private String enforcementArea;
     private String restrictedVehicles = "2";
     private String applicationStatus;
     private String licenceId;
-    public String businessName = "API";
+    private String businessName = "API";
 
     private static int version = 1;
     private int noOfVehiclesRequired = 5;
-
-    EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
-
-    public CreateLicenceAPI() throws MissingRequiredArgument {
-        if (licenceType == null){
-            operatorType = "goods";
-            licenceType = "standard_national";
-            businessType = "limited_company";
-            niFlag = "N";
-            trafficArea = "D";
-            enforcementArea = "EA-D";
-        }
-    }
 
     public String getTitle() {
         return title;
@@ -183,7 +170,7 @@ public class CreateLicenceAPI {
     public void setOperatorType(String operatorType) {
         this.operatorType = operatorType;
     }
-    public static void setAdminUserHeader(String adminUserHeader) { CreateLicenceAPI.adminUserHeader = adminUserHeader; }
+
     public String getApplicationStatus() {
         return applicationStatus;
     }
@@ -201,31 +188,17 @@ public class CreateLicenceAPI {
     public String getBusinessName() { return businessName; }
     public void setBusinessName(String businessName) { this.businessName = businessName; }
 
+    private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
-    public void createAndSubmitApp() throws Exception {
-        registerUser();
-        getUserDetails();
-        createApplication();
-        updateBusinessType();
-        updateBusinessDetails();
-        addAddressDetails();
-        addPartners();
-        submitTaxiPhv();
-        addOperatingCentre();
-        updateOperatingCentre();
-        addFinancialEvidence();
-        addTransportManager();
-        submitTransport();
-        vehicles();
-        submitVehicleDeclaration();
-        addFinancialHistory();
-        addApplicationSafetyAndComplianceDetails();
-        addSafetyInspector();
-        addConvictionsDetails();
-        addLicenceHistory();
-        applicationReviewAndDeclare();
-        submitApplication();
-        getApplicationLicenceDetails();
+    public CreateLicenceAPI() throws MissingRequiredArgument {
+        if (licenceType == null){
+            operatorType = "goods";
+            licenceType = "standard_national";
+            businessType = "limited_company";
+            niFlag = "N";
+            trafficArea = "D";
+            enforcementArea = "EA-D";
+        }
     }
 
     public void registerUser(){
@@ -369,6 +342,8 @@ public class CreateLicenceAPI {
     }
 
     public void updateOperatingCentre(){
+        setTrafficArea("D");
+        setEnforcementArea("EA-D");
         String updateOperatingCentreResource = URL.build(env, String.format("application/%s/operating-centres", applicationNumber)).toString();
         OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater();
 

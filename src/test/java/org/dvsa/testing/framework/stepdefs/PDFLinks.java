@@ -15,11 +15,11 @@ public class PDFLinks extends BasePage implements En {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(arg0);
             if (arg1.equals("NI")) {
-             world.genericUtils.nIAddressBuilder();
+             world.APIJourneySteps.nIAddressBuilder();
             }
-            world.genericUtils.createApplication();
-            world.genericUtils.payFeesAndGrantLicence();
-            world.genericUtils.grantLicence().payGrantFees();
+            world.APIJourneySteps.createApplication();
+            world.APIJourneySteps.payFeesAndGrantLicence();
+            world.APIJourneySteps.grantLicence().payGrantFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             world.UIJourneySteps.externalUserLogin();
             clickByLinkText(world.createLicence.getLicenceNumber());

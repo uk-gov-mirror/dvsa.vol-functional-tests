@@ -22,6 +22,7 @@ import org.openqa.selenium.By;
 import java.net.MalformedURLException;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getFutureDate;
 
 public class UIJourneySteps extends BasePage {
 
@@ -40,11 +41,6 @@ public class UIJourneySteps extends BasePage {
             SearchNavBar.search(world.createLicence.getLicenceNumber());
         } while (!isLinkPresent(world.createLicence.getLicenceNumber(), 60));
         clickByLinkText(world.createLicence.getLicenceNumber());
-    }
-
-    public static java.time.LocalDate getFutureDate(@NotNull int month) {
-        java.time.LocalDate date = java.time.LocalDate.now().plusMonths(month);
-        return date;
     }
 
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
@@ -72,7 +68,6 @@ public class UIJourneySteps extends BasePage {
         }
         while (!isTextPresent("Service details", 2));//condition
     }
-
 
     private static void enterDate(int day, int month, int year) throws IllegalBrowserException {
         enterText("receivedDate_day", String.valueOf(day), SelectorType.ID);
@@ -240,7 +235,7 @@ public class UIJourneySteps extends BasePage {
     }
 
     public String navigateToInternalTask(World world) throws IllegalBrowserException, MissingDriverException, MalformedURLException {
-        world.genericUtils.createAdminUser();
+        world.APIJourneySteps.createAdminUser();
         world.UIJourneySteps.internalAdminUserLogin();
         world.UIJourneySteps.searchAndViewApplication();
         clickByLinkText("Processing");
@@ -360,5 +355,4 @@ public class UIJourneySteps extends BasePage {
         enterField(nameAttribute("input", "data[totAuthVehicles]"), noOfAuthVehicles);
         click(nameAttribute("button", "form-actions[save]"));
     }
-
 }
