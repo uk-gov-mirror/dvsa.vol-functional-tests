@@ -9,7 +9,7 @@ import org.dvsa.testing.framework.Utils.API_Builders.GenericBuilder;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
-import org.dvsa.testing.framework.stepdefs.World;
+import Injectors.World;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import java.net.MalformedURLException;
@@ -216,11 +216,11 @@ public class APIJourneySteps {
             world.createLicence.addConvictionsDetails();
             world.createLicence.addLicenceHistory();
             world.createLicence.applicationReviewAndDeclare();
-            submitApplication();
         }
     }
 
-    private void submitApplication(){
+    private void createAndSubmitApplication(){
+        createApplication();
         world.createLicence.submitApplication();
         world.createLicence.getApplicationLicenceDetails();
     }

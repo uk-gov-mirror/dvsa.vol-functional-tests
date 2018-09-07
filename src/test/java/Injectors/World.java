@@ -1,4 +1,4 @@
-package org.dvsa.testing.framework.stepdefs;
+package Injectors;
 
 import org.dvsa.testing.framework.Journeys.APIJourneySteps;
 import org.dvsa.testing.framework.Journeys.UIJourneySteps;

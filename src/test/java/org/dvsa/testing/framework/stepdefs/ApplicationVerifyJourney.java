@@ -1,21 +1,29 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import Injectors.World;
+import activesupport.IllegalBrowserException;
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
+import org.dvsa.testing.lib.pages.BasePage;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 
-public class ApplicationVerifyJourney implements En {
-    public ApplicationVerifyJourney() {
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class ApplicationVerifyJourney extends BasePage implements En {
+    public ApplicationVerifyJourney(World world) {
         Given("^i have an application in progress$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
+            world.APIJourneySteps.createApplication();
         });
-        When("^i choose to sign with verify$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
+        When("^i choose to sign with verify with \"([^\"]*)\"$", (String arg0) -> {
+            String password = "Password1";
+            world.UIJourneySteps.externalUserLogin();
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            world.UIJourneySteps.signWithVerify(arg0,password);
         });
         Then("^the application should be signed with verify$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
+            waitForTextToBePresent("Review and declarations");
+            assertTrue(isTextPresent("Signed by", 10));
+            assertTrue(isTextPresent("Declaration signed through GOV.UK Verify", 10));
         });
     }
 }

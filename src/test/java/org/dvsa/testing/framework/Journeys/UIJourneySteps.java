@@ -8,7 +8,7 @@ import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
-import org.dvsa.testing.framework.stepdefs.World;
+import Injectors.World;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -27,9 +27,17 @@ import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getFutureDat
 public class UIJourneySteps extends BasePage {
 
     private World world;
-    private static final String zipFilePath = "/src/test/resources/ESBR.zip";
-    static int tmCount;
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+    static int tmCount;
+    private static final String zipFilePath = "/src/test/resources/ESBR.zip";
+    private String verifyUsername;
+
+    public String getVerifyUsername() {
+        return verifyUsername;
+    }
+    private void setVerifyUsername(String verifyUsername) {
+        this.verifyUsername = verifyUsername;
+    }
 
     public UIJourneySteps(World world) {
         this.world = world;
@@ -354,5 +362,23 @@ public class UIJourneySteps extends BasePage {
     public void changeVehicleAuth(String noOfAuthVehicles) throws IllegalBrowserException {
         enterField(nameAttribute("input", "data[totAuthVehicles]"), noOfAuthVehicles);
         click(nameAttribute("button", "form-actions[save]"));
+    }
+
+    public void signWithVerify(String username, String password) throws IllegalBrowserException {
+        setVerifyUsername(username);
+        clickByLinkText("Review");
+        waitForTextToBePresent("Review and declarations");
+        click("//*[@id='declarationsAndUndertakings[signatureOptions]']", SelectorType.XPATH);
+        click("//*[@id='sign']", SelectorType.XPATH);
+        waitForTextToBePresent("Sign in with GOV.UK Verify");
+        click("//*[@id='start_form_selection_false']", SelectorType.XPATH);
+        click("//*[@id='next-button']", SelectorType.XPATH);
+        click("//*[contains(text(),'Select Post')]", SelectorType.XPATH);
+        waitForTextToBePresent("Verified");
+        enterText("username", username, SelectorType.NAME);
+        enterText("password", password, SelectorType.NAME);
+        click("//*[@id='login']",SelectorType.XPATH);
+        waitForTextToBePresent("Personal Details");
+        click("//*[@id='agree']",SelectorType.XPATH);
     }
 }
