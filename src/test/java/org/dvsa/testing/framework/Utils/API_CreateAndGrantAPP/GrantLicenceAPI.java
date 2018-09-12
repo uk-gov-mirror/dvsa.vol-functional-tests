@@ -12,6 +12,8 @@ import Injectors.World;
 import org.dvsa.testing.lib.url.api.URL;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
+import javax.xml.ws.http.HTTPException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.List;
@@ -56,17 +58,25 @@ public class GrantLicenceAPI {
                 version = 1;
             }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
     }
 
-    public void getOutstandingFees(String applicationNumber) throws MalformedURLException {
+    public void getOutstandingFees(String applicationNumber){
         String getOutstandingFeesResource = URL.build(env, String.format("application/%s/outstanding-fees/", applicationNumber)).toString();
         apiResponse = RestUtils.get(getOutstandingFeesResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
         outstandingFeesIds = apiResponse.extract().response().body().jsonPath().getList("outstandingFees.id");
     }
 
-    public void payOutstandingFees(String organisationId, String applicationNumber) throws MalformedURLException {
+    public void payOutstandingFees(String organisationId, String applicationNumber){
         int feesAmount = 405;
         String payer = "apiUser";
         String paymentMethod = "fpm_cash";
@@ -76,19 +86,29 @@ public class GrantLicenceAPI {
         FeesBuilder feesBuilder = new FeesBuilder().withFeeIds(outstandingFeesIds).withOrganisationId(organisationId).withApplicationId(applicationNumber)
                 .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(GenericUtils.getDates("current",0)).withPayer(payer).withSlipNo(slipNo);
         apiResponse = RestUtils.post(feesBuilder,payOutstandingFeesResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
     }
 
-    public void grant(String applicationNumber) throws MalformedURLException {
-        String grantApplicationResource = URL.build(env,String.format("application/%s/grant/", applicationNumber)).toString();
+    public void grant(String applicationNumber) {
+        String grantApplicationResource = URL.build(env, String.format("application/%s/grant/", applicationNumber)).toString();
         GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withDuePeriod("9").withCaseworkerNotes("This notes are from the API");
         apiResponse = RestUtils.put(grantApplication, grantApplicationResource, getHeaders());
-        if (apiResponse.extract().response().asString().contains("fee")) {
+
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
+            }
+        else  if (apiResponse.extract().response().asString().contains("fee")) {
             feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
         }
     }
 
-    public void payGrantFees() throws MalformedURLException {
+    public void payGrantFees(){
         int feesAmount = 450;
         String payer = "apiUser";
         String paymentMethod = "fpm_cash";
@@ -101,17 +121,23 @@ public class GrantLicenceAPI {
         FeesBuilder feesBuilder = new FeesBuilder().withFeeIds(Collections.singletonList(feeId)).withOrganisationId(organisationId).withApplicationId(applicationNumber)
                 .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(GenericUtils.getDates("current",0)).withPayer(payer).withSlipNo(slipNo);
         apiResponse = RestUtils.post(feesBuilder,payOutstandingFeesResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
 
         if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
+            System.out.println(apiResponse.extract().statusCode());
             System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
         }
     }
 
-    public void variationGrant(String applicationNumber) throws MalformedURLException {
+    public void variationGrant(String applicationNumber) {
         String grantApplicationResource = URL.build(env,String.format("variation/%s/grant/", applicationNumber)).toString();
         GenericBuilder grantVariationBuilder = new GenericBuilder().withId(applicationNumber);
         apiResponse = RestUtils.put(grantVariationBuilder, grantApplicationResource, getHeaders());
-        System.out.println(apiResponse.extract().body().asString());
+
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
     }
 }

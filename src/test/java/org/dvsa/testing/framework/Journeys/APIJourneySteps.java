@@ -169,7 +169,7 @@ public class APIJourneySteps {
         world.createLicence.setTrafficArea(trafficArea);
         world.createLicence.setEnforcementArea(enforcementArea);
         world.createLicence.setOperatorType("public");
-        world.APIJourneySteps.createApplication();
+        world.APIJourneySteps.createAndSubmitApplication();
         payFeesAndGrantLicence();
         world.grantLicence.payGrantFees();
         getLicenceTrafficArea();
@@ -219,13 +219,13 @@ public class APIJourneySteps {
         }
     }
 
-    private void createAndSubmitApplication(){
+    public void createAndSubmitApplication(){
         createApplication();
         world.createLicence.submitApplication();
         world.createLicence.getApplicationLicenceDetails();
     }
 
-    public String adminApiHeader(){
+    public static String adminApiHeader(){
         return "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
     }
 }

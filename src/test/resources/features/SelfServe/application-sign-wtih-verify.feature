@@ -1,4 +1,3 @@
-@SS
 @OLCS-21213
 @SS-VERIFY
 

@@ -41,14 +41,6 @@ public class GenericUtils extends BasePage {
         return registrationNumber;
     }
 
-    public String getTrafficAreaName() {
-        return trafficAreaName;
-    }
-
-    public void setTrafficAreaName(String trafficAreaName) {
-        this.trafficAreaName = trafficAreaName;
-    }
-
     public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
@@ -84,7 +76,7 @@ public class GenericUtils extends BasePage {
                         node.setTextContent(getRegistrationNumber());
                     }
                     if ("TrafficAreaName".equals(node.getNodeName())) {
-                        switch (getTrafficAreaName()) {
+                        switch (world.APIJourneySteps.getTrafficAreaName()) {
                             case "Wales":
                                 node.setTextContent("Welsh");
                                 break;

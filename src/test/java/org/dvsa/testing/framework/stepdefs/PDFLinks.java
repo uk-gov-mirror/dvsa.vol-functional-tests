@@ -18,7 +18,7 @@ public class PDFLinks extends BasePage implements En {
             if (arg1.equals("NI")) {
              world.APIJourneySteps.nIAddressBuilder();
             }
-            world.APIJourneySteps.createApplication();
+            world.APIJourneySteps.createAndSubmitApplication();
             world.APIJourneySteps.payFeesAndGrantLicence();
             world.APIJourneySteps.grantLicence().payGrantFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());

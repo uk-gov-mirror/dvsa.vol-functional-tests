@@ -14,7 +14,7 @@ public class PSVapplication implements En {
             world.createLicence.setOperatorType(arg0);
             world.createLicence.setLicenceType(arg1);
             if (world.createLicence.getApplicationNumber() == null) {
-                world.APIJourneySteps.createApplication();
+                world.APIJourneySteps.createAndSubmitApplication();
             }
         });
 
@@ -22,7 +22,7 @@ public class PSVapplication implements En {
             world.createLicence.setOperatorType(arg0);
             world.createLicence.setLicenceType(arg1);
             if (world.createLicence.getApplicationNumber() == null) {
-                world.APIJourneySteps.createApplication();
+                world.APIJourneySteps.createAndSubmitApplication();
             }
         });
     }

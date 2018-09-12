@@ -22,7 +22,6 @@ public class ApplicationVerifyJourney extends BasePage implements En {
         });
         Then("^the application should be signed with verify$", () -> {
             waitForTextToBePresent("Review and declarations");
-            assertTrue(isTextPresent("Signed by", 10));
             assertTrue(isTextPresent("Declaration signed through GOV.UK Verify", 10));
         });
     }

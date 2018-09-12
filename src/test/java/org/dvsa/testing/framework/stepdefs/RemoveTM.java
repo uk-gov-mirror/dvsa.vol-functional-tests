@@ -28,7 +28,7 @@ public class RemoveTM extends BasePage implements En {
             if (world.createLicence.getOperatorType() == null) {
                 world.createLicence.setOperatorType("public");
             }
-            world.APIJourneySteps.createApplication();
+            world.APIJourneySteps.createAndSubmitApplication();
         });
         When("^the transport manager has been removed by an internal user$", () -> {
             world.APIJourneySteps.createAdminUser();
