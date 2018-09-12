@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import Injectors.World;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -15,12 +16,12 @@ public class SelfServePayFees extends BasePage implements En {
     public SelfServePayFees(World world) {
         When("^I pay fees on self serve$", () -> {
             world.grantLicence.createOverview(world.createLicence.getApplicationNumber());
-            world.journeySteps.externalUserLogin();
+            world.UIJourneySteps.externalUserLogin();
             clickByLinkText("Fees");
             click("//*[@id='checkall']", SelectorType.XPATH);
             click("//*[@id='pay']", SelectorType.XPATH);
             click("//*[@id='form-actions[pay]']", SelectorType.XPATH);
-            world.journeySteps.payFee(null,"card",bankCardNumber,cardExpiryMonth,cardExpiryYear);
+            world.UIJourneySteps.payFee(null,"card",bankCardNumber,cardExpiryMonth,cardExpiryYear);
         });
         And("^an internal user has granted my application$", () -> {
             world.grantLicence.grant(world.createLicence.getApplicationNumber());

@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import Injectors.World;
 import activesupport.database.DBUnit;
 import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
@@ -22,15 +23,15 @@ public class GenerateLastTMLetter extends BasePage implements En {
         Given("^i have a valid \"([^\"]*)\" licence$", (String arg0) -> {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(arg0);
-            world.genericUtils.createApplication();
+            world.APIJourneySteps.createAndSubmitApplication();
             if(String.valueOf(arg0).equals("public")){
-                world.genericUtils.payFeesAndGrantLicence();
-                world.genericUtils.grantLicence().payGrantFees();
+                world.APIJourneySteps.payFeesAndGrantLicence();
+                world.APIJourneySteps.grantLicence().payGrantFees();
                 System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
             else {
-                world.genericUtils.payFeesAndGrantLicence();
-                world.genericUtils.grantLicence().payGrantFees();
+                world.APIJourneySteps.payFeesAndGrantLicence();
+                world.APIJourneySteps.grantLicence().payGrantFees();
                 System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
         });
@@ -43,7 +44,7 @@ public class GenerateLastTMLetter extends BasePage implements En {
             }
         });
         Given("^the licence status is \"([^\"]*)\"$", (String arg0) -> {
-            world.genericUtils.updateLicenceStatus(world.createLicence.getLicenceId(), arg0);
+            world.APIJourneySteps.updateLicenceStatus(world.createLicence.getLicenceId(), arg0);
         });
         And("^the user confirms they want to send letter$", () -> {
             waitForTextToBePresent(alertHeaderValue);

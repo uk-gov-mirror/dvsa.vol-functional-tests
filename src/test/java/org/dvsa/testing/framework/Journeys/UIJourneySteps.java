@@ -8,7 +8,7 @@ import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
-import org.dvsa.testing.framework.stepdefs.World;
+import Injectors.World;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -22,15 +22,24 @@ import org.openqa.selenium.By;
 import java.net.MalformedURLException;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getFutureDate;
 
-public class JourneySteps extends BasePage {
+public class UIJourneySteps extends BasePage {
 
     private World world;
-    private static final String zipFilePath = "/src/test/resources/ESBR.zip";
-    static int tmCount;
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+    static int tmCount;
+    private static final String zipFilePath = "/src/test/resources/ESBR.zip";
+    private String verifyUsername;
 
-    public JourneySteps(World world) {
+    public String getVerifyUsername() {
+        return verifyUsername;
+    }
+    private void setVerifyUsername(String verifyUsername) {
+        this.verifyUsername = verifyUsername;
+    }
+
+    public UIJourneySteps(World world) {
         this.world = world;
     }
 
@@ -40,11 +49,6 @@ public class JourneySteps extends BasePage {
             SearchNavBar.search(world.createLicence.getLicenceNumber());
         } while (!isLinkPresent(world.createLicence.getLicenceNumber(), 60));
         clickByLinkText(world.createLicence.getLicenceNumber());
-    }
-
-    public static java.time.LocalDate getFutureDate(@NotNull int month) {
-        java.time.LocalDate date = java.time.LocalDate.now().plusMonths(month);
-        return date;
     }
 
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
@@ -72,7 +76,6 @@ public class JourneySteps extends BasePage {
         }
         while (!isTextPresent("Service details", 2));//condition
     }
-
 
     private static void enterDate(int day, int month, int year) throws IllegalBrowserException {
         enterText("receivedDate_day", String.valueOf(day), SelectorType.ID);
@@ -240,9 +243,9 @@ public class JourneySteps extends BasePage {
     }
 
     public String navigateToInternalTask(World world) throws IllegalBrowserException, MissingDriverException, MalformedURLException {
-        world.genericUtils.createAdminUser();
-        world.journeySteps.internalAdminUserLogin();
-        world.journeySteps.searchAndViewApplication();
+        world.APIJourneySteps.createAdminUser();
+        world.UIJourneySteps.internalAdminUserLogin();
+        world.UIJourneySteps.searchAndViewApplication();
         clickByLinkText("Processing");
         clickByLinkText("Add director(s)");
         waitForTextToBePresent("Linked to");
@@ -336,8 +339,8 @@ public class JourneySteps extends BasePage {
     }
 
     public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException, MalformedURLException {
-        world.journeySteps.externalUserLogin();
-        world.journeySteps.addPerson(firstName, lastName);
+        world.UIJourneySteps.externalUserLogin();
+        world.UIJourneySteps.addPerson(firstName, lastName);
         world.genericUtils.selectAllExternalRadioButtons("No");
         clickByName("form-actions[saveAndContinue]");
         world.genericUtils.selectAllExternalRadioButtons("No");
@@ -361,4 +364,21 @@ public class JourneySteps extends BasePage {
         click(nameAttribute("button", "form-actions[save]"));
     }
 
+    public void signWithVerify(String username, String password) throws IllegalBrowserException {
+        setVerifyUsername(username);
+        clickByLinkText("Review");
+        waitForTextToBePresent("Review and declarations");
+        click("//*[@id='declarationsAndUndertakings[signatureOptions]']", SelectorType.XPATH);
+        click("//*[@id='sign']", SelectorType.XPATH);
+        waitForTextToBePresent("Sign in with GOV.UK Verify");
+        click("//*[@id='start_form_selection_false']", SelectorType.XPATH);
+        click("//*[@id='next-button']", SelectorType.XPATH);
+        click("//*[contains(text(),'Select Post')]", SelectorType.XPATH);
+        waitForTextToBePresent("Verified");
+        enterText("username", username, SelectorType.NAME);
+        enterText("password", password, SelectorType.NAME);
+        click("//*[@id='login']",SelectorType.XPATH);
+        waitForTextToBePresent("Personal Details");
+        click("//*[@id='agree']",SelectorType.XPATH);
+    }
 }
