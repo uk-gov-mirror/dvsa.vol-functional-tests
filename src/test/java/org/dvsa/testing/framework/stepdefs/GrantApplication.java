@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import Injectors.World;
 import cucumber.api.java8.En;
 
 public class GrantApplication implements En {
@@ -11,7 +12,7 @@ public class GrantApplication implements En {
         this.world = world;
 
         When("^I pay fees$", () -> {
-            world.genericUtils.payFeesAndGrantLicence();
+            world.APIJourneySteps.payFeesAndGrantLicence();
         });
         Then("^the licence should be granted$", () -> {
             world.grantLicence.payGrantFees();
