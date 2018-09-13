@@ -16,7 +16,7 @@ public class ExternalSearch extends BasePage implements En {
             world.UIJourneySteps.navigateToExternalSearch();
         });
         When("^I search for a lorry and bus operator by \"([^\"]*)\"$", (String arg0) -> {
-            world.genericUtils.findAllRadioButtons(arg0);
+            world.genericUtils.findSelectAllRadioButtonsByValue(arg0);
             switch (arg0) {
                 case "address":
                     enterText("search", world.createLicence.getPostcode(), SelectorType.NAME);

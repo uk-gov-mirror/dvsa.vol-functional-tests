@@ -436,10 +436,11 @@ public class UIJourneySteps extends BasePage {
     public void addExistingPersonAsTransportManager() throws IllegalBrowserException {
         waitForTextToBePresent("Apply for a new licence");
         clickByLinkText("Transport");
-        clickByName("table[action]");
+        waitForTextToBePresent("Transport Managers");
+        click("//*[@name='table[action]']",SelectorType.XPATH);
         waitForTextToBePresent("Add Transport Manager");
         selectValueFromDropDownByIndex("data[registeredUser]",SelectorType.ID,1);
-        clickByName("form-actions[continue]");
+        click("//*[@id='form-actions[continue]']",SelectorType.XPATH);
         waitForTextToBePresent("Transport Manager details");
     }
 }
