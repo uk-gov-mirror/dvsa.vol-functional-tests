@@ -4,8 +4,6 @@ import Injectors.World;
 import activesupport.MissingRequiredArgument;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.Journeys.APIJourneySteps;
-import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -20,8 +18,8 @@ public class ESBRupload extends BasePage implements En {
 
     public ESBRupload(World world) throws MissingRequiredArgument {
         this.world = world;
-        world.APIJourneySteps = new APIJourneySteps(world);
-        world.genericUtils = new GenericUtils(world);
+//        world.APIJourneySteps = new APIJourneySteps(world);
+//        world.genericUtils = new GenericUtils(world);
 
         Given("^I have a psv application with traffic area \"([^\"]*)\" and enforcement area \"([^\"]*)\" which has been granted$", (String arg0, String arg1) -> {
             world.APIJourneySteps.generateAndGrantPsvApplicationPerTrafficArea(arg0, arg1);

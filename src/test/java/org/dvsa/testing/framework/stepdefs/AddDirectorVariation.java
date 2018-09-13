@@ -24,7 +24,7 @@ public class AddDirectorVariation extends BasePage implements En {
         world.UIJourneySteps = new UIJourneySteps(world);
 
         When("^i add a new person$", () -> {
-            world.UIJourneySteps.externalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin();
             world.UIJourneySteps.addPerson(firstName, lastName);
         });
         Then("^a new director should be added to my licence$", () -> {
