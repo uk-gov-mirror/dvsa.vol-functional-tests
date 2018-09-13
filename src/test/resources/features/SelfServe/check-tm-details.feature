@@ -1,5 +1,6 @@
 @SS-TM-Verify
 @SS
+@OLCS-21298
 
 Feature: TM/operator checks optional wording has been removed for TM details page
 
