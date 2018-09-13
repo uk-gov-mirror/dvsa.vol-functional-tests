@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import Injectors.World;
 import activesupport.MissingRequiredArgument;
 
 import cucumber.api.java8.En;
@@ -15,13 +16,13 @@ public class PDFLinks extends BasePage implements En {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(arg0);
             if (arg1.equals("NI")) {
-             world.genericUtils.nIAddressBuilder();
+             world.APIJourneySteps.nIAddressBuilder();
             }
-            world.genericUtils.createApplication();
-            world.genericUtils.payFeesAndGrantLicence();
-            world.genericUtils.grantLicence().payGrantFees();
+            world.APIJourneySteps.createAndSubmitApplication();
+            world.APIJourneySteps.payFeesAndGrantLicence();
+            world.APIJourneySteps.grantLicence().payGrantFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
-            world.journeySteps.externalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin();
             clickByLinkText(world.createLicence.getLicenceNumber());
         });
         And("^I am on add Transport Manager Page$", () -> {

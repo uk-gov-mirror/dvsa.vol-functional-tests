@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import Injectors.World;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
@@ -64,11 +65,11 @@ public class InterimLicence extends BasePage implements En {
             isTextPresent(noDatesErrorMessage,60);
         });
         And("^i have logged in to internal$", () -> {
-            world.genericUtils.createAdminUser();
-            world.journeySteps.internalAdminUserLogin();
+            world.APIJourneySteps.createAdminUser();
+            world.UIJourneySteps.internalAdminUserLogin();
         });
         And("^i search for my licence$", () -> {
-            world.journeySteps.searchAndViewApplication();
+            world.UIJourneySteps.searchAndViewApplication();
         });
     }
 }

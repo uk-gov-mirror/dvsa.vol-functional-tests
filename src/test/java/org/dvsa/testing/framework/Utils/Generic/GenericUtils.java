@@ -1,23 +1,15 @@
 package org.dvsa.testing.framework.Utils.Generic;
 
+import Injectors.World;
 import activesupport.IllegalBrowserException;
-import activesupport.driver.Browser;
 import activesupport.MissingRequiredArgument;
-import activesupport.http.RestUtils;
+import activesupport.driver.Browser;
 import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
-import io.restassured.response.ValidatableResponse;
-import org.apache.http.HttpStatus;
-import org.dvsa.testing.framework.Utils.API_Builders.GenericBuilder;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
-import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
-import org.dvsa.testing.framework.Utils.API_Headers.Headers;
-import org.dvsa.testing.framework.stepdefs.World;
 import org.dvsa.testing.lib.pages.BasePage;
-import org.dvsa.testing.lib.url.utils.EnvironmentType;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.w3c.dom.Document;
@@ -32,7 +24,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -41,101 +32,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 
 public class GenericUtils extends BasePage {
 
-    private static EnvironmentType env;
-
-    static {
-        try {
-            env = EnvironmentType.getEnum(Properties.get("env", false));
-        } catch (MissingRequiredArgument missingRequiredArgument) {
-            missingRequiredArgument.printStackTrace();
-        }
-    }
-
     private World world;
-    private ValidatableResponse apiResponse;
     private String registrationNumber;
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
     private String trafficAreaName;
-    private static String variationApplicationNumber;
-    private static String operatorType = System.getProperty("operatorType");
-    private String goodOrPsv;
-    private String licenceStatus;
-
-    public String getLicenceType() {
-        return licenceType;
-    }
-
-    public void setLicenceType(String licenceType) {
-        this.licenceType = licenceType;
-    }
-
-    private String licenceType;
-
-    public static int tmCount;
-
-    public String getBusinessType() {
-        return businessType;
-    }
-
-    public void setBusinessType(String businessType) {
-        this.businessType = businessType;
-    }
-
-    private String businessType;
-    public String getGoodOrPsv() {
-        return goodOrPsv;
-    }
-
-    public void setGoodOrPsv(String goodOrPsv) {
-        this.goodOrPsv = goodOrPsv;
-    }
-
-    public void setLicenceStatus(String licenceStatus) {
-        this.licenceStatus = licenceStatus;
-    }
-
-    public String getLicenceStatus() {
-        return licenceStatus;
-    }
 
     public String getRegistrationNumber() {
         return registrationNumber;
-    }
-
-    public String getTrafficAreaName() {
-        return trafficAreaName;
-    }
-
-    public void setTrafficAreaName(String trafficAreaName) {
-        this.trafficAreaName = trafficAreaName;
     }
 
     public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
     }
 
-
     public GenericUtils(World world) throws MissingRequiredArgument {
         this.world = world;
         world.createLicence = new CreateLicenceAPI();
-        world.grantLicence = new GrantLicenceAPI(world);
-    }
-
-    public void payFeesAndGrantLicence() throws MalformedURLException {
-        if (variationApplicationNumber != null) {
-            world.grantLicence.createOverview(variationApplicationNumber);
-            world.grantLicence.variationGrant(variationApplicationNumber);
-        } else {
-            world.grantLicence.createOverview(world.createLicence.getApplicationNumber());
-            world.grantLicence.getOutstandingFees(world.createLicence.getApplicationNumber());
-            world.grantLicence.payOutstandingFees(world.createLicence.getOrganisationId(), world.createLicence.getApplicationNumber());
-            world.grantLicence.grant(world.createLicence.getApplicationNumber());
-        }
     }
 
     public void modifyXML(String dateState, int months) {
@@ -164,7 +79,7 @@ public class GenericUtils extends BasePage {
                         node.setTextContent(getRegistrationNumber());
                     }
                     if ("TrafficAreaName".equals(node.getNodeName())) {
-                        switch (getTrafficAreaName()) {
+                        switch (world.APIJourneySteps.getTrafficAreaName()) {
                             case "Wales":
                                 node.setTextContent("Welsh");
                                 break;
@@ -226,90 +141,6 @@ public class GenericUtils extends BasePage {
         ZipUtil.pack(new File("./src/test/resources/ESBR"), new File("./src/test/resources/ESBR.zip"));
     }
 
-    public void createAdminUser() throws MissingRequiredArgument {
-        world.updateLicence.createInternalAdminUser();
-    }
-
-    public void nIAddressBuilder() {
-        world.createLicence.setEnforcementArea("EA-N");
-        world.createLicence.setTrafficArea("N");
-        world.createLicence.setTown("Belfast");
-        world.createLicence.setPostcode("BT28HQ");
-        world.createLicence.setCountryCode("NI");
-        world.createLicence.setNiFlag("Y");
-    }
-
-    public String getLicenceTrafficArea() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
-        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
-
-        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
-        setTrafficAreaName(apiResponse.extract().jsonPath().getString("trafficArea.name"));
-        return trafficAreaName;
-    }
-
-    public String getLicenceStatusDetails() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
-        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
-
-        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
-        setLicenceStatus(apiResponse.extract().jsonPath().getString("status.description"));
-        return licenceStatus;
-    }
-    public String getOperatorTypeDetails() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
-        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
-
-        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
-        setGoodOrPsv(apiResponse.extract().jsonPath().getString("goodsOrPsv.description"));
-        return goodOrPsv;
-    }
-    public String getBusinessTypeDetails() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
-        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
-
-        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
-        setBusinessType(apiResponse.extract().jsonPath().getString("organisation.type.description"));
-        return businessType;
-    }  public String getLicenceTypeDetails() {
-        Headers.getHeaders().put("x-pid", CreateLicenceAPI.getAdminUserHeader());
-        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
-
-        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
-        setLicenceType(apiResponse.extract().jsonPath().getString("licenceType.description"));
-        return licenceType;
-    }
-
-    public void generateAndGrantPsvApplicationPerTrafficArea(String trafficArea, String enforcementArea) throws Exception {
-        world.createLicence.setTrafficArea(trafficArea);
-        world.createLicence.setEnforcementArea(enforcementArea);
-        world.createLicence.setOperatorType("public");
-        world.createLicence.createAndSubmitApp();
-        payFeesAndGrantLicence();
-        world.grantLicence.payGrantFees();
-        getLicenceTrafficArea();
-        System.out.println("--Licence-Number: " + world.createLicence.getLicenceNumber() + "--");
-    }
-
-    public void updateLicenceStatus(String licenceId, String status) throws MalformedURLException {
-        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/%s", licenceId, status)).toString();
-
-        GenericBuilder genericBuilder = new GenericBuilder().withId(licenceId);
-        apiResponse = RestUtils.post(genericBuilder, typeOfLicenceResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
-    }
-
-    public GrantLicenceAPI grantLicence() throws MissingRequiredArgument {
-        GrantLicenceAPI grantLicenceAPI = new GrantLicenceAPI(world);
-        return grantLicenceAPI;
-    }
-
-    public void createApplication() throws Exception {
-        if (world.createLicence.getApplicationNumber() == null) {
-            world.createLicence.createAndSubmitApp();
-        }
-    }
-
     public void executeJenkinsBatchJob(String command) throws Exception {
         HashMap<String, String> jenkinsParams = new HashMap<>();
         jenkinsParams.put(JenkinsParameterKey.NODE.toString(), String.format("api&&%s&&olcs", Properties.get("env", true)));
@@ -346,7 +177,7 @@ public class GenericUtils extends BasePage {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//label[@class='form-control form-control--radio form-control--inline']"));
         radioButtons.stream().filter(s -> s.getText().equals(radioButtonValue)).forEach(x -> x.click());
     }
-    public void findAllRadioButtons(String value) throws IllegalBrowserException {
+    public void findSelectAllRadioButtonsByValue(String value) throws IllegalBrowserException {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//*[@type='radio']"));
         radioButtons.stream().
                 filter(x -> x.getAttribute("value").equals(value)).

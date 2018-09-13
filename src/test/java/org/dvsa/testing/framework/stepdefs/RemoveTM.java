@@ -1,12 +1,13 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import Injectors.World;
 import activesupport.driver.Browser;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.*;
+import static org.dvsa.testing.framework.Journeys.APIJourneySteps.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -27,13 +28,13 @@ public class RemoveTM extends BasePage implements En {
             if (world.createLicence.getOperatorType() == null) {
                 world.createLicence.setOperatorType("public");
             }
-            world.genericUtils.createApplication();
+            world.APIJourneySteps.createAndSubmitApplication();
         });
         When("^the transport manager has been removed by an internal user$", () -> {
-            world.genericUtils.createAdminUser();
-            world.journeySteps.internalAdminUserLogin();
-            world.journeySteps.searchAndViewApplication();
-            world.journeySteps.removeInternalTransportManager();
+            world.APIJourneySteps.createAdminUser();
+            world.UIJourneySteps.internalAdminUserLogin();
+            world.UIJourneySteps.searchAndViewApplication();
+            world.UIJourneySteps.removeInternalTransportManager();
         });
         Then("^a pop up message should be displayed$", () -> {
             waitForTextToBePresent(alertHeaderValue);
@@ -61,14 +62,14 @@ public class RemoveTM extends BasePage implements En {
             }
         });
         Given("^a self-serve user removes the last TM$", () -> {
-            world.journeySteps.externalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin();
             clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Transport Managers");
             click("//*[@value='Remove']", SelectorType.XPATH);
         });
         Given("^the licence has been granted$", () -> {
-            world.genericUtils.payFeesAndGrantLicence();
-            world.genericUtils.grantLicence().payGrantFees();
+            world.APIJourneySteps.payFeesAndGrantLicence();
+            world.APIJourneySteps.grantLicence().payGrantFees();
 
         });
         When("^i create a variation$", () -> {

@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.Journeys;
 
+import Injectors.World;
 import activesupport.IllegalBrowserException;
 import activesupport.MissingDriverException;
 import activesupport.MissingRequiredArgument;
@@ -8,7 +9,6 @@ import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
-import org.dvsa.testing.framework.stepdefs.World;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -23,16 +23,25 @@ import java.net.MalformedURLException;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getFutureDate;
-import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getPastDate;
 
-public class JourneySteps extends BasePage {
+
+public class UIJourneySteps extends BasePage {
 
     private World world;
-    private static final String zipFilePath = "/src/test/resources/ESBR.zip";
-    static int tmCount;
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+    static int tmCount;
+    private static final String zipFilePath = "/src/test/resources/ESBR.zip";
+    private String verifyUsername;
 
-    public JourneySteps(World world) {
+    public String getVerifyUsername() {
+        return verifyUsername;
+    }
+
+    private void setVerifyUsername(String verifyUsername) {
+        this.verifyUsername = verifyUsername;
+    }
+
+    public UIJourneySteps(World world) {
         this.world = world;
     }
 
@@ -70,7 +79,6 @@ public class JourneySteps extends BasePage {
         while (!isTextPresent("Service details", 2));//condition
     }
 
-
     private static void enterDate(int day, int month, int year) throws IllegalBrowserException {
         enterText("receivedDate_day", String.valueOf(day), SelectorType.ID);
         enterText("receivedDate_month", String.valueOf(month), SelectorType.ID);
@@ -88,7 +96,7 @@ public class JourneySteps extends BasePage {
         // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
         world.genericUtils.modifyXML(state, interval);
         GenericUtils.zipFolder();
-        externalUserLogin();
+        navigateToExternalUserLogin();
         clickByLinkText("Bus");
         waitAndClick("//*[@id='main']/div[2]/ul/li[2]/a", SelectorType.XPATH);
         click(nameAttribute("button", "action"));
@@ -237,9 +245,9 @@ public class JourneySteps extends BasePage {
     }
 
     public String navigateToInternalTask(World world) throws IllegalBrowserException, MissingDriverException, MalformedURLException {
-        world.genericUtils.createAdminUser();
-        world.journeySteps.internalAdminUserLogin();
-        world.journeySteps.searchAndViewApplication();
+        world.APIJourneySteps.createAdminUser();
+        world.UIJourneySteps.internalAdminUserLogin();
+        world.UIJourneySteps.searchAndViewApplication();
         clickByLinkText("Processing");
         clickByLinkText("Add director(s)");
         waitForTextToBePresent("Linked to");
@@ -285,7 +293,7 @@ public class JourneySteps extends BasePage {
         }
     }
 
-    public void externalUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException, MalformedURLException {
+    public void navigateToExternalUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException, MalformedURLException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
         if (Browser.isBrowserOpen()) {
             //Quit Browser and open a new window
@@ -333,8 +341,8 @@ public class JourneySteps extends BasePage {
     }
 
     public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException, MalformedURLException {
-        world.journeySteps.externalUserLogin();
-        world.journeySteps.addPerson(firstName, lastName);
+        world.UIJourneySteps.navigateToExternalUserLogin();
+        world.UIJourneySteps.addPerson(firstName, lastName);
         world.genericUtils.selectAllExternalRadioButtons("No");
         clickByName("form-actions[saveAndContinue]");
         world.genericUtils.selectAllExternalRadioButtons("No");
@@ -358,7 +366,25 @@ public class JourneySteps extends BasePage {
         click(nameAttribute("button", "form-actions[save]"));
     }
 
-    public void addTransportManager(String forename, String familyName ) throws IllegalBrowserException {
+    public void signWithVerify(String username, String password) throws IllegalBrowserException {
+        setVerifyUsername(username);
+        clickByLinkText("Review");
+        waitForTextToBePresent("Review and declarations");
+        click("//*[@id='declarationsAndUndertakings[signatureOptions]']", SelectorType.XPATH);
+        click("//*[@id='sign']", SelectorType.XPATH);
+        waitForTextToBePresent("Sign in with GOV.UK Verify");
+        click("//*[@id='start_form_selection_false']", SelectorType.XPATH);
+        click("//*[@id='next-button']", SelectorType.XPATH);
+        click("//*[contains(text(),'Select Post')]", SelectorType.XPATH);
+        waitForTextToBePresent("Verified");
+        enterText("username", username, SelectorType.NAME);
+        enterText("password", password, SelectorType.NAME);
+        click("//*[@id='login']", SelectorType.XPATH);
+        waitForTextToBePresent("Personal Details");
+        click("//*[@id='agree']", SelectorType.XPATH);
+    }
+
+    public void addNewPersonAsTransportManager(String forename, String familyName) throws IllegalBrowserException {
         String username = Str.randomWord(3);
         clickByLinkText("change your licence");
         waitForTextToBePresent("Applying to change a licence");
@@ -369,7 +395,7 @@ public class JourneySteps extends BasePage {
         waitAndClick("addUser", SelectorType.ID);
         enterText("forename", forename, SelectorType.ID);
         enterText("familyName", familyName, SelectorType.ID);
-        String[] date = getPastDate(25).toString().split("-");
+        String[] date = world.genericUtils.getPastDate(25).toString().split("-");
         enterText("dob_day", date[2], SelectorType.ID);
         enterText("dob_month", date[1], SelectorType.ID);
         enterText("dob_year", date[0], SelectorType.ID);
@@ -378,4 +404,44 @@ public class JourneySteps extends BasePage {
         enterText("emailConfirm", "TM@vol.com", SelectorType.ID);
         waitAndClick("form-actions[continue]", SelectorType.ID);
     }
+
+    public void addTransportManagerDetails() throws IllegalBrowserException {
+        //Add Personal Details
+        String birthPlace = world.createLicence.getTown();
+        String[] date = world.genericUtils.getPastDate(25).toString().split("-");
+        enterText("dob_day", date[2], SelectorType.ID);
+        enterText("dob_month", date[1], SelectorType.ID);
+        enterText("dob_year", date[0], SelectorType.ID);
+        enterText("birthPlace", birthPlace, SelectorType.ID);
+        //Add Home Address
+        String postCode = world.createLicence.getPostcode();
+        enterText("postcodeInput1", postCode, SelectorType.ID);
+        clickByName("homeAddress[searchPostcode][search]");
+        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        //Add Work Address
+        enterText("postcodeInput2", postCode, SelectorType.ID);
+        clickByName("workAddress[searchPostcode][search]");
+        selectValueFromDropDownByIndex("workAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        //Add Responsibilities
+        click("//*[contains(text(),'External')]", SelectorType.XPATH);
+        world.genericUtils.selectAllExternalRadioButtons("Y");
+        //Add Other Licences
+        String role = "Transport Manager";
+        click("//*[contains(text(),'Add other licences')]", SelectorType.XPATH);
+        waitForTextToBePresent("Add other licence");
+        enterText("licNo", "PB123456", SelectorType.ID);
+        selectValueFromDropDown("data[role]", SelectorType.ID, role);
+    }
+
+    public void addExistingPersonAsTransportManager() throws IllegalBrowserException {
+        waitForTextToBePresent("Apply for a new licence");
+        clickByLinkText("Transport");
+        waitForTextToBePresent("Transport Managers");
+        click("//*[@name='table[action]']",SelectorType.XPATH);
+        waitForTextToBePresent("Add Transport Manager");
+        selectValueFromDropDownByIndex("data[registeredUser]",SelectorType.ID,1);
+        click("//*[@id='form-actions[continue]']",SelectorType.XPATH);
+        waitForTextToBePresent("Transport Manager details");
+    }
 }
+

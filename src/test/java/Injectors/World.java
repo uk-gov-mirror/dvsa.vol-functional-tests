@@ -1,6 +1,7 @@
-package org.dvsa.testing.framework.stepdefs;
+package Injectors;
 
-import org.dvsa.testing.framework.Journeys.JourneySteps;
+import org.dvsa.testing.framework.Journeys.APIJourneySteps;
+import org.dvsa.testing.framework.Journeys.UIJourneySteps;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.UpdateLicenceAPI;
@@ -11,5 +12,6 @@ public class World {
     public GrantLicenceAPI grantLicence;
     public GenericUtils genericUtils;
     public UpdateLicenceAPI updateLicence;
-    public JourneySteps journeySteps;
+    public UIJourneySteps UIJourneySteps;
+    public APIJourneySteps APIJourneySteps;
 }

@@ -36,6 +36,7 @@ Feature: TM signs through verify
     And the users chooses to sign with verify
     Then the declaration text and verify button are displayed
 
+
   @OLCS-20343
   Scenario: Operator applicant has confirmed TM details and submitted and now wishes to co-sign using Print - TM has signed online already using Verify
     When the user confirms details on the TM 'Review and submit' page

@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
+import Injectors.World;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -9,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CheckCorrespondence extends BasePage implements En {
     public CheckCorrespondence(World world) {
         And("^i have logged in to self serve$", () -> {
-            world.journeySteps.externalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin();
         });
         When("^i open the documents tab$", () -> {
            click("//a[@href='/correspondence/']", SelectorType.XPATH);

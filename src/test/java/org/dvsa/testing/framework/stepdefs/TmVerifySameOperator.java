@@ -1,6 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
-import activesupport.IllegalBrowserException;
+import Injectors.World;
 import activesupport.driver.Browser;
 import activesupport.system.Properties;
 import cucumber.api.PendingException;
@@ -16,17 +16,16 @@ import org.openqa.selenium.support.Color;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TmVerify extends BasePage implements En {
-    String forname = "Transport";
-    String familyName = "Manager";
+public class TmVerifySameOperator extends BasePage implements En {
+    private String forename = "Transport";
+    private String familyName = "Manager";
 
-    public TmVerify(World world) {
+    public TmVerifySameOperator(World world) {
         Given("^the TM has successfully signed through verify$", () -> {
             // Write code here that turns the phrase above into concrete actions
             throw new PendingException();
@@ -112,14 +111,14 @@ public class TmVerify extends BasePage implements En {
         When("^i add a new transport manager$", () -> {
             clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Transport");
-            world.journeySteps.addTransportManager(forname, familyName);
+            world.UIJourneySteps.addNewPersonAsTransportManager(forename, familyName);
         });
         Then("^a transport manager has been created banner is displayed$", () -> {
             assertFalse(isTextPresent("The transport manager's user account has been created and a link sent to them", 30));
             assertTrue(isTextPresent("The user account has been created and form has been emailed to the transport manager", 30));
         });
         Then("^the download TM(\\d+) for should not be displayed on the details page$", (Integer arg0) -> {
-            waitAndClick("//a[contains(text(),'" + forname + " " + familyName + "')]", SelectorType.XPATH);
+            waitAndClick("//a[contains(text(),'" + forename + " " + familyName + "')]", SelectorType.XPATH);
             waitForTextToBePresent("Details not submitted");
             assertFalse(isTextPresent("Alternatively they can download a TM1 form (PDF 150KB).", 30));
             assertFalse(isLinkPresent("download a TM1 form (PDF 150KB).", 30));
