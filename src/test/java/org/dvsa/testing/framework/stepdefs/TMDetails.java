@@ -49,5 +49,11 @@ public class TMDetails extends BasePage implements En {
             isTextPresent(arg0,10);
             clickByLinkText("Back");
         });
+        When("^the users attempts to save without entering any data$", () -> {
+            click("form-actions[submit]",SelectorType.ID);
+        });
+        Then("^a validation message should be displayed$", () -> {
+            assertTrue(isElementPresent("validationSummary",SelectorType.ID));
+        });
     }
 }

@@ -43,4 +43,6 @@ Feature: TM/operator checks optional wording has been removed for TM details pag
       | add-previous-conviction        | Add convictions and penalties | Add previous conviction |
       | add-previous-licence           | Add licences                  | Add previous licence    |
 
-
+  Scenario: validation checks when no radio button has been selected
+    When the users attempts to save without entering any data
+    Then a validation message should be displayed
