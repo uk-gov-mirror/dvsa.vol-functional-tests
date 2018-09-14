@@ -58,6 +58,7 @@ public class CreateLicenceAPI {
     private String applicationStatus;
     private String licenceId;
     private String businessName = "API";
+    private String isInterim;
 
     private static int version = 1;
     private int noOfVehiclesRequired = 5;
@@ -194,9 +195,7 @@ public class CreateLicenceAPI {
         return transportManagerApplicationId;
     }
 
-    private void setTransportManagerApplicationId(String transportManagerApplicationId) {
-        this.transportManagerApplicationId = transportManagerApplicationId;
-    }
+    private void setTransportManagerApplicationId(String transportManagerApplicationId) { this.transportManagerApplicationId = transportManagerApplicationId; }
 
     public void setTrafficArea(String trafficArea) {
         this.trafficArea = trafficArea;
@@ -269,6 +268,10 @@ public class CreateLicenceAPI {
     public void setBusinessName(String businessName) {
         this.businessName = businessName;
     }
+
+    public String getIsInterim() { return isInterim; }
+
+    public void setIsInterim(String isInterim) { this.isInterim = isInterim; }
 
     private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
@@ -713,53 +716,6 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void applicationReviewAndDeclare() {
-        String interimReason = "Testing through the API";
-        String isInterim = "Y";
-        String declarationConfirmation = "Y";
-        String signatureRequired = "sig_physical_signature";
-        DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings();
-        String reviewResource = URL.build(env, String.format("application/%s/declaration/", applicationNumber)).toString();
-
-        do {
-            if (operatorType.equals("goods")) {
-                undertakings.withId(applicationNumber).withVersion(String.valueOf(version)).withInterimRequested(isInterim)
-                        .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
-            } else {
-                undertakings.withId(applicationNumber).withVersion(String.valueOf(version))
-                        .withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
-            }
-            apiResponse = RestUtils.put(undertakings, reviewResource, getHeaders());
-            version++;
-            if (version > 20) {
-                version = 1;
-            }
-        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-            System.out.println(apiResponse.extract().statusCode());
-            System.out.println(apiResponse.extract().response().asString());
-            throw new HTTPException(apiResponse.extract().statusCode());
-        }
-    }
-
-    public void submitApplication() {
-        String submitResource = URL.build(env, String.format("application/%s/submit", applicationNumber)).toString();
-
-        do {
-            GenericBuilder genericBuilder = new GenericBuilder().withId(applicationNumber).withVersion(version);
-            apiResponse = RestUtils.put(genericBuilder, submitResource, getHeaders());
-            version++;
-            if (version > 20) {
-                version = 1;
-            }
-        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-            System.out.println(apiResponse.extract().statusCode());
-            System.out.println(apiResponse.extract().response().asString());
-            throw new HTTPException(apiResponse.extract().statusCode());
-        }
-    }
-
     public void getApplicationLicenceDetails() {
         Headers.headers.put("x-pid", adminApiHeader());
 
@@ -794,6 +750,52 @@ public class CreateLicenceAPI {
                 System.out.println(apiResponse.extract().response().asString());
                 throw new HTTPException(apiResponse.extract().statusCode());
             }
+        }
+    }
+
+    public void applicationReviewAndDeclare() {
+        String interimReason = "Testing through the API";
+        String declarationConfirmation = "Y";
+        String signatureRequired = "sig_physical_signature";
+        DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings();
+        String reviewResource = URL.build(env, String.format("application/%s/declaration/", applicationNumber)).toString();
+
+        do {
+            if (operatorType.equals("goods") && (getIsInterim().equals("Y"))) {
+                undertakings.withId(applicationNumber).withVersion(String.valueOf(version)).withInterimRequested(getIsInterim())
+                        .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
+            } else {
+                undertakings.withId(applicationNumber).withVersion(String.valueOf(version))
+                        .withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
+            }
+            apiResponse = RestUtils.put(undertakings, reviewResource, getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
+    }
+
+    public void submitApplication() {
+        String submitResource = URL.build(env, String.format("application/%s/submit", applicationNumber)).toString();
+
+        do {
+            GenericBuilder genericBuilder = new GenericBuilder().withId(applicationNumber).withVersion(version);
+            apiResponse = RestUtils.put(genericBuilder, submitResource, getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
         }
     }
 }

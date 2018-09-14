@@ -19,6 +19,7 @@ public class PSVapplication implements En {
         });
 
         Given("^I have a \"([^\"]*)\" \"([^\"]*)\" application which is under consideration$", (String arg0, String arg1) -> {
+            world.createLicence.setIsInterim("Y");
             world.createLicence.setOperatorType(arg0);
             world.createLicence.setLicenceType(arg1);
             if (world.createLicence.getApplicationNumber() == null) {

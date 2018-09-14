@@ -368,7 +368,6 @@ public class UIJourneySteps extends BasePage {
 
     public void signWithVerify(String username, String password) throws IllegalBrowserException {
         setVerifyUsername(username);
-        clickByLinkText("Review");
         waitForTextToBePresent("Review and declarations");
         click("//*[@id='declarationsAndUndertakings[signatureOptions]']", SelectorType.XPATH);
         click("//*[@id='sign']", SelectorType.XPATH);
@@ -443,5 +442,9 @@ public class UIJourneySteps extends BasePage {
         click("//*[@id='form-actions[continue]']",SelectorType.XPATH);
         waitForTextToBePresent("Transport Manager details");
     }
+    public void navigateToExternalReviewAndDeclarationsPage() throws IllegalBrowserException, MalformedURLException, MissingDriverException {
+        world.UIJourneySteps.navigateToExternalUserLogin();
+        clickByLinkText(world.createLicence.getApplicationNumber());
+        clickByLinkText("Review");
+    }
 }
-
