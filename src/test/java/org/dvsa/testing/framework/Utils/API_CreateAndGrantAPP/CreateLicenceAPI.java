@@ -716,21 +716,6 @@ public class CreateLicenceAPI {
         }
     }
 
-    public void getApplicationLicenceDetails() {
-        Headers.headers.put("x-pid", adminApiHeader());
-
-        String getApplicationResource = URL.build(env, String.format("application/%s", applicationNumber)).toString();
-        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
-        setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
-        setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
-        setApplicationStatus(apiResponse.extract().jsonPath().getString("licenceType.status.olbsKey"));
-        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-            System.out.println(apiResponse.extract().statusCode());
-            System.out.println(apiResponse.extract().response().asString());
-            throw new HTTPException(apiResponse.extract().statusCode());
-        }
-    }
-
     public void submitTaxiPhv() {
         String phLicenceNumber = "phv123456";
         String councilName = "nottinghamshire";
@@ -792,6 +777,20 @@ public class CreateLicenceAPI {
                 version = 1;
             }
         } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
+    }
+    public void getApplicationLicenceDetails() {
+        Headers.headers.put("x-pid", adminApiHeader());
+
+        String getApplicationResource = URL.build(env, String.format("application/%s", applicationNumber)).toString();
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
+        setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
+        setApplicationStatus(apiResponse.extract().jsonPath().getString("licenceType.status.olbsKey"));
         if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
             System.out.println(apiResponse.extract().statusCode());
             System.out.println(apiResponse.extract().response().asString());
