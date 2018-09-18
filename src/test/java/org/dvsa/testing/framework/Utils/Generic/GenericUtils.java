@@ -1,13 +1,13 @@
 package org.dvsa.testing.framework.Utils.Generic;
 
+import Injectors.World;
 import activesupport.IllegalBrowserException;
-import activesupport.driver.Browser;
 import activesupport.MissingRequiredArgument;
+import activesupport.driver.Browser;
 import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
-import Injectors.World;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
@@ -24,8 +24,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -174,7 +177,7 @@ public class GenericUtils extends BasePage {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//label[@class='form-control form-control--radio form-control--inline']"));
         radioButtons.stream().filter(s -> s.getText().equals(radioButtonValue)).forEach(x -> x.click());
     }
-    public void findAllRadioButtons(String value) throws IllegalBrowserException {
+    public void findSelectAllRadioButtonsByValue(String value) throws IllegalBrowserException {
         List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//*[@type='radio']"));
         radioButtons.stream().
                 filter(x -> x.getAttribute("value").equals(value)).
@@ -184,6 +187,12 @@ public class GenericUtils extends BasePage {
     public void selectFirstValueInList(String selector) throws IllegalBrowserException {
         Browser.navigate().findElements(By.xpath(selector)).stream().findFirst().get().click();
     }
+
+    public String readFileAsString(String fileName) throws Exception {
+        String data = new String(Files.readAllBytes(Paths.get(fileName)));
+        return data;
+    }
+
     public boolean checkForValuesInTable(String searchTerm) throws IllegalBrowserException {
         return Browser.navigate().findElements(By.xpath("//table/tbody/tr[*]")).stream().allMatch(w -> w.getText().contains(searchTerm));
     }
@@ -191,5 +200,19 @@ public class GenericUtils extends BasePage {
     public static java.time.LocalDate getFutureDate(@NotNull int month) {
         java.time.LocalDate date = java.time.LocalDate.now().plusMonths(month);
         return date;
+    }
+
+    public static java.time.LocalDate getPastDate(@NotNull int years) {
+        java.time.LocalDate date = java.time.LocalDate.now().minusYears(years);
+        return date;
+    }
+
+    public String confirmationPanel(String locator, String cssValue) throws IllegalBrowserException {
+        return Browser.navigate().findElement(By.xpath(locator)).getCssValue(cssValue);
+    }
+
+    public void switchTab(int tab) throws IllegalBrowserException {
+        ArrayList<String> tabs = new ArrayList<>(Browser.navigate().getWindowHandles());
+        Browser.navigate().switchTo().window(tabs.get(tab));
     }
 }

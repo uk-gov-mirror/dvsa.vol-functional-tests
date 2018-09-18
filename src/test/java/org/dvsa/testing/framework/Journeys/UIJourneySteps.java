@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.Journeys;
 
+import Injectors.World;
 import activesupport.IllegalBrowserException;
 import activesupport.MissingDriverException;
 import activesupport.MissingRequiredArgument;
@@ -8,7 +9,6 @@ import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
-import Injectors.World;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getFutureDate;
 
+
 public class UIJourneySteps extends BasePage {
 
     private World world;
@@ -35,6 +36,7 @@ public class UIJourneySteps extends BasePage {
     public String getVerifyUsername() {
         return verifyUsername;
     }
+
     private void setVerifyUsername(String verifyUsername) {
         this.verifyUsername = verifyUsername;
     }
@@ -60,7 +62,7 @@ public class UIJourneySteps extends BasePage {
         enterText("startPoint", Str.randomWord(9), SelectorType.ID);
         enterText("finishPoint", Str.randomWord(11), SelectorType.ID);
         enterText("via", Str.randomWord(5), SelectorType.ID);
-        click("//*[@class='chosen-choices']",SelectorType.XPATH);
+        click("//*[@class='chosen-choices']", SelectorType.XPATH);
         //This will need to be moved into Page Objects//
         Browser.navigate().findElements(By.xpath("//*[@class=\"active-result\"]")).stream().findFirst().get().click();
         enterDate(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
@@ -94,7 +96,7 @@ public class UIJourneySteps extends BasePage {
         // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
         world.genericUtils.modifyXML(state, interval);
         GenericUtils.zipFolder();
-        externalUserLogin();
+        navigateToExternalUserLogin();
         clickByLinkText("Bus");
         waitAndClick("//*[@id='main']/div[2]/ul/li[2]/a", SelectorType.XPATH);
         click(nameAttribute("button", "action"));
@@ -291,7 +293,7 @@ public class UIJourneySteps extends BasePage {
         }
     }
 
-    public void externalUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException, MalformedURLException {
+    public void navigateToExternalUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MissingDriverException, MalformedURLException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
         if (Browser.isBrowserOpen()) {
             //Quit Browser and open a new window
@@ -312,7 +314,7 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void navigateToExternalSearch() throws IllegalBrowserException {
-        String myURL = URL.build(ApplicationType.EXTERNAL, env,"search/find-lorry-bus-operators/").toString();
+        String myURL = URL.build(ApplicationType.EXTERNAL, env, "search/find-lorry-bus-operators/").toString();
         Browser.navigate().get(myURL);
     }
 
@@ -339,7 +341,7 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException, MalformedURLException {
-        world.UIJourneySteps.externalUserLogin();
+        world.UIJourneySteps.navigateToExternalUserLogin();
         world.UIJourneySteps.addPerson(firstName, lastName);
         world.genericUtils.selectAllExternalRadioButtons("No");
         clickByName("form-actions[saveAndContinue]");
@@ -366,7 +368,6 @@ public class UIJourneySteps extends BasePage {
 
     public void signWithVerify(String username, String password) throws IllegalBrowserException {
         setVerifyUsername(username);
-        clickByLinkText("Review");
         waitForTextToBePresent("Review and declarations");
         click("//*[@id='declarationsAndUndertakings[signatureOptions]']", SelectorType.XPATH);
         click("//*[@id='sign']", SelectorType.XPATH);
@@ -377,8 +378,73 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Verified");
         enterText("username", username, SelectorType.NAME);
         enterText("password", password, SelectorType.NAME);
-        click("//*[@id='login']",SelectorType.XPATH);
+        click("//*[@id='login']", SelectorType.XPATH);
         waitForTextToBePresent("Personal Details");
-        click("//*[@id='agree']",SelectorType.XPATH);
+        click("//*[@id='agree']", SelectorType.XPATH);
+    }
+
+    public void addNewPersonAsTransportManager(String forename, String familyName) throws IllegalBrowserException {
+        String username = Str.randomWord(3);
+        clickByLinkText("change your licence");
+        waitForTextToBePresent("Applying to change a licence");
+        click("form-actions[submit]", SelectorType.ID);
+        waitForTextToBePresent("Transport Managers");
+        waitAndClick("//*[@id='add']", SelectorType.XPATH);
+        waitForTextToBePresent("Add Transport Manager");
+        waitAndClick("addUser", SelectorType.ID);
+        enterText("forename", forename, SelectorType.ID);
+        enterText("familyName", familyName, SelectorType.ID);
+        String[] date = world.genericUtils.getPastDate(25).toString().split("-");
+        enterText("dob_day", date[2], SelectorType.ID);
+        enterText("dob_month", date[1], SelectorType.ID);
+        enterText("dob_year", date[0], SelectorType.ID);
+        enterText("username", "TM".concat(username), SelectorType.ID);
+        enterText("emailAddress", "TM@vol.com", SelectorType.ID);
+        enterText("emailConfirm", "TM@vol.com", SelectorType.ID);
+        waitAndClick("form-actions[continue]", SelectorType.ID);
+    }
+
+    public void addTransportManagerDetails() throws IllegalBrowserException {
+        //Add Personal Details
+        String birthPlace = world.createLicence.getTown();
+        String[] date = world.genericUtils.getPastDate(25).toString().split("-");
+        enterText("dob_day", date[2], SelectorType.ID);
+        enterText("dob_month", date[1], SelectorType.ID);
+        enterText("dob_year", date[0], SelectorType.ID);
+        enterText("birthPlace", birthPlace, SelectorType.ID);
+        //Add Home Address
+        String postCode = world.createLicence.getPostcode();
+        enterText("postcodeInput1", postCode, SelectorType.ID);
+        clickByName("homeAddress[searchPostcode][search]");
+        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        //Add Work Address
+        enterText("postcodeInput2", postCode, SelectorType.ID);
+        clickByName("workAddress[searchPostcode][search]");
+        selectValueFromDropDownByIndex("workAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        //Add Responsibilities
+        click("//*[contains(text(),'External')]", SelectorType.XPATH);
+        world.genericUtils.selectAllExternalRadioButtons("Y");
+        //Add Other Licences
+        String role = "Transport Manager";
+        click("//*[contains(text(),'Add other licences')]", SelectorType.XPATH);
+        waitForTextToBePresent("Add other licence");
+        enterText("licNo", "PB123456", SelectorType.ID);
+        selectValueFromDropDown("data[role]", SelectorType.ID, role);
+    }
+
+    public void addExistingPersonAsTransportManager() throws IllegalBrowserException {
+        waitForTextToBePresent("Apply for a new licence");
+        clickByLinkText("Transport");
+        waitForTextToBePresent("Transport Managers");
+        click("//*[@name='table[action]']",SelectorType.XPATH);
+        waitForTextToBePresent("Add Transport Manager");
+        selectValueFromDropDownByIndex("data[registeredUser]",SelectorType.ID,1);
+        click("//*[@id='form-actions[continue]']",SelectorType.XPATH);
+        waitForTextToBePresent("Transport Manager details");
+    }
+    public void navigateToExternalReviewAndDeclarationsPage() throws IllegalBrowserException, MalformedURLException, MissingDriverException {
+        world.UIJourneySteps.navigateToExternalUserLogin();
+        clickByLinkText(world.createLicence.getApplicationNumber());
+        clickByLinkText("Review");
     }
 }

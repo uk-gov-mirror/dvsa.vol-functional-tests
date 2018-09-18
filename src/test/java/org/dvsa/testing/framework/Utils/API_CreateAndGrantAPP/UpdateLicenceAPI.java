@@ -332,8 +332,6 @@ public class UpdateLicenceAPI extends BasePage {
 
         GenericBuilder genericBuilder = new GenericBuilder().withId(variationApplicationNumber);
         apiResponse = RestUtils.put(genericBuilder, grantVariation, getHeaders());
-
         return apiResponse;
     }
-
 }
