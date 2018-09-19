@@ -52,8 +52,8 @@ public class CreateLicenceAPI {
     private String businessType = System.getProperty("businessType"); //"limited_company"
     private String operatorType = System.getProperty("operatorType"); //goods
     private String niFlag = System.getProperty("ni"); //"Y|N"
-    private String trafficArea;
-    private String enforcementArea;
+    private String trafficArea = "D";
+    private String enforcementArea = "EA-D";
     private String restrictedVehicles = "2";
     private String applicationStatus;
     private String licenceId;
@@ -278,8 +278,6 @@ public class CreateLicenceAPI {
             licenceType = "standard_national";
             businessType = "limited_company";
             niFlag = "N";
-            trafficArea = "D";
-            enforcementArea = "EA-D";
         }
     }
 
@@ -442,8 +440,6 @@ public class CreateLicenceAPI {
     }
 
     public void updateOperatingCentre() {
-        setTrafficArea("D");
-        setEnforcementArea("EA-D");
         String updateOperatingCentreResource = URL.build(env, String.format("application/%s/operating-centres", applicationNumber)).toString();
         OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater();
 

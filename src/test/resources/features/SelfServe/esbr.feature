@@ -9,20 +9,20 @@ Feature: ESBR for English, Welsh and Scottish Areas
     And  A short notice tab should be displayed in internal
     Examples:
       | TrafficArea | EnforcementArea | Days |
-      | B           | EA-B            | 41   |
-      | M           | EA-A            | 41   |
+#      | B           | EA-B            | 41   |
+#      | M           | EA-A            | 41   |
       | G           | EA-E            | 55   |
-      | F           | EA-F            | 41   |
-      | H           | EA-H            | 41   |
-  Scenario Outline: ESBR in self-serve
-    Given I have a psv application with traffic area "<TrafficArea>" and enforcement area "<EnforcementArea>" which has been granted
-    When I upload an esbr file with "<Days>" days notice
-    Then A short notice flag should not be displayed in selfserve
-    And  A short notice tab should not be displayed in internal
-    Examples:
-      | TrafficArea | EnforcementArea | Days |
-      | B           | EA-B            | 42   |
-      | M           | EA-A            | 42   |
-      | G           | EA-E            | 56   |
-      | F           | EA-F            | 42   |
-      | H           | EA-H            | 42   |
+#      | F           | EA-F            | 41   |
+#      | H           | EA-H            | 41   |
+#  Scenario Outline: ESBR in self-serve
+#    Given I have a psv application with traffic area "<TrafficArea>" and enforcement area "<EnforcementArea>" which has been granted
+#    When I upload an esbr file with "<Days>" days notice
+#    Then A short notice flag should not be displayed in selfserve
+#    And  A short notice tab should not be displayed in internal
+#    Examples:
+#      | TrafficArea | EnforcementArea | Days |
+#      | B           | EA-B            | 42   |
+#      | M           | EA-A            | 42   |
+#      | G           | EA-E            | 56   |
+#      | F           | EA-F            | 42   |
+#      | H           | EA-H            | 42   |
