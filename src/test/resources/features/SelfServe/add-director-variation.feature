@@ -35,7 +35,7 @@ Feature: Add a director variation
     When i add a director
     And i add a new director
     Then i should have multiple directors on my application
-#
+
   Scenario: No snapshot created for removing person
     When i add a director
     And i remove a director
