@@ -6,11 +6,14 @@ import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Journeys.UIJourneySteps;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
+import org.hamcrest.MatcherAssert;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AddDirectorVariation extends BasePage implements En {
@@ -24,21 +27,25 @@ public class AddDirectorVariation extends BasePage implements En {
         world.UIJourneySteps = new UIJourneySteps(world);
 
         When("^i add a new person$", () -> {
-            world.UIJourneySteps.externalUserLogin();
+            world.UIJourneySteps.navigateToDirectorsPage();
             world.UIJourneySteps.addPerson(firstName, lastName);
         });
         Then("^a new director should be added to my licence$", () -> {
             waitForTextToBePresent("Directors");
-            List<WebElement> director = listOfWebElements("//*/tbody/tr[*]/td[1]/input",SelectorType.XPATH);
+            List<WebElement> director = listOfWebElements("//*/tbody/tr[*]/td[1]/input", SelectorType.XPATH);
             long directors = director.size();
             assertEquals(directors, 2);
             assertTrue(director.stream().anyMatch(d -> d.getAttribute("value").contains(firstName)));
         });
         And("^a non urgent task is created in internal$", () -> {
-            assertEquals(world.UIJourneySteps.navigateToInternalTask(world), "");
+            world.UIJourneySteps.navigateToInternalTask();
+            clickByLinkText("Add director(s)");
+            waitForTextToBePresent("Linked to");
+            String isSelected = findElement("//div[4]/label", SelectorType.XPATH, 30).getAttribute("class");
+            assertEquals(isSelected, "");
         });
         When("^i enter \"([^\"]*)\" previous convictions details question$", (String arg0) -> {
-            world.genericUtils.selectAllExternalRadioButtons(arg0);
+            selectAllExternalRadioButtons(arg0);
             if (arg0.equals("Yes")) {
                 click("add", SelectorType.ID);
                 world.UIJourneySteps.addPreviousConviction();
@@ -46,27 +53,50 @@ public class AddDirectorVariation extends BasePage implements En {
             clickByName("form-actions[saveAndContinue]");
         });
         And("^an urgent task is created in internal$", () -> {
-            assertEquals(world.UIJourneySteps.navigateToInternalTask(world), "selected");
+            world.UIJourneySteps.navigateToInternalTask();
+            clickByLinkText("Add director(s)");
+            waitForTextToBePresent("Linked to");
+            String isSelected = findElement("//div[4]/label", SelectorType.XPATH, 30).getAttribute("class");
+            assertEquals(isSelected, "selected");
         });
         And("^i enter \"([^\"]*)\" to financial details question$", (String arg0) -> {
-            world.genericUtils.selectAllExternalRadioButtons(arg0);
+            selectAllExternalRadioButtons(arg0);
             if (arg0.equals("Yes")) {
                 enterText("data[insolvencyDetails]", Str.randomWord(150), SelectorType.ID);
             }
             clickByName("form-actions[saveAndContinue]");
         });
         Then("^a snapshot should be created in internal$", () -> {
-            world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.internalAdminUserLogin();
-            world.UIJourneySteps.searchAndViewApplication();
-            clickByLinkText("Docs");
-            List<WebElement> docsAttach = listOfWebElements("//tbody/tr[*]/td[2]",SelectorType.XPATH);
+            world.UIJourneySteps.internalUserNavigateToDocsTable();
+            List<WebElement> docsAttach = listOfWebElements("//tbody/tr[*]/td[2]", SelectorType.XPATH);
             long docsList = docsAttach.size();
-            assertEquals(docsList,5);
+            assertEquals(docsList, 5);
             assertTrue(docsAttach.stream().anyMatch(d -> d.getText().contains("Application")));
         });
         When("^a new director has been added$", () -> {
             world.UIJourneySteps.addDirectorWithoutConvictions(firstName, lastName);
+        });
+        Given("^i add a director$", () -> {
+            world.UIJourneySteps.navigateToDirectorsPage();
+            world.UIJourneySteps.addDirector(firstName,lastName);
+        });
+        Then("^i should have multiple directors on my application$", () -> {
+            waitForTextToBePresent("Directors");
+            List<WebElement> director = listOfWebElements("//*/tbody/tr[*]/td[1]/input", SelectorType.XPATH);
+            long directors = director.size();
+            MatcherAssert.assertThat(directors,greaterThan(1L));
+            assertTrue(director.stream().anyMatch(d -> d.getAttribute("value").contains(firstName)));
+        });
+        When("^i add a new director$", () -> {
+            world.UIJourneySteps.addDirector(firstName, lastName);
+        });
+        When("^i remove a director$", () -> {
+            world.UIJourneySteps.removeDirector();
+        });
+        Then("^a task should not be created in internal$", () -> {
+            world.UIJourneySteps.navigateToInternalTask();
+            List<WebElement> director = listOfWebElements("//tbody", SelectorType.XPATH);
+            assertFalse(director.stream().anyMatch(d -> d.getText().contains("Last director removed")));
         });
     }
 }

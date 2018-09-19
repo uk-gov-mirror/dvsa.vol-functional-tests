@@ -1,7 +1,5 @@
 package org.dvsa.testing.framework.Utils.Generic;
 
-import activesupport.IllegalBrowserException;
-import activesupport.driver.Browser;
 import activesupport.MissingRequiredArgument;
 import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
@@ -10,8 +8,6 @@ import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import Injectors.World;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.jetbrains.annotations.NotNull;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -27,7 +23,6 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.List;
 
 
 public class GenericUtils extends BasePage {
@@ -107,7 +102,6 @@ public class GenericUtils extends BasePage {
     }
 
     public static String getDates(String state, int months) {
-
         DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime now = LocalDateTime.now();
         String myDate = null;
@@ -126,7 +120,7 @@ public class GenericUtils extends BasePage {
                 myDate = date.format(now);
                 break;
             default:
-                System.out.println(state + ": does not exist, needs to either be 'current', 'past' or 'future'");
+                System.out.println(state + ": does not exist, needs to either be 'current', or 'past' or 'futureDay' or 'futureMonth'");
         }
         return myDate;
     }
@@ -146,46 +140,12 @@ public class GenericUtils extends BasePage {
         Jenkins.trigger(Jenkins.Job.BATCH_PROCESS_QUEQUE, jenkinsParams);
     }
 
-    public boolean retryingFindClick(By by) {
-        boolean result = false;
-        int attempts = 0;
-        while (attempts < 10) {
-            try {
-                Browser.navigate().findElement(by).click();
-                result = true;
-                break;
-            } catch (Exception e) {
-            }
-            attempts++;
-        }
-        return result;
-    }
-
     public String stripNonAlphanumericCharacters(String value) {
         return value.replaceAll("[^A-Za-z0-9]", "");
-
     }
 
     public String stripAlphaCharacters(String value) {
         return value.replaceAll("[^0-9]", "");
-    }
-
-    public void selectAllExternalRadioButtons(String radioButtonValue) throws IllegalBrowserException {
-        List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//label[@class='form-control form-control--radio form-control--inline']"));
-        radioButtons.stream().filter(s -> s.getText().equals(radioButtonValue)).forEach(x -> x.click());
-    }
-    public void findAllRadioButtons(String value) throws IllegalBrowserException {
-        List<WebElement> radioButtons = Browser.navigate().findElements(By.xpath("//*[@type='radio']"));
-        radioButtons.stream().
-                filter(x -> x.getAttribute("value").equals(value)).
-                filter(isChecked -> !isChecked.isSelected()).
-                forEach(x -> x.click());
-    }
-    public void selectFirstValueInList(String selector) throws IllegalBrowserException {
-        Browser.navigate().findElements(By.xpath(selector)).stream().findFirst().get().click();
-    }
-    public boolean checkForValuesInTable(String searchTerm) throws IllegalBrowserException {
-        return Browser.navigate().findElements(By.xpath("//table/tbody/tr[*]")).stream().allMatch(w -> w.getText().contains(searchTerm));
     }
 
     public static java.time.LocalDate getFutureDate(@NotNull int month) {

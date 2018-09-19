@@ -16,7 +16,7 @@ public class ExternalSearch extends BasePage implements En {
             world.UIJourneySteps.navigateToExternalSearch();
         });
         When("^I search for a lorry and bus operator by \"([^\"]*)\"$", (String arg0) -> {
-            world.genericUtils.findAllRadioButtons(arg0);
+            findSelectAllRadioButtonsByValue(arg0);
             switch (arg0) {
                 case "address":
                     enterText("search", world.createLicence.getPostcode(), SelectorType.NAME);
@@ -34,35 +34,35 @@ public class ExternalSearch extends BasePage implements En {
             clickByName("submit");
         });
         Then("^search results page addresses should only display address belonging to our post code$", () -> {
-            assertTrue(world.genericUtils.checkForValuesInTable(world.createLicence.getPostcode().toUpperCase()));
+            assertTrue(checkForValuesInTable(world.createLicence.getPostcode().toUpperCase()));
         });
 
         Then("^search results page should display operator names containing our business name$", () -> {
-            assertTrue(world.genericUtils.checkForValuesInTable(world.createLicence.getBusinessName().toUpperCase()));
+            assertTrue(checkForValuesInTable(world.createLicence.getBusinessName().toUpperCase()));
         });
         Then("^search results page should only display our licence number$", () -> {
             do {
                 clickByName("submit");
             } while (!isTextPresent(world.createLicence.getBusinessName(), 30));
-            assertTrue(world.genericUtils.checkForValuesInTable(world.createLicence.getLicenceNumber()));
+            assertTrue(checkForValuesInTable(world.createLicence.getLicenceNumber()));
         });
         Then("^search results page should display names containing our operator name$", () -> {
-            assertTrue(world.genericUtils.checkForValuesInTable(world.createLicence.getFamilyName().toUpperCase()));
+            assertTrue(checkForValuesInTable(world.createLicence.getFamilyName().toUpperCase()));
         });
         Then("^search results page should not display addresses which were not searched for$", () -> {
-            assertFalse(world.genericUtils.checkForValuesInTable("Swansea"));
+            assertFalse(checkForValuesInTable("Swansea"));
         });
         Then("^search results page should only display operator names containing our business name$", () -> {
-            assertFalse(world.genericUtils.checkForValuesInTable("Jones-Made-Up"));
+            assertFalse(checkForValuesInTable("Jones-Made-Up"));
         });
         Then("^search results page should not display any other licence number$", () -> {
             do {
                 clickByName("submit");
             } while (!isTextPresent(world.createLicence.getBusinessName(), 30));
-            assertFalse(world.genericUtils.checkForValuesInTable("OB0000123"));
+            assertFalse(checkForValuesInTable("OB0000123"));
         });
         Then("^search results page should only display names containing our operator name$", () -> {
-            assertFalse(world.genericUtils.checkForValuesInTable("DVSA"));
+            assertFalse(checkForValuesInTable("DVSA"));
         });
     }
 }

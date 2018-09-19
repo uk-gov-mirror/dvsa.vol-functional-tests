@@ -1,11 +1,8 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import activesupport.IllegalBrowserException;
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
-import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,7 +13,7 @@ public class ApplicationVerifyJourney extends BasePage implements En {
         });
         When("^i choose to sign with verify with \"([^\"]*)\"$", (String arg0) -> {
             String password = "Password1";
-            world.UIJourneySteps.externalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin();
             clickByLinkText(world.createLicence.getApplicationNumber());
             world.UIJourneySteps.signWithVerify(arg0,password);
         });
