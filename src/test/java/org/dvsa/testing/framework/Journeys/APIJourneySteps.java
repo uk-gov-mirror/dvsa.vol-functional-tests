@@ -225,6 +225,15 @@ public class APIJourneySteps {
         world.createLicence.getApplicationLicenceDetails();
     }
 
+    public void createPartialApplication() {
+        world.createLicence.registerUser();
+        world.createLicence.getUserDetails();
+        world.createLicence.createApplication();
+        world.createLicence.addOperatingCentre();
+        world.createLicence.updateOperatingCentre();
+        world.createLicence.addFinancialEvidence();
+    }
+
     public static String adminApiHeader(){
         return "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
     }

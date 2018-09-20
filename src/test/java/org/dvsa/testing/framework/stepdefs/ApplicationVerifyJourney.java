@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ApplicationVerifyJourney extends BasePage implements En {
     public ApplicationVerifyJourney(World world) {
         Given("^i have an application in progress$", () -> {
+            world.createLicence.setIsInterim("N");
             world.APIJourneySteps.createApplication();
         });
         When("^i choose to sign with verify with \"([^\"]*)\"$", (String arg0) -> {

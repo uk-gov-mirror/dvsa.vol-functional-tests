@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.Journeys;
 
+import Injectors.World;
 import activesupport.IllegalBrowserException;
 import activesupport.MissingDriverException;
 import activesupport.MissingRequiredArgument;
@@ -8,7 +9,6 @@ import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
-import Injectors.World;
 import org.dvsa.testing.lib.Login;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.LoginPage;
@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getFutureDate;
+
 
 public class UIJourneySteps extends BasePage {
 
@@ -364,7 +365,6 @@ public class UIJourneySteps extends BasePage {
 
     public void signWithVerify(String username, String password) throws IllegalBrowserException {
         setVerifyUsername(username);
-        clickByLinkText("Review");
         waitForTextToBePresent("Review and declarations");
         click("//*[@id='declarationsAndUndertakings[signatureOptions]']", SelectorType.XPATH);
         click("//*[@id='sign']", SelectorType.XPATH);
