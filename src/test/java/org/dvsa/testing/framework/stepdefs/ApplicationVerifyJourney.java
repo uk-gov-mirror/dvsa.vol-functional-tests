@@ -1,7 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import activesupport.IllegalBrowserException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 
@@ -15,7 +14,8 @@ public class ApplicationVerifyJourney extends BasePage implements En {
         });
         When("^i choose to sign with verify with \"([^\"]*)\"$", (String arg0) -> {
             String password = "Password1";
-            world.UIJourneySteps.navigateToExternalReviewAndDeclarationsPage();
+            world.UIJourneySteps.navigateToExternalUserLogin();
+            clickByLinkText(world.createLicence.getApplicationNumber());
             world.UIJourneySteps.signWithVerify(arg0,password);
         });
         Then("^the application should be signed with verify$", () -> {

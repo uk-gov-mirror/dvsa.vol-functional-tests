@@ -36,7 +36,7 @@ public class ESBRupload extends BasePage implements En {
         });
         And("^A short notice tab should be displayed in internal$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.internalAdminUserLogin();
+            world.UIJourneySteps.navigateTointernalAdminUserLogin();
             world.UIJourneySteps.internalSearchForBusReg();
             assertTrue(isTextPresent("Short notice", 60));
         });
@@ -50,7 +50,7 @@ public class ESBRupload extends BasePage implements En {
 
         And("^A short notice tab should not be displayed in internal$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.internalAdminUserLogin();
+            world.UIJourneySteps.navigateTointernalAdminUserLogin();
             world.UIJourneySteps.internalSearchForBusReg();
             assertFalse(isTextPresent("Short notice", 60));
         });
@@ -62,14 +62,14 @@ public class ESBRupload extends BasePage implements En {
         Given("^i add a new bus registration$", () -> {
             world.UIJourneySteps.internalSiteAddBusNewReg(5);
             clickByLinkText("Register");
-            world.genericUtils.findSelectAllRadioButtonsByValue("Y");
+            findSelectAllRadioButtonsByValue("Y");
             clickByName("form-actions[submit]");
             clickByLinkText("Service details");
             clickByLinkText("TA's");
             click("//*[@class='chosen-choices']",SelectorType.XPATH);
-            world.genericUtils.selectFirstValueInList("//*[@class=\"active-result\"]");
+            selectFirstValueInList("//*[@class=\"active-result\"]");
             click("//*[@id='localAuthoritys_chosen']/ul[@class='chosen-choices']",SelectorType.XPATH);
-            world.genericUtils.selectFirstValueInList("//*[@class=\"active-result group-option\"]");
+            selectFirstValueInList("//*[@class=\"active-result group-option\"]");
             clickByName("form-actions[submit]");
         });
         And("^it has been paid and granted$", () -> {

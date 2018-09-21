@@ -66,7 +66,7 @@ public class InterimLicence extends BasePage implements En {
         });
         And("^i have logged in to internal$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.internalAdminUserLogin();
+            world.UIJourneySteps.navigateTointernalAdminUserLogin();
         });
         And("^i search for my licence$", () -> {
             world.UIJourneySteps.searchAndViewApplication();
