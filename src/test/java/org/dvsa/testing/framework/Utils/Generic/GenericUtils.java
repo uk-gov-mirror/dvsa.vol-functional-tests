@@ -1,5 +1,7 @@
 package org.dvsa.testing.framework.Utils.Generic;
 
+import Injectors.World;
+import activesupport.IllegalBrowserException;
 import activesupport.MissingRequiredArgument;
 import activesupport.driver.Browser;
 import activesupport.jenkins.Jenkins;
@@ -8,6 +10,7 @@ import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.By;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
