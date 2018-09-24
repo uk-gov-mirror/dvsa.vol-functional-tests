@@ -36,7 +36,6 @@ public class ResettingPassword extends BasePage implements En {
                 while (isTextPresent("Failed", 30)) {
                 click(nameAttribute("input","submit"), SelectorType.CSS);
             }
-
         });
         And("^i try resetting my password$", () -> {
             String env = System.getProperty("env");
