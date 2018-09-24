@@ -16,28 +16,54 @@ import javax.xml.xpath.XPath;
 public class ResettingPassword extends BasePage implements En {
     public ResettingPassword(World world) {
         Then("^i will receive a message to say my password has changed$", () -> {
-
+          isTextPresent("We've sent you an email. Follow the link in the email to reset your password", 30);
         });
 
         Then("^i will receive an error that username invalid$", () -> {
-            Assert.assertEquals("Failed to reset your password",getText(nameAttribute("",""), SelectorType.CSS));
+            isTextPresent("Failed to reset your password", 30);
         });
 
         And("^i reset my password$", () -> {
             String env = System.getProperty("env");
+            world.UIJourneySteps.navigateToExternalUserLogin();
+            clickByLinkText("Sign out");
             String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
             Browser.navigate().get(myURL);
             clickByLinkText("Forgotten your password?");
-            enterField(nameAttribute("", ""), world.createLicence.getUsername());
-            click("", SelectorType.XPATH);
+            enterField(nameAttribute("input", "username"), world.createLicence.getLoginId());
+            isTextPresent("Failed", 30);
+            click(nameAttribute("input","submit"), SelectorType.CSS);
+                while (isTextPresent("Failed", 30)) {
+                click(nameAttribute("input","submit"), SelectorType.CSS);
+            }
+
         });
         And("^i try resetting my password$", () -> {
             String env = System.getProperty("env");
             String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
             Browser.navigate().get(myURL);
             clickByLinkText("Forgotten your password?");
-            enterField(nameAttribute("", ""), Str.randomWord(14));
-            click("", SelectorType.XPATH);
+            enterField(nameAttribute("input", "username"), Str.randomWord(14));
+            click(nameAttribute("input","submit"), SelectorType.CSS);
+        });
+        And("^i then try reset my password$", () -> {
+            if (Browser.isBrowserOpen()) {
+                Browser.navigate().manage().deleteAllCookies();
+            }
+            String env = System.getProperty("env");
+            String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
+            Browser.navigate().get(myURL);
+            clickByLinkText("Forgotten your password?");
+            enterField(nameAttribute("input", "username"), world.createLicence.getLoginId());
+            isTextPresent("Failed", 30);
+            click(nameAttribute("input","submit"), SelectorType.CSS);
+            isTextPresent("Failed", 30);
+            click(nameAttribute("input","submit"), SelectorType.CSS);
+
+
+        });
+        Then("^i will recieve an error for inactive account$", () -> {
+            isTextPresent("It looks like your account isn't active", 30);
         });
     }
 }
