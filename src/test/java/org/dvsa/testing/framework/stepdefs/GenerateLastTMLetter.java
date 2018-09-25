@@ -24,6 +24,7 @@ public class GenerateLastTMLetter extends BasePage implements En {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setIsInterim("N");
             world.createLicence.setOperatorType(arg0);
+            world.createLicence.setIsInterim("N");
             world.APIJourneySteps.createAndSubmitApplication();
             if(String.valueOf(arg0).equals("public")){
                 world.APIJourneySteps.payFeesAndGrantLicence();
