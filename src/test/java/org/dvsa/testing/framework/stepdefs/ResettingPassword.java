@@ -34,7 +34,6 @@ public class ResettingPassword extends BasePage implements En {
                 while (isTextPresent("Failed", 30)) {
                 click(nameAttribute("input","submit"), SelectorType.CSS);
             }
-
         });
         And("^i try resetting my password$", () -> {
             world.UIJourneySteps.resettingExternalPassword();
@@ -48,8 +47,6 @@ public class ResettingPassword extends BasePage implements En {
             click(nameAttribute("input","submit"), SelectorType.CSS);
             isTextPresent("Failed", 30);
             click(nameAttribute("input","submit"), SelectorType.CSS);
-
-
         });
         Then("^i will recieve an error for inactive account$", () -> {
             isTextPresent("It looks like your account isn't active", 30);
