@@ -64,7 +64,7 @@ public class UIJourneySteps extends BasePage {
         enterText("finishPoint", Str.randomWord(11), SelectorType.ID);
         enterText("via", Str.randomWord(5), SelectorType.ID);
         click("//*[@class='chosen-choices']", SelectorType.XPATH);
-        clickFirstElementFound("//*[@class=\"active-result\"]",SelectorType.XPATH);
+        clickFirstElementFound("//*[@class=\"active-result\"]", SelectorType.XPATH);
         enterDate(getCurrentDayOfMonth(), getCurrentMonth(), getCurrentYear());
         getFutureDate(month);
         String[] date = getFutureDate(5).toString().split("-");
@@ -222,7 +222,7 @@ public class UIJourneySteps extends BasePage {
         waitAndClick("address[searchPostcode][search]", SelectorType.NAME);
         waitAndSelectByIndex("", "//*[@id='fee_payment']/fieldset[2]/fieldset/div[3]/select[@name='address[searchPostcode][addresses]']", SelectorType.XPATH, 1);
         do {
-           retryingFindClick(By.xpath("//*[@id='form-actions[pay]']"));
+            retryingFindClick(By.xpath("//*[@id='form-actions[pay]']"));
         } while (getAttribute("//*[@name='address[addressLine1]']", SelectorType.XPATH, "value").isEmpty());
     }
 
@@ -268,7 +268,7 @@ public class UIJourneySteps extends BasePage {
         clickByName("form-actions[submit]");
     }
 
-    public void navigateTointernalAdminUserLogin() throws MissingRequiredArgument, IllegalBrowserException{
+    public void navigateTointernalAdminUserLogin() throws MissingRequiredArgument, IllegalBrowserException {
         String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
         String newPassword = "Password1";
         String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
@@ -338,7 +338,7 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException, MalformedURLException {
-       world.UIJourneySteps.navigateToDirectorsPage();
+        world.UIJourneySteps.navigateToDirectorsPage();
         world.UIJourneySteps.addPerson(firstName, lastName);
         selectAllExternalRadioButtons("No");
         clickByName("form-actions[saveAndContinue]");
@@ -389,9 +389,9 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void removeDirector() throws IllegalBrowserException, MalformedURLException, MissingDriverException {
-        click("//*/tr[2]/td[4]/input[@type='submit']",SelectorType.XPATH);
+        click("//*/tr[2]/td[4]/input[@type='submit']", SelectorType.XPATH);
         waitForTextToBePresent("Are you sure");
-        click("//*[@id='form-actions[submit]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 
     public void internalUserNavigateToDocsTable() throws IllegalBrowserException, MalformedURLException, MissingDriverException {
@@ -408,8 +408,19 @@ public class UIJourneySteps extends BasePage {
         LoginPage.untilNotOnPage(timeLimitInSeconds);
     }
 
-    public static void signIn(@NotNull String emailAddress, @NotNull String password) throws  IllegalBrowserException {
+    public static void signIn(@NotNull String emailAddress, @NotNull String password) throws IllegalBrowserException {
         int timeLimitInSeconds = 10;
         signIn(emailAddress, password, timeLimitInSeconds);
+    }
+
+    public void resettingExternalPassword() throws IllegalBrowserException {
+        if (Browser.isBrowserOpen()) {
+            Browser.navigate().manage().deleteAllCookies();
+        }
+        String env = System.getProperty("env");
+        String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
+        Browser.navigate().get(myURL);
+        clickByLinkText("Forgotten your password?");
+
     }
 }
