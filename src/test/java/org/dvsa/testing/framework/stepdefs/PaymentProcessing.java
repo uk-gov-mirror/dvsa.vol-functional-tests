@@ -5,29 +5,28 @@ import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 public class PaymentProcessing extends BasePage implements En {
     private World world;
     private String currentFeeCount;
+    private String feeNumber;
 
     public String getCurrentFeeCount() {
         return currentFeeCount;
     }
 
-    public void setCurrentFeeCount(String currentFeeCount) {
+    private void setCurrentFeeCount(String currentFeeCount) {
         this.currentFeeCount = currentFeeCount;
     }
 
-    private String historicalFeeCurrent;
-
-    public String getHistoricalFeeCurrent() {
-        return historicalFeeCurrent;
+    public String getFeeNumber() {
+        return feeNumber;
     }
 
-    public void setHistoricalFeeCurrent(String historicalFeeCurrent) {
-        this.historicalFeeCurrent = historicalFeeCurrent;
+    public void setFeeNumber(String feeNumber) {
+        this.feeNumber = feeNumber;
     }
 
     public PaymentProcessing(World world) {
@@ -35,10 +34,6 @@ public class PaymentProcessing extends BasePage implements En {
             waitAndClick("//li[@class='admin__title']", SelectorType.XPATH);
             clickByLinkText("Payment processing");
             waitForTextToBePresent("Payment Processing");
-            selectValueFromDropDown("status", SelectorType.ID, "Historic");
-            waitForTextToBePresent("Paid");
-            String feeCountBeforePayingForNewFee = getElementValueByText("//div[@class='table__header']/h3", SelectorType.XPATH);
-            setHistoricalFeeCurrent(world.genericUtils.stripAlphaCharacters(feeCountBeforePayingForNewFee));
         });
         When("^i add a new \"([^\"]*)\" fee$", (String arg0) -> {
             String amount = "100";
@@ -58,16 +53,12 @@ public class PaymentProcessing extends BasePage implements En {
             assertNotEquals(currentFeeCount, newFeeCount);
         });
         Then("^the fee should be paid and no longer visible in the fees table$", () -> {
+            assertFalse(checkForValuesInTable(getFeeNumber()));
             selectValueFromDropDown("status", SelectorType.ID, "Historic");
             waitForTextToBePresent("Paid");
-            String feeCountAfterFeeHasBeenPaid = world.genericUtils.stripAlphaCharacters(getElementValueByText("//div[@class='table__header']/h3", SelectorType.XPATH));
-            // Refresh page
-            javaScriptExecutor("location.reload(true)");
-            assertNotEquals(historicalFeeCurrent, feeCountAfterFeeHasBeenPaid);
-            System.out.println(String.valueOf(Integer.parseInt(historicalFeeCurrent) + 1));
-            assertEquals(String.valueOf(Integer.parseInt(historicalFeeCurrent) + 1), feeCountAfterFeeHasBeenPaid);
         });
         And("^when i pay for the fee by \"([^\"]*)\"$", (String arg0) -> {
+            setFeeNumber(world.genericUtils.stripAlphaCharacters(String.valueOf(findElement("//*/tbody/tr[1]/td[1]", SelectorType.XPATH, 10).getText())));
             world.UIJourneySteps.selectFee();
             if (arg0.equals("card")) {
                 String bankCardNumber = "4006000000000600";

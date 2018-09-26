@@ -13,5 +13,5 @@ Feature: Change Date Validation On Interim Applications
     Then I should not error when i save the application
 
   Scenario: Date required when granting an interim application
-    When I create an interim application with no start and end dates
+    When I create an interim application with a start and no end date
     Then I should error when i attempt to grant the application
