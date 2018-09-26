@@ -28,7 +28,7 @@ public class ESBRupload extends BasePage implements En {
         });
 
         Then("^A short notice flag should be displayed in selfserve$", () -> {
-            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
+//            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
             world.UIJourneySteps.viewESBRInExternal();
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
@@ -41,7 +41,7 @@ public class ESBRupload extends BasePage implements En {
             assertTrue(isTextPresent("Short notice", 60));
         });
         Then("^A short notice flag should not be displayed in selfserve$", () -> {
-            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
+//            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
             world.UIJourneySteps.viewESBRInExternal();
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
