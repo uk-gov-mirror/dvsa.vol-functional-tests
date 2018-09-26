@@ -10,11 +10,14 @@ public class PSVapplication implements En {
     public PSVapplication(World world) {
         world.APIJourneySteps = new APIJourneySteps(world);
 
-        Given("^I have applied for a \"([^\"]*)\" \"([^\"]*)\" licence$", (String arg0, String arg1) -> {
+        Given("^I have applied for a \"([^\"]*)\" \"([^\"]*)\" licence$", (String operator, String licenceType) -> {
             world.createLicence.setIsInterim("N");
-            world.createLicence.setOperatorType(arg0);
-            world.createLicence.setLicenceType(arg1);
-            if (world.createLicence.getApplicationNumber() == null) {
+            world.createLicence.setOperatorType(operator);
+            world.createLicence.setLicenceType(licenceType);
+            if(licenceType.equals("special_restricted") && (world.createLicence.getApplicationNumber() == null)){
+                world.APIJourneySteps.createSpecialRestrictedLicence();
+            }
+            else if (world.createLicence.getApplicationNumber() == null) {
                 world.APIJourneySteps.createAndSubmitApplication();
             }
         });

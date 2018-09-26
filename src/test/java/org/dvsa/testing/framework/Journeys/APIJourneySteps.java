@@ -219,6 +219,19 @@ public class APIJourneySteps {
         }
     }
 
+    public void createSpecialRestrictedLicence(){
+        world.createLicence.registerUser();
+        world.createLicence.getUserDetails();
+        world.createLicence.createApplication();
+        world.createLicence.updateBusinessType();
+        world.createLicence.updateBusinessDetails();
+        world.createLicence.addAddressDetails();
+        world.createLicence.addPartners();
+        world.createLicence.submitTaxiPhv();
+        world.createLicence.submitApplication();
+        world.createLicence.getApplicationLicenceDetails();
+    }
+
     public void createAndSubmitApplication(){
         createApplication();
         world.createLicence.submitApplication();
