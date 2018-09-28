@@ -16,13 +16,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AddDirectorVariation extends BasePage implements En {
+public class DirectorVariation extends BasePage implements En {
 
     private String firstName = String.format("Director%s", Str.randomWord(4));
     private String lastName = "LastName";
     private World world;
 
-    public AddDirectorVariation(World world) {
+    public DirectorVariation(World world) {
         this.world = world;
         world.UIJourneySteps = new UIJourneySteps(world);
 
@@ -91,12 +91,29 @@ public class AddDirectorVariation extends BasePage implements En {
             world.UIJourneySteps.addDirector(firstName, lastName);
         });
         When("^i remove a director$", () -> {
-            world.UIJourneySteps.removeDirector("2");
+            world.UIJourneySteps.removeDirector();
         });
         Then("^a task should not be created in internal$", () -> {
             world.UIJourneySteps.navigateToInternalTask();
             List<WebElement> director = listOfWebElements("//tbody", SelectorType.XPATH);
             assertFalse(director.stream().anyMatch(d -> d.getText().contains("Last director removed")));
+        });
+
+        When("^i remove a the last director$", () -> {
+            world.UIJourneySteps.navigateToExternalUserLogin();
+            world.UIJourneySteps.navigateToDirectorsPage();
+            world.UIJourneySteps.removeDirector();
+        });
+
+        Then("^a task should be created in internal$", () -> {
+            world.UIJourneySteps.navigateTointernalAdminUserLogin();
+            world.UIJourneySteps.searchAndViewApplication();
+
+        });
+
+        Then("^a task is created in internal$", () -> {
+            world.UIJourneySteps.navigateToInternalTask();
+            clickByLinkText("Last director removed");
         });
     }
 }
