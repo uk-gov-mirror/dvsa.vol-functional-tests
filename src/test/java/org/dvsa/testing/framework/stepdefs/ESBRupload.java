@@ -2,6 +2,17 @@ package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
 import activesupport.MissingRequiredArgument;
+import activesupport.jenkins.Jenkins;
+import activesupport.jenkins.JenkinsParameterKey;
+import activesupport.jenkins.exceptions.JenkinsBuildFailed;
+import activesupport.system.Properties;
+import activesupport.system.out.Output;
+import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.helper.Range;
+import com.offbytwo.jenkins.model.Build;
+import com.offbytwo.jenkins.model.BuildResult;
+import com.offbytwo.jenkins.model.BuildWithDetails;
+import com.offbytwo.jenkins.model.JobWithDetails;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Journeys.APIJourneySteps;
@@ -10,6 +21,11 @@ import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.junit.Assert;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -28,7 +44,38 @@ public class ESBRupload extends BasePage implements En {
         });
 
         Then("^A short notice flag should be displayed in selfserve$", () -> {
-            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
+            String command ="que_typ_ebsr_pack";
+
+                    HashMap<String, String> jenkinsParams = new HashMap<>();
+                    jenkinsParams.put(JenkinsParameterKey.NODE.toString(), String.format("api&&%s&&olcs", Properties.get("env", true)));
+                    jenkinsParams.put(JenkinsParameterKey.JOB.toString(), command);
+
+                    Jenkins.trigger(Jenkins.Job.BATCH_PROCESS_QUEQUE, jenkinsParams);
+                    JenkinsServer batchProcessJobs = new JenkinsServer(new URI("http://olcsci.shd.ci.nonprod.dvsa.aws:8080/"), "", "");
+                    JobWithDetails details = batchProcessJobs.getJob("Batch_Process_Queue");
+                    int lastSuccessfulBuild = details.getNextBuildNumber();
+                    details.build(jenkinsParams, true);
+                    List<Build> builds = details.getAllBuilds(Range.build().from(lastSuccessfulBuild).build());
+                    Iterator var8 = builds.iterator();
+
+                    BuildWithDetails buildInfo;
+                    do {
+                        if (!var8.hasNext()) {
+                            return;
+                        }
+
+                        Build build = (Build)var8.next();
+                        buildInfo = build.details();
+                    } while(!buildInfo.isBuilding() || buildInfo.getResult() == BuildResult.SUCCESS);
+
+                    if (buildInfo.getResult() == BuildResult.FAILURE) {
+                        throw new JenkinsBuildFailed();
+                    } else {
+                        throw new Exception(Output.printColoredLog("[ERROR] Jenkins job was not successfully completed"));
+                    }
+
+
+
 //            world.UIJourneySteps.viewESBRInExternal();
 //            assertTrue(isTextPresent("successful", 60));
 //            assertTrue(isTextPresent("New", 60));
