@@ -18,6 +18,7 @@ import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
 
@@ -390,8 +391,9 @@ public class UIJourneySteps extends BasePage {
         clickByName("form-actions[saveAndContinue]");
     }
 
-    public void removeDirector(String tableRow) throws IllegalBrowserException, MalformedURLException, MissingDriverException {
-        click("//*/tr["+ tableRow +"]/td[4]/input[@type='submit']", SelectorType.XPATH);
+    public void removeDirector() throws IllegalBrowserException, MalformedURLException, MissingDriverException {
+        int sizeOfTable = size("//*/td[4]/input[@type='submit']", SelectorType.XPATH);
+        click("//*/tr["+ sizeOfTable +"]/td[4]/input[@type='submit']", SelectorType.XPATH);
         waitForTextToBePresent("Are you sure");
         click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
