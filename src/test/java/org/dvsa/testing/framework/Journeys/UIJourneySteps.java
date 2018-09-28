@@ -390,8 +390,8 @@ public class UIJourneySteps extends BasePage {
         clickByName("form-actions[saveAndContinue]");
     }
 
-    public void removeDirector() throws IllegalBrowserException, MalformedURLException, MissingDriverException {
-        click("//*/tr[2]/td[4]/input[@type='submit']", SelectorType.XPATH);
+    public void removeDirector(String tableRow) throws IllegalBrowserException, MalformedURLException, MissingDriverException {
+        click("//*/tr["+ tableRow +"]/td[4]/input[@type='submit']", SelectorType.XPATH);
         waitForTextToBePresent("Are you sure");
         click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
