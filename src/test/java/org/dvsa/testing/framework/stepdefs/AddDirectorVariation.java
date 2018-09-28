@@ -91,7 +91,7 @@ public class AddDirectorVariation extends BasePage implements En {
             world.UIJourneySteps.addDirector(firstName, lastName);
         });
         When("^i remove a director$", () -> {
-            world.UIJourneySteps.removeDirector();
+            world.UIJourneySteps.removeDirector("2");
         });
         Then("^a task should not be created in internal$", () -> {
             world.UIJourneySteps.navigateToInternalTask();
