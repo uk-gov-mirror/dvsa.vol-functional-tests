@@ -36,7 +36,11 @@ Feature: Add a director variation
     And i add a new director
     Then i should have multiple directors on my application
 
-  Scenario: No snapshot created for removing person
+  Scenario: No task should be created for removing person
     When i add a director
     And i remove a director
     Then a task should not be created in internal
+
+  Scenario: Remove last director from licence
+    When i remove a the last director
+    Then a task is created in internal
