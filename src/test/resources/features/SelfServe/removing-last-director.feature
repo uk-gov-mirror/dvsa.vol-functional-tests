@@ -2,7 +2,6 @@
 @SS-LAST-DIRECTOR
 @OLCS-21887
 
-
 Feature: Removing the Last Director
 
     Scenario: remove last director from licence
