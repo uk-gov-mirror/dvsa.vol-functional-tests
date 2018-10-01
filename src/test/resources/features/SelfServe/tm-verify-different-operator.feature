@@ -41,5 +41,5 @@ Feature: TM signs through verify
   Scenario: Operator applicant has confirmed TM details and submitted and now wishes to co-sign using Print - TM has signed online already using Verify
     When the user confirms details on the TM 'Review and submit' page
     Then the correct information is displayed on operator-application declaration page
-    And the users chooses to sign with verify
+    And the users chooses to sign print and sign
     Then the declaration text and verify button are not displayed

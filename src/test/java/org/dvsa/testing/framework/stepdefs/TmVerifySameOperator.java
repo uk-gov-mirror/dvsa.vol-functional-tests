@@ -123,5 +123,8 @@ public class TmVerifySameOperator extends BasePage implements En {
             assertFalse(isTextPresent("Alternatively they can download a TM1 form (PDF 150KB).", 30));
             assertFalse(isLinkPresent("download a TM1 form (PDF 150KB).", 30));
         });
+        And("^the users chooses to sign print and sign$", () -> {
+            click("//*[contains(text(),'Print')]", SelectorType.XPATH);
+        });
     }
 }
