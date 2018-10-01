@@ -44,42 +44,11 @@ public class ESBRupload extends BasePage implements En {
         });
 
         Then("^A short notice flag should be displayed in selfserve$", () -> {
-            String command ="que_typ_ebsr_pack";
-
-                    HashMap<String, String> jenkinsParams = new HashMap<>();
-                    jenkinsParams.put(JenkinsParameterKey.NODE.toString(), String.format("api&&%s&&olcs", Properties.get("env", true)));
-                    jenkinsParams.put(JenkinsParameterKey.JOB.toString(), command);
-
-                    Jenkins.trigger(Jenkins.Job.BATCH_PROCESS_QUEQUE, jenkinsParams);
-                    JenkinsServer batchProcessJobs = new JenkinsServer(new URI("http://olcsci.shd.ci.nonprod.dvsa.aws:8080/"), "", "");
-                    JobWithDetails details = batchProcessJobs.getJob("Batch_Process_Queue");
-                    int lastSuccessfulBuild = details.getNextBuildNumber();
-                    details.build(jenkinsParams, true);
-                    List<Build> builds = details.getAllBuilds(Range.build().from(lastSuccessfulBuild).build());
-                    Iterator var8 = builds.iterator();
-
-                    BuildWithDetails buildInfo;
-                    do {
-                        if (!var8.hasNext()) {
-                            return;
-                        }
-
-                        Build build = (Build)var8.next();
-                        buildInfo = build.details();
-                    } while(!buildInfo.isBuilding() || buildInfo.getResult() == BuildResult.SUCCESS);
-
-                    if (buildInfo.getResult() == BuildResult.FAILURE) {
-                        throw new JenkinsBuildFailed();
-                    } else {
-                        throw new Exception(Output.printColoredLog("[ERROR] Jenkins job was not successfully completed"));
-                    }
-
-
-
-//            world.UIJourneySteps.viewESBRInExternal();
-//            assertTrue(isTextPresent("successful", 60));
-//            assertTrue(isTextPresent("New", 60));
-//            assertTrue(isTextPresent("short notice", 60));
+            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
+            world.UIJourneySteps.viewESBRInExternal();
+            assertTrue(isTextPresent("successful", 60));
+            assertTrue(isTextPresent("New", 60));
+            assertTrue(isTextPresent("short notice", 60));
         });
         And("^A short notice tab should be displayed in internal$", () -> {
             world.APIJourneySteps.createAdminUser();
