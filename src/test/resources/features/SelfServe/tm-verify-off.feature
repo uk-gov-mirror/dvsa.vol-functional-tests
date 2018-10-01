@@ -8,4 +8,4 @@ Feature: Countersigning declaration page for the operator (Verify switched off)
  Examples:
     |Flag|
     |GB|
-#    |NI|
+    |NI|
