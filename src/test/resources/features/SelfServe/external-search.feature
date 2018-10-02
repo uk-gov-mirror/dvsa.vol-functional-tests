@@ -1,7 +1,7 @@
 @OLCS-20956
 @SS
 @SS-EXTERNAL-SEARCH
-@Business Need: External users should be to search by Address, Business name, Licence Number and Person's name
+@BusinessNeed: External users should be to search by Address, Business name, Licence Number and Person's name
 
 Feature: External user search by Address, Business name, Licence Number and Person's name
 
