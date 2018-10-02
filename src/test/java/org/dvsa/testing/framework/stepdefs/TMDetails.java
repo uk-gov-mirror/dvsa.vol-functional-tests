@@ -2,7 +2,6 @@ package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
 import activesupport.driver.Browser;
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Journeys.APIJourneySteps;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
@@ -54,6 +53,13 @@ public class TMDetails extends BasePage implements En {
         });
         Then("^a validation message should be displayed$", () -> {
             assertTrue(isElementPresent("validationSummary",SelectorType.ID));
+        });
+        When("^I click the no radio button for the \"([^\"]*)\" question$", (String arg0) -> {
+            click("//*[@id=\"lva-transport-manager-details\"]/div/fieldset[4]/fieldset[2]/label[2]", SelectorType.XPATH);
+
+        });
+        Then("^the guidance text should be displayed$", () -> {
+            assertTrue(isTextPresent("When you submit the application an owner",10));
         });
     }
 }
