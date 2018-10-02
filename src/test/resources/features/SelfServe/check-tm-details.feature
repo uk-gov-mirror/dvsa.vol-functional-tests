@@ -19,7 +19,6 @@ Feature: TM/operator checks optional wording has been removed for TM details pag
       | previous Convictions | Add convictions and penalties |
       | previous Licences    | Add licences                  |
 
-
   Scenario Outline: Radio button clicked
     When I click the yes radio button for the "<section>" section
     Then the "<button>" button should be displayed
@@ -46,7 +45,6 @@ Feature: TM/operator checks optional wording has been removed for TM details pag
   Scenario: validation checks when no radio button has been selected
     When the users attempts to save without entering any data
     Then a validation message should be displayed
-
 
   Scenario: validation checks on guidance message
     When I click the no radio button for the "owner/director" question
