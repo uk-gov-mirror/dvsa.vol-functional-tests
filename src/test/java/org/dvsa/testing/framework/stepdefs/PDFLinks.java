@@ -12,7 +12,7 @@ public class PDFLinks extends BasePage implements En {
 
     public PDFLinks(World world) throws MissingRequiredArgument {
 
-        Given("^I have a valid \"([^\"]*)\" \"([^\"]*)\" licence$", (String arg0, String arg1) -> {
+        Given("^i have a valid \"([^\"]*)\" \"([^\"]*)\" licence$", (String arg0, String arg1) -> {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(arg0);
             if (arg1.equals("NI")) {
