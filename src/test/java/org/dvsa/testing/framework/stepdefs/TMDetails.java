@@ -32,7 +32,7 @@ public class TMDetails extends BasePage implements En {
             assertTrue(Browser.navigate().findElements(By.xpath("//button")).stream().noneMatch(x -> x.getText().contains(button)));
         });
         When("^I click the yes radio button for the \"([^\"]*)\" section$", (String section) -> {
-            world.genericUtils.selectAllExternalRadioButtons("Y");
+            world.genericUtils.findSelectAllRadioButtonsByValue("Y");
         });
         Then("^the \"([^\"]*)\" button should be displayed$", (String button) -> {
             assertFalse(Browser.navigate().findElements(By.xpath("//button")).stream().noneMatch(x -> x.getText().contains(button)));
@@ -55,11 +55,12 @@ public class TMDetails extends BasePage implements En {
             assertTrue(isElementPresent("validationSummary",SelectorType.ID));
         });
         When("^I click the no radio button for the \"([^\"]*)\" question$", (String arg0) -> {
-            click("//*[@id=\"lva-transport-manager-details\"]/div/fieldset[4]/fieldset[2]/label[2]", SelectorType.XPATH);
+            click("//*[@id=\"responsibilities\"]//input[@value='N']", SelectorType.XPATH);
 
         });
         Then("^the guidance text should be displayed$", () -> {
-            assertTrue(isTextPresent("When you submit the application an owner",10));
+            String notDirectorText = findElement("//*[@id='responsibilities']/fieldset[2]/div",SelectorType.XPATH,10).getText();
+            assertTrue(isTextPresent(notDirectorText,10));
         });
     }
 }

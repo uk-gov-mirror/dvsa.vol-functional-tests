@@ -12,9 +12,8 @@ public class VerifySwitchedOff extends BasePage implements En {
     String flag;
     public VerifySwitchedOff(World world) {
         Given("^I have a \"([^\"]*)\" \"([^\"]*)\" application$", (String arg0, String arg1) -> {
-            this.flag = arg1;
             world.genericUtils = new GenericUtils(world);
-            world.createLicence.setIsInterim("Y");
+            world.APIJourneySteps.createPartialApplication();
             world.createLicence.setOperatorType(arg0);
             if (arg1.equals("NI")) {
                 world.APIJourneySteps.nIAddressBuilder();
@@ -22,6 +21,7 @@ public class VerifySwitchedOff extends BasePage implements En {
             world.APIJourneySteps.createApplication();
         });
         When("^I navigate to the declaration page$", () -> {
+            //update to navigate to TM declaration page
           world.UIJourneySteps.navigateToExternalReviewAndDeclarationsPage();
         });
         Then("^Signing options are not displayed on the page$", () -> {
