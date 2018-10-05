@@ -11,7 +11,6 @@ public class PSVapplication implements En {
         world.APIJourneySteps = new APIJourneySteps(world);
 
         Given("^I have applied for a \"([^\"]*)\" \"([^\"]*)\" licence$", (String operator, String licenceType) -> {
-            world.createLicence.setIsInterim("N");
             world.createLicence.setOperatorType(operator);
             world.createLicence.setLicenceType(licenceType);
             if(licenceType.equals("special_restricted") && (world.createLicence.getApplicationNumber() == null)){
