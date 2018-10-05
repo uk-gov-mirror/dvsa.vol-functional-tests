@@ -426,4 +426,23 @@ public class UIJourneySteps extends BasePage {
         Browser.navigate().get(myURL);
         clickByLinkText("Forgotten your password?");
     }
+
+    public void navigateToTMReviewAndDeclarationsPage() throws IllegalBrowserException {
+        String hours = "8";
+        enterText("birthPlace", "Nottingham", SelectorType.ID);
+        enterText("postcodeInput1", "NG23HX", SelectorType.ID);
+        clickByName("homeAddress[searchPostcode][search]");
+        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        enterText("postcodeInput1", "NG23HX", SelectorType.ID);
+        clickByName("homeAddress[searchPostcode][search]");
+        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 2);
+        world.genericUtils.findSelectAllRadioButtonsByValue("N");
+        enterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursMon]", hours, SelectorType.ID);
+        enterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursTue]", hours, SelectorType.ID);
+        enterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursWed]", hours, SelectorType.ID);
+        enterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursThu]", hours, SelectorType.ID);
+        click("form-actions[submit]", SelectorType.ID);
+        waitForTextToBePresent("Check your answers");
+        click("form-actions[submit]", SelectorType.ID);
+    }
 }
