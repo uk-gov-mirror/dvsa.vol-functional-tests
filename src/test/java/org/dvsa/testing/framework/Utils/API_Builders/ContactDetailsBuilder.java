@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 public class ContactDetailsBuilder {
 
-    @JsonProperty("emailAddress")
+    @JsonProperty("email")
     private String emailAddress;
     @JsonProperty("person")
     private PersonBuilder personBuilder;

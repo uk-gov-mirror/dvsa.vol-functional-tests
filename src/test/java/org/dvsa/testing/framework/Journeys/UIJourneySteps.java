@@ -425,6 +425,5 @@ public class UIJourneySteps extends BasePage {
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
         Browser.navigate().get(myURL);
         clickByLinkText("Forgotten your password?");
-
     }
 }
