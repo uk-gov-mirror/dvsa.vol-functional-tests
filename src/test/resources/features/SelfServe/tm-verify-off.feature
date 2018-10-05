@@ -1,9 +1,5 @@
 Feature: Countersigning declaration page for the operator (Verify switched off)
 
-  Background:
-    Given I have a new application
-    And the transport manager is the operator
-
   Scenario Outline: Verify switched off check text
     Given I have a "goods" "<Flag>" application
     And the transport manager is the operator
@@ -12,5 +8,5 @@ Feature: Countersigning declaration page for the operator (Verify switched off)
 
     Examples:
       | Flag |
-      | GB   |
+#      | GB   |
       | NI   |

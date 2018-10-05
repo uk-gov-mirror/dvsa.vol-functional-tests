@@ -10,11 +10,12 @@ import static org.junit.Assert.assertFalse;
 
 public class VerifySwitchedOff extends BasePage implements En {
     String flag;
+
     public VerifySwitchedOff(World world) {
         Given("^I have a \"([^\"]*)\" \"([^\"]*)\" application$", (String arg0, String arg1) -> {
             world.genericUtils = new GenericUtils(world);
-            world.APIJourneySteps.createPartialApplication();
             world.createLicence.setOperatorType(arg0);
+            world.APIJourneySteps.createPartialApplication();
             if (arg1.equals("NI")) {
                 world.APIJourneySteps.nIAddressBuilder();
             }
@@ -22,11 +23,11 @@ public class VerifySwitchedOff extends BasePage implements En {
         });
         When("^I navigate to the declaration page$", () -> {
             //update to navigate to TM declaration page
-          world.UIJourneySteps.navigateToExternalReviewAndDeclarationsPage();
+            world.UIJourneySteps.navigateToTMReviewAndDeclarationsPage();
         });
         Then("^Signing options are not displayed on the page$", () -> {
-         assertFalse(isElementPresent("//*[@type='radio']", SelectorType.XPATH));
-         assertFalse(isTextPresent("How would you like to sign the declaration?", 20));
+            assertFalse(isElementPresent("//*[@type='radio']", SelectorType.XPATH));
+            assertFalse(isTextPresent("How would you like to sign the declaration?", 20));
         });
     }
 }
