@@ -41,6 +41,6 @@ Feature: Add a director variation
     And i remove a director
     Then a task should not be created in internal
 
-  Scenario: Remove last director from licence
+  Scenario: Task should be created in internal when last TM is removed
     When i remove a the last director
     Then a task is created in internal
