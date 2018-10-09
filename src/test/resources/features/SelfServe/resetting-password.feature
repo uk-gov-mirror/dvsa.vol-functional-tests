@@ -13,4 +13,4 @@ Feature: resetting password with valid/invalid user
      Scenario: try reset password for inactive user
        Given i have a valid "goods" licence
        And i then try reset my password
-       Then i will recieve an error for inactive account
+       Then i will receive an error for inactive account

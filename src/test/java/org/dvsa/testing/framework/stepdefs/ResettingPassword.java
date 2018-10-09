@@ -48,7 +48,7 @@ public class ResettingPassword extends BasePage implements En {
             isTextPresent("Failed", 30);
             click(nameAttribute("input","submit"), SelectorType.CSS);
         });
-        Then("^i will recieve an error for inactive account$", () -> {
+        Then("^i will receive an error for inactive account$", () -> {
             isTextPresent("It looks like your account isn't active", 30);
         });
     }
