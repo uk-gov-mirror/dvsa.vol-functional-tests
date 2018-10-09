@@ -112,7 +112,8 @@ public class DirectorVariation extends BasePage implements En {
 
         Then("^a task is created in internal$", () -> {
             world.UIJourneySteps.navigateToInternalTask();
-            clickByLinkText("Last director removed");
+            List<WebElement> director = listOfWebElements("//tbody", SelectorType.XPATH);
+            assertTrue(director.stream().anyMatch(d -> d.getText().contains("Last director removed")));
         });
     }
 }
