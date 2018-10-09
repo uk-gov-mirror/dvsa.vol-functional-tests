@@ -384,6 +384,26 @@ public class UIJourneySteps extends BasePage {
         click("//*[@id='agree']", SelectorType.XPATH);
     }
 
+    public void addNewPersonAsTransportManager(String forename, String familyName) throws IllegalBrowserException {
+        String username = Str.randomWord(3);
+        clickByLinkText("change your licence");
+        waitForTextToBePresent("Applying to change a licence");
+        click("form-actions[submit]", SelectorType.ID);
+        waitForTextToBePresent("Transport Managers");
+        waitAndClick("//*[@id='add']", SelectorType.XPATH);
+        waitForTextToBePresent("Add Transport Manager");
+        waitAndClick("addUser", SelectorType.ID);
+        enterText("forename", forename, SelectorType.ID);
+        enterText("familyName", familyName, SelectorType.ID);
+        String[] date = world.genericUtils.getPastDate(25).toString().split("-");
+        enterText("dob_day", date[2], SelectorType.ID);
+        enterText("dob_month", date[1], SelectorType.ID);
+        enterText("dob_year", date[0], SelectorType.ID);
+        enterText("username", "TM".concat(username), SelectorType.ID);
+        enterText("emailAddress", "TM@vol.com", SelectorType.ID);
+        enterText("emailConfirm", "TM@vol.com", SelectorType.ID);
+        waitAndClick("form-actions[continue]", SelectorType.ID);
+    }
     public void addDirector(String forename, String familyName) throws IllegalBrowserException {
         addPerson(forename, familyName);
         world.genericUtils.selectAllExternalRadioButtons("No");
@@ -412,6 +432,49 @@ public class UIJourneySteps extends BasePage {
         LoginPage.submit();
         LoginPage.untilNotOnPage(timeLimitInSeconds);
     }
+    public void addTransportManagerDetails() throws IllegalBrowserException {
+        //Add Personal Details
+        String birthPlace = world.createLicence.getTown();
+        String[] date = world.genericUtils.getPastDate(25).toString().split("-");
+        enterText("dob_day", date[2], SelectorType.ID);
+        enterText("dob_month", date[1], SelectorType.ID);
+        enterText("dob_year", date[0], SelectorType.ID);
+        enterText("birthPlace", birthPlace, SelectorType.ID);
+        //Add Home Address
+        String postCode = world.createLicence.getPostcode();
+        enterText("postcodeInput1", postCode, SelectorType.ID);
+        clickByName("homeAddress[searchPostcode][search]");
+        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        //Add Work Address
+        enterText("postcodeInput2", postCode, SelectorType.ID);
+        clickByName("workAddress[searchPostcode][search]");
+        selectValueFromDropDownByIndex("workAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        //Add Responsibilities
+        click("//*[contains(text(),'External')]", SelectorType.XPATH);
+        world.genericUtils.selectAllExternalRadioButtons("Y");
+        //Add Other Licences
+        String role = "Transport Manager";
+        click("//*[contains(text(),'Add other licences')]", SelectorType.XPATH);
+        waitForTextToBePresent("Add other licence");
+        enterText("licNo", "PB123456", SelectorType.ID);
+        selectValueFromDropDown("data[role]", SelectorType.ID, role);
+    }
+
+    public void addExistingPersonAsTransportManager() throws IllegalBrowserException {
+        waitForTextToBePresent("Apply for a new licence");
+        clickByLinkText("Transport");
+        waitForTextToBePresent("Transport Managers");
+        click("//*[@name='table[action]']",SelectorType.XPATH);
+        waitForTextToBePresent("Add Transport Manager");
+        selectValueFromDropDownByIndex("data[registeredUser]",SelectorType.ID,1);
+        click("//*[@id='form-actions[continue]']",SelectorType.XPATH);
+        waitForTextToBePresent("Transport Manager details");
+    }
+    public void navigateToExternalReviewAndDeclarationsPage() throws IllegalBrowserException, MalformedURLException, MissingDriverException {
+        world.UIJourneySteps.navigateToExternalUserLogin();
+        clickByLinkText(world.createLicence.getApplicationNumber());
+        clickByLinkText("Review");
+    }
 
     public static void signIn(@NotNull String emailAddress, @NotNull String password) throws IllegalBrowserException {
         int timeLimitInSeconds = 10;
@@ -427,31 +490,6 @@ public class UIJourneySteps extends BasePage {
         Browser.navigate().get(myURL);
         clickByLinkText("Forgotten your password?");
     }
-
-    public void updateTMDetailsAndNavigateToDeclarationsPage(String isOwner) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
-        String hours = "8";
-        world.genericUtils.findSelectAllRadioButtonsByValue("N");
-        findElement("//*[@id='responsibilities']//*[contains(text(),'Internal')]",SelectorType.XPATH,10).click();
-        findElement("//*[contains(text(),"+isOwner+")]//*[@id='responsibilities[isOwner]']",SelectorType.XPATH,10).click();
-        waitAndEnterText("birthPlace",  SelectorType.ID,"Nottingham");
-        waitAndEnterText("postcodeInput1", SelectorType.ID,"NG23HX");
-        clickByName("homeAddress[searchPostcode][search]");
-        untilElementPresent("//*[@id='homeAddress[searchPostcode][addresses]']",SelectorType.XPATH);
-        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 1);
-        waitAndEnterText("postcodeInput2",  SelectorType.ID,"NG23HX");
-        waitAndClick("//*[@id='workAddress[searchPostcode][search]']",SelectorType.XPATH);
-        untilElementPresent("//*[@id='workAddress[searchPostcode][addresses]']",SelectorType.XPATH);
-        selectValueFromDropDownByIndex("workAddress[searchPostcode][addresses]", SelectorType.ID, 1);
-        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursMon]", SelectorType.ID, hours);
-        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursTue]", SelectorType.ID, hours);
-        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursWed]", SelectorType.ID, hours);
-        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursThu]", SelectorType.ID, hours);
-        click("form-actions[submit]", SelectorType.ID);
-        waitForTextToBePresent("Check your answers");
-        click("form-actions[submit]", SelectorType.ID);
-        waitForTextToBePresent("Declaration");
-    }
-
     public void updateTMDetailsAndNavigateToDeclarationsPage(String isOwner) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
         String hours = "8";
         world.genericUtils.findSelectAllRadioButtonsByValue("N");

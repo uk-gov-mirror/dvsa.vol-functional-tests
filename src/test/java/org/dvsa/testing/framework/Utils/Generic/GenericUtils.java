@@ -25,6 +25,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -171,5 +173,9 @@ public class GenericUtils extends BasePage {
     public void switchTab(int tab) throws IllegalBrowserException {
         ArrayList<String> tabs = new ArrayList<>(Browser.navigate().getWindowHandles());
         Browser.navigate().switchTo().window(tabs.get(tab));
+    }
+    public String readFileAsString(String fileName) throws Exception {
+        String data = new String(Files.readAllBytes(Paths.get(fileName)));
+        return data;
     }
 }
