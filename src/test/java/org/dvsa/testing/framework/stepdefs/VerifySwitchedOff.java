@@ -23,10 +23,6 @@ public class VerifySwitchedOff extends BasePage implements En {
             }
             world.APIJourneySteps.createApplication();
         });
-        When("^I navigate to the declaration page$", () -> {
-            //update to navigate to TM declaration page
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage();
-        });
         Then("^Signing options are not displayed on the page$", () -> {
             assertFalse(isElementPresent("//*[@type='radio']", SelectorType.XPATH));
             assertFalse(isTextPresent("How would you like to sign the declaration?", 20));
@@ -36,6 +32,18 @@ public class VerifySwitchedOff extends BasePage implements En {
         });
         And("^submit to operator button is not displayed$", () -> {
             assertTrue(isElementPresent("//*[@id='form-actions[submitToOperator]']"));
+        });
+        And("^i add a transport manager$", () -> {
+            world.UIJourneySteps.navigateToExternalUserLogin();
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            world.UIJourneySteps.addExistingPersonAsTransportManager();
+        });
+        When("^the transport manager is the owner$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
+        });
+        And("^the transport manager is not the owner$", () -> {
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("Yes");
         });
     }
 }

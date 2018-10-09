@@ -12,6 +12,7 @@ import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.LoginPage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
+import org.dvsa.testing.lib.pages.exception.ElementDidNotAppearWithinSpecifiedTimeException;
 import org.dvsa.testing.lib.pages.internal.SearchNavBar;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 import org.dvsa.testing.lib.url.webapp.URL;
@@ -427,22 +428,27 @@ public class UIJourneySteps extends BasePage {
         clickByLinkText("Forgotten your password?");
     }
 
-    public void navigateToTMReviewAndDeclarationsPage() throws IllegalBrowserException {
+    public void updateTMDetailsAndNavigateToDeclarationsPage(String isOwner) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
         String hours = "8";
-        enterText("birthPlace", "Nottingham", SelectorType.ID);
-        enterText("postcodeInput1", "NG23HX", SelectorType.ID);
-        clickByName("homeAddress[searchPostcode][search]");
-        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 1);
-        enterText("postcodeInput1", "NG23HX", SelectorType.ID);
-        clickByName("homeAddress[searchPostcode][search]");
-        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 2);
         world.genericUtils.findSelectAllRadioButtonsByValue("N");
-        enterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursMon]", hours, SelectorType.ID);
-        enterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursTue]", hours, SelectorType.ID);
-        enterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursWed]", hours, SelectorType.ID);
-        enterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursThu]", hours, SelectorType.ID);
+        findElement("//*[@id='responsibilities']//*[contains(text(),'Internal')]",SelectorType.XPATH,10).click();
+        findElement("//*[contains(text(),"+isOwner+")]//*[@id='responsibilities[isOwner]']",SelectorType.XPATH,10).click();
+        waitAndEnterText("birthPlace",  SelectorType.ID,"Nottingham");
+        waitAndEnterText("postcodeInput1", SelectorType.ID,"NG23HX");
+        clickByName("homeAddress[searchPostcode][search]");
+        untilElementPresent("//*[@id='homeAddress[searchPostcode][addresses]']",SelectorType.XPATH);
+        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        waitAndEnterText("postcodeInput2",  SelectorType.ID,"NG23HX");
+        waitAndClick("//*[@id='workAddress[searchPostcode][search]']",SelectorType.XPATH);
+        untilElementPresent("//*[@id='workAddress[searchPostcode][addresses]']",SelectorType.XPATH);
+        selectValueFromDropDownByIndex("workAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursMon]", SelectorType.ID, hours);
+        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursTue]", SelectorType.ID, hours);
+        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursWed]", SelectorType.ID, hours);
+        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursThu]", SelectorType.ID, hours);
         click("form-actions[submit]", SelectorType.ID);
         waitForTextToBePresent("Check your answers");
         click("form-actions[submit]", SelectorType.ID);
+        waitForTextToBePresent("Declaration");
     }
 }
