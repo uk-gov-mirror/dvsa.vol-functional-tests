@@ -19,7 +19,6 @@ import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
 
@@ -251,7 +250,7 @@ public class UIJourneySteps extends BasePage {
 
     public void navigateToInternalTask() throws IllegalBrowserException, MissingDriverException, MalformedURLException {
         world.APIJourneySteps.createAdminUser();
-        world.UIJourneySteps.navigateTointernalAdminUserLogin();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin();
         world.UIJourneySteps.searchAndViewApplication();
         waitForTextToBePresent("Processing");
         clickByLinkText("Processing");
@@ -271,7 +270,7 @@ public class UIJourneySteps extends BasePage {
         clickByName("form-actions[submit]");
     }
 
-    public void navigateTointernalAdminUserLogin() throws MissingRequiredArgument, IllegalBrowserException {
+    public void navigateToInternalAdminUserLogin() throws MissingRequiredArgument, IllegalBrowserException {
         String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
         String newPassword = "Password1";
         String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
@@ -421,7 +420,7 @@ public class UIJourneySteps extends BasePage {
 
     public void internalUserNavigateToDocsTable() throws IllegalBrowserException, MalformedURLException, MissingDriverException {
         world.APIJourneySteps.createAdminUser();
-        world.UIJourneySteps.navigateTointernalAdminUserLogin();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin();
         world.UIJourneySteps.searchAndViewApplication();
         clickByLinkText("Docs");
     }

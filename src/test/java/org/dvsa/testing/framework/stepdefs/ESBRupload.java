@@ -2,17 +2,6 @@ package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
 import activesupport.MissingRequiredArgument;
-import activesupport.jenkins.Jenkins;
-import activesupport.jenkins.JenkinsParameterKey;
-import activesupport.jenkins.exceptions.JenkinsBuildFailed;
-import activesupport.system.Properties;
-import activesupport.system.out.Output;
-import com.offbytwo.jenkins.JenkinsServer;
-import com.offbytwo.jenkins.helper.Range;
-import com.offbytwo.jenkins.model.Build;
-import com.offbytwo.jenkins.model.BuildResult;
-import com.offbytwo.jenkins.model.BuildWithDetails;
-import com.offbytwo.jenkins.model.JobWithDetails;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Journeys.APIJourneySteps;
@@ -21,11 +10,6 @@ import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.junit.Assert;
-
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -52,7 +36,7 @@ public class ESBRupload extends BasePage implements En {
         });
         And("^A short notice tab should be displayed in internal$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.navigateTointernalAdminUserLogin();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin();
             world.UIJourneySteps.internalSearchForBusReg();
             assertTrue(isTextPresent("Short notice", 60));
         });
@@ -66,7 +50,7 @@ public class ESBRupload extends BasePage implements En {
 
         And("^A short notice tab should not be displayed in internal$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.navigateTointernalAdminUserLogin();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin();
             world.UIJourneySteps.internalSearchForBusReg();
             assertFalse(isTextPresent("Short notice", 60));
         });

@@ -106,7 +106,7 @@ public class DirectorVariation extends BasePage implements En {
         });
 
         Then("^a task should be created in internal$", () -> {
-            world.UIJourneySteps.navigateTointernalAdminUserLogin();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin();
             world.UIJourneySteps.searchAndViewApplication();
         });
 
