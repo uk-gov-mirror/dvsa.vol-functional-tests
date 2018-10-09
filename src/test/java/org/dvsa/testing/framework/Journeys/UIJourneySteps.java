@@ -451,4 +451,28 @@ public class UIJourneySteps extends BasePage {
         click("form-actions[submit]", SelectorType.ID);
         waitForTextToBePresent("Declaration");
     }
+
+    public void updateTMDetailsAndNavigateToDeclarationsPage(String isOwner) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
+        String hours = "8";
+        world.genericUtils.findSelectAllRadioButtonsByValue("N");
+        findElement("//*[@id='responsibilities']//*[contains(text(),'Internal')]",SelectorType.XPATH,10).click();
+        findElement("//*[contains(text(),"+isOwner+")]//*[@id='responsibilities[isOwner]']",SelectorType.XPATH,10).click();
+        waitAndEnterText("birthPlace",  SelectorType.ID,"Nottingham");
+        waitAndEnterText("postcodeInput1", SelectorType.ID,"NG23HX");
+        clickByName("homeAddress[searchPostcode][search]");
+        untilElementPresent("//*[@id='homeAddress[searchPostcode][addresses]']",SelectorType.XPATH);
+        selectValueFromDropDownByIndex("homeAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        waitAndEnterText("postcodeInput2",  SelectorType.ID,"NG23HX");
+        waitAndClick("//*[@id='workAddress[searchPostcode][search]']",SelectorType.XPATH);
+        untilElementPresent("//*[@id='workAddress[searchPostcode][addresses]']",SelectorType.XPATH);
+        selectValueFromDropDownByIndex("workAddress[searchPostcode][addresses]", SelectorType.ID, 1);
+        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursMon]", SelectorType.ID, hours);
+        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursTue]", SelectorType.ID, hours);
+        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursWed]", SelectorType.ID, hours);
+        waitAndEnterText("responsibilities[hoursOfWeek][hoursPerWeekContent][hoursThu]", SelectorType.ID, hours);
+        click("form-actions[submit]", SelectorType.ID);
+        waitForTextToBePresent("Check your answers");
+        click("form-actions[submit]", SelectorType.ID);
+        waitForTextToBePresent("Declaration");
+    }
 }
