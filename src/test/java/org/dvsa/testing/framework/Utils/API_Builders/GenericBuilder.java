@@ -1,6 +1,5 @@
 package org.dvsa.testing.framework.Utils.API_Builders;
 
-import activesupport.string.Str;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -9,7 +8,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "id",
         "version",
-        "licenceType"
+        "licenceType",
+        "paramValue",
+        "description"
 })
 public class GenericBuilder {
 
@@ -21,6 +22,13 @@ public class GenericBuilder {
     private String licenceType;
     @JsonProperty("Address")
     private AddressBuilder address;
+    @JsonProperty("paramValue")
+    private String paramValue;
+    @JsonProperty("description")
+    private String description;
+
+    public GenericBuilder() {
+    }
 
     @JsonProperty("id")
     public String getId() {
@@ -67,6 +75,7 @@ public class GenericBuilder {
         return this;
     }
 
+
     @JsonProperty("Address")
     public AddressBuilder getAddress() {
         return address;
@@ -82,8 +91,40 @@ public class GenericBuilder {
         return this;
     }
 
+    @JsonProperty("paramValue")
+    public String getParamValue() {
+        return paramValue;
+    }
+
+    @JsonProperty("paramValue")
+    public void setParamValue(String paramValue) {
+        this.paramValue = paramValue;
+    }
+
+    public GenericBuilder withParamValue(String paramValue){
+        this.paramValue = paramValue;
+        return this;
+    }
+
+    @JsonProperty("description")
+    public String getDescription() {
+        return description;
+    }
+
+    @JsonProperty("description")
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public GenericBuilder withDescription(String description){
+        this.description = description;
+        return this;
+    }
+
+
     @Override
     public String toString() {
-        return "id" + getId() + ",version:" + getVersion() + ",licenceType:" + getLicenceType() + ",registeredAddress:" + getAddress();
+        return "id" + getId() + ",version:" + getVersion() + ",licenceType:" + getLicenceType() + ",registeredAddress:" + getAddress()
+                + "paramValue:" + getParamValue() + "description:" + getDescription();
     }
 }
