@@ -16,8 +16,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class VerifySwitchedOff extends BasePage implements En {
-    String flag;
-    private World world;
 
     public VerifySwitchedOff(World world) {
         Given("^I have a \"([^\"]*)\" \"([^\"]*)\" application$", (String arg0, String arg1) -> {
@@ -59,7 +57,6 @@ public class VerifySwitchedOff extends BasePage implements En {
             click("form-actions[submit]", SelectorType.ID);
         });
         Then("^the print and sign page is displayed$", () -> {
-
             Assert.assertTrue(isTextPresent("Transport Manager details approved", 10));
             Assert.assertTrue(isTextPresent(world.createLicence.getForeName() + " " + world.createLicence.getFamilyName(), 10));
             Assert.assertTrue(isTextPresent("Print, sign and return", 10));

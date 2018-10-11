@@ -184,7 +184,7 @@ public class APIJourneySteps {
         apiResponse.statusCode(HttpStatus.SC_CREATED);
     }
 
-    public void  enableDisableVerify(String toggle){
+    public void enableDisableVerify(String toggle){
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String enableDisableVerifyResource = org.dvsa.testing.lib.url.api.URL.build(env, "system-parameter/DISABLE_GDS_VERIFY_SIGNATURES/").toString();
 
@@ -198,7 +198,6 @@ public class APIJourneySteps {
         CreateLicenceAPI api = new CreateLicenceAPI();
         return api;
     }
-
     public GrantLicenceAPI grantLicence() throws MissingRequiredArgument {
         return new GrantLicenceAPI(world);
     }
