@@ -59,9 +59,19 @@ public class CreateLicenceAPI {
     private String licenceId;
     private String businessName = "API";
     private String isInterim;
+    private String isOwner;
+    private String tmType = "tm_t_i";
 
     private static int version = 1;
     private int noOfVehiclesRequired = 5;
+
+    public String getIsOwner() {
+        return isOwner;
+    }
+
+    public void setIsOwner(String isOwner) {
+        this.isOwner = isOwner;
+    }
 
     public String getTitle() {
         return title;
@@ -282,6 +292,7 @@ public class CreateLicenceAPI {
             businessType = "limited_company";
             niFlag = "N";
             isInterim = "N";
+            isOwner="Y";
         }
     }
 
@@ -535,6 +546,57 @@ public class CreateLicenceAPI {
             throw new HTTPException(apiResponse.extract().statusCode());
         }
     }
+
+    public void addTmResponsibilities() {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+            // no need to submit details
+        } else {
+            String applicationNo = getTransportManagerApplicationId();
+            String hours = "2";
+            String addTMresp = URL.build(env, String.format("transport-manager-application/%s/update-details/", applicationNo)).toString();
+            do {
+                AddressBuilder homeAddress = new AddressBuilder().withAddressLine1(addressLine1).withPostcode(postcode).withTown(town).withCountryCode(countryCode);
+                AddressBuilder workAddress = new AddressBuilder().withAddressLine1(addressLine1).withPostcode(postcode).withTown(town).withCountryCode(countryCode);
+                ;
+                TmRespBuilder tmRespBuilder = new TmRespBuilder().withEmail(emailAddress).withPlaceOfBirth(birthDate).withHomeAddress(homeAddress).withWorkAddress(workAddress).withTmType(tmType).withIsOwner(isOwner)
+                        .withHoursMon(hours).withHoursTue(hours).withHoursWed(hours).withHoursThu(hours).withHoursThu(hours).withHoursFri(hours).withHoursSat(hours).withHoursSun(hours).withAdditionalInfo("").withDob(birthDate)
+                        .withId(applicationNo).withVersion(version);
+                apiResponse = RestUtils.put(tmRespBuilder, addTMresp, getHeaders());
+                version++;
+                if (version > 20) {
+                    version = 1;
+                }
+            } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
+            }
+        }
+    }
+
+    public void submitTmResponsibilities() {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+            // no need to submit details
+        } else {
+            String applicationNo = getTransportManagerApplicationId();
+            String submitTmResp = URL.build(env, String.format("transport-manager-application/%s/submit", applicationNo)).toString();
+            do {
+                GenericBuilder genericBuilder = new GenericBuilder().withId(transportManagerApplicationId).withVersion(version);
+                version++;
+                if (version > 20) {
+                    version = 1;
+                }
+                apiResponse = RestUtils.put(genericBuilder, submitTmResp, getHeaders());
+            } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
+            }
+        }
+    }
+
 
     public void vehicles() {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
