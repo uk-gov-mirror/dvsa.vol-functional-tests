@@ -490,6 +490,7 @@ public class UIJourneySteps extends BasePage {
         clickByLinkText("Forgotten your password?");
     }
     public void updateTMDetailsAndNavigateToDeclarationsPage(String isOwner, String OtherLicence, String hasEmployment, String hasConvictions, String hasPreviousLicences) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
+        String tmEmailAddress = "externalTM@vol.com";
         String hours = "8";
         findElement("//*[@id='responsibilities']//*[contains(text(),'Internal')]",SelectorType.XPATH,10).click();
         findElement("//*[contains(text(),'"+OtherLicence+"')]//*[@name='responsibilities[otherLicencesFieldset][hasOtherLicences]']", SelectorType.XPATH,10).click();
@@ -497,6 +498,8 @@ public class UIJourneySteps extends BasePage {
         findElement("//*[contains(text(),'"+hasEmployment+"')]//*[@name='otherEmployments[hasOtherEmployment]']",SelectorType.XPATH,10).click();
         findElement("//*[contains(text(),'"+hasConvictions+"')]//*[@name='previousHistory[hasConvictions]']",SelectorType.XPATH,10).click();
         findElement("//*[contains(text(),'"+hasPreviousLicences+"')]//*[@name='previousHistory[hasPreviousLicences]']",SelectorType.XPATH,10).click();
+        findElement("emailAddress", SelectorType.ID,10).clear();
+        waitAndEnterText("emailAddress",SelectorType.ID,tmEmailAddress);
         waitAndEnterText("birthPlace",  SelectorType.ID,"Nottingham");
         waitAndEnterText("postcodeInput1", SelectorType.ID,"NG23HX");
         clickByName("homeAddress[searchPostcode][search]");
