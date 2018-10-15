@@ -7,25 +7,22 @@ import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class VerifySwitchedOff extends BasePage implements En {
 
     public VerifySwitchedOff(World world) {
-        Given("^I have a \"([^\"]*)\" \"([^\"]*)\" application$", (String arg0, String arg1) -> {
+        Given("^I have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String arg0, String arg1) -> {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(arg0);
-            world.APIJourneySteps.createPartialApplication();
             if (arg1.equals("NI")) {
                 world.APIJourneySteps.nIAddressBuilder();
             }
-            world.APIJourneySteps.createApplication();
+            world.APIJourneySteps.createPartialApplication();
         });
         Then("^Signing options are not displayed on the page$", () -> {
             assertFalse(isElementPresent("//*[@type='radio']", SelectorType.XPATH));
@@ -49,9 +46,6 @@ public class VerifySwitchedOff extends BasePage implements En {
         });
         And("^the transport manager is not the owner$", () -> {
             world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
-        });
-        Given("^verify has been switched off$", () -> {
-            world.APIJourneySteps.enableDisableVerify("1");
         });
         When("^i submit the application$", () -> {
             click("form-actions[submit]", SelectorType.ID);
@@ -78,7 +72,18 @@ public class VerifySwitchedOff extends BasePage implements En {
             Assert.assertTrue(isTextPresent("The user account has been created and form has been emailed to the transport manager", 10));
         });
         After(new String[]{"@SS-Verify-Off"}, (Scenario scenario) -> {
+            if(scenario.isFailed() || !scenario.isFailed())
             world.APIJourneySteps.enableDisableVerify("0");
+        });
+        And("^i navigate to the declarations page$", () -> {
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
+        });
+        Given("^verify has been switched \"([^\"]*)\"$", (String arg0) -> {
+          if (arg0.equals("On")){
+              world.APIJourneySteps.enableDisableVerify("0");
+          } else {
+              world.APIJourneySteps.enableDisableVerify("1");
+          }
         });
     }
 }
