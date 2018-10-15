@@ -217,6 +217,8 @@ public class APIJourneySteps {
             world.createLicence.addFinancialEvidence();
             world.createLicence.addTransportManager();
             world.createLicence.submitTransport();
+            world.createLicence.addTmResponsibilities();
+            world.createLicence.submitTmResponsibilities();
             world.createLicence.vehicles();
             world.createLicence.submitVehicleDeclaration();
             world.createLicence.addFinancialHistory();
