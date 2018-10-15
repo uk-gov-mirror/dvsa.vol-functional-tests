@@ -34,35 +34,35 @@ public class ExternalSearch extends BasePage implements En {
             clickByName("submit");
         });
         Then("^search results page addresses should only display address belonging to our post code$", () -> {
-            assertTrue(checkForValuesInTable(world.createLicence.getPostcode().toUpperCase()));
+            assertTrue(checkForFullMatch(world.createLicence.getPostcode().toUpperCase()));
         });
 
         Then("^search results page should display operator names containing our business name$", () -> {
-            assertTrue(checkForValuesInTable(world.createLicence.getBusinessName().toUpperCase()));
+            assertTrue(checkForFullMatch(world.createLicence.getBusinessName().toUpperCase()));
         });
         Then("^search results page should only display our licence number$", () -> {
             do {
                 clickByName("submit");
             } while (!isTextPresent(world.createLicence.getBusinessName(), 30));
-            assertTrue(checkForValuesInTable(world.createLicence.getLicenceNumber()));
+            assertTrue(checkForFullMatch(world.createLicence.getLicenceNumber()));
         });
         Then("^search results page should display names containing our operator name$", () -> {
-            assertTrue(checkForValuesInTable(world.createLicence.getFamilyName().toUpperCase()));
+            assertTrue(checkForPartialMatch(world.createLicence.getFamilyName().toUpperCase()));
         });
         Then("^search results page should not display addresses which were not searched for$", () -> {
-            assertFalse(checkForValuesInTable("Swansea"));
+            assertFalse(checkForFullMatch("Swansea"));
         });
         Then("^search results page should only display operator names containing our business name$", () -> {
-            assertFalse(checkForValuesInTable("Jones-Made-Up"));
+            assertFalse(checkForFullMatch("Jones-Made-Up"));
         });
         Then("^search results page should not display any other licence number$", () -> {
             do {
                 clickByName("submit");
             } while (!isTextPresent(world.createLicence.getBusinessName(), 30));
-            assertFalse(checkForValuesInTable("OB0000123"));
+            assertFalse(checkForFullMatch("OB0000123"));
         });
         Then("^search results page should only display names containing our operator name$", () -> {
-            assertFalse(checkForValuesInTable("DVSA"));
+            assertFalse(checkForFullMatch("DVSA"));
         });
     }
 }

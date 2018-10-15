@@ -53,7 +53,7 @@ public class PaymentProcessing extends BasePage implements En {
             assertNotEquals(currentFeeCount, newFeeCount);
         });
         Then("^the fee should be paid and no longer visible in the fees table$", () -> {
-            assertFalse(checkForValuesInTable(getFeeNumber()));
+            assertFalse(checkForFullMatch(getFeeNumber()));
             selectValueFromDropDown("status", SelectorType.ID, "Historic");
             waitForTextToBePresent("Paid");
         });
