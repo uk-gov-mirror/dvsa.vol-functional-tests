@@ -100,7 +100,6 @@ public class DirectorVariation extends BasePage implements En {
         });
 
         When("^i remove a the last director$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin();
             world.UIJourneySteps.navigateToDirectorsPage();
             world.UIJourneySteps.removeDirector();
         });
