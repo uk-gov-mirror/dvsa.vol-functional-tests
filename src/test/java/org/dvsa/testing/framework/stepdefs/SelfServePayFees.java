@@ -16,7 +16,7 @@ public class SelfServePayFees extends BasePage implements En {
     public SelfServePayFees(World world) {
         When("^I pay fees on self serve$", () -> {
             world.grantLicence.createOverview(world.createLicence.getApplicationNumber());
-            world.UIJourneySteps.navigateToExternalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             clickByLinkText("Fees");
             click("//*[@id='checkall']", SelectorType.XPATH);
             click("//*[@id='pay']", SelectorType.XPATH);

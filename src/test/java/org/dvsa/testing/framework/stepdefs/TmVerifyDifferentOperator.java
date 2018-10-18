@@ -116,6 +116,18 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             click("//*[contains(text(),'Print')]", SelectorType.XPATH);
         });
         And("^I am the operator and not the transport manager$", () -> {
+            world.createLicence.setIsOwner("N");
+        });
+        And("^i add an existing person as a transport manger who is not the operator$", () -> {
+            world.UIJourneySteps.addInternalAdmin();
+            clickByLinkText("Home");
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            world.UIJourneySteps.addExistingPersonAsTransportManager(1);
+            world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getOperatorUser(),world.UIJourneySteps.getOperatorUserEmail());
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            clickByLinkText("Transport");
+            clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
         });
     }
 

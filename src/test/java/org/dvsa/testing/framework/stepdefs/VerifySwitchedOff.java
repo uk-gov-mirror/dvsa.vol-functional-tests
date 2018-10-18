@@ -1,7 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
@@ -37,9 +36,9 @@ public class VerifySwitchedOff extends BasePage implements En {
             assertEquals("Submit", buttonName);
         });
         And("^i add a transport manager$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
-            world.UIJourneySteps.addExistingPersonAsTransportManager();
+            world.UIJourneySteps.addExistingPersonAsTransportManager(1);
         });
         When("^the transport manager is the owner$", () -> {
             world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("Yes", "No", "No", "No", "No");

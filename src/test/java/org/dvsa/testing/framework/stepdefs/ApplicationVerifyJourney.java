@@ -10,11 +10,11 @@ public class ApplicationVerifyJourney extends BasePage implements En {
     public ApplicationVerifyJourney(World world) {
         Given("^i have an application in progress$", () -> {
             world.APIJourneySteps.createApplication();
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            world.UIJourneySteps.navigateToApplicationReviewDeclarationsPage();
         });
         When("^i choose to sign with verify with \"([^\"]*)\"$", (String arg0) -> {
             String password = "Password1";
-            world.UIJourneySteps.navigateToExternalUserLogin();
-            clickByLinkText(world.createLicence.getApplicationNumber());
             world.UIJourneySteps.signWithVerify(arg0,password);
         });
         Then("^the application should be signed with verify$", () -> {

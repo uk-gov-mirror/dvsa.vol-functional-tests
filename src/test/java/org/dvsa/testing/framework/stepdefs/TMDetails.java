@@ -21,9 +21,9 @@ public class TMDetails extends BasePage implements En {
             world.APIJourneySteps.createPartialApplication();
         });
         And("^the transport manager is the operator$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
-            world.UIJourneySteps.addExistingPersonAsTransportManager();
+            world.UIJourneySteps.addExistingPersonAsTransportManager(1);
         });
         Then("^the optional wording should not be displayed in the \"([^\"]*)\" section$", (String section) -> {
             assertTrue(Browser.navigate().findElements(By.xpath(String.format("//*[@id=\"%s\"]/div/div", section.replace(" ", "")))).stream().noneMatch(x -> x.getText().contains("(optional)")));
