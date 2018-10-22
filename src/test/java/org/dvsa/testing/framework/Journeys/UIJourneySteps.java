@@ -312,6 +312,24 @@ public class UIJourneySteps extends BasePage {
         }
     }
 
+    public void navigateToTMExternalUserLogin() throws MissingRequiredArgument, IllegalBrowserException {
+        String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
+        if (Browser.isBrowserOpen()) {
+            Browser.navigate().manage().deleteAllCookies();
+        }
+        Browser.navigate().get(myURL);
+        String password = S3.getTempPassword(world.createLicence.getTransManEmailAddress());
+
+        if (isTextPresent("Username", 60))
+            signIn(world.createLicence.getUsername(), password);
+        if (isTextPresent("Current password", 60)) {
+            enterField(nameAttribute("input", "oldPassword"), password);
+            enterField(nameAttribute("input", "newPassword"), "Password1");
+            enterField(nameAttribute("input", "confirmPassword"), "Password1");
+            click(nameAttribute("input", "submit"));
+        }
+    }
+
     public void navigateToExternalSearch() throws IllegalBrowserException {
         String myURL = URL.build(ApplicationType.EXTERNAL, env, "search/find-lorry-bus-operators/").toString();
         Browser.navigate().get(myURL);
