@@ -7,10 +7,11 @@ import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class VerifySwitchedOff extends BasePage implements En {
 
@@ -60,9 +61,10 @@ public class VerifySwitchedOff extends BasePage implements En {
             Assert.assertTrue(isTextPresent(arg0, 10));
         });
         Then("^the 'Awaiting operator review' post signature page is displayed$", () -> {
-            Assert.assertTrue(isTextPresent(world.createLicence.getForeName() + " " + world.createLicence.getFamilyName(), 10));
-            Assertions.assertTrue(isTextPresent("Awaiting operator review", 10));
-            Assert.assertTrue(isElementPresent("//a[contains(text(),'change your details')]", SelectorType.XPATH));
+            waitForTextToBePresent("What happens next?");
+            assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
+            assertTrue(isTextPresent("Awaiting operator review", 10));
+            assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("dd MMM yyyy")),20));
         });
         When("^i am on the the TM landing page$", () -> {
             world.UIJourneySteps.submitTMApplicationAndNavigateToTMLandingPage();

@@ -11,4 +11,3 @@ Feature: Operator signs with verify
     Examples:
     |user|
     |pavlov|
-    |georgios|

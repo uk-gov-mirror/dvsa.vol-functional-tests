@@ -3,7 +3,6 @@ package org.dvsa.testing.framework.stepdefs;
 import Injectors.World;
 import activesupport.driver.Browser;
 import activesupport.system.Properties;
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -27,10 +26,6 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
     private String familyName = "Manager";
 
     public TmVerifyDifferentOperator(World world) {
-        Given("^the TM has successfully signed through verify$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
-        });
         Then("^the 'Awaiting operator review' post signature page is displayed showing the correct information$", () -> {
             //need to split out
             String name = world.createLicence.getForeName() + " " + world.createLicence.getFamilyName();
@@ -51,20 +46,7 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             String url = Browser.navigate().getCurrentUrl();
             assertEquals(myURL, url);
         });
-        Given("^the operator has chosen to counter sign the application by print$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
-        });
-        When("^the user is on the print sign page$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
-        });
-        Then("^print details like will open in a new tab$", () -> {
-            world.genericUtils.switchTab(0);
-        });
-        And("^the following \"([^\"]*)\" text will be displayed on the page$", (String arg0) -> {
-            assertTrue(isElementPresent(arg0));
-        });
+
         Then("^the correct information is displayed on the declaration page$", () -> {
             Path fileToRead = getPath(world);
             String data = world.genericUtils.readFileAsString(String.valueOf(fileToRead));
@@ -125,13 +107,14 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             world.UIJourneySteps.addExistingPersonAsTransportManager(1);
             world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getOperatorUser(),world.UIJourneySteps.getOperatorUserEmail());
             clickByLinkText(world.createLicence.getApplicationNumber());
+            waitForTextToBePresent("Transport Managers");
             clickByLinkText("Transport");
             clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
             world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
         });
     }
 
-    public Path getPath(World world) throws URISyntaxException {
+    private Path getPath(World world) throws URISyntaxException {
         String declarationText;
         if (world.createLicence.getNiFlag().equals("N")) {
             declarationText = "operator-GB-declaration.txt";

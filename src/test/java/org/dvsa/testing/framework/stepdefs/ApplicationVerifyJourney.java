@@ -4,6 +4,7 @@ import Injectors.World;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationVerifyJourney extends BasePage implements En {
@@ -20,6 +21,7 @@ public class ApplicationVerifyJourney extends BasePage implements En {
         Then("^the application should be signed with verify$", () -> {
             waitForTextToBePresent("Review and declarations");
             assertTrue(isTextPresent("Declaration signed through GOV.UK Verify", 10));
+            assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("dd MMM yyyy")),20));
         });
     }
 }
