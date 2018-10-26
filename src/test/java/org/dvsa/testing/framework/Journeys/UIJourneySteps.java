@@ -37,6 +37,7 @@ public class UIJourneySteps extends BasePage {
     private String operatorUserEmail;
     private String operatorForeName;
     private String operatorFamilyName;
+    private String password;
 
 
     public String getVerifyUsername() {
@@ -81,6 +82,14 @@ public class UIJourneySteps extends BasePage {
 
     public void setOperatorFamilyName(String operatorFamilyName) {
         this.operatorFamilyName = operatorFamilyName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void internalSearchForBusReg() throws IllegalBrowserException {
@@ -332,6 +341,7 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void navigateToExternalUserLogin(String username, String emailAddress) throws MissingRequiredArgument, IllegalBrowserException {
+        String newPassword = "Password1";
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
         if (Browser.isBrowserOpen()) {
             Browser.navigate().manage().deleteAllCookies();
@@ -339,13 +349,19 @@ public class UIJourneySteps extends BasePage {
         Browser.navigate().get(myURL);
         String password = S3.getTempPassword(emailAddress);
 
-        if (isTextPresent("Username", 60))
+        try {
             signIn(username, password);
-        if (isTextPresent("Current password", 60)) {
-            enterField(nameAttribute("input", "oldPassword"), password);
-            enterField(nameAttribute("input", "newPassword"), "Password1");
-            enterField(nameAttribute("input", "confirmPassword"), "Password1");
-            click(nameAttribute("input", "submit"));
+        } catch (Exception e){
+            //User is already registered
+            signIn(username, getPassword());
+        } finally {
+            if (isTextPresent("Current password", 60)) {
+                enterField(nameAttribute("input", "oldPassword"), password);
+                enterField(nameAttribute("input", "newPassword"), newPassword);
+                enterField(nameAttribute("input", "confirmPassword"), newPassword);
+                click(nameAttribute("input", "submit"));
+                setPassword(newPassword);
+            }
         }
     }
 
@@ -500,10 +516,8 @@ public class UIJourneySteps extends BasePage {
         selectValueFromDropDown("data[role]", SelectorType.ID, role);
     }
 
-    public void addExistingPersonAsTransportManager(int user) throws IllegalBrowserException {
-        waitForTextToBePresent("Apply for a new licence");
-        clickByLinkText("Transport");
-        waitForTextToBePresent("Transport Managers");
+    public void nominateOperatorUserAsTransportManager(int user) throws IllegalBrowserException {
+        navigateToTransportManagersPage();
         click("//*[@name='table[action]']", SelectorType.XPATH);
         waitForTextToBePresent("Add Transport Manager");
         selectValueFromDropDownByIndex("data[registeredUser]", SelectorType.ID, user);
@@ -512,6 +526,21 @@ public class UIJourneySteps extends BasePage {
         enterText("dob_month", String.valueOf(getCurrentMonth()), SelectorType.ID);
         enterText("dob_year", String.valueOf(getPastYear(20)), SelectorType.ID);
         click("//*[@id='form-actions[send]']", SelectorType.XPATH);
+    }
+
+    public void addOperatorAdminAsTransportManager(int user) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
+        navigateToTransportManagersPage();
+        click("//*[@name='table[action]']", SelectorType.XPATH);
+        waitForTextToBePresent("Add Transport Manager");
+        selectValueFromDropDownByIndex("data[registeredUser]", SelectorType.ID, user);
+        click("//*[@id='form-actions[continue]']", SelectorType.XPATH);
+        updateTMDetailsAndNavigateToDeclarationsPage("Yes","No","No","No","No");
+    }
+
+    private void navigateToTransportManagersPage() throws IllegalBrowserException {
+        waitForTextToBePresent("Apply for a new licence");
+        clickByLinkText("Transport");
+        waitForTextToBePresent("Transport Managers");
     }
 
     public void navigateToApplicationReviewDeclarationsPage() throws IllegalBrowserException {
@@ -563,6 +592,18 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Check your answers");
         click("form-actions[submit]", SelectorType.ID);
         waitForTextToBePresent("Declaration");
+    }
+
+    public void addOperatorUserAsTransportManager(int user, String isOwner) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getApplicationNumber());
+        world.UIJourneySteps.nominateOperatorUserAsTransportManager(user);
+        world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getOperatorUser(),world.UIJourneySteps.getOperatorUserEmail());
+        clickByLinkText(world.createLicence.getApplicationNumber());
+        waitForTextToBePresent("Transport Managers");
+        clickByLinkText("Transport");
+        clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
+        updateTMDetailsAndNavigateToDeclarationsPage(isOwner, "No", "No", "No", "No");
     }
 
     public void submitTMApplicationAndNavigateToTMLandingPage() throws ElementDidNotAppearWithinSpecifiedTimeException, IllegalBrowserException {

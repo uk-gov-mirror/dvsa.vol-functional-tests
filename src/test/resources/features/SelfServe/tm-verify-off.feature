@@ -1,4 +1,6 @@
 @SS-Verify-Off
+@SS
+
 Feature: Countersigning declaration page for the operator (Verify switched off)
 
   Background:

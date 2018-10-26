@@ -1,4 +1,4 @@
-@SS-Verify-check-text
+@SS-Verify-On
 @OLCS-20343
 Feature: Countersigning declaration page for the operator (Verify switched on)
 

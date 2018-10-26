@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,7 +28,6 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
 
     public TmVerifyDifferentOperator(World world) {
         Then("^the 'Awaiting operator review' post signature page is displayed showing the correct information$", () -> {
-            //need to split out
             String name = world.createLicence.getForeName() + " " + world.createLicence.getFamilyName();
             assertTrue(isTextPresent(name, 30));
             assertTrue(isTextPresent("What happens next", 30));
@@ -102,15 +102,29 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
         });
         And("^i add an existing person as a transport manger who is not the operator$", () -> {
             world.UIJourneySteps.addInternalAdmin();
-            clickByLinkText("Home");
+            world.UIJourneySteps.addOperatorUserAsTransportManager(1,"No");
+        });
+        And("^the operator countersigns digitally$", () -> {
+            waitForTextToBePresent("What happens next?");
+            clickByLinkText("Sign out");
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
-            world.UIJourneySteps.addExistingPersonAsTransportManager(1);
-            world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getOperatorUser(),world.UIJourneySteps.getOperatorUserEmail());
-            clickByLinkText(world.createLicence.getApplicationNumber());
-            waitForTextToBePresent("Transport Managers");
+            waitForTextToBePresent("Apply for a new licence");
             clickByLinkText("Transport");
             clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
+            click("form-actions[submit]",SelectorType.ID);
+            world.UIJourneySteps.signWithVerify("pavlov","Password1");
+        });
+        Then("^the 'Review and declarations' post signature page is displayed$", () -> {
+            waitForTextToBePresent("Review and declarations");
+            Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
+            Assert.assertTrue(isTextPresent("Review and declarations", 10));
+            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("dd MMM yyyy")),20));
+        });
+        When("^i add an operator as a transport manager$", () -> {
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            world.UIJourneySteps.addOperatorAdminAsTransportManager(1);
         });
     }
 

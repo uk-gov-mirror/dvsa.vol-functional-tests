@@ -1,5 +1,5 @@
 @OLCS-21213
-@SS-VERIFY
+@SS-Verify-On
 
 Feature: Operator signs with verify
 
