@@ -449,7 +449,7 @@ public class UIJourneySteps extends BasePage {
         waitAndClick("addUser", SelectorType.ID);
         enterText("forename", forename, SelectorType.ID);
         enterText("familyName", familyName, SelectorType.ID);
-        String[] date = world.genericUtils.getPastDate(25).toString().split("-");
+        String[] date = GenericUtils.getPastDate(25).toString().split("-");
         enterText("dob_day", date[2], SelectorType.ID);
         enterText("dob_month", date[1], SelectorType.ID);
         enterText("dob_year", date[0], SelectorType.ID);
@@ -481,7 +481,7 @@ public class UIJourneySteps extends BasePage {
         clickByLinkText("Docs");
     }
 
-    public static void signIn(@NotNull String emailAddress, @NotNull String password, int timeLimitInSeconds) throws IllegalBrowserException {
+    private static void signIn(@NotNull String emailAddress, @NotNull String password, int timeLimitInSeconds) throws IllegalBrowserException {
         LoginPage.email(emailAddress);
         LoginPage.password(password);
         LoginPage.submit();
@@ -549,7 +549,7 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Review and declarations");
     }
 
-    public static void signIn(@NotNull String emailAddress, @NotNull String password) throws IllegalBrowserException {
+    private static void signIn(@NotNull String emailAddress, @NotNull String password) throws IllegalBrowserException {
         int timeLimitInSeconds = 10;
         signIn(emailAddress, password, timeLimitInSeconds);
     }
