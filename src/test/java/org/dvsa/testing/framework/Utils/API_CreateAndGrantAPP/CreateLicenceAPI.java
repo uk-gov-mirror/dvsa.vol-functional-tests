@@ -63,7 +63,7 @@ public class CreateLicenceAPI {
     private String isInterim;
     private String isOwner;
     private String tmType = "tm_t_i";
-    private String hours = "2";
+    private String hours = "2.0";
 
     private static int version = 1;
     private int noOfVehiclesRequired = 5;
@@ -607,7 +607,7 @@ public class CreateLicenceAPI {
             String addTMresp = URL.build(env, String.format("transport-manager-application/%s/update-details/", applicationNo)).toString();
             do {
                 AddressBuilder Address = new AddressBuilder().withAddressLine1(addressLine1).withPostcode(postcode).withTown(town).withCountryCode(countryCode);
-                TmRespBuilder tmRespBuilder = new TmRespBuilder().withEmail(emailAddress).withPlaceOfBirth(birthDate).withHomeAddress(Address).withWorkAddress(Address).withTmType(tmType).withIsOwner(isOwner)
+                TmRespBuilder tmRespBuilder = new TmRespBuilder().withEmail(emailAddress).withPlaceOfBirth(town).withHomeAddress(Address).withWorkAddress(Address).withTmType(tmType).withIsOwner(isOwner)
                         .withHoursMon(hours).withHoursTue(hours).withHoursWed(hours).withHoursThu(hours).withHoursThu(hours).withHoursFri(hours).withHoursSat(hours).withHoursSun(hours).withDob(birthDate)
                         .withId(applicationNo).withVersion(version);
                 apiResponse = RestUtils.put(tmRespBuilder, addTMresp, getHeaders());
