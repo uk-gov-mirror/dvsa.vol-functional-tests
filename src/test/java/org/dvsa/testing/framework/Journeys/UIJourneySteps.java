@@ -294,13 +294,28 @@ public class UIJourneySteps extends BasePage {
         }
     }
 
+    public String getBucketName() {
+
+        String s3bucketName;
+        if (env == EnvironmentType.LOCAL) {
+            s3bucketName = "devapp-olcs-pri-olcs-autotest-s3";
+        } else {
+            s3bucketName = "devapp-olcs-pri-olcs-autotest-s3";
+        }
+
+        return s3bucketName;
+    }
+
     public void navigateToExternalUserLogin() throws MissingRequiredArgument, IllegalBrowserException {
+
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
+
+
         if (Browser.isBrowserOpen()) {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        String password = S3.getTempPassword(world.createLicence.getEmailAddress());
+        String password = S3.getTempPassword(world.createLicence.getEmailAddress(), getBucketName());
 
         if (isTextPresent("Username", 60))
             signIn(world.createLicence.getLoginId(), password);
