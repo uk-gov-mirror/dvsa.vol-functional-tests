@@ -2,7 +2,7 @@
 @SS-TM-Verify
 @SS
 
-Feature: operator signs as TM
+Feature: Check answers page
 
   @OLCS-21373
   Scenario: TM has completed journey and is checking Your details section
