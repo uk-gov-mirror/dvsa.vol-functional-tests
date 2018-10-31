@@ -16,7 +16,9 @@ import org.dvsa.testing.lib.url.utils.EnvironmentType;
 import org.dvsa.testing.lib.url.api.URL;
 
 import javax.xml.ws.http.HTTPException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
@@ -41,7 +43,7 @@ public class CreateLicenceAPI {
     private String transManEmailAddress = Str.randomWord(6).concat(".TM@dvsa.com");
     private String applicationNumber;
     private String userId;
-    private String username = "apiTM";
+    private String username;
     private String loginId;
     private String pid;
     private String organisationId;
@@ -61,9 +63,26 @@ public class CreateLicenceAPI {
     private String isInterim;
     private String isOwner;
     private String tmType = "tm_t_i";
+    private String hours = "2.0";
 
     private static int version = 1;
     private int noOfVehiclesRequired = 5;
+
+    public String getHours() {
+        return hours;
+    }
+
+    public void setHours(String hours) {
+        this.hours = hours;
+    }
+
+    public String getTmType() {
+        return tmType;
+    }
+
+    public void setTmType(String tmType) {
+        this.tmType = tmType;
+    }
 
     public String getIsOwner() {
         return isOwner;
@@ -91,6 +110,31 @@ public class CreateLicenceAPI {
 
     private void setLicenceNumber(String licenceNumber) {
         this.licenceNumber = licenceNumber;
+    }
+
+    public String getTransManEmailAddress() {
+        return transManEmailAddress;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getAddressLine1() {
+        return addressLine1;
+    }
+
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+    }
+
+
+    public void setTransManEmailAddress(String transManEmailAddress) {
+        this.transManEmailAddress = transManEmailAddress;
     }
 
     public String getLicenceNumber() {
@@ -516,10 +560,11 @@ public class CreateLicenceAPI {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
+           username =  "apiTM".concat(getLoginId());
             String hasEmail = "Y";
             String addTransportManager = URL.build(env, "transport-manager/create-new-user/").toString();
             TransportManagerBuilder transportManagerBuilder = new TransportManagerBuilder().withApplication(applicationNumber).withFirstName(foreName)
-                    .withFamilyName(familyName).withHasEmail(hasEmail).withUsername(username.concat(getLoginId())).withEmailAddress(transManEmailAddress).withBirthDate(birthDate);
+                    .withFamilyName(familyName).withHasEmail(hasEmail).withUsername(getUsername()).withEmailAddress(transManEmailAddress).withBirthDate(birthDate);
             apiResponse = RestUtils.post(transportManagerBuilder, addTransportManager, getHeaders());
             assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
             setTransportManagerApplicationId(apiResponse.extract().jsonPath().getString("id.transportManagerApplicationId"));
@@ -552,11 +597,11 @@ public class CreateLicenceAPI {
             // no need to submit details
         } else {
             String applicationNo = getTransportManagerApplicationId();
-            String hours = "2";
+
             String addTMresp = URL.build(env, String.format("transport-manager-application/%s/update-details/", applicationNo)).toString();
             do {
                 AddressBuilder Address = new AddressBuilder().withAddressLine1(addressLine1).withPostcode(postcode).withTown(town).withCountryCode(countryCode);
-                TmRespBuilder tmRespBuilder = new TmRespBuilder().withEmail(emailAddress).withPlaceOfBirth(birthDate).withHomeAddress(Address).withWorkAddress(Address).withTmType(tmType).withIsOwner(isOwner)
+                TmRespBuilder tmRespBuilder = new TmRespBuilder().withEmail(emailAddress).withPlaceOfBirth(town).withHomeAddress(Address).withWorkAddress(Address).withTmType(tmType).withIsOwner(isOwner)
                         .withHoursMon(hours).withHoursTue(hours).withHoursWed(hours).withHoursThu(hours).withHoursThu(hours).withHoursFri(hours).withHoursSat(hours).withHoursSun(hours).withDob(birthDate)
                         .withId(applicationNo).withVersion(version);
                 apiResponse = RestUtils.put(tmRespBuilder, addTMresp, getHeaders());
