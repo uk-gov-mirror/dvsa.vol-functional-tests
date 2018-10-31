@@ -22,7 +22,7 @@ public class PDFLinks extends BasePage implements En {
             world.APIJourneySteps.payFeesAndGrantLicence();
             world.APIJourneySteps.grantLicence().payGrantFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
-            world.UIJourneySteps.navigateToExternalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getLicenceNumber());
         });
         And("^I am on add Transport Manager Page$", () -> {

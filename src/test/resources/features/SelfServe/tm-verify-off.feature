@@ -1,9 +1,11 @@
 @SS-Verify-Off
+@SS
+
 Feature: Countersigning declaration page for the operator (Verify switched off)
 
   Background:
-    Given verify has been switched off
-    When I have a "goods" "<Flag>" application
+    Given verify has been switched "off"
+    When I have a "goods" "GB" partial application
     And i add a transport manager
 
   @OLCS-21374
@@ -36,4 +38,3 @@ Feature: Countersigning declaration page for the operator (Verify switched off)
   Scenario: Change to banner text on successful addition of TM
     When i am on the the TM landing page
     Then a success message banner should be displayed
-

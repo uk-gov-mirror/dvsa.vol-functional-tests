@@ -1,5 +1,5 @@
 @OLCS-21213
-@SS-VERIFY
+@SS-Verify-On
 
 Feature: Operator signs with verify
 
@@ -11,4 +11,3 @@ Feature: Operator signs with verify
     Examples:
     |user|
     |pavlov|
-    |georgios|
