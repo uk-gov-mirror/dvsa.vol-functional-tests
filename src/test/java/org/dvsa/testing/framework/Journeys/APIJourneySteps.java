@@ -253,6 +253,10 @@ public class APIJourneySteps {
         world.createLicence.registerUser();
         world.createLicence.getUserDetails();
         world.createLicence.createApplication();
+        world.createLicence.updateBusinessType();
+        world.createLicence.updateBusinessDetails();
+        world.createLicence.addAddressDetails();
+        world.createLicence.addPartners();
         world.createLicence.addOperatingCentre();
         world.createLicence.updateOperatingCentre();
         world.createLicence.addFinancialEvidence();

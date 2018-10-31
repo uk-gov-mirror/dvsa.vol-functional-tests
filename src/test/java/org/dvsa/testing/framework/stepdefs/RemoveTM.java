@@ -62,7 +62,7 @@ public class RemoveTM extends BasePage implements En {
             }
         });
         Given("^a self-serve user removes the last TM$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Transport Managers");
             click("//*[@value='Remove']", SelectorType.XPATH);
