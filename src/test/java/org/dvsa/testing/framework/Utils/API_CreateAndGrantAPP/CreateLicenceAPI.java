@@ -340,12 +340,6 @@ public class CreateLicenceAPI {
         }
     }
 
-    public String[] getYourDetails() {
-        String[] yourDetails = new String[]{getForeName() + " " + getFamilyName(), getBirthDate(), getTown(), getEmailAddress(), "No certificates attached", getTown(), getAddressLine1() + " " + getTown() + "" + getPostcode(), getAddressLine1() + " " + getTown() + "" + getPostcode()};
-
-            return yourDetails;
-    }
-
     public void registerUser() {
         setTitle("title_mr");
         setForeName("Vol-API-".concat(Str.randomWord(3).toLowerCase()));
