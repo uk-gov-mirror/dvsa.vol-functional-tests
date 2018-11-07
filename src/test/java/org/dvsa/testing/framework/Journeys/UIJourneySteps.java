@@ -340,9 +340,23 @@ public class UIJourneySteps extends BasePage {
         }
     }
 
-    public void navigateToExternalUserLogin(String username, String emailAddress) throws MissingRequiredArgument, IllegalBrowserException {
-        String newPassword = "Password1";
+    public String getBucketName() {
+
+        String s3bucketName;
+        if (env == EnvironmentType.LOCAL) {
+            s3bucketName = "devapp-olcs-pri-olcs-autotest-s3";
+        } else {
+            s3bucketName = "devapp-olcs-pri-olcs-autotest-s3";
+        }
+
+        return s3bucketName;
+    }
+
+    public void navigateToExternalUserLogin() throws MissingRequiredArgument, IllegalBrowserException {
+
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
+
+
         if (Browser.isBrowserOpen()) {
             Browser.navigate().manage().deleteAllCookies();
         }
