@@ -13,7 +13,3 @@ Feature: Complete Manual Bus Registration Steps
     When it has been paid and granted
     Then the bus registration should be granted
     And the traffic areas should be displayed on the service details page
-
-
-
-

@@ -25,7 +25,7 @@ public class ResettingPassword extends BasePage implements En {
 
         And("^i reset my password$", () -> {
             String env = System.getProperty("env");
-            world.UIJourneySteps.navigateToExternalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             clickByLinkText("Sign out");
             world.UIJourneySteps.resettingExternalPassword();
             enterField(nameAttribute("input", "username"), world.createLicence.getLoginId());
@@ -48,7 +48,7 @@ public class ResettingPassword extends BasePage implements En {
             isTextPresent("Failed", 30);
             click(nameAttribute("input","submit"), SelectorType.CSS);
         });
-        Then("^i will recieve an error for inactive account$", () -> {
+        Then("^i will receive an error for inactive account$", () -> {
             isTextPresent("It looks like your account isn't active", 30);
         });
     }

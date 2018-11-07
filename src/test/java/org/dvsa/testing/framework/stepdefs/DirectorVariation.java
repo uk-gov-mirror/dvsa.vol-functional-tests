@@ -100,12 +100,13 @@ public class DirectorVariation extends BasePage implements En {
         });
 
         When("^i remove a the last director$", () -> {
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             world.UIJourneySteps.navigateToDirectorsPage();
             world.UIJourneySteps.removeDirector();
         });
 
         Then("^a task should be created in internal$", () -> {
-            world.UIJourneySteps.navigateTointernalAdminUserLogin();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin();
             world.UIJourneySteps.searchAndViewApplication();
         });
 
