@@ -30,7 +30,7 @@ public class TmVerifyCheckAnswers extends BasePage implements En {
             world.createLicence.addTransportManager();
             world.createLicence.submitTransport();
             world.createLicence.addTmResponsibilities();
-            world.UIJourneySteps.navigateToTMExternalUserLogin();
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             clickByLinkText("View details");
             clickByLinkText("change your details");
             findSelectAllRadioButtonsByValue("N");

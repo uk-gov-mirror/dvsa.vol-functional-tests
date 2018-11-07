@@ -140,6 +140,7 @@ public class APIJourneySteps {
         setLicenceStatus(apiResponse.extract().jsonPath().getString("status.description"));
         return licenceStatus;
     }
+
     public String getOperatorTypeDetails() {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
@@ -148,6 +149,7 @@ public class APIJourneySteps {
         setGoodOrPsv(apiResponse.extract().jsonPath().getString("goodsOrPsv.description"));
         return goodOrPsv;
     }
+
     public String getBusinessTypeDetails() {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
@@ -155,6 +157,7 @@ public class APIJourneySteps {
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
         setBusinessType(apiResponse.extract().jsonPath().getString("organisation.type.description"));
         return businessType;
+
     }  public String getLicenceTypeDetails() {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
@@ -194,10 +197,6 @@ public class APIJourneySteps {
         apiResponse.statusCode(HttpStatus.SC_OK);
     }
 
-    public CreateLicenceAPI createApp() throws MissingRequiredArgument {
-        CreateLicenceAPI api = new CreateLicenceAPI();
-        return api;
-    }
     public GrantLicenceAPI grantLicence() throws MissingRequiredArgument {
         return new GrantLicenceAPI(world);
     }
