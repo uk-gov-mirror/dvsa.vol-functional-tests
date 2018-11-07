@@ -138,7 +138,7 @@ public class UIJourneySteps extends BasePage {
         } while (isTextPresent("processing", 60));
     }
 
-    public void uploadAndSubmitESBR(String state, int interval) throws MissingRequiredArgument, MalformedURLException, IllegalBrowserException, MissingDriverException {
+    public void uploadAndSubmitESBR(String state, int interval) throws MissingRequiredArgument, IllegalBrowserException {
         // for the date state the options are ['current','past','future'] and depending on your choice the months you want to add/remove
         world.genericUtils.modifyXML(state, interval);
         GenericUtils.zipFolder();
@@ -340,28 +340,25 @@ public class UIJourneySteps extends BasePage {
         }
     }
 
-    public String getBucketName() {
-
+    private String getBucketName() {
         String s3bucketName;
         if (env == EnvironmentType.LOCAL) {
             s3bucketName = "devapp-olcs-pri-olcs-autotest-s3";
         } else {
             s3bucketName = "devapp-olcs-pri-olcs-autotest-s3";
         }
-
         return s3bucketName;
     }
 
-    public void navigateToExternalUserLogin() throws MissingRequiredArgument, IllegalBrowserException {
-
+    public void navigateToExternalUserLogin(String username, String emailAddress) throws MissingRequiredArgument, IllegalBrowserException {
+        String newPassword = "Password1";
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
-
 
         if (Browser.isBrowserOpen()) {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        String password = S3.getTempPassword(emailAddress);
+        String password = S3.getTempPassword(emailAddress, getBucketName());
 
         try {
             signIn(username, password);
