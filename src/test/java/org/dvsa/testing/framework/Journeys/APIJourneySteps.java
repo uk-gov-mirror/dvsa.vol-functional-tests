@@ -14,7 +14,6 @@ import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import java.net.MalformedURLException;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 
 public class APIJourneySteps {
@@ -43,7 +42,7 @@ public class APIJourneySteps {
         return licenceType;
     }
 
-    public void setLicenceType(String licenceType) {
+    private void setLicenceType(String licenceType) {
         this.licenceType = licenceType;
     }
 
@@ -55,7 +54,7 @@ public class APIJourneySteps {
         return businessType;
     }
 
-    public void setBusinessType(String businessType) {
+    private void setBusinessType(String businessType) {
         this.businessType = businessType;
     }
 
@@ -64,11 +63,11 @@ public class APIJourneySteps {
         return goodOrPsv;
     }
 
-    public void setGoodOrPsv(String goodOrPsv) {
+    private void setGoodOrPsv(String goodOrPsv) {
         this.goodOrPsv = goodOrPsv;
     }
 
-    public void setLicenceStatus(String licenceStatus) {
+    private void setLicenceStatus(String licenceStatus) {
         this.licenceStatus = licenceStatus;
     }
 
@@ -84,7 +83,7 @@ public class APIJourneySteps {
         return trafficAreaName;
     }
 
-    public void setTrafficAreaName(String trafficAreaName) {
+    private void setTrafficAreaName(String trafficAreaName) {
         this.trafficAreaName = trafficAreaName;
     }
 
@@ -141,6 +140,7 @@ public class APIJourneySteps {
         setLicenceStatus(apiResponse.extract().jsonPath().getString("status.description"));
         return licenceStatus;
     }
+
     public String getOperatorTypeDetails() {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
@@ -149,6 +149,7 @@ public class APIJourneySteps {
         setGoodOrPsv(apiResponse.extract().jsonPath().getString("goodsOrPsv.description"));
         return goodOrPsv;
     }
+
     public String getBusinessTypeDetails() {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
@@ -156,6 +157,7 @@ public class APIJourneySteps {
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
         setBusinessType(apiResponse.extract().jsonPath().getString("organisation.type.description"));
         return businessType;
+
     }  public String getLicenceTypeDetails() {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
@@ -177,16 +179,22 @@ public class APIJourneySteps {
     }
 
     public void updateLicenceStatus(String licenceId, String status) {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
         String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/%s", licenceId, status)).toString();
 
         GenericBuilder genericBuilder = new GenericBuilder().withId(licenceId);
         apiResponse = RestUtils.post(genericBuilder, typeOfLicenceResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        apiResponse.statusCode(HttpStatus.SC_CREATED);
     }
 
-    public CreateLicenceAPI createApp() throws MissingRequiredArgument {
-        CreateLicenceAPI api = new CreateLicenceAPI();
-        return api;
+    public void enableDisableVerify(String toggle){
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String enableDisableVerifyResource = org.dvsa.testing.lib.url.api.URL.build(env, "system-parameter/DISABLE_GDS_VERIFY_SIGNATURES/").toString();
+
+        GenericBuilder genericBuilder = new GenericBuilder().withId("DISABLE_GDS_VERIFY_SIGNATURES").withParamValue(toggle).
+                withDescription("Disable GDS verify digital signature functionality");
+        apiResponse = RestUtils.put(genericBuilder, enableDisableVerifyResource, getHeaders());
+        apiResponse.statusCode(HttpStatus.SC_OK);
     }
 
     public GrantLicenceAPI grantLicence() throws MissingRequiredArgument {
@@ -208,6 +216,8 @@ public class APIJourneySteps {
             world.createLicence.addFinancialEvidence();
             world.createLicence.addTransportManager();
             world.createLicence.submitTransport();
+            world.createLicence.addTmResponsibilities();
+            world.createLicence.submitTmResponsibilities();
             world.createLicence.vehicles();
             world.createLicence.submitVehicleDeclaration();
             world.createLicence.addFinancialHistory();
@@ -242,6 +252,10 @@ public class APIJourneySteps {
         world.createLicence.registerUser();
         world.createLicence.getUserDetails();
         world.createLicence.createApplication();
+        world.createLicence.updateBusinessType();
+        world.createLicence.updateBusinessDetails();
+        world.createLicence.addAddressDetails();
+        world.createLicence.addPartners();
         world.createLicence.addOperatingCentre();
         world.createLicence.updateOperatingCentre();
         world.createLicence.addFinancialEvidence();

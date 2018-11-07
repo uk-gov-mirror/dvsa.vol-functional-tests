@@ -15,4 +15,3 @@ Feature: Admin payment process
       | NETA Bus Fine |
       | NI A&D        |
       | SCOT Bus Fine |
-
