@@ -2,23 +2,21 @@ package org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP;
 
 import activesupport.MissingRequiredArgument;
 import activesupport.http.RestUtils;
+import activesupport.number.Int;
+import activesupport.string.Str;
 import activesupport.system.Properties;
 import enums.BusinessType;
 import enums.LicenceType;
 import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
-import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.framework.Utils.API_Builders.*;
-import activesupport.string.Str;
-import activesupport.number.Int;
-import org.dvsa.testing.lib.url.utils.EnvironmentType;
+import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.lib.url.api.URL;
+import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import javax.xml.ws.http.HTTPException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
@@ -64,6 +62,9 @@ public class CreateLicenceAPI {
     private String isOwner;
     private String tmType = "tm_t_i";
     private String hours = "2.0";
+    private String phoneNumber;
+    private String businessEmailAddress;
+
 
     private static int version = 1;
     private int noOfVehiclesRequired = 5;
@@ -327,6 +328,20 @@ public class CreateLicenceAPI {
 
     public void setIsInterim(String isInterim) { this.isInterim = isInterim; }
 
+    public String getPhoneNumber() { return phoneNumber; }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getBusinessEmailAddress() {
+        return businessEmailAddress;
+    }
+
+    public void setBusinessEmailAddress(String businessEmailAddress) {
+        this.businessEmailAddress = businessEmailAddress;
+    }
+
     private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
     public CreateLicenceAPI() throws MissingRequiredArgument {
@@ -458,6 +473,8 @@ public class CreateLicenceAPI {
             System.out.println(apiResponse.extract().response().asString());
             throw new HTTPException(apiResponse.extract().statusCode());
         }
+        setBusinessEmailAddress(businessEmail);
+        setPhoneNumber(phoneNumber);
     }
 
     public void addPartners() {
@@ -903,4 +920,5 @@ public class CreateLicenceAPI {
             throw new HTTPException(apiResponse.extract().statusCode());
         }
     }
+
 }
