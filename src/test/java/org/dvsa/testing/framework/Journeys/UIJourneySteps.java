@@ -639,4 +639,12 @@ public class UIJourneySteps extends BasePage {
         enterText("main[emailConfirm]", getOperatorUserEmail(), SelectorType.ID);
         click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
+
+    public void navigateToSurrendersStartPage() throws IllegalBrowserException {
+        navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+        clickByLinkText(world.createLicence.getLicenceNumber());
+        waitForTextToBePresent("Summary");
+        clickByLinkText("Apply to");
+        waitForTextToBePresent("Apply to surrender your licence");
+    }
 }
