@@ -1,4 +1,3 @@
-@Business Need: As part of the OTC strategic objects for 2018
 @SS-TM-Verify
 @SS
 

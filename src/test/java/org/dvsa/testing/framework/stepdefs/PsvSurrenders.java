@@ -51,5 +51,4 @@ public class PsvSurrenders extends BasePage implements En {
             Assert.assertEquals(this.town,licenceTown);
         });
     }
-
 }
