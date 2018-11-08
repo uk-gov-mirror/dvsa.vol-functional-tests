@@ -1,5 +1,5 @@
 #OLCS-21939
-Feature:Digital Surrender - Review contact details page
+Feature:Digital Surrender - PSV Surrender licence
 
   Background:
     Given i have a valid "public" licence
@@ -14,6 +14,5 @@ Feature:Digital Surrender - Review contact details page
     Scenario: Update correspondence details
       And i update my correspondence address
       Then the new correspondence details should be displayed on the review page
-
 
 
