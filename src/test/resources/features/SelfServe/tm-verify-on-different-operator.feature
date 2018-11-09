@@ -8,7 +8,7 @@ Feature: TM signs through verify
     And I have a "goods" "GB" partial application
 
   Scenario: TM who is not Operator / Applicant signs through Verify
-    When i add an existing person as a transport manger who is not the operator
+    When i add an existing person as a transport manager who is not the operator
     And i choose to sign with verify with "pavlov"
     Then the 'Awaiting operator review' post signature page is displayed
 
@@ -18,7 +18,7 @@ Feature: TM signs through verify
     Then the 'Review and declarations' post signature page is displayed
 
   Scenario: Operator co-signs through Verify
-    When i add an existing person as a transport manger who is not the operator
+    When i add an external person as a transport manager
     And i choose to sign with verify with "pavlov"
     And the operator countersigns digitally
     Then the 'Review and declarations' post signature page is displayed

@@ -6,7 +6,6 @@ Feature: ESBR for English, Welsh and Scottish Areas
     Given I have a psv application with traffic area "<TrafficArea>" and enforcement area "<EnforcementArea>" which has been granted
     When I upload an esbr file with "<Days>" days notice
     Then A short notice flag should be displayed in selfserve
-    And  A short notice tab should be displayed in internal
     Examples:
       | TrafficArea | EnforcementArea | Days |
       | B           | EA-B            | 41   |
@@ -18,7 +17,6 @@ Feature: ESBR for English, Welsh and Scottish Areas
     Given I have a psv application with traffic area "<TrafficArea>" and enforcement area "<EnforcementArea>" which has been granted
     When I upload an esbr file with "<Days>" days notice
     Then A short notice flag should not be displayed in selfserve
-    And  A short notice tab should not be displayed in internal
     Examples:
       | TrafficArea | EnforcementArea | Days |
       | B           | EA-B            | 42   |

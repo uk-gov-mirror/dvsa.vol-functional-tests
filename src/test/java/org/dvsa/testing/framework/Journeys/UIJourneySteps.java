@@ -38,6 +38,8 @@ public class UIJourneySteps extends BasePage {
     private String operatorForeName;
     private String operatorFamilyName;
     private String password;
+    private String externalTMUser;
+    private String externalTMEmail;
 
 
     public String getVerifyUsername() {
@@ -52,17 +54,13 @@ public class UIJourneySteps extends BasePage {
         this.world = world;
     }
 
-    public String getOperatorUser() {
-        return operatorUser;
-    }
+    public String getOperatorUser() { return operatorUser; }
 
     public void setOperatorUser(String operatorUser) {
         this.operatorUser = operatorUser;
     }
 
-    public String getOperatorUserEmail() {
-        return operatorUserEmail;
-    }
+    public String getOperatorUserEmail() { return operatorUserEmail; }
 
     public void setOperatorUserEmail(String operatorUserEmail) {
         this.operatorUserEmail = operatorUserEmail;
@@ -91,6 +89,14 @@ public class UIJourneySteps extends BasePage {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getExternalTMUser() { return externalTMUser; }
+
+    public void setExternalTMUser(String externalTMUser) { this.externalTMUser = externalTMUser; }
+
+    public String getExternalTMEmail() { return externalTMEmail; }
+
+    public void setExternalTMEmail(String externalTMEmail) { this.externalTMEmail = externalTMEmail; }
 
     public void internalSearchForBusReg() throws IllegalBrowserException {
         selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
@@ -450,10 +456,8 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void addNewPersonAsTransportManager(String forename, String familyName) throws IllegalBrowserException {
-        String username = Str.randomWord(3);
-        clickByLinkText("change your licence");
-        waitForTextToBePresent("Applying to change a licence");
-        click("form-actions[submit]", SelectorType.ID);
+        externalTMUser = "TM".concat(Str.randomWord(3));
+        externalTMEmail = "tme".concat(Str.randomWord(2)).concat("externalTM@vol.gov");
         waitForTextToBePresent("Transport Managers");
         waitAndClick("//*[@id='add']", SelectorType.XPATH);
         waitForTextToBePresent("Add Transport Manager");
@@ -464,9 +468,9 @@ public class UIJourneySteps extends BasePage {
         enterText("dob_day", date[2], SelectorType.ID);
         enterText("dob_month", date[1], SelectorType.ID);
         enterText("dob_year", date[0], SelectorType.ID);
-        enterText("username", "TM".concat(username), SelectorType.ID);
-        enterText("emailAddress", "TM@vol.com", SelectorType.ID);
-        enterText("emailConfirm", "TM@vol.com", SelectorType.ID);
+        enterText("username", externalTMUser, SelectorType.ID);
+        enterText("emailAddress", externalTMEmail, SelectorType.ID);
+        enterText("emailConfirm", externalTMEmail, SelectorType.ID);
         waitAndClick("form-actions[continue]", SelectorType.ID);
     }
 
@@ -536,7 +540,8 @@ public class UIJourneySteps extends BasePage {
         enterText("dob_day", String.valueOf(getPastDayOfMonth(5)), SelectorType.ID);
         enterText("dob_month", String.valueOf(getCurrentMonth()), SelectorType.ID);
         enterText("dob_year", String.valueOf(getPastYear(20)), SelectorType.ID);
-        click("//*[@id='form-actions[send]']", SelectorType.XPATH);
+        click("form-actions[send]",SelectorType.ID);
+        waitForTextToBePresent("Transport Managers");
     }
 
     public void addOperatorAdminAsTransportManager(int user) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
@@ -548,7 +553,7 @@ public class UIJourneySteps extends BasePage {
         updateTMDetailsAndNavigateToDeclarationsPage("Yes","No","No","No","No");
     }
 
-    private void navigateToTransportManagersPage() throws IllegalBrowserException {
+    public void navigateToTransportManagersPage() throws IllegalBrowserException {
         waitForTextToBePresent("Apply for a new licence");
         clickByLinkText("Transport");
         waitForTextToBePresent("Transport Managers");
@@ -585,7 +590,9 @@ public class UIJourneySteps extends BasePage {
         findElement("//*[contains(text(),'" + hasConvictions + "')]//*[@name='previousHistory[hasConvictions]']", SelectorType.XPATH, 10).click();
         findElement("//*[contains(text(),'" + hasPreviousLicences + "')]//*[@name='previousHistory[hasPreviousLicences]']", SelectorType.XPATH, 10).click();
         findElement("emailAddress", SelectorType.ID, 10).clear();
-        waitAndEnterText("emailAddress", SelectorType.ID, tmEmailAddress);
+        if(findElement("emailAddress",SelectorType.ID,10).getText().isEmpty()) {
+            waitAndEnterText("emailAddress", SelectorType.ID, tmEmailAddress);
+        }
         waitAndEnterText("birthPlace", SelectorType.ID, "Nottingham");
         waitAndEnterText("postcodeInput1", SelectorType.ID, "NG23HX");
         clickByName("homeAddress[searchPostcode][search]");
