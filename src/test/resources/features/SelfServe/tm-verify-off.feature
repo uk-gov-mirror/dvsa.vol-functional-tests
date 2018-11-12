@@ -1,5 +1,4 @@
 @Verify-Off
-
 Feature: Countersigning declaration page for the operator (Verify switched off)
 
   Background:
