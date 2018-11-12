@@ -144,6 +144,11 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             clickByLinkText("Provide details");
             world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No","No","No","No","No");
         });
+        And("^i add a transport manager and navigate to the declarations page$", () -> {
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            world.UIJourneySteps.addOperatorAdminAsTransportManager(1);
+        });
     }
 
     private Path getPath(World world) throws URISyntaxException {

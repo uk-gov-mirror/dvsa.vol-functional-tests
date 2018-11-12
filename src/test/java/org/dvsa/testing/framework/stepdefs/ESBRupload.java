@@ -58,6 +58,7 @@ public class ESBRupload extends BasePage implements En {
             world.UIJourneySteps.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
         });
         Given("^i add a new bus registration$", () -> {
+            world.UIJourneySteps.searchAndViewApplication();
             world.UIJourneySteps.internalSiteAddBusNewReg(5);
             clickByLinkText("Register");
             findSelectAllRadioButtonsByValue("Y");

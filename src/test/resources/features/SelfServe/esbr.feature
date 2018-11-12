@@ -13,6 +13,7 @@ Feature: ESBR for English, Welsh and Scottish Areas
       | G           | EA-E            | 55   |
       | F           | EA-F            | 41   |
       | H           | EA-H            | 41   |
+
   Scenario Outline: ESBR in self-serve
     Given I have a psv application with traffic area "<TrafficArea>" and enforcement area "<EnforcementArea>" which has been granted
     When I upload an esbr file with "<Days>" days notice

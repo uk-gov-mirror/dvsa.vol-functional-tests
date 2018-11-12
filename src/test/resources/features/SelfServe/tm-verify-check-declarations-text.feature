@@ -5,8 +5,7 @@ Feature: Countersigning declaration page for the operator (Verify switched on)
   Background:
     Given verify has been switched "On"
     When i have a "goods" "NI" partial application
-    And i add a transport manager
-    And i navigate to the declarations page
+    And i add a transport manager and navigate to the declarations page
 
   Scenario: Check declaration text for NI
     Then the correct information is displayed on the declaration page
