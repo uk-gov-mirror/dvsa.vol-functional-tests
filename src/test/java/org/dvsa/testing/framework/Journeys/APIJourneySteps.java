@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.Journeys;
 
+import Injectors.World;
 import activesupport.MissingRequiredArgument;
 import activesupport.http.RestUtils;
 import activesupport.system.Properties;
@@ -9,7 +10,6 @@ import org.dvsa.testing.framework.Utils.API_Builders.GenericBuilder;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
-import Injectors.World;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import java.net.MalformedURLException;
@@ -179,12 +179,21 @@ public class APIJourneySteps {
     }
 
     public void updateLicenceStatus(String licenceId, String status) {
-        Headers.getHeaders().put("x-pid", adminApiHeader());
+        Headers.getHeaders().put("x-pid",adminApiHeader());
         String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/%s", licenceId, status)).toString();
 
         GenericBuilder genericBuilder = new GenericBuilder().withId(licenceId);
         apiResponse = RestUtils.post(genericBuilder, typeOfLicenceResource, getHeaders());
         apiResponse.statusCode(HttpStatus.SC_CREATED);
+    }
+
+    public ValidatableResponse surrenderLicence(String licenceId, String userPid){
+        Headers.getHeaders().put("x-pid", userPid);
+        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
+
+        GenericBuilder genericBuilder = new GenericBuilder().withLicence(licenceId);
+        apiResponse = RestUtils.post(genericBuilder, typeOfLicenceResource, getHeaders());
+       return apiResponse;
     }
 
     public void enableDisableVerify(String toggle){
