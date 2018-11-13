@@ -1,6 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 public class VerifySwitchedOff extends BasePage implements En {
 
     public VerifySwitchedOff(World world) {
-        Given("^I have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String arg0, String arg1) -> {
+        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String arg0, String arg1) -> {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(arg0);
             if (arg1.equals("NI")) {
@@ -64,7 +65,7 @@ public class VerifySwitchedOff extends BasePage implements En {
             waitForTextToBePresent("What happens next?");
             assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
             assertTrue(isTextPresent("Awaiting operator review", 10));
-            assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("dd MMM yyyy")),20));
+            assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("d MMM yyyy")),20));
         });
         When("^i am on the the TM landing page$", () -> {
             world.UIJourneySteps.submitTMApplicationAndNavigateToTMLandingPage();
@@ -85,6 +86,9 @@ public class VerifySwitchedOff extends BasePage implements En {
           } else {
               world.APIJourneySteps.enableDisableVerify("1");
           }
+        });
+        Then("^the 'Awaiting operator review' verify off page is displayed$", () -> {
+            assertTrue(isTextPresent("Awaiting operator review", 10));
         });
     }
 }

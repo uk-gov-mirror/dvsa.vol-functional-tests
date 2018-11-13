@@ -38,7 +38,7 @@ Feature: Add a director variation
 
   Scenario: No task should be created for removing person
     When i add a director
-     And i remove a director
+    And i remove a director
     Then a task should not be created in internal
 
   Scenario: Task should be created in internal when last TM is removed

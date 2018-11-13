@@ -6,29 +6,27 @@ Feature: TM/operator checks optional wording has been removed for TM details pag
 
   Background:
     Given I have a new application
-    And the transport manager is the operator
+    And i navigate to the transport managers details page
 
-  Scenario Outline: Radio button not clicked
-    Then the optional wording should not be displayed in the "<section>" section
-    And the "<button>" button should not be displayed
+  Scenario: Radio button not clicked
+    Then the optional wording should not be displayed on the page
+      | Other Licences       |
+      | Other Employments    |
+      | previous Convictions |
+      | previous Licences    |
+    And the section buttons should not be displayed
+      | Add other licences            |
+      | Add other employment          |
+      | Add convictions and penalties |
+      | Add licences                  |
 
-    Examples:
-      | section              | button                        |
-      | Other Licences       | Add other licences            |
-      | Other Employments    | Add other employment          |
-      | previous Convictions | Add convictions and penalties |
-      | previous Licences    | Add licences                  |
-
-  Scenario Outline: Radio button clicked
-    When I click the yes radio button for the "<section>" section
-    Then the "<button>" button should be displayed
-
-    Examples:
-      | section              | button                        |
-      | Other Licences       | Add other licences            |
-      | Other Employments    | Add other employment          |
-      | previous Convictions | Add convictions and penalties |
-      | previous Licences    | Add licences                  |
+  Scenario: Radio button clicked
+    When I select yes to all radio buttons
+    Then the section buttons should be displayed
+      | Add other licences            |
+      | Add other employment          |
+      | Add convictions and penalties |
+      | Add licences                  |
 
   Scenario Outline: Check section contains
     When I click on the "<button>" button
@@ -49,4 +47,3 @@ Feature: TM/operator checks optional wording has been removed for TM details pag
   Scenario: validation checks on guidance message
     When I click the no radio button for the "owner/director" question
     Then the guidance text should be displayed
-

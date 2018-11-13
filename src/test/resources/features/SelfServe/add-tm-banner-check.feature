@@ -14,4 +14,3 @@ Feature: Remove reference to TM1 form
   Scenario: Check that link is not displayed on details page
     When i add a new transport manager
     Then the download TM1 for should not be displayed on the details page
-

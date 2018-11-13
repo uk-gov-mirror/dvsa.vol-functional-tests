@@ -1,7 +1,7 @@
 @SS
 @SS-GOODS-VAR-OC-DECREASE-VEHICLE
 @OLCS-20946
-Feature: Goods Variation increase vehicle count for an OC
+Feature: Goods Variation decrease vehicle count for an OC
 
   Background:
     Given i have a valid "goods" licence

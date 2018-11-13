@@ -3,6 +3,7 @@ package org.dvsa.testing.framework.stepdefs;
 import Injectors.World;
 import activesupport.driver.Browser;
 import activesupport.system.Properties;
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -100,7 +101,7 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
         And("^I am the operator and not the transport manager$", () -> {
             world.createLicence.setIsOwner("N");
         });
-        And("^i add an existing person as a transport manger who is not the operator$", () -> {
+        And("^i add an existing person as a transport manager who is not the operator$", () -> {
             world.UIJourneySteps.addInternalAdmin();
             world.UIJourneySteps.addOperatorUserAsTransportManager(1,"No");
         });
@@ -111,7 +112,7 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             clickByLinkText(world.createLicence.getApplicationNumber());
             waitForTextToBePresent("Apply for a new licence");
             clickByLinkText("Transport");
-            clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
+            clickByLinkText(forename + " " + familyName);
             click("form-actions[submit]",SelectorType.ID);
             world.UIJourneySteps.signWithVerify("pavlov","Password1");
         });
@@ -119,9 +120,31 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             waitForTextToBePresent("Review and declarations");
             Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
             Assert.assertTrue(isTextPresent("Review and declarations", 10));
-            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("dd MMM yyyy")),20));
+            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("d MMM yyyy")),20));
         });
         When("^i add an operator as a transport manager$", () -> {
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            world.UIJourneySteps.addOperatorAdminAsTransportManager(1);
+        });
+        When("^i add a new person as a transport manager who is not the operator$", () -> {
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            clickByLinkText("Transport");
+            clickByLinkText("Or add");
+        });
+        When("^i add an external person as a transport manager$", () -> {
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            waitForTextToBePresent("Apply for a new licence");
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            clickByLinkText("Transport");
+            world.UIJourneySteps.addNewPersonAsTransportManager(forename, familyName);
+            world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getExternalTMUser(),world.UIJourneySteps.getExternalTMEmail());
+            waitForTextToBePresent("Open applications");
+            clickByLinkText("Provide details");
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No","No","No","No","No");
+        });
+        And("^i add a transport manager and navigate to the declarations page$", () -> {
             world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
             world.UIJourneySteps.addOperatorAdminAsTransportManager(1);
