@@ -189,11 +189,22 @@ public class APIJourneySteps {
 
     public ValidatableResponse surrenderLicence(String licenceId, String userPid){
         Headers.getHeaders().put("x-pid", userPid);
-        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
+        String surrenderLicence = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
         GenericBuilder genericBuilder = new GenericBuilder().withLicence(licenceId);
-        apiResponse = RestUtils.post(genericBuilder, typeOfLicenceResource, getHeaders());
+        apiResponse = RestUtils.post(genericBuilder, surrenderLicence, getHeaders());
        return apiResponse;
+    }
+
+    public ValidatableResponse updateSurrender (String licenceId, String userPid, String surrenderId){
+        Headers.getHeaders().put("x-pid", userPid);
+        String updateSurrender = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
+
+        GenericBuilder genericBuilder = new GenericBuilder().withLicence(licenceId);
+        genericBuilder.setId(surrenderId);
+        genericBuilder.setDiscStolen("2");
+        apiResponse = RestUtils.put(genericBuilder, updateSurrender, getHeaders());
+        return apiResponse;
     }
 
     public void enableDisableVerify(String toggle){
