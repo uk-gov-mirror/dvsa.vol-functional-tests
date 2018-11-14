@@ -308,6 +308,7 @@ public class UIJourneySteps extends BasePage {
         world.UIJourneySteps.searchAndViewApplication();
         waitForTextToBePresent("Processing");
         clickByLinkText("Processing");
+        waitUntilElementIsEnabled("//body", SelectorType.XPATH);
     }
 
     public void addPreviousConviction() throws IllegalBrowserException {
