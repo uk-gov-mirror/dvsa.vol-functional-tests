@@ -457,9 +457,9 @@ public class UIJourneySteps extends BasePage {
         click("//*[@id='agree']", SelectorType.XPATH);
     }
 
-    public void addNewPersonAsTransportManager(String forename, String familyName) throws IllegalBrowserException {
+    public void addNewPersonAsTransportManager(String forename, String familyName, String emailAddress) throws IllegalBrowserException {
+        this.externalTMEmail = emailAddress;
         externalTMUser = "TM".concat(Str.randomWord(3));
-        externalTMEmail = "tme".concat(Str.randomWord(2)).concat("externalTM@vol.gov");
         waitForTextToBePresent("Transport Managers");
         waitAndClick("//*[@id='add']", SelectorType.XPATH);
         waitForTextToBePresent("Add Transport Manager");

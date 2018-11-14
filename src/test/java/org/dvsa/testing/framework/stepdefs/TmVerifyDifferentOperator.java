@@ -2,6 +2,7 @@ package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
 import activesupport.driver.Browser;
+import activesupport.string.Str;
 import activesupport.system.Properties;
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
@@ -83,11 +84,17 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
         When("^i add a new transport manager$", () -> {
             clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Transport");
-            world.UIJourneySteps.addNewPersonAsTransportManager(forename, familyName);
+            waitForTextToBePresent("Transport Managers");
+            if (isTextPresent("To add a transport manager", 10)) {
+                clickByLinkText("change");
+                waitForTextToBePresent("Applying to change a licence");
+                click("form-actions[submit]", SelectorType.ID);
+            }
+            String emailAddress = "tme".concat(Str.randomWord(2)).concat("externalTM@vol.gov");
+            world.UIJourneySteps.addNewPersonAsTransportManager(forename, familyName, emailAddress);
         });
         Then("^a transport manager has been created banner is displayed$", () -> {
-            assertFalse(isTextPresent("The transport manager's user account has been created and a link sent to them", 30));
-            assertTrue(isTextPresent("The user account has been created and form has been emailed to the transport manager", 30));
+            findElement("//p[@role]",SelectorType.XPATH,10).getText().contains("The transport manager's user account has been created and a link sent to them");
         });
         Then("^the download TM(\\d+) for should not be displayed on the details page$", (Integer arg0) -> {
             waitAndClick("//a[contains(text(),'" + forename + " " + familyName + "')]", SelectorType.XPATH);
@@ -103,49 +110,50 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
         });
         And("^i add an existing person as a transport manager who is not the operator$", () -> {
             world.UIJourneySteps.addInternalAdmin();
-            world.UIJourneySteps.addOperatorUserAsTransportManager(1,"No");
+            world.UIJourneySteps.addOperatorUserAsTransportManager(1, "No");
         });
         And("^the operator countersigns digitally$", () -> {
             waitForTextToBePresent("What happens next?");
             clickByLinkText("Sign out");
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
             waitForTextToBePresent("Apply for a new licence");
             clickByLinkText("Transport");
             clickByLinkText(forename + " " + familyName);
-            click("form-actions[submit]",SelectorType.ID);
-            world.UIJourneySteps.signWithVerify("pavlov","Password1");
+            click("form-actions[submit]", SelectorType.ID);
+            world.UIJourneySteps.signWithVerify("pavlov", "Password1");
         });
         Then("^the 'Review and declarations' post signature page is displayed$", () -> {
             waitForTextToBePresent("Review and declarations");
             Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
             Assert.assertTrue(isTextPresent("Review and declarations", 10));
-            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("d MMM yyyy")),20));
+            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("d MMM yyyy")), 20));
         });
         When("^i add an operator as a transport manager$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
             world.UIJourneySteps.addOperatorAdminAsTransportManager(1);
         });
         When("^i add a new person as a transport manager who is not the operator$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
             clickByLinkText("Transport");
             clickByLinkText("Or add");
         });
         When("^i add an external person as a transport manager$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            String emailAddress = "tme".concat(Str.randomWord(2)).concat("externalTM@vol.gov");
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             waitForTextToBePresent("Apply for a new licence");
             clickByLinkText(world.createLicence.getApplicationNumber());
             clickByLinkText("Transport");
-            world.UIJourneySteps.addNewPersonAsTransportManager(forename, familyName);
-            world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getExternalTMUser(),world.UIJourneySteps.getExternalTMEmail());
+            world.UIJourneySteps.addNewPersonAsTransportManager(forename, familyName,emailAddress);
+            world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getExternalTMUser(), world.UIJourneySteps.getExternalTMEmail());
             waitForTextToBePresent("Open applications");
             clickByLinkText("Provide details");
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No","No","No","No","No");
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
         });
         And("^i add a transport manager and navigate to the declarations page$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
             world.UIJourneySteps.addOperatorAdminAsTransportManager(1);
         });
