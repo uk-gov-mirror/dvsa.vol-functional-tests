@@ -7,6 +7,7 @@ import activesupport.system.Properties;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.Utils.API_Builders.GenericBuilder;
+import org.dvsa.testing.framework.Utils.API_Builders.SurrendersBuilder;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
@@ -191,18 +192,19 @@ public class APIJourneySteps {
         Headers.getHeaders().put("x-pid", userPid);
         String surrenderLicence = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
-        GenericBuilder genericBuilder = new GenericBuilder().withLicence(licenceId);
-        apiResponse = RestUtils.post(genericBuilder, surrenderLicence, getHeaders());
+        SurrendersBuilder surrendersBuilder = new SurrendersBuilder().withLicence(licenceId);
+        apiResponse = RestUtils.post(surrendersBuilder, surrenderLicence, getHeaders());
        return apiResponse;
     }
 
-    public ValidatableResponse updateSurrender (String licenceId, String userPid, String surrenderId){
+    public ValidatableResponse updateSurrender (String licenceId, String userPid, Integer surrenderId){
         Headers.getHeaders().put("x-pid", userPid);
         String updateSurrender = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
         GenericBuilder genericBuilder = new GenericBuilder().withLicence(licenceId);
-        genericBuilder.setId(surrenderId);
+        genericBuilder.setId(surrenderId.toString());
         genericBuilder.setDiscStolen("2");
+        genericBuilder.setVersion(1);
         apiResponse = RestUtils.put(genericBuilder, updateSurrender, getHeaders());
         return apiResponse;
     }

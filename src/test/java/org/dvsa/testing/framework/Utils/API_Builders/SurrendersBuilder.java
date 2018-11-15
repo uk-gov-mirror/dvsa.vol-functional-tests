@@ -1,0 +1,72 @@
+package org.dvsa.testing.framework.Utils.API_Builders;
+
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+        "id",
+        "version",
+        "licenceType",
+        "paramValue",
+        "description",
+        "licence",
+        "discStolen"
+
+})
+
+public class SurrendersBuilder {
+    @JsonProperty("id")
+    private String id;
+    @JsonProperty("licence")
+    private String licence;
+    @JsonProperty("discStolen")
+    private String discStolen;
+
+    public SurrendersBuilder() {
+
+    }
+
+    @JsonProperty("licence")
+    public String getLicence() {
+        return licence;
+    }
+
+    @JsonProperty("licence")
+    public void setLicence(String licence) {
+        this.licence = licence;
+    }
+
+    @JsonProperty("discStolen")
+    public String getDiscStolen() {
+        return discStolen;
+    }
+
+    @JsonProperty("discStolen")
+    public void setDiscStolen(String discStolen) {
+        this.discStolen = discStolen;
+    }
+
+    @JsonProperty("id")
+    public String getId() {
+        return id;
+    }
+
+    @JsonProperty("id")
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public SurrendersBuilder withLicence(String licence) {
+        this.licence = licence;
+        return this;
+    }
+}
+
+
+
+
+
+

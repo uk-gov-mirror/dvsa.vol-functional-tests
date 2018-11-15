@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class Surrenders implements En {
     ValidatableResponse apiResponse;
     private String selfServeUserPid;
-    private String surrenderId;
+    private Integer surrenderId;
 
     public Surrenders(World world) {
         Then("^i can surrender my licence$", () -> {
@@ -22,8 +22,15 @@ public class Surrenders implements En {
             assertTrue(createdMessage.contains("Surrender successfully created"));
             apiResponse.extract().jsonPath().getString("id.surrender");
             assertThat(apiResponse.body("id.surrender", Matchers.isA(Number.class)));
-            this.surrenderId = apiResponse.extract().jsonPath().getString("id.surrender");
+            this.surrenderId = apiResponse.extract().jsonPath().getInt("id.surrender");
             apiResponse.statusCode(HttpStatus.SC_CREATED);
+        });
+        And("^i can update surrender details$", () -> {
+            apiResponse = world.APIJourneySteps.updateSurrender(world.createLicence.getLicenceId(),world.createLicence.getPid(), this.surrenderId);
+            String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
+            assertTrue(createdMessage.contains("Surrender successfully updated"));
+            apiResponse.body("id.surrender", Matchers.equalTo(this.surrenderId));
+            apiResponse.statusCode(HttpStatus.SC_OK);
         });
         And("^i cannot surrender my licence again$", () -> {
             apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(),world.createLicence.getPid());
@@ -47,20 +54,18 @@ public class Surrenders implements En {
                 System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
         });
-        Then("^another user is unable to surrender my licence$", () -> {
+        And("^another user is unable to surrender my licence$", () -> {
             apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(),this.selfServeUserPid);
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
             assertTrue(createdMessage.contains("You do not have access to this resource"));
             apiResponse.statusCode(HttpStatus.SC_FORBIDDEN);
 
         });
-        And("^i can update surrender details$", () -> {
+        And("^another user is unable to update my surrender details$", () -> {
             apiResponse = world.APIJourneySteps.updateSurrender(world.createLicence.getLicenceId(),this.selfServeUserPid, this.surrenderId);
-//            String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
-//            assertTrue(createdMessage.contains("Surrender successfully updated"));
-            System.out.println(apiResponse.extract().response().asString());
-            apiResponse.body("id.surrender", Matchers.equalTo(this.surrenderId));
-            apiResponse.statusCode(HttpStatus.SC_OK);
+            String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
+            assertTrue(createdMessage.contains("You do not have access to this resource"));
+            apiResponse.statusCode(HttpStatus.SC_FORBIDDEN);
         });
     }
 }
