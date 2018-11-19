@@ -9,8 +9,8 @@ Feature: Surrenders toggle switched off
     When i have a valid "public" licence
 
   Scenario: As an internal user I am unable to use any surrender feature
-    Then i cannot surrender a licence
-    Then i cannot update a surrender
-    Then i cannot delete a surrender
+    Then as "internal" user I cannot surrender a licence
+    Then as "internal" user I cannot update a surrender
+    Then as "internal" user I cannot delete a surrender
 
 

@@ -20,8 +20,28 @@ public class Surrenders implements En {
     private Integer surrenderId;
 
     public Surrenders(World world) {
-        Then("^i can surrender my licence$", () -> {
-        apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(),world.createLicence.getPid());
+        Given("^surrenders has been switched \"([^\"]*)\"$", (String toggle) -> {
+            HashMap<String, String> params = new HashMap<String, String>();
+            String status;
+            if (toggle.toLowerCase().equals("off")) {
+                status = "inactive";
+            } else if (toggle.toLowerCase().equals("on")) {
+                status = "always-active";
+            }
+            params.put("id", FeatureToggleBuilder.BACKEND_SURRENDER);
+            params.put("friendlyName","Backend Surrender");
+            params.put("configName","back_surrender");
+            params.put("status",status);
+            apiResponse = world.APIJourneySteps.updateFeatureToggle(params);
+        });
+        Then("^as \"([^\"]*)\" user I can surrender a licence$", (String userType) -> {
+            String pid;
+            if(userType.equals("selfserve")){
+                pid = world.createLicence.getPid();
+            } else if(userType.equals("internal")) {
+                pid = UpdateLicenceAPI.getInternalAdminHeader();
+            }
+            apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(),pid);
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
             assertTrue(createdMessage.contains("Surrender successfully created"));
             apiResponse.extract().jsonPath().getString("id.surrender");
@@ -29,15 +49,27 @@ public class Surrenders implements En {
             this.surrenderId = apiResponse.extract().jsonPath().getInt("id.surrender");
             apiResponse.statusCode(HttpStatus.SC_CREATED);
         });
-        And("^i can update surrender details$", () -> {
-            apiResponse = world.APIJourneySteps.updateSurrender(world.createLicence.getLicenceId(),world.createLicence.getPid(), this.surrenderId);
+        And("^as \"([^\"]*)\" user I can update surrender details$", (String userType) -> {
+            String pid;
+            if(userType.equals("selfserve")){
+                pid = world.createLicence.getPid();
+            } else if(userType.equals("internal")) {
+                pid = UpdateLicenceAPI.getInternalAdminHeader();
+            }
+            apiResponse = world.APIJourneySteps.updateSurrender(world.createLicence.getLicenceId(),pid, this.surrenderId);
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
             assertTrue(createdMessage.contains("Surrender successfully updated"));
             apiResponse.body("id.surrender", Matchers.equalTo(this.surrenderId));
             apiResponse.statusCode(HttpStatus.SC_OK);
         });
-        And("^i cannot surrender my licence again$", () -> {
-            apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(),world.createLicence.getPid());
+        And("^as \"([^\"]*)\" user I cannot surrender a licence again$", (String userType) -> {
+            String pid;
+            if(userType.equals("selfserve")){
+                pid = world.createLicence.getPid();
+            } else if(userType.equals("internal")) {
+                pid = UpdateLicenceAPI.getInternalAdminHeader();
+            }
+            apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(),pid);
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
             assertTrue(createdMessage.contains("A surrender record already exists for this licence"));
             apiResponse.statusCode(HttpStatus.SC_FORBIDDEN);
@@ -57,7 +89,7 @@ public class Surrenders implements En {
                 world.APIJourneySteps.grantLicence().payGrantFees();
                 System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
-        });
+        });  
         And("^another user is unable to surrender my licence$", () -> {
             apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(),this.selfServeUserPid);
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
@@ -71,77 +103,32 @@ public class Surrenders implements En {
             assertTrue(createdMessage.contains("You do not have access to this resource"));
             apiResponse.statusCode(HttpStatus.SC_FORBIDDEN);
         });
-        Given("^surrenders has been switched \"([^\"]*)\"$", (String arg0) -> {
-            HashMap<String, String> params = new HashMap<String, String>();
-            String status = "always-active";
-
-            if (arg0.toLowerCase().equals("off")){
-                status = "inactive";
-            }
-
-            params.put("id", FeatureToggleBuilder.BACKEND_SURRENDER);
-            params.put("friendlyName","Backend Surrender");
-            params.put("configName","back_surrender");
-            params.put("status",status);
-            apiResponse = world.APIJourneySteps.updateFeatureToggle(params);
-
-
-        });
-        Then("^i cannot surrender my licence$", () -> {
-            apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(),world.createLicence.getPid());
-            String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
-            assertTrue(createdMessage.contains("Handler Dvsa\\Olcs\\Api\\Domain\\CommandHandler\\Surrender\\Create is currently disabled via feature toggle"));
-            apiResponse.statusCode(HttpStatus.SC_BAD_REQUEST);
-        });
-        Then("^i cannot update my surrender$", () -> {
-            apiResponse = world.APIJourneySteps.updateSurrender(world.createLicence.getLicenceId(),world.createLicence.getPid(),1);
-            String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
-            assertTrue(createdMessage.contains("Handler Dvsa\\Olcs\\Api\\Domain\\CommandHandler\\Surrender\\Update is currently disabled via feature toggle"));
-            apiResponse.statusCode(HttpStatus.SC_BAD_REQUEST);
-
-        });
-        Then("^as an internal user i can surrender a licence", () -> {
-            apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(), UpdateLicenceAPI.getInternalAdminHeader());
-            String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
-            assertTrue(createdMessage.contains("Surrender successfully created"));
-            apiResponse.extract().jsonPath().getString("id.surrender");
-            assertThat(apiResponse.body("id.surrender", Matchers.isA(Number.class)));
-            this.surrenderId = apiResponse.extract().jsonPath().getInt("id.surrender");
-            apiResponse.statusCode(HttpStatus.SC_CREATED);
-        });
-        And("^as an internal user i can update a surrender$", () -> {
-            apiResponse = world.APIJourneySteps.updateSurrender(world.createLicence.getLicenceId(),UpdateLicenceAPI.getInternalAdminHeader(), this.surrenderId);
-            String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
-            assertTrue(createdMessage.contains("Surrender successfully updated"));
-            apiResponse.body("id.surrender", Matchers.equalTo(this.surrenderId));
-            apiResponse.statusCode(HttpStatus.SC_OK);
-        });
-        And("^as an internal user i can delete a surrender$", () -> {
+        And("^as internal user i can delete a surrender$", () -> {
             apiResponse = world.APIJourneySteps.deleteSurrender(world.createLicence.getLicenceId(),UpdateLicenceAPI.getInternalAdminHeader(), this.surrenderId);
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
             assertTrue(createdMessage.toLowerCase().contains("id ".concat(this.surrenderId.toString()).concat(" deleted")));
             apiResponse.body("id.id".concat(this.surrenderId.toString()) , Matchers.equalTo(this.surrenderId.toString()));
             apiResponse.statusCode(HttpStatus.SC_OK);
         });
-        And("^i cannot delete my surrender$", () -> {
+        And("^as selfserve user I cannot delete my surrender$", () -> {
             apiResponse = world.APIJourneySteps.deleteSurrender(world.createLicence.getLicenceId(),world.createLicence.getPid(), this.surrenderId);
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
             assertTrue(createdMessage.contains("You do not have access to this resource"));
             apiResponse.statusCode(HttpStatus.SC_FORBIDDEN);
         });
-        Then("^i cannot surrender a licence$", () -> {
+        Then("^as \"([^\"]*)\" user I cannot surrender a licence$", (String userType) -> {
             apiResponse = world.APIJourneySteps.surrenderLicence(world.createLicence.getLicenceId(),UpdateLicenceAPI.getInternalAdminHeader());
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
             assertTrue(createdMessage.contains("Handler Dvsa\\Olcs\\Api\\Domain\\CommandHandler\\Surrender\\Create is currently disabled via feature toggle"));
             apiResponse.statusCode(HttpStatus.SC_BAD_REQUEST);
         });
-        Then("^i cannot update a surrender$", () -> {
+        Then("^as \"([^\"]*)\" user I cannot update a surrender$", (String userType) -> {
             apiResponse = world.APIJourneySteps.updateSurrender(world.createLicence.getLicenceId(),UpdateLicenceAPI.getInternalAdminHeader(),1);
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
             assertTrue(createdMessage.contains("Handler Dvsa\\Olcs\\Api\\Domain\\CommandHandler\\Surrender\\Update is currently disabled via feature toggle"));
             apiResponse.statusCode(HttpStatus.SC_BAD_REQUEST);
         });
-        Then("^i cannot delete a surrender$", () -> {
+        Then("^as \"([^\"]*)\" user I cannot delete a surrender$", (String userType) -> {
             apiResponse = world.APIJourneySteps.deleteSurrender(world.createLicence.getLicenceId(),UpdateLicenceAPI.getInternalAdminHeader(),1);
             String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
             assertTrue(createdMessage.contains("Handler Dvsa\\Olcs\\Api\\Domain\\CommandHandler\\Surrender\\Delete is currently disabled via feature toggle"));

@@ -6,6 +6,7 @@
       Given i have a valid "public" licence
 
       Scenario: internal user can create, update and delete a licence surrender
-        Then as an internal user i can surrender a licence
-        And as an internal user i can update a surrender
-        And as an internal user i can delete a surrender
+        Then as "internal" user I can surrender a licence
+        And as "internal" user I can update surrender details
+        And as "internal" user I cannot surrender a licence again
+        And as internal user i can delete a surrender
