@@ -8,8 +8,8 @@ Feature: Surrenders toggle switched off
     When i have a valid "public" licence
 
   Scenario: I am unable to use any surrender feature
-    Then as "selfserve" user I cannot surrender my licence
-    Then as "selfserve" user I cannot update my surrender
+    Then as "selfserve" user I cannot surrender a licence
+    Then as "selfserve" user I cannot update a surrender
 
 
 

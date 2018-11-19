@@ -22,7 +22,7 @@ public class Surrenders implements En {
     public Surrenders(World world) {
         Given("^surrenders has been switched \"([^\"]*)\"$", (String toggle) -> {
             HashMap<String, String> params = new HashMap<String, String>();
-            String status;
+            String status = "";
             if (toggle.toLowerCase().equals("off")) {
                 status = "inactive";
             } else if (toggle.toLowerCase().equals("on")) {
@@ -35,7 +35,7 @@ public class Surrenders implements En {
             apiResponse = world.APIJourneySteps.updateFeatureToggle(params);
         });
         Then("^as \"([^\"]*)\" user I can surrender a licence$", (String userType) -> {
-            String pid;
+            String pid = "";
             if(userType.equals("selfserve")){
                 pid = world.createLicence.getPid();
             } else if(userType.equals("internal")) {
@@ -50,7 +50,7 @@ public class Surrenders implements En {
             apiResponse.statusCode(HttpStatus.SC_CREATED);
         });
         And("^as \"([^\"]*)\" user I can update surrender details$", (String userType) -> {
-            String pid;
+            String pid = "";
             if(userType.equals("selfserve")){
                 pid = world.createLicence.getPid();
             } else if(userType.equals("internal")) {
@@ -63,7 +63,7 @@ public class Surrenders implements En {
             apiResponse.statusCode(HttpStatus.SC_OK);
         });
         And("^as \"([^\"]*)\" user I cannot surrender a licence again$", (String userType) -> {
-            String pid;
+            String pid = "";
             if(userType.equals("selfserve")){
                 pid = world.createLicence.getPid();
             } else if(userType.equals("internal")) {
