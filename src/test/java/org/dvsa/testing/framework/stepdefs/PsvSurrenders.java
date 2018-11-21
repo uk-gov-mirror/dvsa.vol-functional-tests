@@ -15,7 +15,7 @@ public class PsvSurrenders extends BasePage implements En {
             world.UIJourneySteps.navigateToSurrendersStartPage();
         });
         When("^i am on the review contact details page$", () -> {
-            click("//*[contains(text(),'Start now')]", SelectorType.XPATH);
+            click("//*[@id='submit']", SelectorType.XPATH);
             waitForTextToBePresent("Review your contact information");
         });
 
@@ -39,15 +39,15 @@ public class PsvSurrenders extends BasePage implements En {
         });
         And("^i update my correspondence address$", () -> {
             this.town = "Leicester";
-            click("//*[@class='govuk-heading-m'][2]/span/a", SelectorType.XPATH);
-            waitForTextToBePresent("Change address details");
-            findElement("address-town", SelectorType.ID,5).clear();
-            enterText("address-town",this.town,SelectorType.ID);
-            click("//*[contains(text(),'Continue')]",SelectorType.XPATH);
+            click("//a[contains(text(),'Change')][1]", SelectorType.XPATH);
+            waitForTextToBePresent("Addresses");
+            findElement("addressTown", SelectorType.ID,5).clear();
+            enterText("addressTown",this.town,SelectorType.ID);
+            click("//*[@id='form-actions[save]']",SelectorType.XPATH);
             waitForTextToBePresent("Review your contact information");
         });
         Then("^the new correspondence details should be displayed on the review page$", () -> {
-            String licenceTown = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][3]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+            String licenceTown = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
             Assert.assertEquals(this.town,licenceTown);
         });
     }

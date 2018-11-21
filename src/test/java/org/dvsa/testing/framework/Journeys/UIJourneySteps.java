@@ -645,6 +645,5 @@ public class UIJourneySteps extends BasePage {
         clickByLinkText(world.createLicence.getLicenceNumber());
         waitForTextToBePresent("Summary");
         clickByLinkText("Apply to");
-        waitForTextToBePresent("Apply to surrender your licence");
     }
 }
