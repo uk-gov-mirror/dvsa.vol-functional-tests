@@ -4,12 +4,9 @@ import Injectors.World;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
-import org.dvsa.testing.framework.Utils.API_Builders.FeatureToggleBuilder;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.UpdateLicenceAPI;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.hamcrest.Matchers;
-
-import java.util.HashMap;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,18 +18,13 @@ public class Surrenders implements En {
 
     public Surrenders(World world) {
         Given("^surrenders has been switched \"([^\"]*)\"$", (String toggle) -> {
-            HashMap<String, String> params = new HashMap<String, String>();
             String status = "";
             if (toggle.toLowerCase().equals("off")) {
                 status = "inactive";
             } else if (toggle.toLowerCase().equals("on")) {
                 status = "always-active";
             }
-            params.put("id", FeatureToggleBuilder.BACKEND_SURRENDER);
-            params.put("friendlyName","Backend Surrender");
-            params.put("configName","back_surrender");
-            params.put("status",status);
-            apiResponse = world.APIJourneySteps.updateFeatureToggle(params);
+            world.APIJourneySteps.updateFeatureToggle("15","Backend Surrender","back_surrender",status);
         });
         Then("^as \"([^\"]*)\" user I can surrender a licence$", (String userType) -> {
             String pid = "";

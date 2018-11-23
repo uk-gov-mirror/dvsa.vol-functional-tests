@@ -4,17 +4,16 @@ package org.dvsa.testing.framework.Utils.API_Builders;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.junit.platform.commons.util.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "id",
-        "version",
-        "licenceType",
         "paramValue",
-        "description",
         "licence",
-        "discStolen"
-
+        "discStolen",
+        "version"
 })
 
 public class SurrendersBuilder {
@@ -24,6 +23,10 @@ public class SurrendersBuilder {
     private String licence;
     @JsonProperty("discStolen")
     private String discStolen;
+    @JsonProperty("paramValue")
+    private String paramValue;
+    @JsonProperty("version")
+    private int version;
 
     public SurrendersBuilder() {
 
@@ -63,10 +66,45 @@ public class SurrendersBuilder {
         this.licence = licence;
         return this;
     }
+
+    @JsonProperty("paramValue")
+    public String getParamValue() {
+        return paramValue;
+    }
+
+    @JsonProperty("paramValue")
+    public void setParamValue(String paramValue) {
+        this.paramValue = paramValue;
+    }
+
+    public SurrendersBuilder withParamValue(String paramValue) {
+        this.paramValue = paramValue;
+        return this;
+    }
+
+    @JsonProperty("version")
+    public int getVersion() {
+        return version;
+    }
+
+    @JsonProperty("version")
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public SurrendersBuilder withVersion(int version) {
+        this.version = version;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(ToStringStyle.JSON_STYLE)
+                .append("id",getId())
+                .append("paramValue",getParamValue())
+                .append("discStolen",getDiscStolen())
+                .append("licence",getLicence())
+                .append("version",getVersion())
+                .toString();
+    }
 }
-
-
-
-
-
-

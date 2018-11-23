@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "paramValue",
         "description",
         "licence",
-        "discStolen"
+
 })
 public class GenericBuilder {
 
@@ -30,8 +30,6 @@ public class GenericBuilder {
     private String description;
     @JsonProperty("licence")
     private String licence;
-    @JsonProperty("discStolen")
-    private String discStolen;
 
     public GenericBuilder() {
     }
@@ -43,15 +41,6 @@ public class GenericBuilder {
     @JsonProperty("licence")
     public void setLicence(String licence) {
         this.licence = licence;
-    }
-
-    @JsonProperty("discStolen")
-    public String getDiscStolen() {
-        return discStolen;
-    }
-    @JsonProperty("discStolen")
-    public void setDiscStolen(String discStolen) {
-        this.discStolen = discStolen;
     }
 
     @JsonProperty("id")
@@ -149,8 +138,6 @@ public class GenericBuilder {
         this.description = description;
         return this;
     }
-
-
     @Override
     public String toString() {
         return "id" + getId() + ",version:" + getVersion() + ",licenceType:" + getLicenceType() + ",registeredAddress:" + getAddress()

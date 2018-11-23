@@ -13,10 +13,8 @@ import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.GrantLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
-import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
-import java.util.Map;
 
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 
@@ -204,11 +202,11 @@ public class APIJourneySteps {
         Headers.getHeaders().put("x-pid", userPid);
         String updateSurrender = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
-        GenericBuilder genericBuilder = new GenericBuilder().withLicence(licenceId);
-        genericBuilder.setId(surrenderId.toString());
-        genericBuilder.setDiscStolen("2");
-        genericBuilder.setVersion(1);
-        apiResponse = RestUtils.put(genericBuilder, updateSurrender, getHeaders());
+        SurrendersBuilder surrendersBuilder = new SurrendersBuilder().withLicence(licenceId);
+        surrendersBuilder.setId(surrenderId.toString());
+        surrendersBuilder.setDiscStolen("2");
+        surrendersBuilder.setVersion(1);
+        apiResponse = RestUtils.put(surrendersBuilder, updateSurrender, getHeaders());
         return apiResponse;
     }
 
@@ -230,25 +228,20 @@ public class APIJourneySteps {
 
         GenericBuilder genericBuilder = new GenericBuilder().withId("DISABLE_GDS_VERIFY_SIGNATURES").withParamValue(toggle).
                 withDescription("Disable GDS verify digital signature functionality");
+
         apiResponse = RestUtils.put(genericBuilder, enableDisableVerifyResource, getHeaders());
         apiResponse.statusCode(HttpStatus.SC_OK);
     }
 
-    public ValidatableResponse updateFeatureToggle(@NotNull Map<String, String> params) {
+    public void updateFeatureToggle(String id, String friendlyName, String configName, String status) {
         Headers.getHeaders().put("x-pid", adminApiHeader());
-        String updateFeatureToggleResource = org.dvsa.testing.lib.url.api.URL.build(env, "feature-toggle/".concat(params.get("id"))).toString();
+        String updateFeatureToggleResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("feature-toggle/%s/",id)).toString();
 
-        FeatureToggleBuilder featureToggleBuilder = new FeatureToggleBuilder();
-        featureToggleBuilder.setId(params.get("id"));
-        featureToggleBuilder.setFriendlyName(params.get("friendlyName"));
-        featureToggleBuilder.setConfigName(params.get("configName"));
-        featureToggleBuilder.setStatus(params.get("status"));
+        FeatureToggleBuilder featureToggleBuilder = new FeatureToggleBuilder().withId(id).withFriendlyName(friendlyName).withConfigName(configName)
+                .withStatus(status);
 
         apiResponse = RestUtils.put(featureToggleBuilder, updateFeatureToggleResource, getHeaders());
         apiResponse.statusCode(HttpStatus.SC_OK);
-
-        return apiResponse;
-
     }
 
 
