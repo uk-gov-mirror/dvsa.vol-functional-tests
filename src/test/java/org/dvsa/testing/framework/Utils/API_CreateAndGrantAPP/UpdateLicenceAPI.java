@@ -28,7 +28,7 @@ public class UpdateLicenceAPI extends BasePage {
     private int caseId;
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
     public String adminUserLogin = String.format("volAdminUser" + "%s", Str.randomWord(3));
-    private String internalAdminHeader = "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
+    private static String internalAdminHeader = "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
     private String adminUserId;
 
     public String getVariationApplicationNumber() {
@@ -111,6 +111,9 @@ public class UpdateLicenceAPI extends BasePage {
 
     private static int version = 1;
 
+    public static String getInternalAdminHeader() {
+        return internalAdminHeader;
+    }
 
     private static EnvironmentType env;
 
