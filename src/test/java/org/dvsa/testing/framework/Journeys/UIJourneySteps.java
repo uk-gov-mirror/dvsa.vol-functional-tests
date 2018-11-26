@@ -431,12 +431,6 @@ public class UIJourneySteps extends BasePage {
 
     public void signWithVerify(String username, String password) throws IllegalBrowserException {
         setVerifyUsername(username);
-        click("//*[contains(text(),'Sign your declaration online')]", SelectorType.XPATH);
-        if(isTextPresent("Review and declarations",10)) {
-            click("//*[@name='form-actions[sign]']", SelectorType.XPATH);
-        }else if (isTextPresent("Declaration",10)) {
-            click("//*[@name='form-actions[submit]']", SelectorType.XPATH);
-        }
         waitForTextToBePresent("Sign in with GOV.UK Verify");
         click("//*[@id='start_form_selection_false']", SelectorType.XPATH);
         click("//*[@id='next-button']", SelectorType.XPATH);
@@ -646,5 +640,14 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Summary");
         clickByLinkText("Apply to");
         waitForTextToBePresent("Apply to surrender your licence");
+    }
+
+    public void signDeclaration() throws IllegalBrowserException {
+        waitAndClick("//*[contains(text(),'Sign your declaration online')]", SelectorType.XPATH);
+        if(isTextPresent("Review and declarations",10)) {
+            click("//*[@name='form-actions[sign]']", SelectorType.XPATH);
+        }else if (isTextPresent("Declaration",10)) {
+            click("//*[@name='form-actions[submit]']", SelectorType.XPATH);
+        }
     }
 }

@@ -3,6 +3,7 @@ package org.dvsa.testing.framework.stepdefs;
 import Injectors.World;
 import activesupport.driver.Browser;
 import activesupport.system.Properties;
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -94,37 +95,41 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             assertFalse(isTextPresent("Alternatively they can download a TM1 form (PDF 150KB).", 30));
             assertFalse(isLinkPresent("download a TM1 form (PDF 150KB).", 30));
         });
-        And("^the users chooses to sign print and sign$", () -> {
+        And("^the user chooses to print and sign$", () -> {
             click("//*[contains(text(),'Print')]", SelectorType.XPATH);
         });
         And("^I am the operator and not the transport manager$", () -> {
             world.createLicence.setIsOwner("N");
         });
-        And("^i add an existing person as a transport manger who is not the operator$", () -> {
+        And("^i add an existing person as a transport manager who is not the operator$", () -> {
             world.UIJourneySteps.addInternalAdmin();
-            world.UIJourneySteps.addOperatorUserAsTransportManager(1,"No");
+            world.UIJourneySteps.addOperatorUserAsTransportManager(1, "No");
         });
         And("^the operator countersigns digitally$", () -> {
             waitForTextToBePresent("What happens next?");
             clickByLinkText("Sign out");
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
             waitForTextToBePresent("Apply for a new licence");
             clickByLinkText("Transport");
             clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
-            click("form-actions[submit]",SelectorType.ID);
-            world.UIJourneySteps.signWithVerify("pavlov","Password1");
+            click("form-actions[submit]", SelectorType.ID);
+            world.UIJourneySteps.signDeclaration();
+            world.UIJourneySteps.signWithVerify("pavlov", "Password1");
         });
         Then("^the 'Review and declarations' post signature page is displayed$", () -> {
             waitForTextToBePresent("Review and declarations");
             Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
             Assert.assertTrue(isTextPresent("Review and declarations", 10));
-            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("dd MMM yyyy")),20));
+            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("dd MMM yyyy")), 20));
         });
         When("^i add an operator as a transport manager$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
             world.UIJourneySteps.addOperatorAdminAsTransportManager(1);
+        });
+        And("^i sign the declaration$", () -> {
+            world.UIJourneySteps.signDeclaration();
         });
     }
 

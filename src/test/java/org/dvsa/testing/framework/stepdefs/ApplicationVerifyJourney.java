@@ -3,6 +3,7 @@ package org.dvsa.testing.framework.stepdefs;
 import Injectors.World;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,6 +14,7 @@ public class ApplicationVerifyJourney extends BasePage implements En {
             world.APIJourneySteps.createApplication();
             world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             world.UIJourneySteps.navigateToApplicationReviewDeclarationsPage();
+            world.UIJourneySteps.signDeclaration();
         });
         When("^i choose to sign with verify with \"([^\"]*)\"$", (String arg0) -> {
             world.UIJourneySteps.signWithVerify(arg0,"Password1");
