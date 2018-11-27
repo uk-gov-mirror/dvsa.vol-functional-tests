@@ -3,6 +3,8 @@ package org.dvsa.testing.framework.Utils.API_Builders;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.junit.platform.commons.util.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -111,9 +113,14 @@ public class AddressBuilder {
     }
 
     @Override
-    public String toString(){
-        return "version:" + getVersion() +
-        ",addressLine1:" + getAddressLine1() + ",addressLine2:" + getAddressLine2()
-                + ",town:" + getTown() + ",postcode:" + getPostcode() + ",countryCode:"+getCountryCode();
+    public String toString() {
+        return new ToStringBuilder(ToStringStyle.JSON_STYLE)
+                .append("version:", getVersion())
+                .append("addressLine1", getAddressLine1())
+                .append("addressLine2", getAddressLine2())
+                .append("town", getTown())
+                .append("postcode", getPostcode())
+                .append("countryCode", getCountryCode())
+                .toString();
     }
 }

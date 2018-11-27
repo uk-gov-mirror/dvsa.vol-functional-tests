@@ -1,14 +1,18 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.junit.Assert;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
+
 public class PsvSurrenders extends BasePage implements En {
     private String town;
-    private String phoneNumber;
 
     public PsvSurrenders(World world) {
         And("^i choose to surrender my licence$", () -> {
@@ -49,6 +53,29 @@ public class PsvSurrenders extends BasePage implements En {
         Then("^the new correspondence details should be displayed on the review page$", () -> {
             String licenceTown = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][3]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
             Assert.assertEquals(this.town,licenceTown);
+        });
+        And("^i surrender my licence$", () -> {
+            //add steps to surrender a licence
+            //TODO world.UIJourneySteps.surrenderLicence();
+
+        });
+        Given("^i sign with verify$", () -> {
+            //TODO
+//            waitAndClick("//*[id='I agree-continue']",SelectorType.XPATH);
+            world.UIJourneySteps.signWithVerify("pavlov","Password1");
+        });
+        Then("^the post verify success page is displayed$", () -> {
+            waitForTextToBePresent("What happen next");
+            Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
+            Assert.assertTrue(isTextPresent(String.format("Application to surrender licence %s", world.createLicence.getLicenceNumber()),10));
+            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("dd MMM yyyy")), 20));
+            waitAndClick("//*[@id='return']",SelectorType.ID);
+        });
+        And("^the surrender status is \"([^\"]*)\"$", (String status) -> {
+            waitForTextToBePresent("Current licences");
+            //TODO check for label belonging to licence
+//            String surrenderStatus = status;
+//            assertEquals(SurrenderStatus,getText());
         });
     }
 }

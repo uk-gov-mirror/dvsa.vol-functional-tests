@@ -1,4 +1,4 @@
-#OLCS-21939
+@OLCS-21939
 Feature:Digital Surrender - PSV Surrender licence
 
   Background:
@@ -11,8 +11,8 @@ Feature:Digital Surrender - PSV Surrender licence
     And the correct correspondence details should be displayed
     And the correct contact details should be displayed
 
-    Scenario: Update correspondence details
-      And i update my correspondence address
-      Then the new correspondence details should be displayed on the review page
+  Scenario: Update correspondence details
+    And i update my correspondence address
+    Then the new correspondence details should be displayed on the review page
 
 

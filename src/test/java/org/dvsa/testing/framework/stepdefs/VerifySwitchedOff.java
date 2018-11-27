@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 public class VerifySwitchedOff extends BasePage implements En {
 
     public VerifySwitchedOff(World world) {
-        Given("^I have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String arg0, String arg1) -> {
+        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String arg0, String arg1) -> {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(arg0);
             if (arg1.equals("NI")) {
