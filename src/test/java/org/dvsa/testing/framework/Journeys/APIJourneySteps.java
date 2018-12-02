@@ -61,6 +61,7 @@ public class APIJourneySteps {
     }
 
     private String businessType;
+
     public String getGoodOrPsv() {
         return goodOrPsv;
     }
@@ -160,7 +161,9 @@ public class APIJourneySteps {
         setBusinessType(apiResponse.extract().jsonPath().getString("organisation.type.description"));
         return businessType;
 
-    }  public String getLicenceTypeDetails() {
+    }
+
+    public String getLicenceTypeDetails() {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
@@ -181,7 +184,7 @@ public class APIJourneySteps {
     }
 
     public void updateLicenceStatus(String licenceId, String status) {
-        Headers.getHeaders().put("x-pid",adminApiHeader());
+        Headers.getHeaders().put("x-pid", adminApiHeader());
         String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/%s", licenceId, status)).toString();
 
         GenericBuilder genericBuilder = new GenericBuilder().withId(licenceId);
@@ -189,16 +192,23 @@ public class APIJourneySteps {
         apiResponse.statusCode(HttpStatus.SC_CREATED);
     }
 
-    public ValidatableResponse surrenderLicence(String licenceId, String userPid){
+    public ValidatableResponse surrenderLicence(String licenceId, String userPid) {
         Headers.getHeaders().put("x-pid", userPid);
         String surrenderLicence = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
-        SurrendersBuilder surrendersBuilder = new SurrendersBuilder().withLicence(licenceId);
+        SurrendersBuilder surrendersBuilder = new SurrendersBuilder().withId(licenceId);
         apiResponse = RestUtils.post(surrendersBuilder, surrenderLicence, getHeaders());
-       return apiResponse;
+        return apiResponse;
     }
 
-    public ValidatableResponse updateSurrender (String licenceId, String userPid, Integer surrenderId){
+    public ValidatableResponse querySurrender(String licenceId, String userPid) {
+        Headers.getHeaders().put("x-pid", userPid);
+        String surrenderEndpoint = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
+        apiResponse = RestUtils.get(surrenderEndpoint, getHeaders());
+        return apiResponse;
+    }
+
+    public ValidatableResponse updateSurrender(String licenceId, String userPid, Integer surrenderId) {
         Headers.getHeaders().put("x-pid", userPid);
         String updateSurrender = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
@@ -210,7 +220,7 @@ public class APIJourneySteps {
         return apiResponse;
     }
 
-    public ValidatableResponse deleteSurrender (String licenceId, String userPid, Integer surrenderId){
+    public ValidatableResponse deleteSurrender(String licenceId, String userPid, Integer surrenderId) {
         Headers.getHeaders().put("x-pid", userPid);
         String deleteSurrender = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
@@ -222,7 +232,7 @@ public class APIJourneySteps {
     }
 
 
-    public void enableDisableVerify(String toggle){
+    public void enableDisableVerify(String toggle) {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String enableDisableVerifyResource = org.dvsa.testing.lib.url.api.URL.build(env, "system-parameter/DISABLE_GDS_VERIFY_SIGNATURES/").toString();
 
@@ -235,7 +245,7 @@ public class APIJourneySteps {
 
     public void updateFeatureToggle(String id, String friendlyName, String configName, String status) {
         Headers.getHeaders().put("x-pid", adminApiHeader());
-        String updateFeatureToggleResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("feature-toggle/%s/",id)).toString();
+        String updateFeatureToggleResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("feature-toggle/%s/", id)).toString();
 
         FeatureToggleBuilder featureToggleBuilder = new FeatureToggleBuilder().withId(id).withFriendlyName(friendlyName).withConfigName(configName)
                 .withStatus(status);
@@ -249,8 +259,8 @@ public class APIJourneySteps {
         return new GrantLicenceAPI(world);
     }
 
-    public void createApplication(){
-        if(world.createLicence.getApplicationNumber() == null) {
+    public void createApplication() {
+        if (world.createLicence.getApplicationNumber() == null) {
             world.createLicence.registerUser();
             world.createLicence.getUserDetails();
             world.createLicence.createApplication();
@@ -277,7 +287,7 @@ public class APIJourneySteps {
         }
     }
 
-    public void createSpecialRestrictedLicence(){
+    public void createSpecialRestrictedLicence() {
         world.createLicence.registerUser();
         world.createLicence.getUserDetails();
         world.createLicence.createApplication();
@@ -290,7 +300,7 @@ public class APIJourneySteps {
         world.createLicence.getApplicationLicenceDetails();
     }
 
-    public void createAndSubmitApplication(){
+    public void createAndSubmitApplication() {
         createApplication();
         world.createLicence.submitApplication();
         world.createLicence.getApplicationLicenceDetails();
@@ -309,7 +319,7 @@ public class APIJourneySteps {
         world.createLicence.addFinancialEvidence();
     }
 
-    public static String adminApiHeader(){
+    public static String adminApiHeader() {
         return "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
     }
 }

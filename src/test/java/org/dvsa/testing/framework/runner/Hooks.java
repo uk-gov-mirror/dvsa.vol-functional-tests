@@ -28,6 +28,7 @@ public class Hooks {
         }
     }
 
+
     @Attachment(value = "Screenshot on failure", type = "image/png")
     public byte[] attach() {
         createDirectory();

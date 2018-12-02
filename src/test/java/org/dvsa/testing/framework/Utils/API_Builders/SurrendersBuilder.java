@@ -67,6 +67,11 @@ public class SurrendersBuilder {
         return this;
     }
 
+    public SurrendersBuilder withId(String id) {
+        this.id = id;
+        return this;
+    }
+
     @JsonProperty("paramValue")
     public String getParamValue() {
         return paramValue;
