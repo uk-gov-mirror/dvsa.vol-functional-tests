@@ -4,6 +4,7 @@ import Injectors.World;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
+import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.UpdateLicenceAPI;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.hamcrest.Matchers;
@@ -144,9 +145,9 @@ public class Surrenders implements En {
                     "discDestroyed.find()", Matchers.nullValue(),
                     "discLost.find()",Matchers.nullValue(),
                     "discLostInfo.find()",Matchers.nullValue(),
-                    "discStolen.find()",Matchers.nullValue(),
+                    "discStolen.find()",Matchers.equalTo(2),
                     "discStolenInfo.find()",Matchers.nullValue(),
-                    "licence.find()", Matchers.notNullValue()
+                    "licence.findAll()", Matchers.notNullValue()
             ));
 
 
@@ -159,7 +160,27 @@ public class Surrenders implements En {
             assertFalse(disableSignatures);
 
         });
+        Then("^updated surrender details should be returned$", () -> {
 
+            assertThat(apiResponse.body(
+                    "communityLicenceDocumentStatus.find()", Matchers.nullValue(),
+                    "digitalSignature.find()", Matchers.nullValue(),
+                    "discDestroyed.find()", Matchers.nullValue(),
+                    "discLost.find()",Matchers.nullValue(),
+                    "discLostInfo.find()",Matchers.nullValue(),
+                    "discStolen.find()",Matchers.equalTo(2),
+                    "discStolenInfo.find()",Matchers.nullValue(),
+                    "licence.findAll()", Matchers.notNullValue()
+            ));
+        });
+        And("^another user is unable to get details of my surrendered licence$", () -> {
+            String licence = world.createLicence.getLicenceId();
+            apiResponse = world.APIJourneySteps.querySurrender(licence, this.selfServeUserPid);
+            String Message = apiResponse.extract().jsonPath().getString("messages[0]");
+            assertTrue(Message.contains("You do not have access to this resource"));
+            apiResponse.statusCode(HttpStatus.SC_FORBIDDEN);
+
+        });
 
 
     }
