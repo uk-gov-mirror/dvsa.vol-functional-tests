@@ -10,6 +10,7 @@ Feature: Surrenders toggle switched off
   Scenario: I am unable to use any surrender feature
     Then as "selfserve" user I cannot surrender a licence
     Then as "selfserve" user I cannot update a surrender
+    Then as "selfserve" user I cannot query a surrender
 
 
 

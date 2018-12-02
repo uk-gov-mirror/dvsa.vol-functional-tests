@@ -4,9 +4,11 @@ Feature: Retrieving details for a Surrendered licence Verify off
 
   Background:
     Given i have a valid "public" licence
+    Given verify has been switched "Off"
     And surrenders has been switched "on"
     Then as "selfserve" user I can surrender a licence
-    Given verify has been switched "Off"
+    Then as "selfserve" user I can update surrender details
+
 
 
   Scenario: Retrieve details for surrendered licence

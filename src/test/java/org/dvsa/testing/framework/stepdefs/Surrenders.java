@@ -181,6 +181,19 @@ public class Surrenders implements En {
             apiResponse.statusCode(HttpStatus.SC_FORBIDDEN);
 
         });
+        Then("^as \"([^\"]*)\" user I cannot query a surrender$", (String userType) -> {
+            String pid = "";
+            if (userType.equals("selfserve")) {
+                pid = world.createLicence.getPid();
+            } else if (userType.equals("internal")) {
+                pid = UpdateLicenceAPI.getInternalAdminHeader();
+            }
+            apiResponse = world.APIJourneySteps.querySurrender(world.createLicence.getLicenceId(), UpdateLicenceAPI.getInternalAdminHeader());
+            String createdMessage = apiResponse.extract().jsonPath().getString("messages[0]");
+            assertTrue(createdMessage.contains("" +
+                    "Handler Dvsa\\Olcs\\Api\\Domain\\QueryHandler\\Surrender\\ByLicence is currently disabled via feature toggle"));
+            apiResponse.statusCode(HttpStatus.SC_BAD_REQUEST);
+        });
 
 
     }
