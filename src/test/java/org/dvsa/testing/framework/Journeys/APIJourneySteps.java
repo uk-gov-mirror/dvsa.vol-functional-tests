@@ -201,6 +201,14 @@ public class APIJourneySteps {
         return apiResponse;
     }
 
+    public ValidatableResponse getVerifyStatus(String userPid){
+        String paramName = "DISABLE_GDS_VERIFY_SIGNATURES";
+        Headers.getHeaders().put("x-pid", userPid);
+        String surrenderEndpoint = org.dvsa.testing.lib.url.api.URL.build(env, String.format("system-parameter/%s/", paramName)).toString();
+        apiResponse = RestUtils.get(surrenderEndpoint, getHeaders());
+        return apiResponse;
+    }
+
     public ValidatableResponse querySurrender(String licenceId, String userPid) {
         Headers.getHeaders().put("x-pid", userPid);
         String surrenderEndpoint = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();

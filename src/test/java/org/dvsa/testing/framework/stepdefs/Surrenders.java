@@ -153,11 +153,20 @@ public class Surrenders implements En {
 
         });
         And("^the value of the SystemParameter for disabled digital signatures should be \"([^\"]*)\"$", (String verify) -> {
+
             boolean disableSignatures = apiResponse.extract().jsonPath().getBoolean("disableSignatures");
-            if(verify.equalsIgnoreCase("true")){
+
+            ValidatableResponse verifyStatus = world.APIJourneySteps.getVerifyStatus(UpdateLicenceAPI.getInternalAdminHeader());
+            String verifyOff = verifyStatus.extract().jsonPath().getString("paramValue");
+
+            if(verifyOff.equalsIgnoreCase("1")){
                 assertTrue(disableSignatures);
             }
-            assertFalse(disableSignatures);
+            else
+            {
+                assertFalse(disableSignatures);
+            }
+
 
         });
         Then("^updated surrender details should be returned$", () -> {

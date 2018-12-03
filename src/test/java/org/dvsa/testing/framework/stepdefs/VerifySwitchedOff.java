@@ -82,8 +82,10 @@ public class VerifySwitchedOff extends BasePage implements En {
         Given("^verify has been switched \"([^\"]*)\"$", (String arg0) -> {
           if (arg0.equals("On")){
               world.APIJourneySteps.enableDisableVerify("0");
+
           } else {
               world.APIJourneySteps.enableDisableVerify("1");
+
           }
         });
     }
