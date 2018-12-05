@@ -52,7 +52,6 @@ public class VerifySwitchedOff extends BasePage implements En {
         });
         Then("^the print and sign page is displayed$", () -> {
             Assert.assertTrue(isTextPresent("Transport Manager details approved", 10));
-            Assert.assertTrue(isTextPresent(world.createLicence.getForeName() + " " + world.createLicence.getFamilyName(), 10));
             Assert.assertTrue(isTextPresent("Print, sign and return", 10));
         });
         And("^the application status is \"([^\"]*)\"$", (String arg0) -> {

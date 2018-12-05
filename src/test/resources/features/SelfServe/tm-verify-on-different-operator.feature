@@ -25,3 +25,10 @@ Feature: TM signs through verify
     Then i choose to sign with verify with "pavlov"
     And the operator countersigns digitally
     And the 'Review and declarations' post signature page is displayed
+
+  Scenario: Operator co-signs manually
+    When i add an existing person as a transport manager who is not the operator
+    And i sign the declaration
+    Then i choose to sign with verify with "pavlov"
+    And the operator countersigns by print and sign
+    And the print and sign page is displayed

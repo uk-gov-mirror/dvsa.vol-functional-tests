@@ -131,6 +131,18 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
         And("^i sign the declaration$", () -> {
             world.UIJourneySteps.signDeclaration();
         });
+        And("^the operator countersigns by print and sign$", () -> {
+            waitForTextToBePresent("What happens next?");
+            clickByLinkText("Sign out");
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
+            clickByLinkText(world.createLicence.getApplicationNumber());
+            waitForTextToBePresent("Apply for a new licence");
+            clickByLinkText("Transport");
+            clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
+            click("form-actions[submit]", SelectorType.ID);
+            click("//*[contains(text(),'Print')]",SelectorType.XPATH);
+            click("//*[@name='form-actions[submit]']", SelectorType.XPATH);
+        });
     }
 
     private Path getPath(World world) throws URISyntaxException {
