@@ -2,6 +2,7 @@ package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
 import activesupport.MissingRequiredArgument;
+import activesupport.driver.Browser;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Journeys.APIJourneySteps;
@@ -28,7 +29,6 @@ public class ESBRupload extends BasePage implements En {
         });
 
         Then("^A short notice flag should be displayed in selfserve$", () -> {
-            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
             world.UIJourneySteps.viewESBRInExternal();
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
@@ -41,7 +41,6 @@ public class ESBRupload extends BasePage implements En {
             assertTrue(isTextPresent("Short notice", 60));
         });
         Then("^A short notice flag should not be displayed in selfserve$", () -> {
-            world.genericUtils.executeJenkinsBatchJob("que_typ_ebsr_pack");
             world.UIJourneySteps.viewESBRInExternal();
             assertTrue(isTextPresent("successful", 60));
             assertTrue(isTextPresent("New", 60));
@@ -60,7 +59,7 @@ public class ESBRupload extends BasePage implements En {
             world.UIJourneySteps.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
         });
         Given("^i add a new bus registration$", () -> {
-            world.UIJourneySteps.internalSearchForBusReg();
+            world.UIJourneySteps.searchAndViewApplication();
             world.UIJourneySteps.internalSiteAddBusNewReg(5);
             clickByLinkText("Register");
             findSelectAllRadioButtonsByValue("Y");

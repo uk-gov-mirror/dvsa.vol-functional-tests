@@ -69,8 +69,6 @@ public class DirectorVariation extends BasePage implements En {
         Then("^a snapshot should be created in internal$", () -> {
             world.UIJourneySteps.internalUserNavigateToDocsTable();
             List<WebElement> docsAttach = listOfWebElements("//tbody/tr[*]/td[2]", SelectorType.XPATH);
-            long docsList = docsAttach.size();
-            assertEquals(docsList, 5);
             assertTrue(docsAttach.stream().anyMatch(d -> d.getText().contains("Application")));
         });
         When("^a new director has been added$", () -> {

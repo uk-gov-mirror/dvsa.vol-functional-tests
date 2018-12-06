@@ -266,7 +266,7 @@ public class APIJourneySteps {
             world.createLicence.submitTransport();
             world.createLicence.addTmResponsibilities();
             world.createLicence.submitTmResponsibilities();
-            world.createLicence.vehicles();
+            world.createLicence.addVehicleDetails();
             world.createLicence.submitVehicleDeclaration();
             world.createLicence.addFinancialHistory();
             world.createLicence.addApplicationSafetyAndComplianceDetails();

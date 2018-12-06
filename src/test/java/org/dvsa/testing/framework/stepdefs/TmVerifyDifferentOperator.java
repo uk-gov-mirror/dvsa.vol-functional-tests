@@ -2,6 +2,7 @@ package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
 import activesupport.driver.Browser;
+import activesupport.string.Str;
 import activesupport.system.Properties;
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
@@ -83,11 +84,17 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
         When("^i add a new transport manager$", () -> {
             clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Transport");
-            world.UIJourneySteps.addNewPersonAsTransportManager(forename, familyName);
+            waitForTextToBePresent("Transport Managers");
+            if (isTextPresent("To add a transport manager", 10)) {
+                clickByLinkText("change");
+                waitForTextToBePresent("Applying to change a licence");
+                click("form-actions[submit]", SelectorType.ID);
+            }
+            String emailAddress = "tme".concat(Str.randomWord(2)).concat("externalTM@vol.gov");
+            world.UIJourneySteps.addNewPersonAsTransportManager(forename, familyName, emailAddress);
         });
         Then("^a transport manager has been created banner is displayed$", () -> {
-            assertFalse(isTextPresent("The transport manager's user account has been created and a link sent to them", 30));
-            assertTrue(isTextPresent("The user account has been created and form has been emailed to the transport manager", 30));
+            findElement("//p[@role]",SelectorType.XPATH,10).getText().contains("The transport manager's user account has been created and a link sent to them");
         });
         Then("^the download TM(\\d+) for should not be displayed on the details page$", (Integer arg0) -> {
             waitAndClick("//a[contains(text(),'" + forename + " " + familyName + "')]", SelectorType.XPATH);

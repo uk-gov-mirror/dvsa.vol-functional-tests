@@ -45,6 +45,8 @@ public class RemoveTM extends BasePage implements En {
             world.createLicence.setUsername("newTmApi");
             world.createLicence.addTransportManager();
             world.createLicence.submitTransport();
+            world.createLicence.addTmResponsibilities();
+            world.createLicence.submitTmResponsibilities();
         });
         Then("^the remove TM popup should not be displaying new TM remove text$", () -> {
             waitForTextToBePresent(alertHeaderValue);

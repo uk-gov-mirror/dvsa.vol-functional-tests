@@ -9,5 +9,5 @@ Feature: Operator signs with verify
     Then the application should be signed with verify
 
     Examples:
-    |user|
-    |pavlov|
+      | user   |
+      | pavlov |
