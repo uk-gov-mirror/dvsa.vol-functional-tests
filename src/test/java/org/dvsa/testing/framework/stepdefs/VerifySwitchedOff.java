@@ -17,10 +17,10 @@ import static org.junit.Assert.assertTrue;
 public class VerifySwitchedOff extends BasePage implements En {
 
     public VerifySwitchedOff(World world) {
-        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String arg0, String arg1) -> {
+        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String operatorType, String country) -> {
             world.genericUtils = new GenericUtils(world);
-            world.createLicence.setOperatorType(arg0);
-            if (arg1.equals("NI")) {
+            world.createLicence.setOperatorType(operatorType);
+            if (country.equals("NI")) {
                 world.APIJourneySteps.nIAddressBuilder();
             }
             world.APIJourneySteps.createPartialApplication();
@@ -53,7 +53,6 @@ public class VerifySwitchedOff extends BasePage implements En {
         });
         Then("^the print and sign page is displayed$", () -> {
             Assert.assertTrue(isTextPresent("Transport Manager details approved", 10));
-            Assert.assertTrue(isTextPresent(world.createLicence.getForeName() + " " + world.createLicence.getFamilyName(), 10));
             Assert.assertTrue(isTextPresent("Print, sign and return", 10));
         });
         And("^the application status is \"([^\"]*)\"$", (String arg0) -> {

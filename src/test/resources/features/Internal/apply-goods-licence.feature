@@ -1,6 +1,6 @@
 @INT
-  @APPLY-GOODS-LICENCE
-  Feature: Apply for a psv licence
+@APPLY-GOODS-LICENCE
+Feature: Apply for a goods licence
 
   Scenario: Apply for a restricted licence
     Given I have applied for a "goods" "restricted" licence
