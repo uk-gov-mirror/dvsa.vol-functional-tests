@@ -11,7 +11,7 @@ Feature: Apply for a goods licence
     Given I have applied for a "goods" "standard_international" licence
     When I pay fees
     Then the licence should be granted
-
+#
   Scenario: Apply for a standard national licence
     Given I have applied for a "goods" "standard_national" licence
     When I pay fees
