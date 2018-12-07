@@ -350,20 +350,6 @@ public class CreateLicenceAPI {
         this.businessEmailAddress = businessEmailAddress;
     }
 
-    public String getPhoneNumber() { return phoneNumber; }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getBusinessEmailAddress() {
-        return businessEmailAddress;
-    }
-
-    public void setBusinessEmailAddress(String businessEmailAddress) {
-        this.businessEmailAddress = businessEmailAddress;
-    }
-
     private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
     public CreateLicenceAPI() throws MissingRequiredArgument {

@@ -77,5 +77,8 @@ public class PsvSurrenders extends BasePage implements En {
 //            String surrenderStatus = status;
 //            assertEquals(SurrenderStatus,getText());
         });
+        Then("^the number of disc should match the vehicles registered on the licence$", () -> {
+            assertEquals(getText("",SelectorType.XPATH),String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
+        });
     }
 }

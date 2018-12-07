@@ -108,7 +108,7 @@ public class GrantLicenceAPI {
         }
     }
 
-    public void payGrantFees(){
+    public ValidatableResponse payGrantFees(){
         int feesAmount = 450;
         String payer = "apiUser";
         String paymentMethod = "fpm_cash";
@@ -127,6 +127,8 @@ public class GrantLicenceAPI {
             System.out.println(apiResponse.extract().response().asString());
             throw new HTTPException(apiResponse.extract().statusCode());
         }
+
+        return apiResponse;
     }
 
     public void variationGrant(String applicationNumber) {
