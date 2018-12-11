@@ -7,6 +7,9 @@ import activesupport.driver.Browser;
 import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FileUtils;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +25,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,7 +36,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 
 public class GenericUtils extends BasePage {
@@ -184,5 +192,39 @@ public class GenericUtils extends BasePage {
     public String readFileAsString(String fileName) throws Exception {
         String data = new String(Files.readAllBytes(Paths.get(fileName)));
         return data;
+    }
+
+    public static int getRandomNumberInts(int min, int max){
+        Random random = new Random();
+        return random.ints(min,(max+1)).findFirst().getAsInt();
+    }
+
+    public void writeToFile(String userId, String password, String fileName) throws Exception {
+        String CSV_HEADERS = "Username,Password";
+
+        FileWriter fileWriter = new FileWriter(fileName, true);
+        BufferedWriter writer = new BufferedWriter(fileWriter);
+        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);
+
+        if (!searchForString(fileName, CSV_HEADERS)) {
+            csvPrinter.printRecord((Object[]) CSV_HEADERS.split(","));
+            csvPrinter.printRecord(Arrays.asList(userId, password));
+            csvPrinter.flush();
+        } else {
+            csvPrinter.printRecord(Arrays.asList(userId, password));
+            csvPrinter.flush();
+        }
+    }
+
+    private boolean searchForString(String file, String searchText) throws IOException {
+        boolean foundIt;
+        File f = new File(file);
+        if (f.exists() && (FileUtils.readFileToString(new File(file), "UTF-8").contains(searchText)))
+            foundIt = true;
+        else {
+            System.out.println("File not found or text not found");
+            foundIt = false;
+        }
+        return foundIt;
     }
 }

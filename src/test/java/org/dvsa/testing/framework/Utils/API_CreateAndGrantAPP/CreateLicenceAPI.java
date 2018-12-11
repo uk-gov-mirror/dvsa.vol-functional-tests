@@ -12,6 +12,7 @@ import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.Utils.API_Builders.*;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
+import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.url.api.URL;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
@@ -672,7 +673,8 @@ public class CreateLicenceAPI {
             for (int i = 0; i < getNoOfVehiclesRequired(); ) {
                 String vehiclesResource = null;
                 String vrm;
-                vrm = "VRM".concat(String.valueOf(Int.random(0, 9999)));
+                vrm = "vrm".concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999)));
+
                 if (getOperatorType().equals("goods")) {
                     vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
                 }

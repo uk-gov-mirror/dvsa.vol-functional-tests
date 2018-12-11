@@ -37,7 +37,7 @@ public class UIJourneySteps extends BasePage {
     private String operatorUserEmail;
     private String operatorForeName;
     private String operatorFamilyName;
-    private String password;
+    private String externalPassword;
     private String externalTMUser;
     private String externalTMEmail;
 
@@ -82,12 +82,12 @@ public class UIJourneySteps extends BasePage {
         this.operatorFamilyName = operatorFamilyName;
     }
 
-    public String getPassword() {
-        return password;
+    public String getExternalPassword() {
+        return externalPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setExternalPassword(String externalPassword) {
+        this.externalPassword = externalPassword;
     }
 
     public String getExternalTMUser() { return externalTMUser; }
@@ -367,20 +367,20 @@ public class UIJourneySteps extends BasePage {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        String password = S3.getTempPassword(emailAddress, getBucketName());
+        externalPassword = S3.getTempPassword(emailAddress, getBucketName());
 
         try {
-            signIn(username, password);
+            signIn(username, externalPassword);
         } catch (Exception e){
             //User is already registered
-            signIn(username, getPassword());
+            signIn(username, getExternalPassword());
         } finally {
             if (isTextPresent("Current password", 60)) {
-                enterField(nameAttribute("input", "oldPassword"), password);
+                enterField(nameAttribute("input", "oldPassword"), externalPassword);
                 enterField(nameAttribute("input", "newPassword"), newPassword);
                 enterField(nameAttribute("input", "confirmPassword"), newPassword);
                 click(nameAttribute("input", "submit"));
-                setPassword(newPassword);
+                setExternalPassword(newPassword);
             }
         }
     }
@@ -438,15 +438,15 @@ public class UIJourneySteps extends BasePage {
         click(nameAttribute("button", "form-actions[save]"));
     }
 
-    public void signWithVerify(String username, String password) throws IllegalBrowserException {
-        setVerifyUsername(username);
+    public void signWithVerify(String verifyUsername, String verifyPassword) throws IllegalBrowserException {
+        setVerifyUsername(verifyUsername);
         waitForTextToBePresent("Sign in with GOV.UK Verify");
         click("//*[@id='start_form_selection_false']", SelectorType.XPATH);
         click("//*[@id='next-button']", SelectorType.XPATH);
         click("//*[contains(text(),'Select Post')]", SelectorType.XPATH);
         waitForTextToBePresent("Verified");
-        enterText("username", username, SelectorType.NAME);
-        enterText("password", password, SelectorType.NAME);
+        enterText("username", verifyUsername, SelectorType.NAME);
+        enterText("password", verifyPassword, SelectorType.NAME);
         click("//*[@id='login']", SelectorType.XPATH);
         waitForTextToBePresent("Personal Details");
         click("//*[@id='agree']", SelectorType.XPATH);
