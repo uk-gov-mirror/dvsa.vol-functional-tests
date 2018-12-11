@@ -1,14 +1,12 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.junit.Assert;
 
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 
 public class PsvSurrenders extends BasePage implements En {
@@ -25,7 +23,7 @@ public class PsvSurrenders extends BasePage implements En {
 
         Then("^the correct licence details should be displayed$", () -> {
             String licenceNumber = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][1]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
-            Assert.assertEquals(world.APIJourneySteps.getLicenceStatusDetails(),licenceNumber);
+            Assert.assertEquals(world.updateLicence.getLicenceStatusDetails(),licenceNumber);
             String licenceHolder = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][1]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
             Assert.assertEquals(world.createLicence.getForeName()+" "+world.createLicence.getFamilyName(),licenceHolder);
         });

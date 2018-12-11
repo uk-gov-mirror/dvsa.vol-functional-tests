@@ -13,12 +13,9 @@ import org.dvsa.testing.lib.url.api.URL;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import javax.xml.ws.http.HTTPException;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 
 public class GrantLicenceAPI {
@@ -129,6 +126,18 @@ public class GrantLicenceAPI {
         }
 
         return apiResponse;
+    }
+
+    public void grantLicence() {
+        if (world.updateLicence.getVariationApplicationNumber() != null) {
+            world.grantLicence.createOverview(world.updateLicence.getVariationApplicationNumber());
+            world.grantLicence.variationGrant(world.updateLicence.getVariationApplicationNumber());
+        } else {
+            world.grantLicence.createOverview(world.createLicence.getApplicationNumber());
+            world.grantLicence.getOutstandingFees(world.createLicence.getApplicationNumber());
+            world.grantLicence.payOutstandingFees(world.createLicence.getOrganisationId(), world.createLicence.getApplicationNumber());
+            world.grantLicence.grant(world.createLicence.getApplicationNumber());
+        }
     }
 
     public void variationGrant(String applicationNumber) {

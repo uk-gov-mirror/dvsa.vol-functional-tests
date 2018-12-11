@@ -22,9 +22,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -81,7 +79,7 @@ public class GenericUtils extends BasePage {
                         node.setTextContent(getRegistrationNumber());
                     }
                     if ("TrafficAreaName".equals(node.getNodeName())) {
-                        switch (world.APIJourneySteps.getTrafficAreaName()) {
+                        switch (world.updateLicence.getTrafficAreaName()) {
                             case "Wales":
                                 node.setTextContent("Welsh");
                                 break;

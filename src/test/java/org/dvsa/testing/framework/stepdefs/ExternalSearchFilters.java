@@ -23,23 +23,23 @@ public class ExternalSearchFilters extends BasePage implements En {
         });
         Then("^the Organisation Type filter should be displayed$", () -> {
             String opName = getText(String.format("//*[@id='filter[orgTypeDesc]']/option[2]"), SelectorType.XPATH);
-             Assert.assertEquals(world.APIJourneySteps.getBusinessTypeDetails().toUpperCase(),opName.toUpperCase());
+             Assert.assertEquals(world.updateLicence.getBusinessTypeDetails().toUpperCase(),opName.toUpperCase());
         });
         Then("^the Licence Type filter should be displayed$", () -> {
             String licType = getText(String.format("//*[@id='filter[licTypeDesc]']/option[2]"), SelectorType.XPATH);
-            Assert.assertEquals(world.APIJourneySteps.getLicenceTypeDetails().toUpperCase(),licType.toUpperCase());
+            Assert.assertEquals(world.updateLicence.getLicenceTypeDetails().toUpperCase(),licType.toUpperCase());
         });
         Then("^the Licence Status filter should be displayed$", () -> {
             String licStatus = getText(String.format("//*[@id='filter[licStatusDesc]']/option[2]"), SelectorType.XPATH);
-            Assert.assertEquals(world.APIJourneySteps.getLicenceStatusDetails(),licStatus);
+            Assert.assertEquals(world.updateLicence.getLicenceStatusDetails(),licStatus);
         });
         Then("^the Traffic Area filter should be displayed$", () -> {
             String traffArea = getText(String.format("//*[@id='filter[licenceTrafficArea]']/option[2]"), SelectorType.XPATH);
-            Assert.assertEquals(world.APIJourneySteps.getLicenceTrafficArea(),traffArea);
+            Assert.assertEquals(world.updateLicence.getLicenceTrafficArea(),traffArea);
         });
         Then("^the Goods or PSV filter should be displayed$", () -> {
             String opType = getText(String.format("//*[@id='filter[goodsOrPsvDesc]']/option[2]"), SelectorType.XPATH);
-            Assert.assertEquals(world.APIJourneySteps.getOperatorTypeDetails(), opType);
+            Assert.assertEquals(world.updateLicence.getOperatorTypeDetails(), opType);
         });
 
     }

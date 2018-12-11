@@ -1,7 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
@@ -23,6 +22,7 @@ public class VerifySwitchedOff extends BasePage implements En {
             if (country.equals("NI")) {
                 world.APIJourneySteps.nIAddressBuilder();
             }
+            world.APIJourneySteps.registerAndGetUserDetails();
             world.APIJourneySteps.createPartialApplication();
         });
         Then("^Signing options are not displayed on the page$", () -> {
@@ -74,16 +74,16 @@ public class VerifySwitchedOff extends BasePage implements En {
         });
         After(new String[]{"@SS-Verify-Off"}, (Scenario scenario) -> {
             if(scenario.isFailed() || !scenario.isFailed())
-            world.APIJourneySteps.enableDisableVerify("0");
+            world.updateLicence.enableDisableVerify("0");
         });
         And("^i navigate to the declarations page$", () -> {
             world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
         });
         Given("^verify has been switched \"([^\"]*)\"$", (String arg0) -> {
           if (arg0.equals("On")){
-              world.APIJourneySteps.enableDisableVerify("0");
+              world.updateLicence.enableDisableVerify("0");
           } else {
-              world.APIJourneySteps.enableDisableVerify("1");
+              world.updateLicence.enableDisableVerify("1");
           }
         });
         Then("^the 'Awaiting operator review' verify off page is displayed$", () -> {

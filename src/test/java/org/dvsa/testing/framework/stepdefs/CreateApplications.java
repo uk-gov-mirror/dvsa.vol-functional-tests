@@ -11,6 +11,7 @@ public class CreateApplications extends BasePage implements En  {
     public CreateApplications(World world) {
         Given("^i have a \"([^\"]*)\" application$", (String operatorType) -> {
             world.createLicence.setOperatorType(operatorType);
+            world.APIJourneySteps.registerAndGetUserDetails();
             world.APIJourneySteps.createApplication();
         });
         When("^i choose to print and sign$", () -> {

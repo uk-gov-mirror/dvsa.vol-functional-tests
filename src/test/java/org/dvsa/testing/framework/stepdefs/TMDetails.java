@@ -22,6 +22,7 @@ public class TMDetails extends BasePage implements En {
         world.APIJourneySteps = new APIJourneySteps(world);
         world.genericUtils = new GenericUtils(world);
         Given("^I have a new application$", () -> {
+            world.APIJourneySteps.registerAndGetUserDetails();
             world.APIJourneySteps.createPartialApplication();
         });
         And("^the transport manager is the operator$", () -> {

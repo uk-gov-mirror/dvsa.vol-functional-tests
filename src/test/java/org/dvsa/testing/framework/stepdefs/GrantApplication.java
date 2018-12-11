@@ -14,8 +14,8 @@ public class GrantApplication implements En {
     public GrantApplication(World world) {
         this.world = world;
 
-        When("^I pay fees$", () -> {
-            world.APIJourneySteps.payFeesAndGrantLicence();
+        When("^I grant licence$", () -> {
+            world.grantLicence.grantLicence();
         });
         Then("^the licence should be granted$", () -> {
             apiResponse = world.grantLicence.payGrantFees();
