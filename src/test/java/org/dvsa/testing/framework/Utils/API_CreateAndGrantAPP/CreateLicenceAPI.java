@@ -172,6 +172,7 @@ public class CreateLicenceAPI {
     public String getLoginId() {
         return loginId;
     }
+
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
@@ -212,15 +213,21 @@ public class CreateLicenceAPI {
         return familyName;
     }
 
-    public String getUsername() { return username; }
+    public String getUsername() {
+        return username;
+    }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public void setTmUserName(String tmUserName) { this.tmUserName = tmUserName; }
+    public void setTmUserName(String tmUserName) {
+        this.tmUserName = tmUserName;
+    }
 
-    public String getTmUserName(){ return tmUserName; }
+    public String getTmUserName() {
+        return tmUserName;
+    }
 
     public String getPid() {
         return pid;
@@ -499,7 +506,7 @@ public class CreateLicenceAPI {
 
     public void addOperatingCentre() {
         String operatingCentreResource = URL.build(env, String.format("application/%s/operating-centre/", applicationNumber)).toString();
-        int buildingNumber = Int.random(0,1000);
+        int buildingNumber = Int.random(0, 1000);
         String permissionOption = "Y";
         String operatingCentreAddress;
         operatingCentreAddress = String.valueOf(buildingNumber).concat(" API_Operating_Centre");
@@ -587,7 +594,7 @@ public class CreateLicenceAPI {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
             // no need to submit details
         } else {
-            int randNumber = Int.random(0,2000);
+            int randNumber = Int.random(0, 2000);
             tmUserName = "apiTM".concat(getLoginId()).concat(String.valueOf(randNumber));
             String hasEmail = "Y";
             String addTransportManager = URL.build(env, "transport-manager/create-new-user/").toString();
@@ -673,8 +680,10 @@ public class CreateLicenceAPI {
             for (int i = 0; i < getNoOfVehiclesRequired(); ) {
                 String vehiclesResource = null;
                 String vrm;
-                vrm = "vrm".concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999)));
-
+                vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999)));
+                if (vrm.contains("Q") || vrm.contains("q")) {
+                    vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999)));
+                }
                 if (getOperatorType().equals("goods")) {
                     vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
                 }
@@ -692,9 +701,11 @@ public class CreateLicenceAPI {
                     System.out.println(apiResponse.extract().response().asString());
                     throw new HTTPException(apiResponse.extract().statusCode());
                 }
-            }
+
         }
     }
+
+}
 
     public void submitVehicleDeclaration() {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {

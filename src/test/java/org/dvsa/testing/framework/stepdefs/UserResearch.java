@@ -2,17 +2,26 @@ package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
 import activesupport.aws.s3.S3;
+import activesupport.driver.Browser;
 import activesupport.number.Int;
 import activesupport.string.Str;
 import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.framework.runner.Hooks;
+import org.dvsa.testing.lib.pages.BasePage;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.Scanner;
 
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getRandomNumberInts;
 
-public class UserResearch implements En {
+public class UserResearch extends BasePage implements En {
     String fileName = "src/test/resources/";
 
     public UserResearch(World world) {
@@ -36,7 +45,7 @@ public class UserResearch implements En {
             }
         });
 
-        Given("^I have applied for \"([^\"]*)\" \"([^\"]*)\" application$", (String licenceType, String operator) -> {
+        Given("^I have applied for \"([^\"]*)\" \"([^\"]*)\" TM application$", (String licenceType, String operator) -> {
             String password;
             world.APIJourneySteps.registerAndGetUserDetails();
             world.createLicence.setNoOfVehiclesRequired(3);
@@ -64,12 +73,27 @@ public class UserResearch implements En {
             }
         });
         Then("^the licence should be created and granted$", () -> {
-            world.genericUtils.writeToFile(world.createLicence.getLoginId(), "Password1", fileName.concat("Operator.csv"));
+            world.genericUtils.writeToFile(world.createLicence.getLoginId(), world.UIJourneySteps.getExternalPassword(), fileName.concat("Operator.csv"));
         });
+
+        Then("^i should be able login as a TM$", () -> {
+            Reader in = new FileReader(fileName.concat("TM.csv"));
+            Iterable<CSVRecord> records = CSVFormat.RFC4180.withHeader().parse(in);
+            for (CSVRecord record : records) {
+                String username = record.get("Username");
+                String password = record.get("Password");
+                world.UIJourneySteps.navigateToExternalUserLogin(username, password);
+                world.genericUtils.writeToFile(world.createLicence.getLoginId(), world.UIJourneySteps.getExternalPassword(), fileName.concat("TmUsers.csv"));
+            }
+        });
+        File file = new File(fileName.concat("Operator.csv"));
+        if(file.delete()){
+            System.out.println("Gooooooooooooooooooooooooooooone");
+        }
     }
 
     private String[] trafficAreaList() {
-        return new String[]{"B", "C", "D", "F", "G", "H", "K", "M"};
+        return new String[]{"B"};
     }
 
     private String postCodes(String trafficArea) {
