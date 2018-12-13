@@ -18,103 +18,97 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 
 public class UpdateLicenceAPI extends BasePage {
     private ValidatableResponse apiResponse;
-    private static String variationApplicationNumber;
     private World world;
-    private int caseId;
+
+    private String goodOrPsv;
+    private String trafficAreaName;
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
     public String adminUserLogin = String.format("volAdminUser" + "%s", Str.randomWord(3));
-    private static String internalAdminHeader = "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
     private String adminUserId;
+    private String licenceStatus;
+    private String businessType;
+    private String licenceType;
 
+    private int caseNoteId;
+    private int complaintId;
+    private int convictionId;
+    private int conditionUndertaking;
+    private int submissionsId;
+    private int caseId;
+
+    private static String variationApplicationNumber;
+    private static int version = 1;
+
+    public void setBusinessType(String businessType) { this.businessType = businessType; }
+    public String getBusinessType() { return businessType; }
+    public void setLicenceType(String licenceType) { this.licenceType = licenceType; }
+    public String getLicenceType() { return licenceType; }
     public String getVariationApplicationNumber() {
         return variationApplicationNumber;
     }
-
-    public static void setVariationApplicationNumber(String variationApplicationNumber) {
-        UpdateLicenceAPI.variationApplicationNumber = variationApplicationNumber;
-    }
-
-    public void setAdminUserId(String adminUserId) {
+    private static void setVariationApplicationNumber(String variationApplicationNumber) { UpdateLicenceAPI.variationApplicationNumber = variationApplicationNumber; }
+    private void setAdminUserId(String adminUserId) {
         this.adminUserId = adminUserId;
     }
-
-    public String getAdminUserLogin() {
-        return adminUserId;
+    public String getTrafficAreaName() {
+        return trafficAreaName;
     }
-
-    public void setAdminUserEmailAddress(String adminUserEmailAddress) {
-        this.adminUserEmailAddress = adminUserEmailAddress;
+    private void setTrafficAreaName(String trafficAreaName) {
+        this.trafficAreaName = trafficAreaName;
     }
-
     public int getCaseId() {
         return caseId;
     }
-
     private void setCaseId(int caseId) {
         this.caseId = caseId;
     }
-
-    private int complaintId;
-
     public int getComplaintId() {
         return complaintId;
     }
-
     private void setComplaintId(int complaintId) {
         this.complaintId = complaintId;
     }
-
-    private int convictionId;
-
     public int getConvictionId() {
         return convictionId;
     }
-
     private void setConvictionId(int convictionId) {
         this.convictionId = convictionId;
     }
-
-    private int conditionUndertaking;
-
     public int getConditionUndertaking() {
         return conditionUndertaking;
     }
-
     private void setConditionUndertaking(int conditionUndertaking) {
         this.conditionUndertaking = conditionUndertaking;
     }
-
-    private int submissionsId;
-
     public int getSubmissionsId() {
         return submissionsId;
     }
-
     private void setSubmissionsId(int submissionsId) {
         this.submissionsId = submissionsId;
     }
-
-    private int caseNoteId;
-
     public int getCaseNoteId() {
         return caseNoteId;
     }
-
     private void setCaseNoteId(int caseNoteId) {
         this.caseNoteId = caseNoteId;
     }
-
-    private static int version = 1;
-
-    public static String getInternalAdminHeader() {
-        return internalAdminHeader;
+    private void setLicenceStatus(String licenceStatus) {
+        this.licenceStatus = licenceStatus;
     }
-
+    public String getGoodOrPsv() {
+        return goodOrPsv;
+    }
+    private void setGoodOrPsv(String goodOrPsv) {
+        this.goodOrPsv = goodOrPsv;
+    }
+    public String getLicenceStatus() {
+        return licenceStatus;
+    }
     private static EnvironmentType env;
 
     static {
@@ -129,17 +123,17 @@ public class UpdateLicenceAPI extends BasePage {
         this.world = world;
     }
 
-    public void createVariation(String variationType) throws MalformedURLException {
+    public void createVariation(String variationType) {
         String licenceId = world.createLicence.getLicenceId();
         String licenceHistoryResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/variation", licenceId)).toString();
 
         VariationBuilder variation = new VariationBuilder().withId(licenceId).withFeeRequired("N").withAppliedVia("applied_via_phone").withVariationType(variationType);
         apiResponse = RestUtils.post(variation, licenceHistoryResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        apiResponse.statusCode(HttpStatus.SC_CREATED);
         setVariationApplicationNumber(String.valueOf(apiResponse.extract().jsonPath().getInt("id.application")));
     }
 
-    public void updateLicenceType(String licenceId) throws MalformedURLException {
+    public void updateLicenceType(String licenceId) {
         Integer version = 1;
         String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("variation/%s/type-of-licence", licenceId)).toString();
 
@@ -209,10 +203,10 @@ public class UpdateLicenceAPI extends BasePage {
         }
         while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         setConvictionId(apiResponse.extract().jsonPath().getInt("id.conviction"));
-        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        apiResponse.statusCode(HttpStatus.SC_CREATED);
     }
 
-    public void addComplaint() throws MalformedURLException {
+    public void addComplaint() {
         String complainantForename = "123456";
         String complainantFamilyName = "503";
         String complaintType = "ct_cov";
@@ -243,7 +237,7 @@ public class UpdateLicenceAPI extends BasePage {
                 .withFulfilled(fulfilled).withAttachedTo(attachedTo).withNotes(description);
         apiResponse = RestUtils.post(conditionsBuilder, conditionsUndertaking, getHeaders());
 
-        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        apiResponse.statusCode(HttpStatus.SC_CREATED);
         setConditionUndertaking(apiResponse.extract().jsonPath().getInt("id.conditionUndertaking"));
     }
 
@@ -265,17 +259,17 @@ public class UpdateLicenceAPI extends BasePage {
                 .withComment(comment).withPriority(priority);
         apiResponse = RestUtils.post(caseNotesBuilder, caseNoteResource, getHeaders());
 
-        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        apiResponse.statusCode(HttpStatus.SC_CREATED);
         setCaseNoteId(apiResponse.extract().jsonPath().getInt("id.note"));
     }
 
-    public ValidatableResponse getCaseDetails(String resource, int id) throws MalformedURLException {
+    public ValidatableResponse getCaseDetails(String resource, int id) {
         String caseResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("%s/%s", resource, id)).toString();
         apiResponse = RestUtils.get(caseResource, getHeaders());
         return apiResponse;
     }
 
-    public ValidatableResponse variationUpdateOperatingCentre() throws MalformedURLException {
+    public ValidatableResponse variationUpdateOperatingCentre() {
         String noOfVehiclesRequired = "5";
         String licenceId = world.createLicence.getLicenceId();
         String updateOperatingCentreResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/variation-operating-centre/%s", licenceId, variationApplicationNumber)).toString();
@@ -314,7 +308,7 @@ public class UpdateLicenceAPI extends BasePage {
         roles.add("internal-admin");
         String team = "1";
         String userType = "internal";
-        Headers.headers.put("x-pid", internalAdminHeader);
+        Headers.headers.put("x-pid", adminApiHeader());
         String internalAdminUserResource = org.dvsa.testing.lib.url.api.URL.build(env, "user/internal").toString();
 
         AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1("AXIS Building").withTown("Nottingham").withPostcode("LS28 5LY").withCountryCode("GB");
@@ -336,5 +330,112 @@ public class UpdateLicenceAPI extends BasePage {
         GenericBuilder genericBuilder = new GenericBuilder().withId(variationApplicationNumber);
         apiResponse = RestUtils.put(genericBuilder, grantVariation, getHeaders());
         return apiResponse;
+    }
+
+    public String getLicenceTrafficArea() {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setTrafficAreaName(apiResponse.extract().jsonPath().getString("trafficArea.name"));
+        return trafficAreaName;
+    }
+
+    public String getLicenceStatusDetails() {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setLicenceStatus(apiResponse.extract().jsonPath().getString("status.description"));
+        return licenceStatus;
+    }
+
+    public String getOperatorTypeDetails() {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setGoodOrPsv(apiResponse.extract().jsonPath().getString("goodsOrPsv.description"));
+        return goodOrPsv;
+    }
+
+    public String getBusinessTypeDetails() {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setBusinessType(apiResponse.extract().jsonPath().getString("organisation.type.description"));
+        return businessType;
+
+    }  public String getLicenceTypeDetails() {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setLicenceType(apiResponse.extract().jsonPath().getString("licenceType.description"));
+        return licenceType;
+    }
+
+    public void updateLicenceStatus(String licenceId, String status) {
+        Headers.getHeaders().put("x-pid",adminApiHeader());
+        String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/%s", licenceId, status)).toString();
+
+        GenericBuilder genericBuilder = new GenericBuilder().withId(licenceId);
+        apiResponse = RestUtils.post(genericBuilder, typeOfLicenceResource, getHeaders());
+        apiResponse.statusCode(HttpStatus.SC_CREATED);
+    }
+
+    public ValidatableResponse surrenderLicence(String licenceId, String userPid){
+        Headers.getHeaders().put("x-pid", userPid);
+        String surrenderLicence = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
+
+        SurrendersBuilder surrendersBuilder = new SurrendersBuilder().withLicence(licenceId);
+        apiResponse = RestUtils.post(surrendersBuilder, surrenderLicence, getHeaders());
+        return apiResponse;
+    }
+
+    public ValidatableResponse updateSurrender (String licenceId, String userPid, Integer surrenderId){
+        Headers.getHeaders().put("x-pid", userPid);
+        String updateSurrender = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
+
+        SurrendersBuilder surrendersBuilder = new SurrendersBuilder().withLicence(licenceId);
+        surrendersBuilder.setId(surrenderId.toString());
+        surrendersBuilder.setDiscStolen("2");
+        surrendersBuilder.setVersion(1);
+        apiResponse = RestUtils.put(surrendersBuilder, updateSurrender, getHeaders());
+        return apiResponse;
+    }
+
+    public ValidatableResponse deleteSurrender (String licenceId, String userPid, Integer surrenderId){
+        Headers.getHeaders().put("x-pid", userPid);
+        String deleteSurrender = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
+
+        GenericBuilder genericBuilder = new GenericBuilder().withLicence(licenceId);
+        genericBuilder.setId(surrenderId.toString());
+
+        apiResponse = RestUtils.delete(genericBuilder, deleteSurrender, getHeaders());
+        return apiResponse;
+    }
+
+    public void enableDisableVerify(String toggle){
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String enableDisableVerifyResource = org.dvsa.testing.lib.url.api.URL.build(env, "system-parameter/DISABLE_GDS_VERIFY_SIGNATURES/").toString();
+
+        GenericBuilder genericBuilder = new GenericBuilder().withId("DISABLE_GDS_VERIFY_SIGNATURES").withParamValue(toggle).
+                withDescription("Disable GDS verify digital signature functionality");
+
+        apiResponse = RestUtils.put(genericBuilder, enableDisableVerifyResource, getHeaders());
+        apiResponse.statusCode(HttpStatus.SC_OK);
+    }
+
+    public void updateFeatureToggle(String id, String friendlyName, String configName, String status) {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String updateFeatureToggleResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("feature-toggle/%s/",id)).toString();
+
+        FeatureToggleBuilder featureToggleBuilder = new FeatureToggleBuilder().withId(id).withFriendlyName(friendlyName).withConfigName(configName)
+                .withStatus(status);
+
+        apiResponse = RestUtils.put(featureToggleBuilder, updateFeatureToggleResource, getHeaders());
+        apiResponse.statusCode(HttpStatus.SC_OK);
     }
 }

@@ -23,15 +23,15 @@ public class GenerateLastTMLetter extends BasePage implements En {
         Given("^i have a valid \"([^\"]*)\" licence$", (String arg0) -> {
             world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(arg0);
-            world.APIJourneySteps.createAndSubmitApplication();
+            world.APIJourneySteps.registerAndGetUserDetails();
+            world.APIJourneySteps.createApplication();
+            world.APIJourneySteps.submitApplication();
             if(String.valueOf(arg0).equals("public")){
-                world.APIJourneySteps.payFeesAndGrantLicence();
-                world.APIJourneySteps.grantLicence().payGrantFees();
+                world.APIJourneySteps.grandLicenceAndPayFees();
                 System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
             else {
-                world.APIJourneySteps.payFeesAndGrantLicence();
-                world.APIJourneySteps.grantLicence().payGrantFees();
+                world.APIJourneySteps.grandLicenceAndPayFees();
                 System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
         });
@@ -44,7 +44,7 @@ public class GenerateLastTMLetter extends BasePage implements En {
             }
         });
         Given("^the licence status is \"([^\"]*)\"$", (String arg0) -> {
-            world.APIJourneySteps.updateLicenceStatus(world.createLicence.getLicenceId(), arg0);
+            world.updateLicence.updateLicenceStatus(world.createLicence.getLicenceId(), arg0);
         });
         And("^the user confirms they want to send letter$", () -> {
             waitForTextToBePresent(alertHeaderValue);

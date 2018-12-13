@@ -14,10 +14,13 @@ public class PSVapplication implements En {
             world.createLicence.setOperatorType(operator);
             world.createLicence.setLicenceType(licenceType);
             if(licenceType.equals("special_restricted") && (world.createLicence.getApplicationNumber() == null)){
+                world.APIJourneySteps.registerAndGetUserDetails();
                 world.APIJourneySteps.createSpecialRestrictedLicence();
             }
             else if (world.createLicence.getApplicationNumber() == null) {
-                world.APIJourneySteps.createAndSubmitApplication();
+                world.APIJourneySteps.registerAndGetUserDetails();
+                world.APIJourneySteps.createApplication();
+                world.APIJourneySteps.submitApplication();
             }
         });
 
@@ -26,7 +29,9 @@ public class PSVapplication implements En {
             world.createLicence.setOperatorType(arg0);
             world.createLicence.setLicenceType(arg1);
             if (world.createLicence.getApplicationNumber() == null) {
-                world.APIJourneySteps.createAndSubmitApplication();
+                world.APIJourneySteps.registerAndGetUserDetails();
+                world.APIJourneySteps.createApplication();
+                world.APIJourneySteps.submitApplication();
             }
         });
     }

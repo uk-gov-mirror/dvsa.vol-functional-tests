@@ -37,9 +37,10 @@ public class UIJourneySteps extends BasePage {
     private String operatorUserEmail;
     private String operatorForeName;
     private String operatorFamilyName;
-    private String password;
+    private String externalPassword;
     private String externalTMUser;
     private String externalTMEmail;
+    private String password;
 
 
     public String getVerifyUsername() {
@@ -54,13 +55,17 @@ public class UIJourneySteps extends BasePage {
         this.world = world;
     }
 
-    public String getOperatorUser() { return operatorUser; }
+    public String getOperatorUser() {
+        return operatorUser;
+    }
 
     public void setOperatorUser(String operatorUser) {
         this.operatorUser = operatorUser;
     }
 
-    public String getOperatorUserEmail() { return operatorUserEmail; }
+    public String getOperatorUserEmail() {
+        return operatorUserEmail;
+    }
 
     public void setOperatorUserEmail(String operatorUserEmail) {
         this.operatorUserEmail = operatorUserEmail;
@@ -82,21 +87,29 @@ public class UIJourneySteps extends BasePage {
         this.operatorFamilyName = operatorFamilyName;
     }
 
-    public String getPassword() {
-        return password;
+    public String getExternalPassword() {
+        return externalPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setExternalPassword(String externalPassword) {
+        this.externalPassword = externalPassword;
     }
 
-    public String getExternalTMUser() { return externalTMUser; }
+    public String getExternalTMUser() {
+        return externalTMUser;
+    }
 
-    public void setExternalTMUser(String externalTMUser) { this.externalTMUser = externalTMUser; }
+    public void setExternalTMUser(String externalTMUser) {
+        this.externalTMUser = externalTMUser;
+    }
 
-    public String getExternalTMEmail() { return externalTMEmail; }
+    public String getExternalTMEmail() {
+        return externalTMEmail;
+    }
 
-    public void setExternalTMEmail(String externalTMEmail) { this.externalTMEmail = externalTMEmail; }
+    public void setExternalTMEmail(String externalTMEmail) {
+        this.externalTMEmail = externalTMEmail;
+    }
 
     public void internalSearchForBusReg() throws IllegalBrowserException {
         selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
@@ -363,24 +376,29 @@ public class UIJourneySteps extends BasePage {
         String newPassword = "Password1";
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
 
+        if (!emailAddress.contains("@")) {
+            this.password = emailAddress;
+        } else {
+            this.password = S3.getTempPassword(emailAddress, getBucketName());
+        }
+
         if (Browser.isBrowserOpen()) {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        String password = S3.getTempPassword(emailAddress, getBucketName());
 
         try {
             signIn(username, password);
-        } catch (Exception e){
+        } catch (Exception e) {
             //User is already registered
-            signIn(username, getPassword());
+            signIn(username, getExternalPassword());
         } finally {
             if (isTextPresent("Current password", 60)) {
                 enterField(nameAttribute("input", "oldPassword"), password);
                 enterField(nameAttribute("input", "newPassword"), newPassword);
                 enterField(nameAttribute("input", "confirmPassword"), newPassword);
                 click(nameAttribute("input", "submit"));
-                setPassword(newPassword);
+                setExternalPassword(newPassword);
             }
         }
     }
@@ -438,15 +456,15 @@ public class UIJourneySteps extends BasePage {
         click(nameAttribute("button", "form-actions[save]"));
     }
 
-    public void signWithVerify(String username, String password) throws IllegalBrowserException {
-        setVerifyUsername(username);
+    public void signWithVerify(String verifyUsername, String verifyPassword) throws IllegalBrowserException {
+        setVerifyUsername(verifyUsername);
         waitForTextToBePresent("Sign in with GOV.UK Verify");
         click("//*[@id='start_form_selection_false']", SelectorType.XPATH);
         click("//*[@id='next-button']", SelectorType.XPATH);
         click("//*[contains(text(),'Select Post')]", SelectorType.XPATH);
         waitForTextToBePresent("Verified");
-        enterText("username", username, SelectorType.NAME);
-        enterText("password", password, SelectorType.NAME);
+        enterText("username", verifyUsername, SelectorType.NAME);
+        enterText("password", verifyPassword, SelectorType.NAME);
         click("//*[@id='login']", SelectorType.XPATH);
         waitForTextToBePresent("Personal Details");
         click("//*[@id='agree']", SelectorType.XPATH);
@@ -537,7 +555,7 @@ public class UIJourneySteps extends BasePage {
         enterText("dob_day", String.valueOf(getPastDayOfMonth(5)), SelectorType.ID);
         enterText("dob_month", String.valueOf(getCurrentMonth()), SelectorType.ID);
         enterText("dob_year", String.valueOf(getPastYear(20)), SelectorType.ID);
-        click("form-actions[send]",SelectorType.ID);
+        click("form-actions[send]", SelectorType.ID);
         waitForTextToBePresent("Transport Managers");
     }
 
@@ -547,7 +565,7 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Add Transport Manager");
         selectValueFromDropDownByIndex("data[registeredUser]", SelectorType.ID, user);
         click("//*[@id='form-actions[continue]']", SelectorType.XPATH);
-        updateTMDetailsAndNavigateToDeclarationsPage("Yes","No","No","No","No");
+        updateTMDetailsAndNavigateToDeclarationsPage("Yes", "No", "No", "No", "No");
     }
 
     public void navigateToTransportManagersPage() throws IllegalBrowserException {
@@ -587,7 +605,7 @@ public class UIJourneySteps extends BasePage {
         findElement("//*[contains(text(),'" + hasConvictions + "')]//*[@name='previousHistory[hasConvictions]']", SelectorType.XPATH, 10).click();
         findElement("//*[contains(text(),'" + hasPreviousLicences + "')]//*[@name='previousHistory[hasPreviousLicences]']", SelectorType.XPATH, 10).click();
         findElement("emailAddress", SelectorType.ID, 10).clear();
-        if(findElement("emailAddress",SelectorType.ID,10).getText().isEmpty()) {
+        if (findElement("emailAddress", SelectorType.ID, 10).getText().isEmpty()) {
             waitAndEnterText("emailAddress", SelectorType.ID, tmEmailAddress);
         }
         waitAndEnterText("birthPlace", SelectorType.ID, "Nottingham");
@@ -613,7 +631,7 @@ public class UIJourneySteps extends BasePage {
         clickByLinkText("Home");
         clickByLinkText(world.createLicence.getApplicationNumber());
         world.UIJourneySteps.nominateOperatorUserAsTransportManager(user);
-        world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getOperatorUser(),world.UIJourneySteps.getOperatorUserEmail());
+        world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getOperatorUser(), world.UIJourneySteps.getOperatorUserEmail());
         clickByLinkText(world.createLicence.getApplicationNumber());
         waitForTextToBePresent("Transport Managers");
         clickByLinkText("Transport");
@@ -645,7 +663,7 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void navigateToSurrendersStartPage() throws IllegalBrowserException, MalformedURLException {
-        navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+        navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
         clickByLinkText(world.createLicence.getLicenceNumber());
         waitForTextToBePresent("Summary");
         clickByLinkText("Apply to");
@@ -654,9 +672,9 @@ public class UIJourneySteps extends BasePage {
 
     public void signDeclaration() throws IllegalBrowserException {
         waitAndClick("//*[contains(text(),'Sign your declaration online')]", SelectorType.XPATH);
-        if(isTextPresent("Review and declarations",10)) {
+        if (isTextPresent("Review and declarations", 10)) {
             click("//*[@name='form-actions[sign]']", SelectorType.XPATH);
-        }else if (isTextPresent("Declaration",10)) {
+        } else if (isTextPresent("Declaration", 10)) {
             click("//*[@name='form-actions[submit]']", SelectorType.XPATH);
         }
     }
@@ -664,30 +682,30 @@ public class UIJourneySteps extends BasePage {
     public void navigateThroughApplication() throws IllegalBrowserException {
         clickByLinkText("Type");
         waitForTextToBePresent("Type of licence");
-        waitAndClick("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        waitAndClick("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Business type");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Business details");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Addresses");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Directors");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Operating centres and authorisation");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Financial evidence");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Transport Managers");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Vehicle details");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Safety and compliance");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Financial history");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Licence history");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
         waitForTextToBePresent("Convictions and Penalties");
-        click("//*[@id='form-actions[saveAndContinue]']",SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
     }
 }
