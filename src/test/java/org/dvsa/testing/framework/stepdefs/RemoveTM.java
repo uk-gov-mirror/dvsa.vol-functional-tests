@@ -28,7 +28,9 @@ public class RemoveTM extends BasePage implements En {
             if (world.createLicence.getOperatorType() == null) {
                 world.createLicence.setOperatorType("public");
             }
-            world.APIJourneySteps.createAndSubmitApplication();
+            world.APIJourneySteps.registerAndGetUserDetails();
+            world.APIJourneySteps.createApplication();
+            world.APIJourneySteps.submitApplication();
         });
         When("^the transport manager has been removed by an internal user$", () -> {
             world.APIJourneySteps.createAdminUser();
@@ -45,6 +47,8 @@ public class RemoveTM extends BasePage implements En {
             world.createLicence.setUsername("newTmApi");
             world.createLicence.addTransportManager();
             world.createLicence.submitTransport();
+            world.createLicence.addTmResponsibilities();
+            world.createLicence.submitTmResponsibilities();
         });
         Then("^the remove TM popup should not be displaying new TM remove text$", () -> {
             waitForTextToBePresent(alertHeaderValue);
@@ -68,9 +72,8 @@ public class RemoveTM extends BasePage implements En {
             click("//*[@value='Remove']", SelectorType.XPATH);
         });
         Given("^the licence has been granted$", () -> {
-            world.APIJourneySteps.payFeesAndGrantLicence();
+            world.grantLicence.grantLicence();
             world.APIJourneySteps.grantLicence().payGrantFees();
-
         });
         When("^i create a variation$", () -> {
             world.updateLicence.createVariation(null);

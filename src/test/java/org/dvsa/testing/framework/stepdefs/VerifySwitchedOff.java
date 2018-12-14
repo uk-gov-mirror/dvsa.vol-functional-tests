@@ -16,12 +16,13 @@ import static org.junit.Assert.assertTrue;
 public class VerifySwitchedOff extends BasePage implements En {
 
     public VerifySwitchedOff(World world) {
-        Given("^I have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String arg0, String arg1) -> {
+        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String operatorType, String country) -> {
             world.genericUtils = new GenericUtils(world);
-            world.createLicence.setOperatorType(arg0);
-            if (arg1.equals("NI")) {
+            world.createLicence.setOperatorType(operatorType);
+            if (country.equals("NI")) {
                 world.APIJourneySteps.nIAddressBuilder();
             }
+            world.APIJourneySteps.registerAndGetUserDetails();
             world.APIJourneySteps.createPartialApplication();
         });
         Then("^Signing options are not displayed on the page$", () -> {
@@ -52,7 +53,6 @@ public class VerifySwitchedOff extends BasePage implements En {
         });
         Then("^the print and sign page is displayed$", () -> {
             Assert.assertTrue(isTextPresent("Transport Manager details approved", 10));
-            Assert.assertTrue(isTextPresent(world.createLicence.getForeName() + " " + world.createLicence.getFamilyName(), 10));
             Assert.assertTrue(isTextPresent("Print, sign and return", 10));
         });
         And("^the application status is \"([^\"]*)\"$", (String arg0) -> {
@@ -64,7 +64,7 @@ public class VerifySwitchedOff extends BasePage implements En {
             waitForTextToBePresent("What happens next?");
             assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
             assertTrue(isTextPresent("Awaiting operator review", 10));
-            assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("dd MMM yyyy")),20));
+            assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s",getCurrentDate("d MMM yyyy")),20));
         });
         When("^i am on the the TM landing page$", () -> {
             world.UIJourneySteps.submitTMApplicationAndNavigateToTMLandingPage();
@@ -74,17 +74,20 @@ public class VerifySwitchedOff extends BasePage implements En {
         });
         After(new String[]{"@SS-Verify-Off"}, (Scenario scenario) -> {
             if(scenario.isFailed() || !scenario.isFailed())
-            world.APIJourneySteps.enableDisableVerify("0");
+            world.updateLicence.enableDisableVerify("0");
         });
         And("^i navigate to the declarations page$", () -> {
             world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
         });
         Given("^verify has been switched \"([^\"]*)\"$", (String arg0) -> {
           if (arg0.equals("On")){
-              world.APIJourneySteps.enableDisableVerify("0");
+              world.updateLicence.enableDisableVerify("0");
           } else {
-              world.APIJourneySteps.enableDisableVerify("1");
+              world.updateLicence.enableDisableVerify("1");
           }
+        });
+        Then("^the 'Awaiting operator review' verify off page is displayed$", () -> {
+            assertTrue(isTextPresent("Awaiting operator review", 10));
         });
     }
 }

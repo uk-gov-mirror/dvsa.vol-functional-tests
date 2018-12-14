@@ -1,6 +1,4 @@
-@SS-Verify-Off
-@SS
-
+@Verify-Off
 Feature: Countersigning declaration page for the operator (Verify switched off)
 
   Background:
@@ -31,10 +29,5 @@ Feature: Countersigning declaration page for the operator (Verify switched off)
   Scenario: New countersigning declaration page for the operator (Verify switched off)
     And the transport manager is not the owner
     When i submit the application
-    Then the 'Awaiting operator review' post signature page is displayed
+    Then the 'Awaiting operator review' verify off page is displayed
     And the application status is "With operator"
-
-  @OLCS-21390
-  Scenario: Change to banner text on successful addition of TM
-    When i am on the the TM landing page
-    Then a success message banner should be displayed

@@ -1,3 +1,4 @@
+@SS
 @OLCS-21390
 Business Need: A TM should no longer be able to access a download link to the TM1 form from VOL, or expect to have a form sent to them via email from VOL.
 
@@ -14,4 +15,3 @@ Feature: Remove reference to TM1 form
   Scenario: Check that link is not displayed on details page
     When i add a new transport manager
     Then the download TM1 for should not be displayed on the details page
-
