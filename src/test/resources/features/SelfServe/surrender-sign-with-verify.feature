@@ -1,8 +1,11 @@
+@SS
+@Surrender-Verify
 Feature: Sign with surrender
 
   Background: 
     Given i have a valid "public" licence
-    And i surrender my licence
+    And i choose to surrender my licence
+    And i am on the review contact details page
     
   Scenario: Sign with verify - check that surrender has been created
     When i sign with verify
