@@ -9,7 +9,6 @@ import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.CreateLicenceAPI;
 import org.dvsa.testing.lib.pages.BasePage;
@@ -26,17 +25,17 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 
 public class GenericUtils extends BasePage {
@@ -224,5 +223,11 @@ public class GenericUtils extends BasePage {
             foundIt = false;
         }
         return foundIt;
+    }
+
+    public static Scanner scanText(String input, String delimeter){
+        Scanner scanner = new Scanner(input);
+        scanner.useDelimiter(delimeter);
+        return scanner;
     }
 }
