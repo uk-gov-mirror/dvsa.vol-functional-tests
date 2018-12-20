@@ -9,6 +9,7 @@ import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.junit.Assert;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 
 public class PsvSurrenders extends BasePage implements En {
@@ -65,6 +66,7 @@ public class PsvSurrenders extends BasePage implements En {
             Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
             Assert.assertTrue(isTextPresent(String.format("Application to surrender licence %s", world.createLicence.getLicenceNumber()),10));
             Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("dd MMM yyyy")), 20));
+            assertTrue(isTextPresent("notifications@vehicle-operator-licensing.service.gov.uk",10));
             waitAndClick("//*[@id='return']",SelectorType.ID);
         });
         And("^the surrender status is \"([^\"]*)\"$", (String status) -> {
