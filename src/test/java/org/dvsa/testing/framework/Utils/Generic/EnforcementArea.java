@@ -6,27 +6,29 @@ import org.jetbrains.annotations.NotNull;
 public class EnforcementArea {
 
     private String area;
+
     public String getArea() {
         return area;
     }
-    EnforcementArea(String area){
+
+    EnforcementArea(String area) {
         this.area = area;
     }
 
-    public static String getEnforcementArea(@NotNull TrafficArea trafficArea){
+    public static String getEnforcementArea(@NotNull TrafficArea trafficArea) {
         String enforcementArea;
-        switch (trafficArea){
+        switch (trafficArea) {
             case B:
                 enforcementArea = "EA-B";
                 break;
             case C:
-                enforcementArea ="EA-C";
+                enforcementArea = "EA-C";
                 break;
             case D:
                 enforcementArea = "EA-D";
                 break;
             case F:
-                enforcementArea ="EA-F";
+                enforcementArea = "EA-F";
                 break;
             case G:
                 enforcementArea = "EA-E";
@@ -43,9 +45,8 @@ public class EnforcementArea {
             case N:
                 enforcementArea = "EA-N";
                 break;
-                default:
-                    throw new IllegalArgumentException(trafficArea + " does not exist. Traffic areas should be " +
-                            "North_East, North_West, Midlands, East, Wales, West, London, Scotland or NI");
+            default:
+                enforcementArea = "EA-D";
         }
         return enforcementArea;
     }

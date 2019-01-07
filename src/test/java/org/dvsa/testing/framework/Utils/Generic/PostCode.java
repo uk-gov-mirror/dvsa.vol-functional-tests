@@ -6,14 +6,15 @@ import org.jetbrains.annotations.NotNull;
 public class PostCode {
 
     private String area;
+
     public String getArea() {
         return area;
     }
 
 
-    public static String getPostCode(@NotNull TrafficArea trafficArea){
+    public static String getPostCode(@NotNull TrafficArea trafficArea) {
         String postCode;
-        switch (trafficArea){
+        switch (trafficArea) {
             case B:
                 postCode = "BD162UA";
                 break;
@@ -39,11 +40,10 @@ public class PostCode {
                 postCode = "EH139DY";
                 break;
             case N:
-                postCode = "NG23HX";
+                postCode = "BT28HQ";
                 break;
-                default:
-                    throw new IllegalArgumentException(trafficArea + " does not exist. Traffic areas should be " +
-                            "North_East, North_West, Midlands, East, Wales, West, London, Scotland or NI");
+            default:
+                postCode = "NG23HX";
         }
         return postCode;
     }
