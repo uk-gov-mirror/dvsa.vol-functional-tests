@@ -3,12 +3,11 @@ package org.dvsa.testing.framework.stepdefs;
 import Injectors.World;
 import activesupport.aws.s3.S3;
 import activesupport.string.Str;
-import cucumber.api.PendingException;
-import cucumber.api.Scenario;
 import cucumber.api.java8.En;
+import enums.TrafficArea;
+import org.dvsa.testing.framework.Utils.Generic.EnforcementArea;
+import org.dvsa.testing.framework.Utils.Generic.PostCode;
 import org.dvsa.testing.lib.pages.BasePage;
-
-import java.io.File;
 
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getRandomNumberInts;
 
@@ -20,14 +19,13 @@ public class UserResearch extends BasePage implements En {
         Given("^^I have applied for \"([^\"]*)\" \"([^\"]*)\" licences$", (String licenceType, String operator) -> {
             world.APIJourneySteps.registerAndGetUserDetails();
             world.createLicence.setNoOfVehiclesRequired(3);
-            for (int i = 0; i < trafficAreaList().length - 1; ) {
+            for (int i = 0; i < trafficAreaList().length; ) {
                 for (String ta : trafficAreaList()) {
-                    System.out.println(ta);
-                    world.createLicence.setPostcode(postCodes(ta));
+                    world.createLicence.setPostcode(PostCode.getPostCode(TrafficArea.valueOf(ta)));
                     world.createLicence.setOperatorType(operator);
                     world.createLicence.setLicenceType(licenceType);
-                    world.createLicence.setTrafficArea(ta);
-                    world.createLicence.setEnforcementArea(enforcementArea(ta));
+                    world.createLicence.setTrafficArea(String.valueOf(TrafficArea.valueOf(ta)));
+                    world.createLicence.setEnforcementArea(EnforcementArea.getEnforcementArea(TrafficArea.valueOf(ta)));
                     world.APIJourneySteps.createApplication();
                     world.APIJourneySteps.submitApplication();
                     world.APIJourneySteps.grandLicenceAndPayFees();
@@ -43,11 +41,11 @@ public class UserResearch extends BasePage implements En {
             world.createLicence.setNoOfVehiclesRequired(3);
             for (int i = 0; i < trafficAreaList().length - 1; ) {
                 for (String ta : trafficAreaList()) {
-                    world.createLicence.setPostcode(postCodes(ta));
+                    world.createLicence.setPostcode(PostCode.getPostCode(TrafficArea.valueOf(ta)));
                     world.createLicence.setOperatorType(operator);
                     world.createLicence.setLicenceType(licenceType);
-                    world.createLicence.setTrafficArea(ta);
-                    world.createLicence.setEnforcementArea(enforcementArea(ta));
+                    world.createLicence.setTrafficArea(String.valueOf(TrafficArea.valueOf(ta)));
+                    world.createLicence.setEnforcementArea(EnforcementArea.getEnforcementArea(TrafficArea.valueOf(ta)));
                     world.APIJourneySteps.createApplication();
                     String randWord = Str.randomWord(4);
                     String externalTmUserName;
@@ -71,74 +69,7 @@ public class UserResearch extends BasePage implements En {
 
         });
     }
-
     private String[] trafficAreaList() {
         return new String[]{"B", "C", "D", "F", "G", "H", "K", "M"};
-    }
-
-    private String postCodes(String trafficArea) {
-        String postCode;
-        switch (trafficArea) {
-            case "B":
-                postCode = "BD162UA";
-                break;
-            case "C":
-                postCode = "M446TL";
-                break;
-            case "D":
-                postCode = "B440TA";
-                break;
-            case "F":
-                postCode = "IP138ES";
-                break;
-            case "G":
-                postCode = "CF116EE";
-                break;
-            case "H":
-                postCode = "OX11BY";
-                break;
-            case "K":
-                postCode = "E72EW";
-                break;
-            case "M":
-                postCode = "EH139DY";
-                break;
-            default:
-                postCode = "NG23HX";
-        }
-        return postCode;
-    }
-
-    private String enforcementArea(String trafficArea) {
-        String enforcementArea;
-        switch (trafficArea) {
-            case "B":
-                enforcementArea = "EA-B";
-                break;
-            case "C":
-                enforcementArea = "EA-C";
-                break;
-            case "D":
-                enforcementArea = "EA-D";
-                break;
-            case "F":
-                enforcementArea = "EA-F";
-                break;
-            case "G":
-                enforcementArea = "EA-E";
-                break;
-            case "H":
-                enforcementArea = "EA-J";
-                break;
-            case "K":
-                enforcementArea = "EA-H";
-                break;
-            case "M":
-                enforcementArea = "EA-A";
-                break;
-            default:
-                enforcementArea = "EA-D";
-        }
-        return enforcementArea;
     }
 }

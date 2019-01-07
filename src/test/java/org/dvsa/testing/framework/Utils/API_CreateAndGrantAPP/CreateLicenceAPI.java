@@ -513,16 +513,16 @@ public class CreateLicenceAPI {
         OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder();
 
         if (operatorType.equals("goods") && (!licenceType.equals("special_restricted")) || (getNiFlag().equals("Y"))) {
-            AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+            AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(getPostcode()).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(getApplicationNumber()).withNoOfVehiclesRequired(String.valueOf(getNoOfVehiclesRequired()))
                     .withNoOfTrailersRequired(String.valueOf(getNoOfVehiclesRequired())).withPermission(permissionOption).withAddress(address);
         }
         if (operatorType.equals("public") && (!licenceType.equals("special_restricted"))) {
-            AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+            AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(getPostcode()).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(applicationNumber).withNoOfVehiclesRequired(String.valueOf(noOfVehiclesRequired)).withPermission(permissionOption).withAddress(address);
         }
         if (operatorType.equals("public") && (licenceType.equals("restricted"))) {
-            AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+            AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(getPostcode()).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(getApplicationNumber()).withNoOfVehiclesRequired(getApplicationNumber()).withPermission(permissionOption).withAddress(address);
         }
         if (!licenceType.equals("special_restricted")) {
@@ -543,15 +543,15 @@ public class CreateLicenceAPI {
         do {
             if (operatorType.equals("goods") && (!licenceType.equals("special_restricted")) || (getNiFlag().equals("Y"))) {
                 updateOperatingCentre.withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
-                        .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withVersion(version);
+                        .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withVersion(version);
             }
             if (operatorType.equals("public") && (!licenceType.equals("special_restricted"))) {
                 updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(noOfVehiclesRequired)
-                        .withTrafficArea(trafficArea).withEnforcementArea(enforcementArea).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
+                        .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
             }
             if (operatorType.equals("public") && (licenceType.equals("restricted"))) {
                 updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(Integer.parseInt(restrictedVehicles))
-                        .withTrafficArea(getTrafficArea()).withEnforcementArea(enforcementArea).withTotCommunityLicences(Integer.parseInt(restrictedVehicles)).withVersion(version);
+                        .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTotCommunityLicences(Integer.parseInt(restrictedVehicles)).withVersion(version);
             }
             if (!licenceType.equals("special_restricted")) {
                 apiResponse = RestUtils.put(updateOperatingCentre, updateOperatingCentreResource, getHeaders());
@@ -695,17 +695,17 @@ public class CreateLicenceAPI {
                     VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight("5000").withVersion(version);
                     apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
                     i++;
-                } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+                }
+                while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().response().asString().contains("Vehicle exists on other licence")));
                 if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
                     System.out.println(apiResponse.extract().statusCode());
                     System.out.println(apiResponse.extract().response().asString());
                     throw new HTTPException(apiResponse.extract().statusCode());
                 }
-
+            }
         }
-    }
 
-}
+    }
 
     public void submitVehicleDeclaration() {
         if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {

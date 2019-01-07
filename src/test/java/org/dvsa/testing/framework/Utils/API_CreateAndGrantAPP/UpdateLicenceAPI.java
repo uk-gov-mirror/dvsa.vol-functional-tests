@@ -13,7 +13,6 @@ import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import Injectors.World;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import java.net.MalformedURLException;
@@ -25,7 +24,6 @@ import java.util.Map;
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 public class UpdateLicenceAPI extends BasePage {
     private ValidatableResponse apiResponse;
