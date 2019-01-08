@@ -25,6 +25,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -173,11 +174,11 @@ public class GenericUtils extends BasePage {
         return formatDateTime;
     }
 
-    public String confirmationPanel(String locator, String cssValue) throws IllegalBrowserException {
+    public String confirmationPanel(String locator, String cssValue) throws IllegalBrowserException, MalformedURLException {
         return Browser.navigate().findElement(By.xpath(locator)).getCssValue(cssValue);
     }
 
-    public void switchTab(int tab) throws IllegalBrowserException {
+    public void switchTab(int tab) throws IllegalBrowserException, MalformedURLException {
         ArrayList<String> tabs = new ArrayList<>(Browser.navigate().getWindowHandles());
         Browser.navigate().switchTo().window(tabs.get(tab));
     }
