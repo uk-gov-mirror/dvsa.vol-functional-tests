@@ -43,7 +43,6 @@ public class GenericUtils extends BasePage {
     private World world;
     private String registrationNumber;
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
-    private String trafficAreaName;
 
     public String getRegistrationNumber() {
         return registrationNumber;
