@@ -33,9 +33,14 @@
         <maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
         <allure-report-version>2.7.0</allure-report-version>
 
+        <cluecumber-report-plugin.version>1.3.0</cluecumber-report-plugin.version>
         <s3-upload-maven-plugin.version>1.4</s3-upload-maven-plugin.version>
 
-        <report.allure.directory>allure-report</report.allure.directory>
+        <report.allure.directory>${project.build.directory}/allure-results</report.allure.directory>
+        <generated.runner.directory>${project.basedir}/src/test/java/runners</generated.runner.directory>
+        <generated.feature.directory>${project.basedir}/src/test/resources/parallel/features</generated.feature.directory>
+        <cucumber.report.json.location>${project.build.directory}/results/json</cucumber.report.json.location>
+        <generated.report.location>${project.build.directory}/results/cluecumber-report</generated.report.location>
     </properties>
 
     <repositories>
@@ -109,8 +114,8 @@
                     <!-- Required properties -->
                     <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
                     <sourceFeatures>src/test/resources/features</sourceFeatures>
-                    <generatedFeatureDirectory>${project.basedir}/src/test/resources/parallel/features</generatedFeatureDirectory>
-                    <generatedRunnerDirectory>${project.basedir}/src/test/java/runners</generatedRunnerDirectory>
+                    <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
+                    <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -149,19 +154,37 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>io.qameta.allure</groupId>-->
+                <!--<artifactId>allure-maven</artifactId>-->
+                <!--<version>${allure-mvn-version}</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>post-integration-test</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>report</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<reportingOutputDirectory>${report.allure.directory}</reportingOutputDirectory>-->
+                            <!--<reportVersion>${allure-report-version}</reportVersion>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
             <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>${allure-mvn-version}</version>
+                <groupId>com.trivago.rta</groupId>
+                <artifactId>cluecumber-report-plugin</artifactId>
+                <version>${cluecumber-report-plugin.version}</version>
                 <executions>
                     <execution>
+                        <id>report</id>
                         <phase>post-integration-test</phase>
                         <goals>
-                            <goal>report</goal>
+                            <goal>reporting</goal>
                         </goals>
                         <configuration>
-                            <reportingOutputDirectory>${report.allure.directory}</reportingOutputDirectory>
-                            <reportVersion>${allure-report-version}</reportVersion>
+                            <sourceJsonReportDirectory>${cucumber.report.json.location}</sourceJsonReportDirectory>
+                            <generatedHtmlReportDirectory>${generated.report.location}</generatedHtmlReportDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -178,7 +201,7 @@
                         <phase>post-integration-test</phase>
                         <configuration>
                             <bucketName>devappci-shd-pri-qarepo</bucketName>
-                            <source>${report.allure.directory}</source>
+                            <source>${generated.report.location}</source>
                             <destination>reports/vol-ci/</destination>
                             <recursive>true</recursive>
                         </configuration>
