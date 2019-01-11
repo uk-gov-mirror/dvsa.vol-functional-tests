@@ -38,28 +38,28 @@
         <report.allure.directory>allure-report</report.allure.directory>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>devappci-shd-pri-qarepo</id>
-            <url>s3://devappci-shd-pri-qarepo</url>
-        </repository>
-    </repositories>
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>devappci-shd-pri-qarepo</id>-->
+            <!--<url>s3://devappci-shd-pri-qarepo</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
 
-    <distributionManagement>
-        <repository>
-            <id>devappci-shd-pri-qarepo</id>
-            <url>s3://devappci-shd-pri-qarepo</url>
-        </repository>
-    </distributionManagement>
+    <!--<distributionManagement>-->
+        <!--<repository>-->
+            <!--<id>devappci-shd-pri-qarepo</id>-->
+            <!--<url>s3://devappci-shd-pri-qarepo</url>-->
+        <!--</repository>-->
+    <!--</distributionManagement>-->
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.springframework.build</groupId>
-                <artifactId>aws-maven</artifactId>
-                <version>5.0.0.RELEASE</version>
-            </extension>
-        </extensions>
+        <!--<extensions>-->
+            <!--<extension>-->
+                <!--<groupId>org.springframework.build</groupId>-->
+                <!--<artifactId>aws-maven</artifactId>-->
+                <!--<version>5.0.0.RELEASE</version>-->
+            <!--</extension>-->
+        <!--</extensions>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
