@@ -32,6 +32,8 @@
         <maven.failsafe.plugin.version>2.22.0</maven.failsafe.plugin.version>
         <maven-surefire-plugin.version>2.20</maven-surefire-plugin.version>
         <allure-report-version>2.7.0</allure-report-version>
+
+        <s3-upload-maven-plugin.version>1.4</s3-upload-maven-plugin.version>
     </properties>
 
     <repositories>
@@ -83,15 +85,6 @@
                         <version>${aspectj.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>${allure-mvn-version}</version>
-                <configuration>
-                    <reportingOutputDirectory>allure-report</reportingOutputDirectory>
-                    <reportVersion>${allure-report-version}</reportVersion>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.trivago.rta</groupId>
@@ -146,6 +139,42 @@
                             <forkCount>5</forkCount>
                             <reuseForks>true</reuseForks>
                             <rerunFailingTestsCount>4</rerunFailingTestsCount>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure-mvn-version}</version>
+                <executions>
+                    <execution>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <reportingOutputDirectory>allure-report</reportingOutputDirectory>
+                    <reportVersion>${allure-report-version}</reportVersion>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.bazaarvoice.maven.plugins</groupId>
+                <artifactId>s3-upload-maven-plugin</artifactId>
+                <version>${s3-upload-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>s3-upload</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <bucketName>devappci-shd-pri-qarepo</bucketName>
+                            <source>allure-report</source>
+                            <destination>reports/vol-ci/</destination>
+                            <recursive>true</recursive>
                         </configuration>
                     </execution>
                 </executions>
