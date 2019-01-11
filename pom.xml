@@ -155,12 +155,12 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <reportingOutputDirectory>${report.allure.directory}</reportingOutputDirectory>
+                            <reportVersion>${allure-report-version}</reportVersion>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <reportingOutputDirectory>${report.allure.directory}</reportingOutputDirectory>
-                    <reportVersion>${allure-report-version}</reportVersion>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.bazaarvoice.maven.plugins</groupId>
