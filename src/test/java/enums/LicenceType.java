@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 public enum LicenceType {
     ltyp_r("restricted"),
-    ltyp_sn("standard_international"),
-    ltyp_si("standard_national"),
+    ltyp_sn("standard_national"),
+    ltyp_si("standard_international"),
     ltyp_sr("standard_restricted");
 
     private String name;

@@ -707,4 +707,14 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Convictions and Penalties");
         click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
     }
+
+    public void navigateToSurrenderReviewPage() throws IllegalBrowserException, MalformedURLException {
+        click("//*[contains(text(),'In your possession')]",SelectorType.XPATH);
+        waitForTextToBePresent("Number of discs you will destroy");
+        waitAndEnterText("//*[@id='possessionSection[info][number]']",SelectorType.XPATH,String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
+        waitAndClick("//*[@id='submit']", SelectorType.XPATH);
+        waitAndClick("//*//*[contains(text(),'In your possession')]",SelectorType.XPATH);
+        waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+        assertTrue(Browser.navigate().getCurrentUrl().contains("review"));
+    }
 }

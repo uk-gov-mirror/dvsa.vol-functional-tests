@@ -31,7 +31,7 @@ public class CreateLicenceAPI {
     private String title;
     private String foreName;
     private String familyName;
-    private String birthDate = String.valueOf(Int.random(1900, 2018) + "-" + Int.random(1, 12) + "-" + Int.random(1, 28));
+    private String birthDate = Int.random(1900, 2018) + "-" + Int.random(1, 12) + "-" + Int.random(1, 28);
     private String addressLine1 = "API House";
     private String town = "Nottingham";
     private String postcode = "NG23HX";
@@ -696,7 +696,9 @@ public class CreateLicenceAPI {
                     apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
                     i++;
                 }
-                while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().response().asString().contains("Vehicle exists on other licence")));
+                while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().response().asString().contains("Vehicle exists on other licence"))
+                || apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY);
+
                 if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
                     System.out.println(apiResponse.extract().statusCode());
                     System.out.println(apiResponse.extract().response().asString());

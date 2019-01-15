@@ -76,10 +76,18 @@ public class PsvSurrenders extends BasePage implements En {
 //            assertEquals(SurrenderStatus,getText());
         });
         Then("^the number of disc should match the vehicles registered on the licence$", () -> {
-            assertEquals(getText("",SelectorType.XPATH),String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
+            assertEquals(getText("//*[@id=\"main\"]/div/div/div[2]/div/p[2]/strong",SelectorType.XPATH),String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
         });
         And("^discs have been added to my licence$", () -> {
            world.updateLicence.printLicenceDiscs();
+        });
+        And("^i navigate to the current discs page$", () -> {
+            click("//*[@id='form-actions[submit]']",SelectorType.XPATH);
+        });
+        And("^i navigate to the review page$", () -> {
+            world.updateLicence.printLicenceDiscs();
+            click("//*[@id='form-actions[submit]']",SelectorType.XPATH);
+            world.UIJourneySteps.navigateToSurrenderReviewPage();
         });
     }
 }
