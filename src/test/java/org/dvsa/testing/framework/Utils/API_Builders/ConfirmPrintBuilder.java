@@ -12,10 +12,13 @@ import org.junit.platform.commons.util.ToStringBuilder;
         "niFlag",
         "licenceType",
         "startNumber",
-        "discSequence"
+        "endNumber",
+        "discSequence",
+        "isSuccessfull",
+        "queueId"
 })
 
-public class PrintDiscBuilder {
+public class ConfirmPrintBuilder {
 
     @JsonProperty("niFlag")
     private String niFlag;
@@ -25,19 +28,65 @@ public class PrintDiscBuilder {
     private String startNumber;
     @JsonProperty("discSequence")
     private String discSequence;
+    @JsonProperty("endNumber")
+    private String endNumber;
+    @JsonProperty("isSuccessfull")
+    private boolean isSuccessfull;
+    @JsonProperty("queueId")
+    private String queueId;
 
     @JsonProperty("niFlag")
     public String getNiFlag() {
         return niFlag;
     }
-
     @JsonProperty("niFlag")
     public void setNiFlag(String niFlag) {
         this.niFlag = niFlag;
     }
-
-    public PrintDiscBuilder withNiFlag(String niFlag) {
+    public ConfirmPrintBuilder withNiFlag(String niFlag) {
         this.niFlag = niFlag;
+        return this;
+    }
+    @JsonProperty("endNumber")
+    public String getEndNumber() {
+        return endNumber;
+    }
+
+    @JsonProperty("endNumber")
+    public void setEndNumber(String endNumber) {
+        this.endNumber = endNumber;
+    }
+
+    public ConfirmPrintBuilder withEndNumber(String endNumber) {
+        this.endNumber = endNumber;
+        return this;
+    }
+    @JsonProperty("isSuccessfull")
+    public boolean getIsSuccessfull() {
+        return isSuccessfull;
+    }
+
+    @JsonProperty("isSuccessfull")
+    public void setIsSuccessfull(boolean isSuccessfull) {
+        this.isSuccessfull = isSuccessfull;
+    }
+
+    public ConfirmPrintBuilder withIsSuccessfull(boolean isSuccessfull) {
+        this.isSuccessfull = isSuccessfull;
+        return this;
+    }
+    @JsonProperty("queueId")
+    public String getQueueId() {
+        return queueId;
+    }
+
+    @JsonProperty("queueId")
+    public void setQueueId(String queueId) {
+        this.queueId = queueId;
+    }
+
+    public ConfirmPrintBuilder withQueueId(String queueId) {
+        this.queueId = queueId;
         return this;
     }
 
@@ -45,43 +94,36 @@ public class PrintDiscBuilder {
     public String getLicenceType() {
         return licenceType;
     }
-
     @JsonProperty("licenceType")
     public void setLicenceType(String licenceType) {
         this.licenceType = licenceType;
     }
 
-    public PrintDiscBuilder withLicenceType(String licenceType) {
+    public ConfirmPrintBuilder withLicenceType(String licenceType) {
         this.licenceType = licenceType;
         return this;
     }
-
     @JsonProperty("startNumber")
     public String getStartNumber() {
         return startNumber;
     }
-
     @JsonProperty("startNumber")
     public void setStartNumber(String startNumber) {
         this.startNumber = startNumber;
     }
-
-    public PrintDiscBuilder withStartNumber(String startNumber) {
+    public ConfirmPrintBuilder withStartNumber(String startNumber) {
         this.startNumber = startNumber;
         return this;
     }
-
     @JsonProperty("discSequence")
     public String getDiscSequence() {
         return discSequence;
     }
-
     @JsonProperty("discSequence")
     public void setDiscSequence(String discSequence) {
         this.discSequence = discSequence;
     }
-
-    public PrintDiscBuilder withDiscSequence(String discSequence) {
+    public ConfirmPrintBuilder withDiscSequence(String discSequence) {
         this.discSequence = discSequence;
         return this;
     }
@@ -92,6 +134,9 @@ public class PrintDiscBuilder {
                 .append("niFlag", niFlag)
                 .append("licenceType", licenceType)
                 .append("startNumber", startNumber)
-                .append("discSequence", discSequence).toString();
+                .append("discSequence", discSequence)
+                .append("endNumber", endNumber)
+                .append("isSuccessfull", isSuccessfull)
+                .append("queueId", discSequence).toString();
     }
 }

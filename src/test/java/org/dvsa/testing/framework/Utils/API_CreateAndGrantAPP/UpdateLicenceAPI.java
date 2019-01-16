@@ -5,6 +5,7 @@ import activesupport.http.RestUtils;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import enums.LicenceType;
+import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
@@ -23,7 +24,8 @@ import java.util.Map;
 
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThat;
+
 
 public class UpdateLicenceAPI extends BasePage {
     private ValidatableResponse apiResponse;
@@ -37,8 +39,10 @@ public class UpdateLicenceAPI extends BasePage {
     private String licenceStatus;
     private String businessType;
     private String licenceType;
+    private String startNumber;
+    private String endNumber;
+    private String queueId;
 
-    private int endNumber;
     private int caseNoteId;
     private int complaintId;
     private int convictionId;
@@ -49,7 +53,7 @@ public class UpdateLicenceAPI extends BasePage {
     private static String variationApplicationNumber;
     private static int version = 1;
 
-    public void setBusinessType(String businessType) { this.businessType = businessType; }
+    private void setBusinessType(String businessType) { this.businessType = businessType; }
     public String getBusinessType() { return businessType; }
     public void setLicenceType(String licenceType) { this.licenceType = licenceType; }
     public String getLicenceType() { return licenceType; }
@@ -57,9 +61,7 @@ public class UpdateLicenceAPI extends BasePage {
         return variationApplicationNumber;
     }
     private static void setVariationApplicationNumber(String variationApplicationNumber) { UpdateLicenceAPI.variationApplicationNumber = variationApplicationNumber; }
-    private void setAdminUserId(String adminUserId) {
-        this.adminUserId = adminUserId;
-    }
+    private void setAdminUserId(String adminUserId) { this.adminUserId = adminUserId; }
     public String getTrafficAreaName() {
         return trafficAreaName;
     }
@@ -105,17 +107,17 @@ public class UpdateLicenceAPI extends BasePage {
     private void setLicenceStatus(String licenceStatus) {
         this.licenceStatus = licenceStatus;
     }
-    public String getGoodOrPsv() {
-        return goodOrPsv;
-    }
+    public String getGoodOrPsv() { return goodOrPsv; }
     private void setGoodOrPsv(String goodOrPsv) {
         this.goodOrPsv = goodOrPsv;
     }
-    public String getLicenceStatus() {
-        return licenceStatus;
-    }
-    public int getEndNumber() { return endNumber; }
-    public void setEndNumber(int endNumber) { this.endNumber = endNumber; }
+    private String getStartNumber() { return startNumber; }
+    private void setStartNumber(String startNumber) { this.startNumber = startNumber; }
+    public String getEndNumber() { return endNumber; }
+    public void setEndNumber(String endNumber) { this.endNumber = endNumber; }
+    public String getQueueId() { return queueId; }
+    public void setQueueId(String queueId) { this.queueId = queueId; }
+
     private static EnvironmentType env;
 
     static {
@@ -177,7 +179,7 @@ public class UpdateLicenceAPI extends BasePage {
         }
         while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
         setCaseId(apiResponse.extract().body().jsonPath().get("id.case"));
-        Assertions.assertThat(apiResponse.statusCode(HttpStatus.SC_CREATED));
+        apiResponse.statusCode(HttpStatus.SC_CREATED);
     }
 
     public void addConviction() throws MalformedURLException {
@@ -450,23 +452,47 @@ public class UpdateLicenceAPI extends BasePage {
         Map<String,String> queryParams = new HashMap<>();
         {
             queryParams.put("niFlag","N");
-            queryParams.put("licenceType",world.createLicence.getLicenceType());
-            queryParams.put("operatorType",world.createLicence.getOperatorType());
+            queryParams.put("licenceType",String.valueOf(LicenceType.getEnum(world.createLicence.getLicenceType())));
+            queryParams.put("operatorType",String.valueOf(OperatorType.getEnum(world.createLicence.getOperatorType())));
             queryParams.put("discSequence","6");
         }
         Headers.getHeaders().put("x-pid",adminApiHeader());
         String discNumberingResource = org.dvsa.testing.lib.url.api.URL.build(env,"disc-sequence/discs-numbering").toString();
         apiResponse = RestUtils.getWithQueryParams(discNumberingResource,queryParams,getHeaders());
-        setEndNumber(apiResponse.extract().jsonPath().get("results.endNumber"));
+        setStartNumber(apiResponse.extract().jsonPath().get("results.startNumber").toString());
+        setEndNumber(apiResponse.extract().jsonPath().get("results.endNumber").toString());
     }
 
     public void printLicenceDiscs(){
+        String operator;
         getDiscInformation();
         Headers.getHeaders().put("x-pid",adminApiHeader());
-        String discPrintResource = org.dvsa.testing.lib.url.api.URL.build(env,"goods-disc/print-discs/").toString();
-        PrintDiscBuilder printDiscBuilder = new PrintDiscBuilder().withDiscSequence("6").withLicenceType(world.createLicence.getLicenceType()).withNiFlag(world.createLicence.getNiFlag())
-                .withStartNumber(String.valueOf(getEndNumber()+1));
+        if(getOperatorTypeDetails().equals("Goods Vehicle")){
+            operator = "goods";
+        }else{
+            operator = "psv";
+        }
+        String discPrintResource = org.dvsa.testing.lib.url.api.URL.build(env,String.format("%s-disc/print-discs/",operator)).toString();
+        PrintDiscBuilder printDiscBuilder = new PrintDiscBuilder().withDiscSequence("6").withLicenceType(String.valueOf(LicenceType.getEnum(world.createLicence.getLicenceType()))).withNiFlag(world.createLicence.getNiFlag())
+                .withStartNumber(String.valueOf(getStartNumber()));
         apiResponse = RestUtils.post(printDiscBuilder,discPrintResource,getHeaders());
         assertThat(apiResponse.extract().body().jsonPath().get("id.queue"), Matchers.notNullValue());
+        setQueueId(apiResponse.extract().jsonPath().get("id.queue").toString());
+        confirmDiscPrint();
+    }
+
+    public void confirmDiscPrint(){
+        String operator;
+        if(getOperatorTypeDetails().equals("Goods Vehicle")){
+            operator = "goods";
+        }else{
+            operator = "psv";
+        }
+        Headers.getHeaders().put("x-pid",adminApiHeader());
+        String discConfirmResource = org.dvsa.testing.lib.url.api.URL.build(env,String.format("%s-disc/confirm-printing/",operator)).toString();
+        ConfirmPrintBuilder confirmPrintBuilder = new ConfirmPrintBuilder().withDiscSequence("6").withEndNumber(getEndNumber()).withStartNumber(getStartNumber()).withIsSuccessfull(true)
+                .withLicenceType(String.valueOf(LicenceType.getEnum(world.createLicence.getLicenceType()))).withNiFlag(world.createLicence.getNiFlag()).withQueueId(getQueueId());
+        apiResponse = RestUtils.post(confirmPrintBuilder,discConfirmResource,getHeaders());
+        apiResponse.statusCode(HttpStatus.SC_CREATED);
     }
 }
