@@ -6,7 +6,7 @@ Feature:Digital Surrender - Goods Surrender licence
     And i choose to surrender my licence
     When i am on the review contact details page
 
-  Scenario: Goods review details page
+  Scenario: Correspondence details page
     Then the correct licence details should be displayed
     And the correct correspondence details should be displayed
     And the correct contact details should be displayed
