@@ -1,0 +1,22 @@
+FROM maven:3.6.0-jdk-8-alpine
+
+RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories \
+    && echo 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories
+
+RUN apk update && apk upgrade --update-cache --available \
+    && apk add --no-cache \
+    build-base \
+    bash \
+    dbus-x11 \
+    xvfb \
+    firefox \
+    curl \
+    jq
+
+RUN export BASE_URL=https://github.com/mozilla/geckodriver/releases/download \
+  && export VERSION=$(curl -sL \
+    https://api.github.com/repos/mozilla/geckodriver/releases/latest | \
+    grep tag_name | cut -d '"' -f 4) \
+  && curl -sL \
+  $BASE_URL/$VERSION/geckodriver-$VERSION-linux64.tar.gz | tar -xz \
+  && mv geckodriver /usr/local/bin/geckodriver
