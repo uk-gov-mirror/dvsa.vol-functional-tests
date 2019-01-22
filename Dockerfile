@@ -1,4 +1,4 @@
-FROM nexus.shd.ci.nonprod.dvsa.aws:5000/maven-jdk-8-alpine-headless-browser:1
+FROM openjdk:maven-jdk-8-alpine-headless-browser:1
 
 WORKDIR /root
 COPY src ./src
