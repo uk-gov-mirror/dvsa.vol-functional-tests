@@ -6,6 +6,7 @@ import activesupport.string.Str;
 import activesupport.system.Properties;
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
+import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
@@ -103,6 +104,8 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             assertFalse(isLinkPresent("download a TM1 form (PDF 150KB).", 30));
         });
         And("^the user chooses to print and sign$", () -> {
+            String declarationUrl = GenericUtils.scanText(Browser.navigate().getCurrentUrl(),"review-contact-details/").next();
+            Browser.navigate().get(declarationUrl.concat("declaration"));
             click("//*[contains(text(),'Print')]", SelectorType.XPATH);
         });
         And("^I am the operator and not the transport manager$", () -> {
