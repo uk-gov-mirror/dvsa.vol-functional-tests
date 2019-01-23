@@ -37,6 +37,11 @@
 
     <repositories>
         <repository>
+            <id>nexus-releases</id>
+            <url>http://nexus.shd.ci.nonprod.dvsa.aws:8080/repository/dvsa-maven-raw/</url>
+        </repository>
+
+        <repository>
             <id>devappci-shd-pri-qarepo</id>
             <url>s3://devappci-shd-pri-qarepo</url>
         </repository>
@@ -249,5 +254,11 @@
             <artifactId>commons-csv</artifactId>
             <version>${apache-commons.version}</version>
         </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.2</version>
+        </dependency>
+
     </dependencies>
 </project>
