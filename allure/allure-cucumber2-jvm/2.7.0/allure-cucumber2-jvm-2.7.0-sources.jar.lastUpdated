@@ -1,0 +1,7 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Wed Jan 23 18:44:51 GMT 2019
+http\://nexus.shd.ci.nonprod.dvsa.aws\:8080/repository/dvsa-maven-raw/.lastUpdated=1548269090850
+https\://repo.maven.apache.org/maven2/.lastUpdated=1548269091323
+s3\://devappci-shd-pri-qarepo/.error=Could not transfer artifact io.qameta.allure\:allure-cucumber2-jvm\:jar\:sources\:2.7.0 from/to devappci-shd-pri-qarepo (s3\://devappci-shd-pri-qarepo)\: Cannot access s3\://devappci-shd-pri-qarepo with type default using the available connector factories\: BasicRepositoryConnectorFactory
+http\://nexus.shd.ci.nonprod.dvsa.aws\:8080/repository/dvsa-maven-raw/.error=
+e278e26fc158ba8ab0b3d85fa49f6ee478a2498d@default-devappci-shd-pri-qarepo-s3\://devappci-shd-pri-qarepo/.lastUpdated=1548269090855
