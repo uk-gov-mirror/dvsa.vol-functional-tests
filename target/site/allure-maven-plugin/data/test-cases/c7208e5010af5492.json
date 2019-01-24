@@ -1,0 +1,130 @@
+{
+  "uid" : "c7208e5010af5492",
+  "name" : "Add a condition-undertaking to a case",
+  "historyId" : "1618e6e68987cb57219f13e031131973",
+  "time" : {
+    "start" : 1548266990537,
+    "stop" : 1548267092193,
+    "duration" : 101656
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ {
+      "name" : "Given  i have a valid \"goods\" licence",
+      "time" : {
+        "start" : 1548266990537,
+        "stop" : 1548267089297,
+        "duration" : 98760
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    }, {
+      "name" : "And  I create a new case",
+      "time" : {
+        "start" : 1548267089297,
+        "stop" : 1548267090559,
+        "duration" : 1262
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    }, {
+      "name" : "When  I add condition undertaking details",
+      "time" : {
+        "start" : 1548267090560,
+        "stop" : 1548267091246,
+        "duration" : 686
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    }, {
+      "name" : "Then  the condition undertaking should be created",
+      "time" : {
+        "start" : 1548267091246,
+        "stop" : 1548267092193,
+        "duration" : 947
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    } ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 4,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "feature",
+    "value" : "Add case details"
+  }, {
+    "name" : "story",
+    "value" : "Add a condition-undertaking to a case"
+  }, {
+    "name" : "tag",
+    "value" : "INT"
+  }, {
+    "name" : "tag",
+    "value" : "CASE-DETAILS"
+  }, {
+    "name" : "tag",
+    "value" : "Conditions-Undertaking"
+  }, {
+    "name" : "host",
+    "value" : "ip-192-168-0-42.eu-west-1.compute.internal"
+  }, {
+    "name" : "package",
+    "value" : "Add case details"
+  }, {
+    "name" : "suite",
+    "value" : "Add case details"
+  }, {
+    "name" : "testClass",
+    "value" : "Add a condition-undertaking to a case"
+  }, {
+    "name" : "thread",
+    "value" : "1023@ip-192-168-0-42.eu-west-1.compute.internal.main(1)"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ "Conditions-Undertaking", "INT", "CASE-DETAILS" ]
+  },
+  "source" : "c7208e5010af5492.json",
+  "parameterValues" : [ ]
+}

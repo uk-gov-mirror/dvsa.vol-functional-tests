@@ -1,0 +1,7 @@
+-------------------------------------------------------------------------------
+Test set: runners.apply_goods_licence_scenario002_run001_IT
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.025 s <<< FAILURE! - in runners.apply_goods_licence_scenario002_run001_IT
+Feature: Apply for a goods licence  Time elapsed: 0.012 s  <<< ERROR!
+activesupport.MissingRequiredArgument: [39m[[m[31mERROR[m[39m][m [39menv is required and must be set either at runtime or as a system variable[m
+

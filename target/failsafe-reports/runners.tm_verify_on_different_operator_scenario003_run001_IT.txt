@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: runners.tm_verify_on_different_operator_scenario003_run001_IT
+-------------------------------------------------------------------------------
+Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.045 s - in runners.tm_verify_on_different_operator_scenario003_run001_IT

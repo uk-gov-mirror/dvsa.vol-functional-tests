@@ -1,0 +1,112 @@
+{
+  "uid" : "6a9534d1f66e9ce1",
+  "name" : "Check beta banner colour",
+  "historyId" : "135513f172ed583df00bf7805d3edd78",
+  "time" : {
+    "start" : 1548266884372,
+    "stop" : 1548266890887,
+    "duration" : 6515
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ {
+      "name" : "Given  I am on Selfserve homepage",
+      "time" : {
+        "start" : 1548266884375,
+        "stop" : 1548266890335,
+        "duration" : 5960
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    }, {
+      "name" : "Then  banner colour is blue",
+      "time" : {
+        "start" : 1548266890335,
+        "stop" : 1548266890369,
+        "duration" : 34
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    }, {
+      "name" : "after",
+      "time" : {
+        "start" : 1548266890369,
+        "stop" : 1548266890885,
+        "duration" : 516
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    } ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 3,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "feature",
+    "value" : "Selfserve beta banner background is blue"
+  }, {
+    "name" : "story",
+    "value" : "Check beta banner colour"
+  }, {
+    "name" : "tag",
+    "value" : "SS"
+  }, {
+    "name" : "tag",
+    "value" : "BETA-BANNER"
+  }, {
+    "name" : "host",
+    "value" : "ip-192-168-0-42.eu-west-1.compute.internal"
+  }, {
+    "name" : "package",
+    "value" : "Selfserve beta banner background is blue"
+  }, {
+    "name" : "suite",
+    "value" : "Selfserve beta banner background is blue"
+  }, {
+    "name" : "testClass",
+    "value" : "Check beta banner colour"
+  }, {
+    "name" : "thread",
+    "value" : "1024@ip-192-168-0-42.eu-west-1.compute.internal.main(1)"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ "SS", "BETA-BANNER" ]
+  },
+  "source" : "6a9534d1f66e9ce1.json",
+  "parameterValues" : [ ]
+}

@@ -1,0 +1,117 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "name" : "packages",
+  "children" : [ {
+    "name" : "Goods Variation increase vehicle count for an OC",
+    "children" : [ {
+      "name" : "Increasing the vehicle count to an invalid character for required vehicles",
+      "uid" : "191ff9db88bc06e0",
+      "parentUid" : "4c9a654cbb4cdf9e9aa6a90cb9e20dcc",
+      "status" : "passed",
+      "time" : {
+        "start" : 1548266884366,
+        "stop" : 1548267025794,
+        "duration" : 141428
+      },
+      "flaky" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "4c9a654cbb4cdf9e9aa6a90cb9e20dcc"
+  }, {
+    "name" : "Create a new case",
+    "children" : [ {
+      "name" : "Creating a case with case notes",
+      "uid" : "d9f6db98893adb4f",
+      "parentUid" : "cfbf8311ae3d6cdc6294f805c6a5e0b0",
+      "status" : "passed",
+      "time" : {
+        "start" : 1548266884367,
+        "stop" : 1548266990479,
+        "duration" : 106112
+      },
+      "flaky" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "cfbf8311ae3d6cdc6294f805c6a5e0b0"
+  }, {
+    "name" : "Selfserve beta banner background is blue",
+    "children" : [ {
+      "name" : "Check beta banner colour",
+      "uid" : "6a9534d1f66e9ce1",
+      "parentUid" : "2fd30c3b6a3f95a7910198da934f627a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1548266884372,
+        "stop" : 1548266890887,
+        "duration" : 6515
+      },
+      "flaky" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "2fd30c3b6a3f95a7910198da934f627a"
+  }, {
+    "name" : "Self Serve Apply for goods licence",
+    "children" : [ {
+      "name" : "Pay application and grant fees on selfserve",
+      "uid" : "8ed898fbb392e1db",
+      "parentUid" : "3eca809e95bc9929be5e038192fb1289",
+      "status" : "passed",
+      "time" : {
+        "start" : 1548266890979,
+        "stop" : 1548267054791,
+        "duration" : 163812
+      },
+      "flaky" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "3eca809e95bc9929be5e038192fb1289"
+  }, {
+    "name" : "Countersigning declaration page for the operator (Verify switched on)",
+    "children" : [ {
+      "name" : "Check that verify button is not displayed when Print and sign is selected as an option",
+      "uid" : "698a21c4e3a87072",
+      "parentUid" : "710326231fb39e253cbe88c58c14eac0",
+      "status" : "failed",
+      "time" : {
+        "start" : 1548266960383,
+        "stop" : 1548267024080,
+        "duration" : 63697
+      },
+      "flaky" : true,
+      "parameters" : [ ]
+    } ],
+    "uid" : "710326231fb39e253cbe88c58c14eac0"
+  }, {
+    "name" : "Add case details",
+    "children" : [ {
+      "name" : "Add a condition-undertaking to a case",
+      "uid" : "c7208e5010af5492",
+      "parentUid" : "1de6af7e6d0303c1a28f97bdc1bb7610",
+      "status" : "passed",
+      "time" : {
+        "start" : 1548266990537,
+        "stop" : 1548267092193,
+        "duration" : 101656
+      },
+      "flaky" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "1de6af7e6d0303c1a28f97bdc1bb7610"
+  }, {
+    "name" : "Apply for a goods licence",
+    "children" : [ {
+      "name" : "Apply for a standard national licence",
+      "uid" : "157eec322bc75438",
+      "parentUid" : "94cb2cbd42b078866d335465c04d9f3a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1548267158574,
+        "stop" : 1548267203186,
+        "duration" : 44612
+      },
+      "flaky" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "94cb2cbd42b078866d335465c04d9f3a"
+  } ]
+}

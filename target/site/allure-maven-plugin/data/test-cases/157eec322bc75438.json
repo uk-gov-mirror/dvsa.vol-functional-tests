@@ -1,0 +1,112 @@
+{
+  "uid" : "157eec322bc75438",
+  "name" : "Apply for a standard national licence",
+  "historyId" : "32b5d90d1c35339f5a4fd0dd6f3fd2d2",
+  "time" : {
+    "start" : 1548267158574,
+    "stop" : 1548267203186,
+    "duration" : 44612
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ {
+      "name" : "Given  I have applied for a \"goods\" \"standard_national\" licence",
+      "time" : {
+        "start" : 1548267158585,
+        "stop" : 1548267187899,
+        "duration" : 29314
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    }, {
+      "name" : "When  I grant licence",
+      "time" : {
+        "start" : 1548267187945,
+        "stop" : 1548267197543,
+        "duration" : 9598
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    }, {
+      "name" : "Then  the licence should be granted",
+      "time" : {
+        "start" : 1548267197543,
+        "stop" : 1548267203184,
+        "duration" : 5641
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    } ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 3,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "feature",
+    "value" : "Apply for a goods licence"
+  }, {
+    "name" : "story",
+    "value" : "Apply for a standard national licence"
+  }, {
+    "name" : "tag",
+    "value" : "INT"
+  }, {
+    "name" : "tag",
+    "value" : "APPLY-GOODS-LICENCE"
+  }, {
+    "name" : "host",
+    "value" : "ip-192-168-0-42.eu-west-1.compute.internal"
+  }, {
+    "name" : "package",
+    "value" : "Apply for a goods licence"
+  }, {
+    "name" : "suite",
+    "value" : "Apply for a goods licence"
+  }, {
+    "name" : "testClass",
+    "value" : "Apply for a standard national licence"
+  }, {
+    "name" : "thread",
+    "value" : "2317@ip-192-168-0-42.eu-west-1.compute.internal.main(1)"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ "APPLY-GOODS-LICENCE", "INT" ]
+  },
+  "source" : "157eec322bc75438.json",
+  "parameterValues" : [ ]
+}

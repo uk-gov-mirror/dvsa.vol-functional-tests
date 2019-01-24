@@ -1,0 +1,112 @@
+{
+  "uid" : "d9f6db98893adb4f",
+  "name" : "Creating a case with case notes",
+  "historyId" : "f6052516389b359360ec8e348d25d8df",
+  "time" : {
+    "start" : 1548266884367,
+    "stop" : 1548266990479,
+    "duration" : 106112
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ {
+      "name" : "Given  i have a valid \"goods\" licence",
+      "time" : {
+        "start" : 1548266884371,
+        "stop" : 1548266986647,
+        "duration" : 102276
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    }, {
+      "name" : "When  I create a new case",
+      "time" : {
+        "start" : 1548266986648,
+        "stop" : 1548266989096,
+        "duration" : 2448
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    }, {
+      "name" : "Then  I should be able to view the case details",
+      "time" : {
+        "start" : 1548266989097,
+        "stop" : 1548266990477,
+        "duration" : 1380
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 0,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
+    } ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "stepsCount" : 3,
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "feature",
+    "value" : "Create a new case"
+  }, {
+    "name" : "story",
+    "value" : "Creating a case with case notes"
+  }, {
+    "name" : "tag",
+    "value" : "INT"
+  }, {
+    "name" : "tag",
+    "value" : "CASE-CREATION"
+  }, {
+    "name" : "host",
+    "value" : "ip-192-168-0-42.eu-west-1.compute.internal"
+  }, {
+    "name" : "package",
+    "value" : "Create a new case"
+  }, {
+    "name" : "suite",
+    "value" : "Create a new case"
+  }, {
+    "name" : "testClass",
+    "value" : "Creating a case with case notes"
+  }, {
+    "name" : "thread",
+    "value" : "1023@ip-192-168-0-42.eu-west-1.compute.internal.main(1)"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ "CASE-CREATION", "INT" ]
+  },
+  "source" : "d9f6db98893adb4f.json",
+  "parameterValues" : [ ]
+}
