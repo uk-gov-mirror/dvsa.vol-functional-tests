@@ -362,7 +362,7 @@ public class CreateLicenceAPI {
     public CreateLicenceAPI() throws MissingRequiredArgument {
         if (licenceType == null) {
             operatorType = "goods";
-            licenceType = "standard_national";
+            licenceType = "standard_international";
             businessType = "limited_company";
             niFlag = "N";
             isInterim = "N";

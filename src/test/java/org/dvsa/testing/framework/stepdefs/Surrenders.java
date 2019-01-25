@@ -4,18 +4,25 @@ import Injectors.World;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
-import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.UpdateLicenceAPI;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
+import org.dvsa.testing.lib.pages.BasePage;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.hamcrest.Matchers;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
+import static org.junit.Assert.assertEquals;
 
-public class Surrenders implements En {
+public class Surrenders extends BasePage implements En {
     ValidatableResponse apiResponse;
     private String selfServeUserPid;
     private Integer surrenderId;
+    private String discsToDestroy;
+    private String discsStolen;
+    private String discsLost;
+    private String operatorLicence;
+    private String communityLicence;
 
     public Surrenders(World world) {
         Given("^surrenders has been switched \"([^\"]*)\"$", (String toggle) -> {
@@ -128,5 +135,45 @@ public class Surrenders implements En {
             assertTrue(createdMessage.contains("Handler Dvsa\\Olcs\\Api\\Domain\\CommandHandler\\Surrender\\Delete is currently disabled via feature toggle"));
             apiResponse.statusCode(HttpStatus.SC_BAD_REQUEST);
         });
-    }
+        When("^i am on the review discs and documentation  page$", () -> {
+            this.discsLost = "2";
+            this.discsToDestroy = "2";
+            this.discsStolen ="1";
+            click("//*[@id='submit']", SelectorType.XPATH);
+            waitForTextToBePresent("Review your contact information");
+            click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+            world.UIJourneySteps.navigateToSurrenderReviewPage(discsToDestroy,discsLost,discsStolen);
+
+        });
+        Then("^the correct destroyed disc details should be displayed$", () -> {
+            String destroyedDiscs = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+            assertEquals(this.discsToDestroy,destroyedDiscs);
+
+        });
+        And("^the correct lost disc details should be displayed$", () -> {
+            String lostDiscs = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+            assertEquals(this.discsLost,lostDiscs);
+        });
+        And("^the correct stolen disc details should be displayed$", () -> {
+            String stolenDiscs = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][3]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+            assertEquals(this.discsStolen,stolenDiscs);
+        });
+        And("^the correct operator details should be displayed$", () -> {
+            String stolenDiscs = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][3]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+            assertEquals(this.discsStolen,stolenDiscs);
+        });
+        And("^the correct licence number is be displayed$", () -> {
+            this.operatorLicence = "to be destroyed";
+            String operatorLicenceStatus = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][3]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+            assertEquals(operatorLicence,operatorLicenceStatus);
+        });
+        And("^the correct community licence details should be displayed$", () -> {
+
+            And("^the correct licence number is be displayed$", () -> {
+                this.communityLicence = "to be destroyed";
+                String communityLicenceStatus = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][3]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+                assertEquals(communityLicence,communityLicenceStatus);
+            });
+    });
+}
 }

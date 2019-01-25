@@ -8,6 +8,7 @@ import activesupport.aws.s3.S3;
 import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
+import enums.LicenceType;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.LoginPage;
@@ -708,13 +709,25 @@ public class UIJourneySteps extends BasePage {
         click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
     }
 
-    public void navigateToSurrenderReviewPage() throws IllegalBrowserException, MalformedURLException {
+    public void navigateToSurrenderReviewPage(String discToDestory, String discsLost,String discsStolen  ) throws IllegalBrowserException, MalformedURLException {
         click("//*[contains(text(),'In your possession')]",SelectorType.XPATH);
         waitForTextToBePresent("Number of discs you will destroy");
-        waitAndEnterText("//*[@id='possessionSection[info][number]']",SelectorType.XPATH,String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
+        waitAndEnterText("//*[@id='possessionSection[info][number]']",SelectorType.XPATH,discToDestory);
+        click("//*[contains(text(),'Lost')]",SelectorType.XPATH);
+        waitAndEnterText("//*[@id='lostSection[info][number]']",SelectorType.XPATH,discsLost);
+        waitAndEnterText("//*[@id='lostSection[info][details]']",SelectorType.XPATH,"lost");
+        click("//*[contains(text(),'Stolen')]",SelectorType.XPATH);
+        waitAndEnterText("//*[@id='stolenSection[info][number]']",SelectorType.XPATH,discsStolen);
+        waitAndEnterText("//*[@id='stolenSection[info][details]']",SelectorType.XPATH,"stolen");
         waitAndClick("//*[@id='submit']", SelectorType.XPATH);
         waitAndClick("//*//*[contains(text(),'In your possession')]",SelectorType.XPATH);
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+        if (world.createLicence.getLicenceType().equals(LicenceType.ltyp_si)){
+            waitAndClick("//*//*[contains(text(),'In your possession')]",SelectorType.XPATH);
+            waitForTextToBePresent("You must destroy all community licence documents and certified copies");
+            waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+        }
+        else
         assertTrue(Browser.navigate().getCurrentUrl().contains("review"));
     }
 }

@@ -87,7 +87,7 @@ public class PsvSurrenders extends BasePage implements En {
         And("^i navigate to the review page$", () -> {
             world.updateLicence.printLicenceDiscs();
             click("//*[@id='form-actions[submit]']",SelectorType.XPATH);
-            world.UIJourneySteps.navigateToSurrenderReviewPage();
+            world.UIJourneySteps.navigateToSurrenderReviewPage("2","2","1");
         });
     }
 }
