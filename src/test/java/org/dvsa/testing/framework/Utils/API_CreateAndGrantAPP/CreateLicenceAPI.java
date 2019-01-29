@@ -421,13 +421,17 @@ public class CreateLicenceAPI {
 
     public void updateBusinessDetails() {
         String natureOfBusiness = "apiTesting";
+        List<String> traders = new ArrayList<>();
+        traders.add("VOLTrades");
+        traders.add("Trading123");
+
         String updateBusinessDetailsResource = URL.build(env, String.format("organisation/business-details/application/%s", licenceNumber)).toString();
 
         do {
             AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode);
             UpdateBusinessDetailsBuilder businessDetails = new UpdateBusinessDetailsBuilder()
                     .withId(applicationNumber).withCompanyNumber(companyNumber).withNatureOfBusiness(natureOfBusiness).withLicence(licenceNumber)
-                    .withVersion(businessVersion).withName(businessName).withAddress(address);
+                    .withVersion(businessVersion).withName(businessName).withAddress(address).withTradingName(traders);
             apiResponse = RestUtils.put(businessDetails, updateBusinessDetailsResource, getHeaders());
             version++;
             if (version > 20) {
