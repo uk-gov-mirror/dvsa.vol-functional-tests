@@ -5,7 +5,7 @@ Xvfb :$DISPLAY_ID &
 
 if [ -z "${CUCUMBER_TAGS// }" ]
 then
-  mvn verify -Denv=da -Dbrowser=firefox -Dwebdriver-manager=false
+  mvn verify -Denv=qa -Dbrowser=firefox -Dwebdriver-manager=false
 else
-  mvn verify -Denv=da -Dbrowser=firefox -Dwebdriver-manager=false -Dcucumber.options="--tags $CUCUMBER_TAGS"
+  mvn verify -Denv=qa -Dbrowser=firefox -Dwebdriver-manager=false -Dcucumber.options="--tags $CUCUMBER_TAGS"
 fi
