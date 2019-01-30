@@ -248,15 +248,15 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Cucumber java.Feature: apply-goods-licence">
-    <configuration name="Feature: apply-goods-licence" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Cucumber java.Scenario: Apply for a standard national licence">
+    <configuration name="Feature: application-sign-with-verify" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java" temporary="true" nameIsGenerated="true">
       <option name="CUCUMBER_CORE_VERSION" value="2" />
-      <option name="FILE_PATH" value="$PROJECT_DIR$/src/test/resources/features/Internal/apply-goods-licence.feature" />
+      <option name="FILE_PATH" value="$PROJECT_DIR$/src/test/resources/features/SelfServe/application-sign-with-verify.feature" />
       <option name="GLUE" value="org.dvsa.testing.framework.stepdefs" />
       <option name="MAIN_CLASS_NAME" value="cucumber.api.cli.Main" />
       <module name="vol-functional-tests" />
       <option name="PROGRAM_PARAMETERS" value=" --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter --monochrome" />
-      <option name="SUGGESTED_NAME" value="Feature: apply-goods-licence" />
+      <option name="SUGGESTED_NAME" value="Feature: application-sign-with-verify" />
       <option name="VM_PARAMETERS" value="-Denv=qa -Dbrowser=chrome" />
       <extension name="coverage">
         <pattern>
@@ -268,14 +268,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Feature: backend-surrender" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java" temporary="true" nameIsGenerated="true">
+    <configuration name="Feature: apply-goods-licence" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java" temporary="true" nameIsGenerated="true">
       <option name="CUCUMBER_CORE_VERSION" value="2" />
-      <option name="FILE_PATH" value="$PROJECT_DIR$/src/test/resources/features/SelfServe/backend-surrender.feature" />
+      <option name="FILE_PATH" value="$PROJECT_DIR$/src/test/resources/features/Internal/apply-goods-licence.feature" />
       <option name="GLUE" value="org.dvsa.testing.framework.stepdefs" />
       <option name="MAIN_CLASS_NAME" value="cucumber.api.cli.Main" />
       <module name="vol-functional-tests" />
       <option name="PROGRAM_PARAMETERS" value=" --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter --monochrome" />
-      <option name="SUGGESTED_NAME" value="Feature: backend-surrender" />
+      <option name="SUGGESTED_NAME" value="Feature: apply-goods-licence" />
       <option name="VM_PARAMETERS" value="-Denv=qa -Dbrowser=chrome" />
       <extension name="coverage">
         <pattern>
@@ -314,7 +314,7 @@
       <module name="vol-functional-tests" />
       <option name="PROGRAM_PARAMETERS" value=" --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter --monochrome" />
       <option name="SUGGESTED_NAME" value="Feature: surrender-sign-with-verify" />
-      <option name="VM_PARAMETERS" value="-Denv=qa -Dbrowser=chrome" />
+      <option name="VM_PARAMETERS" value="-Denv=da -Dbrowser=chrome" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="cucumber.api.cli.*" />
@@ -347,18 +347,18 @@
     </configuration>
     <list>
       <item itemvalue="Cucumber java.Feature: surrender-sign-with-verify" />
-      <item itemvalue="Cucumber java.Scenario: Apply for a standard national licence" />
-      <item itemvalue="Cucumber java.Feature: backend-surrender" />
       <item itemvalue="Cucumber java.Feature: case-creation" />
       <item itemvalue="Cucumber java.Feature: apply-goods-licence" />
+      <item itemvalue="Cucumber java.Feature: application-sign-with-verify" />
+      <item itemvalue="Cucumber java.Scenario: Apply for a standard national licence" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Cucumber java.Scenario: Apply for a standard national licence" />
+        <item itemvalue="Cucumber java.Feature: application-sign-with-verify" />
         <item itemvalue="Cucumber java.Feature: apply-goods-licence" />
         <item itemvalue="Cucumber java.Feature: case-creation" />
-        <item itemvalue="Cucumber java.Feature: backend-surrender" />
         <item itemvalue="Cucumber java.Feature: surrender-sign-with-verify" />
-        <item itemvalue="Cucumber java.Scenario: Apply for a standard national licence" />
       </list>
     </recent_temporary>
   </component>
