@@ -136,3 +136,4 @@ pom.xml.tag
 /src/test/resources/Operator.csv
 /src/test/resources/TM.csv
 /target/
+/allure/
