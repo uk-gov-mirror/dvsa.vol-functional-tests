@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: runners.case_details_scenario001_run001_IT
--------------------------------------------------------------------------------
-Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.024 s - in runners.case_details_scenario001_run001_IT

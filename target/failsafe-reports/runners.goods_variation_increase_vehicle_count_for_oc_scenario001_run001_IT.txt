@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: runners.goods_variation_increase_vehicle_count_for_oc_scenario001_run001_IT
--------------------------------------------------------------------------------
-Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s - in runners.goods_variation_increase_vehicle_count_for_oc_scenario001_run001_IT

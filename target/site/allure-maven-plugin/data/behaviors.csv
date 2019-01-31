@@ -1,8 +1,0 @@
-"Epic","Feature","Story","FAILED","BROKEN","PASSED","SKIPPED","UNKNOWN"
-"","Selfserve beta banner background is blue","Check beta banner colour","0","0","1","0","0"
-"","Countersigning declaration page for the operator (Verify switched on)","Check that verify button is not displayed when Print and sign is selected as an option","1","0","0","0","0"
-"","Create a new case","Creating a case with case notes","0","0","1","0","0"
-"","Apply for a goods licence","Apply for a standard national licence","0","0","1","0","0"
-"","Add case details","Add a condition-undertaking to a case","0","0","1","0","0"
-"","Self Serve Apply for goods licence","Pay application and grant fees on selfserve","0","0","1","0","0"
-"","Goods Variation increase vehicle count for an OC","Increasing the vehicle count to an invalid character for required vehicles","0","0","1","0","0"

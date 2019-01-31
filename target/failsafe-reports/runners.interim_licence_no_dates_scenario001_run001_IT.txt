@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: runners.interim_licence_no_dates_scenario001_run001_IT
--------------------------------------------------------------------------------
-Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.028 s - in runners.interim_licence_no_dates_scenario001_run001_IT
