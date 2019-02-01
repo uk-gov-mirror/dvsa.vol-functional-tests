@@ -302,9 +302,9 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Directors");
     }
 
-    public void navigateToInternalTask() throws IllegalBrowserException, MissingDriverException, MalformedURLException {
+    public void navigateToInternalTask() throws IllegalBrowserException {
         world.APIJourneySteps.createAdminUser();
-        world.UIJourneySteps.navigateToInternalAdminUserLogin();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewApplication();
         waitForTextToBePresent("Processing");
         clickByLinkText("Processing");
@@ -325,27 +325,29 @@ public class UIJourneySteps extends BasePage {
         clickByName("form-actions[submit]");
     }
 
-    public void navigateToInternalAdminUserLogin() throws MissingRequiredArgument, IllegalBrowserException {
-        String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
+    public void navigateToInternalAdminUserLogin(String username, String emailAddress) throws MissingRequiredArgument, IllegalBrowserException {
         String newPassword = "Password1";
-        String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
+        String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
 
         if (Browser.isBrowserOpen()) {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        System.out.println(world.updateLicence.adminUserLogin + "UserLogin");
+        String password = S3.getTempPassword(emailAddress, getBucketName());
 
-        if (Browser.navigate().getCurrentUrl().contains("da")) {
-            signIn(world.updateLicence.adminUserLogin, password);
-        }
-        if (isTextPresent("Username", 60))
-            signIn(world.updateLicence.adminUserLogin, password);
-        if (isTextPresent("Current password", 60)) {
-            enterField(nameAttribute("input", "oldPassword"), password);
-            enterField(nameAttribute("input", "newPassword"), newPassword);
-            enterField(nameAttribute("input", "confirmPassword"), newPassword);
-            click(nameAttribute("input", "submit"));
+        try {
+            signIn(username, password);
+        } catch (Exception e){
+            //User is already registered
+            signIn(username, getPassword());
+        } finally {
+            if (isTextPresent("Current password", 60)) {
+                enterField(nameAttribute("input", "oldPassword"), password);
+                enterField(nameAttribute("input", "newPassword"), newPassword);
+                enterField(nameAttribute("input", "confirmPassword"), newPassword);
+                click(nameAttribute("input", "submit"));
+                setPassword(newPassword);
+            }
         }
     }
 
@@ -494,7 +496,7 @@ public class UIJourneySteps extends BasePage {
 
     public void internalUserNavigateToDocsTable() throws IllegalBrowserException {
         world.APIJourneySteps.createAdminUser();
-        world.UIJourneySteps.navigateToInternalAdminUserLogin();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewApplication();
         clickByLinkText("Docs");
     }

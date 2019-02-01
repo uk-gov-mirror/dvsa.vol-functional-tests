@@ -5,6 +5,7 @@ import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 import static org.dvsa.testing.framework.Journeys.UIJourneySteps.generateLetter;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 public class InternalApplication extends BasePage implements En {
@@ -24,6 +25,7 @@ public class InternalApplication extends BasePage implements En {
 
             String docStoreLink = getElementValueByText("//*[@id='generate-document']/div[4]/div/strong", SelectorType.XPATH);
             assertNotNull(docStoreLink);
+            assertFalse(docStoreLink.contains(".rtf"));
         });
 
         When("^I generate a letter$", () -> {

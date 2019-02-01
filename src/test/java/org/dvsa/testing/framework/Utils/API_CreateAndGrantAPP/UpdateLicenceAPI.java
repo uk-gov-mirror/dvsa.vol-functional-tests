@@ -27,9 +27,10 @@ public class UpdateLicenceAPI extends BasePage {
     private World world;
     private int caseId;
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
-    public String adminUserLogin = String.format("volAdminUser" + "%s", Str.randomWord(3));
+    public String adminUserLogin = String.format("vol" + "%s", Str.randomWord(10));
     private String internalAdminHeader = "e91f1a255e01e20021507465a845e7c24b3a1dc951a277b874c3bcd73dec97a1";
     private String adminUserId;
+
 
     public String getVariationApplicationNumber() {
         return variationApplicationNumber;
@@ -324,7 +325,11 @@ public class UpdateLicenceAPI extends BasePage {
         if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
             System.out.println("+++ERROR+++" + apiResponse.extract().response().asString());
         }
-        setAdminUserId(apiResponse.extract().response().jsonPath().getString("id.user"));
+        else {
+
+            setAdminUserId(apiResponse.extract().response().jsonPath().getString("id.user"));
+        }
+
     }
 
     public ValidatableResponse grantVariation(String resource) throws MalformedURLException {
