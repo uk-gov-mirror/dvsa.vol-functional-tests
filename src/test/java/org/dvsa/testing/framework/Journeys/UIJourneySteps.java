@@ -710,6 +710,19 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void navigateToSurrenderReviewPage(String discToDestroy, String discsLost, String discsStolen) throws IllegalBrowserException, MalformedURLException {
+        addDiscInformation(discToDestroy,discsLost,discsStolen);
+        addOperatorLicenceDetails();
+        if (world.createLicence.getLicenceType().equals(LicenceType.ltyp_si)) {
+            addCommunityLicenceDetails();
+        }
+        assertTrue(Browser.navigate().getCurrentUrl().contains("review"));
+        assertTrue(isTextPresent("Review your surrender",40));
+    }
+
+    public void addDiscInformation(String discToDestroy, String discsLost, String discsStolen) throws IllegalBrowserException, MalformedURLException {
+        world.updateLicence.printLicenceDiscs();
+        click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+        assertTrue(Browser.navigate().getCurrentUrl().contains("current-discs"));
         click("//*[contains(text(),'In your possession')]", SelectorType.XPATH);
         waitForTextToBePresent("Number of discs you will destroy");
         waitAndEnterText("//*[@id='possessionSection[info][number]']", SelectorType.XPATH, discToDestroy);
@@ -720,13 +733,23 @@ public class UIJourneySteps extends BasePage {
         waitAndEnterText("//*[@id='stolenSection[info][number]']", SelectorType.XPATH, discsStolen);
         waitAndEnterText("//*[@id='stolenSection[info][details]']", SelectorType.XPATH, "stolen");
         waitAndClick("//*[@id='submit']", SelectorType.XPATH);
+    }
+
+    public void addOperatorLicenceDetails() throws IllegalBrowserException {
         waitAndClick("//*//*[contains(text(),'In your possession')]", SelectorType.XPATH);
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
-        if (world.createLicence.getLicenceType().equals(LicenceType.ltyp_si)) {
-            waitAndClick("//*//*[contains(text(),'In your possession')]", SelectorType.XPATH);
-            waitForTextToBePresent("You must destroy all community licence documents and certified copies");
-            waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
-        } else
-            assertTrue(Browser.navigate().getCurrentUrl().contains("review"));
+    }
+
+    public void addCommunityLicenceDetails() throws IllegalBrowserException {
+        waitAndClick("//*//*[contains(text(),'In your possession')]", SelectorType.XPATH);
+        waitForTextToBePresent("You must destroy all community licence documents and certified copies");
+        waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public void acknowledgeDestroyPage() throws IllegalBrowserException {
+        waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+        waitForTextToBePresent("Securely destroy");
+        waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+        waitForTextToBePresent("Declaration");
     }
 }
