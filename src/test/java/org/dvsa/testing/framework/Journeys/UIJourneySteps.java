@@ -30,6 +30,8 @@ public class UIJourneySteps extends BasePage {
 
     private World world;
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+    private String localUser = Properties.get("localUser", false);
+    private String localDefaultPassword = Properties.get("localDefaultPassword", false);
     static int tmCount;
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
     private String verifyUsername;
@@ -333,7 +335,16 @@ public class UIJourneySteps extends BasePage {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        String password = S3.getTempPassword(emailAddress, getBucketName());
+
+        if (env == EnvironmentType.LOCAL) {
+            //login locally so get local user and password(s) and try till successful
+            // I would suggest we  tidy all this to set things up in one place
+            username = localUser;
+            emailAddress = "e@example,com";
+        }
+
+        String password = getTempPassword(emailAddress);
+
 
         try {
             signIn(username, password);
@@ -349,6 +360,13 @@ public class UIJourneySteps extends BasePage {
                 setPassword(newPassword);
             }
         }
+    }
+
+    private String getTempPassword(String emailAddress) {
+        if(env == EnvironmentType.LOCAL){
+            return localDefaultPassword;
+        }
+        return S3.getTempPassword(emailAddress, getBucketName());
     }
 
     private String getBucketName() {
@@ -369,7 +387,7 @@ public class UIJourneySteps extends BasePage {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        String password = S3.getTempPassword(emailAddress, getBucketName());
+        String password = getTempPassword(emailAddress);
 
         try {
             signIn(username, password);
