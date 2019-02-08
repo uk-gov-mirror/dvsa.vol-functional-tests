@@ -7,7 +7,7 @@ Feature: Review Discs and Documentation Page
   Background:
     Given i have a valid "goods" licence
     When i choose to surrender my licence
-    And i am on the review discs and documentation  page
+    And i am on the review discs and documentation page
 
   Scenario: Disc & Document  Details page
     And the correct licence details should be displayed

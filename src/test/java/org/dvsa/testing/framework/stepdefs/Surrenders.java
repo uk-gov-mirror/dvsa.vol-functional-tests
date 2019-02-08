@@ -84,6 +84,7 @@ public class Surrenders extends BasePage implements En {
             if(String.valueOf(arg0).equals("public")){
                 world.APIJourneySteps.grandLicenceAndPayFees();
                 System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
             else {
                 world.APIJourneySteps.grandLicenceAndPayFees();

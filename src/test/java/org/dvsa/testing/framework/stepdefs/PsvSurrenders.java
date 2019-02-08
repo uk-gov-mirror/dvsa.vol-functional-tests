@@ -18,8 +18,7 @@ public class PsvSurrenders extends BasePage implements En {
             world.UIJourneySteps.navigateToSurrendersStartPage();
         });
         When("^i am on the surrenders review contact details page$", () -> {
-            click("//*[@id='submit']", SelectorType.XPATH);
-            waitForTextToBePresent("Review your contact information");
+            world.UIJourneySteps.startSurrender();
         });
 
         Then("^the correct licence details should be displayed$", () -> {
@@ -65,13 +64,11 @@ public class PsvSurrenders extends BasePage implements En {
             Assert.assertTrue(isTextPresent(String.format("Application to surrender licence %s", world.createLicence.getLicenceNumber()), 10));
             Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("d MMM yyyy")), 20));
             assertTrue(isTextPresent("notifications@vehicle-operator-licensing.service.gov.uk", 10));
-            waitAndClick("//*[@id='return']", SelectorType.ID);
+            waitAndClick("//*[contains(text(),'home')]", SelectorType.XPATH);
         });
         And("^the surrender status is \"([^\"]*)\"$", (String status) -> {
             waitForTextToBePresent("Current licences");
-            //TODO check for label belonging to licence
-//            String surrenderStatus = status;
-//            assertEquals(SurrenderStatus,getText());
+           assertTrue(isTextPresent("Surrender under consideration",10));
         });
         Then("^the number of disc should match the vehicles registered on the licence$", () -> {
             assertEquals(getText("//*[@id=\"main\"]/div/div/div[2]/div/p[2]/strong", SelectorType.XPATH), String.valueOf(world.createLicence.getNoOfVehiclesRequired()));

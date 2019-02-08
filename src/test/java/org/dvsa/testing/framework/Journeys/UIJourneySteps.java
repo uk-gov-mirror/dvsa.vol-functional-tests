@@ -434,9 +434,9 @@ public class UIJourneySteps extends BasePage {
     public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException, MalformedURLException {
         world.UIJourneySteps.navigateToDirectorsPage();
         world.UIJourneySteps.addPerson(firstName, lastName);
-        selectAllExternalRadioButtons("No");
+        findSelectAllRadioButtonsByValue("No");
         clickByName("form-actions[saveAndContinue]");
-        selectAllExternalRadioButtons("No");
+        findSelectAllRadioButtonsByValue("No");
         clickByName("form-actions[saveAndContinue]");
     }
 
@@ -492,9 +492,9 @@ public class UIJourneySteps extends BasePage {
 
     public void addDirector(String forename, String familyName) throws IllegalBrowserException {
         addPerson(forename, familyName);
-        world.genericUtils.selectAllExternalRadioButtons("No");
+        world.genericUtils.findSelectAllRadioButtonsByValue("No");
         clickByName("form-actions[saveAndContinue]");
-        world.genericUtils.selectAllExternalRadioButtons("No");
+        world.genericUtils.findSelectAllRadioButtonsByValue("No");
         clickByName("form-actions[saveAndContinue]");
     }
 
@@ -528,6 +528,20 @@ public class UIJourneySteps extends BasePage {
         enterText("dob_year", date[0], SelectorType.ID);
         enterText("birthPlace", birthPlace, SelectorType.ID);
         //Add Home Address
+        addAddressDetails();
+        //Add Responsibilities
+        click("//*[contains(text(),'External')]", SelectorType.XPATH);
+        world.genericUtils.findSelectAllRadioButtonsByValue("Y");
+        //Add Other Licences
+        String role = "Transport Manager";
+        click("//*[contains(text(),'Add other licences')]", SelectorType.XPATH);
+        waitForTextToBePresent("Add other licence");
+        enterText("licNo", "PB123456", SelectorType.ID);
+        selectValueFromDropDown("data[role]", SelectorType.ID, role);
+    }
+
+    public void addAddressDetails() throws IllegalBrowserException {
+        //Add Home Address
         String postCode = world.createLicence.getPostcode();
         enterText("postcodeInput1", postCode, SelectorType.ID);
         clickByName("homeAddress[searchPostcode][search]");
@@ -536,15 +550,6 @@ public class UIJourneySteps extends BasePage {
         enterText("postcodeInput2", postCode, SelectorType.ID);
         clickByName("workAddress[searchPostcode][search]");
         selectValueFromDropDownByIndex("workAddress[searchPostcode][addresses]", SelectorType.ID, 1);
-        //Add Responsibilities
-        click("//*[contains(text(),'External')]", SelectorType.XPATH);
-        world.genericUtils.selectAllExternalRadioButtons("Y");
-        //Add Other Licences
-        String role = "Transport Manager";
-        click("//*[contains(text(),'Add other licences')]", SelectorType.XPATH);
-        waitForTextToBePresent("Add other licence");
-        enterText("licNo", "PB123456", SelectorType.ID);
-        selectValueFromDropDown("data[role]", SelectorType.ID, role);
     }
 
     public void nominateOperatorUserAsTransportManager(int user) throws IllegalBrowserException {
@@ -712,11 +717,16 @@ public class UIJourneySteps extends BasePage {
     public void navigateToSurrenderReviewPage(String discToDestroy, String discsLost, String discsStolen) throws IllegalBrowserException, MalformedURLException {
         addDiscInformation(discToDestroy,discsLost,discsStolen);
         addOperatorLicenceDetails();
-        if (world.createLicence.getLicenceType().equals(LicenceType.ltyp_si)) {
+        if (world.createLicence.getLicenceType().equals("standard_international")) {
             addCommunityLicenceDetails();
         }
         assertTrue(Browser.navigate().getCurrentUrl().contains("review"));
         assertTrue(isTextPresent("Review your surrender",40));
+    }
+
+    public void startSurrender() throws IllegalBrowserException {
+        click("//*[@id='submit']", SelectorType.XPATH);
+        waitForTextToBePresent("Review your contact information");
     }
 
     public void addDiscInformation(String discToDestroy, String discsLost, String discsStolen) throws IllegalBrowserException, MalformedURLException {
@@ -751,5 +761,23 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Securely destroy");
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
         waitForTextToBePresent("Declaration");
+    }
+
+    public void updateContactDetails(String addressLine1, String addressLine2, String contactNumber) throws IllegalBrowserException {
+        findElement("addressLine1", SelectorType.ID, 10).clear();
+        enterText("addressLine1", addressLine1, SelectorType.ID);
+        findElement("correspondence_address[addressLine2]", SelectorType.ID, 10).clear();
+        enterText("correspondence_address[addressLine2]", addressLine2, SelectorType.ID);
+        findElement("phone_primary", SelectorType.ID, 10).clear();
+        enterText("phone_primary", contactNumber, SelectorType.ID);
+        waitAndClick("form-actions[save]", SelectorType.ID);
+    }
+
+    public String getSurrenderAddressDetails() throws IllegalBrowserException {
+        return getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']",SelectorType.XPATH);
+    }
+
+    public String getSurrenderContactNumber() throws IllegalBrowserException {
+        return getText("//*[@class='app-check-your-answers app-check-your-answers--long'][3]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']",SelectorType.XPATH);
     }
 }
