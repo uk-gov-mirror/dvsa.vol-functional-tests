@@ -474,10 +474,9 @@ public class CreateLicenceAPI {
 
     public void addAddressDetails() {
         String phoneNumber = "0712345678";
-        String establishmentAddress = "establishment";
         String businessEmail = Str.randomWord(6).concat(".volBusiness@dvsa.com");
         String applicationAddressResource = URL.build(env, String.format("application/%s/addresses/", applicationNumber)).toString();
-        AddressBuilder address = new AddressBuilder().withAddressLine1(establishmentAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+        AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withPhoneNumber(phoneNumber).withEmailAddress(businessEmail);
         ApplicationAddressBuilder addressBuilder = new ApplicationAddressBuilder().withId(applicationNumber).withConsultant("Consult").withContact(contactDetailsBuilder)
                 .withCorrespondenceAddress(address).withEstablishmentAddress(address);

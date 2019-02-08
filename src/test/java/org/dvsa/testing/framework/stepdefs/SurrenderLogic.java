@@ -3,7 +3,6 @@ package org.dvsa.testing.framework.stepdefs;
 import Injectors.World;
 import activesupport.driver.Browser;
 import cucumber.api.java8.En;
-import junit.framework.TestCase;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
@@ -24,7 +23,6 @@ public class SurrenderLogic extends BasePage implements En {
         And("^i have started a surrender$", () -> {
             world.UIJourneySteps.navigateToSurrendersStartPage();
             world.UIJourneySteps.startSurrender();
-            world.UIJourneySteps.addDiscInformation(discDestroyed, discLost, discStolen);
         });
         Given("^i update my address details on my licence$", () -> {
             clickByLinkText("Home");
@@ -44,7 +42,7 @@ public class SurrenderLogic extends BasePage implements En {
             String actualChangeText = getText("//*[@class='govuk-warning-text__text']", SelectorType.XPATH);
             assertEquals(expectedChangedText,actualChangeText);
         });
-        Given("^i add a disc to my licence$", () -> {
+        Given("^i remove a disc to my licence$", () -> {
             clickByLinkText("Home");
             clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Licence discs");
@@ -52,17 +50,51 @@ public class SurrenderLogic extends BasePage implements En {
             waitAndClick("form-actions[submit]",SelectorType.NAME);
             clickByLinkText("Home");
             clickByLinkText(world.createLicence.getLicenceNumber());
-            clickByLinkText("Continue with");
-            assertTrue(Browser.navigate().getCurrentUrl().contains("information-changed"));
-            String expectedChangedText = "Warning\n" +
-                    "Since starting your application to surrender your licence, you have made changes to your licence information.";
-            String actualChangeText = getText("//*[@class='govuk-warning-text__text']", SelectorType.XPATH);
-            assertEquals(expectedChangedText,actualChangeText);
         });
         And("^the new correspondence details are displayed on correspondence page$", () -> {
             click("//*[contains(text(),'Review')]", SelectorType.XPATH);
-            assertEquals(world.UIJourneySteps.getSurrenderAddressDetails(), addressLine1 + "\n" + addressLine2);
+            assertEquals(world.UIJourneySteps.getSurrenderAddressLine1(), addressLine1 + "\n" + addressLine2);
+        });
+        Given("^i add a disc to my licence$", () -> {
+            clickByLinkText("Home");
+            clickByLinkText(world.createLicence.getLicenceNumber());
+            clickByLinkText("Licence discs");
+            waitAndClick("//*[@id='add']",SelectorType.XPATH);
+            waitAndEnterText("data[additionalDiscs]",SelectorType.ID,"2");
+            waitAndClick("form-actions[submit]",SelectorType.NAME);
+            world.updateLicence.printLicenceDiscs();
+            clickByLinkText("Home");
+            clickByLinkText(world.createLicence.getLicenceNumber());
+        });
+        Given("^i am on the surrenders review contact details page$", () -> {
+            assertTrue(Browser.navigate().getCurrentUrl().contains("review-contact-details"));
+        });
+        And("^i leave the surrenders journey$", () -> {
+            clickByLinkText("Home");
+            clickByLinkText(world.createLicence.getLicenceNumber());
+        });
+        And("^user is taken to review contact page on clicking continue application$", () -> {
+            clickByLinkText("Continue");
+            assertTrue(Browser.navigate().getCurrentUrl().contains("review-contact-details"));
+            assertEquals(world.UIJourneySteps.getSurrenderAddressLine1(), world.createLicence.getAddressLine1());
+            assertEquals(world.UIJourneySteps.getSurrenderTown(), world.createLicence.getTown());
+        });
+        Given("^i am on the surrenders current discs page$", () -> {
+            click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+            assertTrue(Browser.navigate().getCurrentUrl().contains("current-discs"));
+        });
+        And("^user is taken to the surrenders current discs on clicking continue application$", () -> {
+            clickByLinkText("Continue");
+            assertTrue(Browser.navigate().getCurrentUrl().contains("current-discs"));
+        });
+        And("^i am on the operator licence page$", () -> {
+            world.UIJourneySteps.addDiscInformation("2","2","1");
+            waitForTextToBePresent("In your possession");
+            assertTrue(Browser.navigate().getCurrentUrl().contains("operator-licence"));
+        });
+        And("^user is taken to the operator licence page on clicking continue application$", () -> {
+            clickByLinkText("Continue");
+            assertTrue(Browser.navigate().getCurrentUrl().contains("operator-licence"));
         });
     }
 }
-

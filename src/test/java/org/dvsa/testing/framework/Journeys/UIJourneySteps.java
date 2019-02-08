@@ -773,8 +773,12 @@ public class UIJourneySteps extends BasePage {
         waitAndClick("form-actions[save]", SelectorType.ID);
     }
 
-    public String getSurrenderAddressDetails() throws IllegalBrowserException {
+    public String getSurrenderAddressLine1() throws IllegalBrowserException {
         return getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']",SelectorType.XPATH);
+    }
+
+    public String getSurrenderTown() throws IllegalBrowserException {
+        return getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']",SelectorType.XPATH);
     }
 
     public String getSurrenderContactNumber() throws IllegalBrowserException {
