@@ -35,3 +35,15 @@ Feature: User should be able to continue where they left off
     When i leave the surrenders journey
     Then continue with application link is displayed
     And user is taken to the operator licence page on clicking continue application
+
+  Scenario: Return back to community licence page
+   And i am on the community licence page
+    When i leave the surrenders journey
+    Then continue with application link is displayed
+    And user is taken to the community licence page on clicking continue application
+
+    Scenario: Return back to disc and doc review page
+    And i am on the disc and doc review page
+    When i leave the surrenders journey
+    Then continue with application link is displayed
+    And user is taken to the disc and doc review page on clicking continue application

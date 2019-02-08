@@ -96,5 +96,33 @@ public class SurrenderLogic extends BasePage implements En {
             clickByLinkText("Continue");
             assertTrue(Browser.navigate().getCurrentUrl().contains("operator-licence"));
         });
+        And("^i am on the community licence page$", () -> {
+            if (world.createLicence.getLicenceType().equals("standard_international")) {
+                world.UIJourneySteps.addDiscInformation("2", "2", "1");
+                waitForTextToBePresent("In your possession");
+                world.UIJourneySteps.addOperatorLicenceDetails();
+                assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
+            }{
+                //doesn't need to be run
+            }
+        });
+        And("^user is taken to the community licence page on clicking continue application$", () -> {
+            clickByLinkText("Continue");
+            assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
+        });
+        And("^i am on the disc and doc review page$", () -> {
+                world.UIJourneySteps.addDiscInformation("2", "2", "1");
+                waitForTextToBePresent("In your possession");
+                world.UIJourneySteps.addOperatorLicenceDetails();
+            if (world.createLicence.getLicenceType().equals("standard_international")){
+                assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
+                world.UIJourneySteps.addCommunityLicenceDetails();
+            }
+            assertTrue(Browser.navigate().getCurrentUrl().contains("review"));
+        });
+        And("^user is taken to the disc and doc review page on clicking continue application$", () -> {
+            clickByLinkText("Continue");
+            assertTrue(Browser.navigate().getCurrentUrl().contains("review"));
+        });
     }
 }
