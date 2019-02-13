@@ -730,8 +730,8 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void addDiscInformation(String discToDestroy, String discsLost, String discsStolen) throws IllegalBrowserException, MalformedURLException {
-        world.updateLicence.printLicenceDiscs();
-        click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+//        world.updateLicence.printLicenceDiscs();
+//        click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
         assertTrue(Browser.navigate().getCurrentUrl().contains("current-discs"));
         click("//*[contains(text(),'In your possession')]", SelectorType.XPATH);
         waitForTextToBePresent("Number of discs you will destroy");

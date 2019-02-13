@@ -360,14 +360,10 @@ public class CreateLicenceAPI {
     private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
     public CreateLicenceAPI() throws MissingRequiredArgument {
-        if (licenceType == null) {
-            operatorType = "goods";
-            licenceType = "standard_international";
-            businessType = "limited_company";
-            niFlag = "N";
-            isInterim = "N";
-            isOwner = "Y";
-        }
+        businessType = "limited_company";
+        niFlag = "N";
+        isInterim = "N";
+        isOwner = "Y";
     }
 
     public void registerUser() {
@@ -696,7 +692,7 @@ public class CreateLicenceAPI {
                     i++;
                 }
                 while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().response().asString().contains("Vehicle exists on other licence"))
-                || apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY);
+                        || apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY);
 
                 if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
                     System.out.println(apiResponse.extract().statusCode());

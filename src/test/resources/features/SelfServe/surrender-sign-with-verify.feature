@@ -3,7 +3,7 @@
 Feature: Sign with surrender
 
   Background: 
-    Given i have a valid "goods" licence
+    Given i have a valid "goods" "sn" licence
     And i choose to surrender my licence
     And i am on the surrenders review contact details page
     
