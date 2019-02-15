@@ -52,7 +52,7 @@ public class GenerateLastTMLetter extends BasePage implements En {
         });
         And("^the user confirms they want to send letter$", () -> {
             waitForTextToBePresent(alertHeaderValue);
-            click("//*[@class='form-control form-control--radio form-control--inline'][1]", SelectorType.XPATH);
+            findSelectAllRadioButtonsByValue("Y");
             click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
         });
         And("^the batch job has run$", () -> {

@@ -7,18 +7,18 @@ Feature: Set and check criteria for triggering automatic letter
     Given i have a valid "goods" "" licence
 
   Scenario: Generate letter for valid licence
-    Given the transport manager has been removed by an internal user
-    And the user confirms they want to send letter
+    And the transport manager has been removed by an internal user
+    When the user confirms they want to send letter
     Then a flag should be set in the DB
 
   Scenario: Generate letter for suspended licence
-    Given the licence status is "suspend"
+    And the licence status is "suspend"
     When the transport manager has been removed by an internal user
     And the user confirms they want to send letter
     Then a flag should be set in the DB
 
   Scenario: Generate letter for curtailed licence
-    Given the licence status is "curtail"
+    And the licence status is "curtail"
     When the transport manager has been removed by an internal user
     And the user confirms they want to send letter
     Then a flag should be set in the DB
