@@ -479,9 +479,9 @@ public class UIJourneySteps extends BasePage {
 
     public void addDirector(String forename, String familyName) throws IllegalBrowserException {
         addPerson(forename, familyName);
-        world.genericUtils.selectAllExternalRadioButtons("No");
+        world.genericUtils.findSelectAllRadioButtonsByValue("N");
         clickByName("form-actions[saveAndContinue]");
-        world.genericUtils.selectAllExternalRadioButtons("No");
+        world.genericUtils.findSelectAllRadioButtonsByValue("N");
         clickByName("form-actions[saveAndContinue]");
     }
 

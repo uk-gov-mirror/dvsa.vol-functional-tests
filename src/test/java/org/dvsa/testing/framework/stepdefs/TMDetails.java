@@ -57,7 +57,7 @@ public class TMDetails extends BasePage implements En {
 
         });
         Then("^the guidance text should be displayed$", () -> {
-            String notDirectorText = findElement("//*[@id='responsibilities']/fieldset[2]/div", SelectorType.XPATH, 10).getText();
+            String notDirectorText = findElement("//*[@id='responsibilities']/fieldset[2]/div[2]", SelectorType.XPATH, 10).getText();
             assertTrue(isTextPresent(notDirectorText, 10));
         });
         Then("^the optional wording should not be displayed on the page$", (DataTable arg) -> {
