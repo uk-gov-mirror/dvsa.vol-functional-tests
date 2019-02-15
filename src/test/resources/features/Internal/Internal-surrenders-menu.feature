@@ -3,7 +3,7 @@
 
   Feature: View Surrender Menu and details on Internal
   Background:
-    Given i have a valid "goods" licence
+    Given i have a valid "goods" "" licence
     And i have completed a surrender application with verify
     And i have logged in to internal
     And i search for my licence
