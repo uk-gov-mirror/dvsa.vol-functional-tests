@@ -5,7 +5,7 @@
 Feature: Set and check criteria for triggering automatic letter
 
   Background:
-    Given i have a valid "public" licence
+    Given i have a valid "public" "si" licence
 
   Scenario: Generate letter for valid licence when ss removes last TM
     When a self-serve user removes the last TM

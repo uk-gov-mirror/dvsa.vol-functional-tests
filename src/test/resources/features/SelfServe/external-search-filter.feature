@@ -3,7 +3,7 @@
 Feature: Using filters on External Search
 
   Background:
-    Given i have a valid "goods" licence
+    Given i have a valid "goods" "sn" licence
     And i have searched for a licence
 
   Scenario: Check lorry and bus operator Organisation Type filter

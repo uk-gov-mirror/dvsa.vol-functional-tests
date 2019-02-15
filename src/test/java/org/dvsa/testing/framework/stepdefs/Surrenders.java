@@ -84,6 +84,7 @@ public class Surrenders extends BasePage implements En {
             if(String.valueOf(arg0).equals("public")){
                 world.APIJourneySteps.grandLicenceAndPayFees();
                 System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
             else {
                 world.APIJourneySteps.grandLicenceAndPayFees();
@@ -135,7 +136,7 @@ public class Surrenders extends BasePage implements En {
             assertTrue(createdMessage.contains("Handler Dvsa\\Olcs\\Api\\Domain\\CommandHandler\\Surrender\\Delete is currently disabled via feature toggle"));
             apiResponse.statusCode(HttpStatus.SC_BAD_REQUEST);
         });
-        When("^i am on the review discs and documentation  page$", () -> {
+        When("^i am on the review discs and documentation page$", () -> {
             this.discsLost = "2";
             this.discsToDestroy = "2";
             this.discsStolen ="1";
@@ -143,7 +144,6 @@ public class Surrenders extends BasePage implements En {
             waitForTextToBePresent("Review your contact information");
             click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
             world.UIJourneySteps.navigateToSurrenderReviewPage(discsToDestroy,discsLost,discsStolen);
-
         });
         Then("^the correct destroyed disc details should be displayed$", () -> {
             String destroyedDiscs = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);

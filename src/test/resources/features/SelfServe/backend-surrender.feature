@@ -3,7 +3,7 @@
 Feature: Surrendering a licence
 
   Background:
-    Given i have a valid "public" licence
+    Given i have a valid "public"  "si" licence
     And surrenders has been switched "on"
 
   Scenario: Surrender valid licence
