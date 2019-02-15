@@ -1,6 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
@@ -168,12 +169,39 @@ public class Surrenders extends BasePage implements En {
             assertEquals(operatorLicence,operatorLicenceStatus);
         });
         And("^the correct community licence details should be displayed$", () -> {
-
             And("^the correct licence number is be displayed$", () -> {
                 this.communityLicence = "to be destroyed";
                 String communityLicenceStatus = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][3]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
                 assertEquals(communityLicence,communityLicenceStatus);
             });
     });
-}
+        And("^i have completed a surrender application with verify$", () -> {
+            this.discsLost = "2";
+            this.discsToDestroy = "2";
+            this.discsStolen ="1";
+            world.UIJourneySteps.navigateToSurrendersStartPage();
+            click("//*[@id='submit']", SelectorType.XPATH);
+            waitForTextToBePresent("Review your contact information");
+            world.UIJourneySteps.navigateToSurrenderReviewPage(discsToDestroy,discsLost,discsStolen);
+            click("//*[@id='submit']", SelectorType.XPATH);
+            waitAndClick("//*[@id='sign']",SelectorType.XPATH);
+            world.UIJourneySteps.signWithVerify("pavlov","Password1");
+
+        });
+        Then("^the internal surrender menu should be displayed$", () -> {
+            waitForTextToBePresent(world.createLicence.getLicenceNumber());
+        });
+        Then("^any open cases should be displayed$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
+        });
+        And("^any open bus registrations should be displayed$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
+        });
+        And("^the ECMS tick box should be displayed$", () -> {
+            // Write code here that turns the phrase above into concrete actions
+            throw new PendingException();
+        });
+    }
 }
