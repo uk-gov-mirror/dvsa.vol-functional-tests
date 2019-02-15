@@ -2,9 +2,9 @@
 Feature:Digital Surrender - Goods Surrender licence
 
   Background:
-    Given i have a valid "goods" licence
+    Given i have a valid "goods" "sn" licence
     And i choose to surrender my licence
-    When i am on the review contact details page
+    When i am on the surrenders review contact details page
 
   Scenario: Correspondence details page
     Then the correct licence details should be displayed

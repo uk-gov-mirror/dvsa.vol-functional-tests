@@ -1,4 +1,5 @@
-#OLCS-21944
+@SURRENDER-START-PAGE
+@OLCS-21944
 Feature: Checking the start page for surrenders
 
   Scenario Outline: PSV and Goods licence

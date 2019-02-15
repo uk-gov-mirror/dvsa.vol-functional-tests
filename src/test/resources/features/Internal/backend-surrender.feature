@@ -3,7 +3,7 @@
   Feature: Surrendering a licence
 
     Background:
-      Given i have a valid "public" licence
+      Given i have a valid "public"  "si" licence
 
       Scenario: internal user can create, update and delete a licence surrender
         Then as "internal" user I can surrender a licence

@@ -14,8 +14,8 @@ public class ExternalSearchFilters extends BasePage implements En {
             String env = System.getProperty("env");
             String myURL = org.dvsa.testing.lib.url.webapp.URL.build(ApplicationType.EXTERNAL, env,"/search/find-lorry-bus-operators/").toString();
             Browser.navigate().get(myURL);
-            click("//*[@class='form-control form-control--radio'][2]", SelectorType.XPATH);
-            enterText("//*[@name='search']",world.createLicence.getLicenceNumber(),SelectorType.XPATH);
+            findSelectAllRadioButtonsByValue("licence");
+            enterText("search",world.createLicence.getLicenceNumber(),SelectorType.NAME);
             click(nameAttribute("input","submit"));
             do { click(nameAttribute("button","submit"));}
             while(!isElementPresent("//*[@class='table__wrapper']",SelectorType.XPATH));

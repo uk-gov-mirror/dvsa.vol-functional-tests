@@ -3,9 +3,9 @@
 Feature: Sign with surrender
 
   Background: 
-    Given i have a valid "public" licence
+    Given i have a valid "goods" "sn" licence
     And i choose to surrender my licence
-    And i am on the review contact details page
+    And i am on the surrenders review contact details page
     
   Scenario: Sign with verify - check that surrender has been created
     When i sign with verify

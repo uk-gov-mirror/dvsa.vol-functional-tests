@@ -360,14 +360,10 @@ public class CreateLicenceAPI {
     private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
     public CreateLicenceAPI() throws MissingRequiredArgument {
-        if (licenceType == null) {
-            operatorType = "goods";
-            licenceType = "standard_international";
-            businessType = "limited_company";
-            niFlag = "N";
-            isInterim = "N";
-            isOwner = "Y";
-        }
+        businessType = "limited_company";
+        niFlag = "N";
+        isInterim = "N";
+        isOwner = "Y";
     }
 
     public void registerUser() {
@@ -474,10 +470,9 @@ public class CreateLicenceAPI {
 
     public void addAddressDetails() {
         String phoneNumber = "0712345678";
-        String establishmentAddress = "establishment";
         String businessEmail = Str.randomWord(6).concat(".volBusiness@dvsa.com");
         String applicationAddressResource = URL.build(env, String.format("application/%s/addresses/", applicationNumber)).toString();
-        AddressBuilder address = new AddressBuilder().withAddressLine1(establishmentAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+        AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withPhoneNumber(phoneNumber).withEmailAddress(businessEmail);
         ApplicationAddressBuilder addressBuilder = new ApplicationAddressBuilder().withId(applicationNumber).withConsultant("Consult").withContact(contactDetailsBuilder)
                 .withCorrespondenceAddress(address).withEstablishmentAddress(address);
@@ -697,7 +692,7 @@ public class CreateLicenceAPI {
                     i++;
                 }
                 while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().response().asString().contains("Vehicle exists on other licence"))
-                || apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY);
+                        || apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY);
 
                 if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
                     System.out.println(apiResponse.extract().statusCode());
