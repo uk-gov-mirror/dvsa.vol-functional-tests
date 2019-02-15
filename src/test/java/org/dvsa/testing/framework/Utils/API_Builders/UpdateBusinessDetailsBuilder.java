@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "id",
@@ -13,7 +15,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "name",
         "licence",
         "companyOrLlpNo",
-        "registeredAddress"
+        "registeredAddress",
+        "tradingNames"
 })
 public class UpdateBusinessDetailsBuilder {
 
@@ -31,6 +34,8 @@ public class UpdateBusinessDetailsBuilder {
     private String companyOrLlpNo;
     @JsonProperty("registeredAddress")
     private AddressBuilder address;
+    @JsonProperty("tradingNames")
+    private List<String> tradingNames = null;
 
     @JsonProperty("id")
     public String getId() {
@@ -137,11 +142,28 @@ public class UpdateBusinessDetailsBuilder {
         return this;
     }
 
+
+    @JsonProperty("tradingNames")
+    public List<String> getTradingNames() {
+        return tradingNames;
+    }
+
+    @JsonProperty("tradingNames")
+    public void setTradingNames(List<String> tradingNames) {
+        this.tradingNames = tradingNames;
+    }
+
+    @JsonProperty("tradingNames")
+    public UpdateBusinessDetailsBuilder withTradingName(List<String> tradingNames){
+        this.tradingNames = tradingNames;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "id:" + getId() + ",natureOfBusiness:" + getNatureOfBusiness() + ",version:" + getVersion() +
                 ",name:" + getName() + ",licence:" + getLicence() + ",companyOrLlpNo:" + getCompanyOrLlpNo()
-                + ",registeredAddress:" + getAddress();
+                + ",registeredAddress:" + getAddress() + "tradingNames:" + getTradingNames();
     }
 
 }
