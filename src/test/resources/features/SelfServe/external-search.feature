@@ -5,7 +5,7 @@
 Feature: External user search by Address, Business name, Licence Number and Person's name
 
   Background:
-    Given i have a valid "goods" licence
+    Given i have a valid "goods" "sn" licence
     And I am on the external search page
 
   Scenario: [Positive]Search for lorry and bus operators by Address
