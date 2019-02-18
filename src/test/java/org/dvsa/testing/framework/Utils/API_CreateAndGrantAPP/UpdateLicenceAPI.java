@@ -34,7 +34,7 @@ public class UpdateLicenceAPI extends BasePage {
     private String goodOrPsv;
     private String trafficAreaName;
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
-    public String adminUserLogin = String.format("volAdminUser" + "%s", Str.randomWord(3));
+    public String adminUserLogin = String.format("vol" + "%s", Str.randomWord(10));
     private String adminUserId;
     private String licenceStatus;
     private String businessType;
@@ -330,7 +330,11 @@ public class UpdateLicenceAPI extends BasePage {
         if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
             System.out.println("+++ERROR+++" + apiResponse.extract().response().asString());
         }
-        setAdminUserId(apiResponse.extract().response().jsonPath().getString("id.user"));
+        else {
+
+            setAdminUserId(apiResponse.extract().response().jsonPath().getString("id.user"));
+        }
+
     }
 
     public ValidatableResponse grantVariation(String resource) throws MalformedURLException {

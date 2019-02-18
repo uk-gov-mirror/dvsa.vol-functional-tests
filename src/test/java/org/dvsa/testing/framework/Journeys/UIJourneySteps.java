@@ -8,7 +8,6 @@ import activesupport.aws.s3.S3;
 import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
-import enums.LicenceType;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.LoginPage;
@@ -31,6 +30,8 @@ public class UIJourneySteps extends BasePage {
 
     private World world;
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+    private String localUser = Properties.get("localUser", false);
+    private String localDefaultPassword = Properties.get("localDefaultPassword", false);
     static int tmCount;
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
     private String verifyUsername;
@@ -316,9 +317,9 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Directors");
     }
 
-    public void navigateToInternalTask() throws IllegalBrowserException, MissingDriverException, MalformedURLException {
+    public void navigateToInternalTask() throws IllegalBrowserException, MalformedURLException {
         world.APIJourneySteps.createAdminUser();
-        world.UIJourneySteps.navigateToInternalAdminUserLogin();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewApplication();
         waitForTextToBePresent("Processing");
         clickByLinkText("Processing");
@@ -339,28 +340,46 @@ public class UIJourneySteps extends BasePage {
         clickByName("form-actions[submit]");
     }
 
-    public void navigateToInternalAdminUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MalformedURLException {
-        String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
+    public void navigateToInternalAdminUserLogin(String username, String emailAddress) throws MissingRequiredArgument, IllegalBrowserException, MalformedURLException {
         String newPassword = "Password1";
-        String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
+        String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
 
         if (Browser.isBrowserOpen()) {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        System.out.println(world.updateLicence.adminUserLogin + "UserLogin");
 
-        if (Browser.navigate().getCurrentUrl().contains("da")) {
-            signIn(world.updateLicence.adminUserLogin, password);
+        if (env == EnvironmentType.LOCAL) {
+            //login locally so get local user and password(s) and try till successful
+            // I would suggest we  tidy all this to set things up in one place
+            username = localUser;
+            emailAddress = "e@example,com";
         }
-        if (isTextPresent("Username", 60))
-            signIn(world.updateLicence.adminUserLogin, password);
-        if (isTextPresent("Current password", 60)) {
-            enterField(nameAttribute("input", "oldPassword"), password);
-            enterField(nameAttribute("input", "newPassword"), newPassword);
-            enterField(nameAttribute("input", "confirmPassword"), newPassword);
-            click(nameAttribute("input", "submit"));
+
+        String password = getTempPassword(emailAddress);
+
+
+        try {
+            signIn(username, password);
+        } catch (Exception e){
+            //User is already registered
+            signIn(username, getPassword());
+        } finally {
+            if (isTextPresent("Current password", 60)) {
+                enterField(nameAttribute("input", "oldPassword"), password);
+                enterField(nameAttribute("input", "newPassword"), newPassword);
+                enterField(nameAttribute("input", "confirmPassword"), newPassword);
+                click(nameAttribute("input", "submit"));
+                setPassword(newPassword);
+            }
         }
+    }
+
+    private String getTempPassword(String emailAddress) {
+        if(env == EnvironmentType.LOCAL){
+            return localDefaultPassword;
+        }
+        return S3.getTempPassword(emailAddress, getBucketName());
     }
 
     private String getBucketName() {
@@ -377,20 +396,15 @@ public class UIJourneySteps extends BasePage {
         String newPassword = "Password1";
         String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
 
-        if (!emailAddress.contains("@")) {
-            this.password = emailAddress;
-        } else {
-            this.password = S3.getTempPassword(emailAddress, getBucketName());
-        }
-
         if (Browser.isBrowserOpen()) {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
+        String password = getTempPassword(emailAddress);
 
         try {
             signIn(username, password);
-        } catch (Exception e) {
+        } catch (Exception e){
             //User is already registered
             signIn(username, getExternalPassword());
         } finally {
@@ -507,7 +521,7 @@ public class UIJourneySteps extends BasePage {
 
     public void internalUserNavigateToDocsTable() throws IllegalBrowserException, MalformedURLException {
         world.APIJourneySteps.createAdminUser();
-        world.UIJourneySteps.navigateToInternalAdminUserLogin();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewApplication();
         clickByLinkText("Docs");
     }
