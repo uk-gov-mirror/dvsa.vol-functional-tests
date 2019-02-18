@@ -159,8 +159,12 @@ public class SurrenderLogic extends BasePage implements En {
             waitAndClick("form-actions[submit]", SelectorType.NAME);
             assertTrue(Browser.navigate().getCurrentUrl().contains("declaration"));
         });
+        And("^my application to surrender is under consideration$", () -> {
+            world.UIJourneySteps.submitSurrender();
+        });
         When("^the caseworker approves the surrender$", () -> {
-            world.UIJourneySteps.navigateToInternalAdminUserLogin();
+            world.UIJourneySteps.caseworkManageSurrender();
+            //add logic to surrender
         });
         Then("^the licence status should be \"([^\"]*)\"$", (String arg0) -> {
         });
@@ -181,28 +185,6 @@ public class SurrenderLogic extends BasePage implements En {
         And("^the caseworker cancels the withdraw$", () -> {
         });
         And("^the surrender menu should be displayed$", () -> {
-        });
-        And("^my application to surrender is under consideration$", () -> {
-            world.UIJourneySteps.navigateToSurrendersStartPage();
-            world.UIJourneySteps.startSurrender();
-            waitAndClick("form-actions[submit]",SelectorType.ID);
-            world.UIJourneySteps.addDiscInformation("2", "2", "1");
-            waitForTextToBePresent("In your possession");
-            world.UIJourneySteps.addOperatorLicenceDetails();
-            if (world.createLicence.getLicenceType().equals("standard_international")) {
-                assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
-                world.UIJourneySteps.addCommunityLicenceDetails();
-            }
-            world.UIJourneySteps.acknowledgeDestroyPage();
-            waitAndClick("//*[@id='sign']", SelectorType.XPATH);
-            world.UIJourneySteps.signWithVerify("pavlov", "Password1");
-            waitForTextToBePresent("What happens next");
-            Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
-            Assert.assertTrue(isTextPresent(String.format("Application to surrender licence %s", world.createLicence.getLicenceNumber()), 10));
-            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("d MMM yyyy")), 20));
-            assertTrue(isTextPresent("notifications@vehicle-operator-licensing.service.gov.uk", 10));
-            waitAndClick("//*[contains(text(),'home')]", SelectorType.XPATH);
-            assertTrue(isTextPresent("Surrender under consideration", 10));
         });
     }
 }
