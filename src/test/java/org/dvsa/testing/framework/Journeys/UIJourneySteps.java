@@ -782,4 +782,8 @@ public class UIJourneySteps extends BasePage {
     public String getSurrenderContactNumber() throws IllegalBrowserException {
         return getText("//*[@class='app-check-your-answers app-check-your-answers--long'][3]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']",SelectorType.XPATH);
     }
+
+    public void submitSurrender(){
+
+    }
 }

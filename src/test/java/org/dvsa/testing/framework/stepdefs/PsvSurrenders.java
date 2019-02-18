@@ -63,7 +63,7 @@ public class PsvSurrenders extends BasePage implements En {
         });
         And("^the surrender status is \"([^\"]*)\"$", (String status) -> {
             waitForTextToBePresent("Current licences");
-           assertTrue(isTextPresent("Surrender under consideration",10));
+            assertTrue(isTextPresent(status, 10));
         });
         Then("^the number of disc should match the vehicles registered on the licence$", () -> {
             assertEquals(getText("//*[@id=\"main\"]/div/div/div[2]/div/p[2]/strong", SelectorType.XPATH), String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
