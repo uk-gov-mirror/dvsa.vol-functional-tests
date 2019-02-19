@@ -167,10 +167,13 @@ public class SurrenderLogic extends BasePage implements En {
             //add logic to surrender
         });
         Then("^the licence status should be \"([^\"]*)\"$", (String arg0) -> {
+            assertTrue(isTextPresent(arg0,40));
         });
         And("^the surrender menu should be hidden$", () -> {
+            assertTrue(isElementNotPresent("//*[contains(text(),'Surrender')]",SelectorType.XPATH));
         });
         And("^the licence details page should display$", () -> {
+            assertTrue(isTextPresent("Licence details",40));
         });
         When("^the caseworker attempts to withdraw the surrender$", () -> {
         });
@@ -185,6 +188,7 @@ public class SurrenderLogic extends BasePage implements En {
         And("^the caseworker cancels the withdraw$", () -> {
         });
         And("^the surrender menu should be displayed$", () -> {
+            assertTrue(isElementPresent("//*[contains(text(),'Surrender')]",SelectorType.XPATH));
         });
     }
 }
