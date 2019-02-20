@@ -38,7 +38,7 @@
     <repositories>
         <repository>
             <id>nexus-releases</id>
-            <url>http://nexus.shd.ci.nonprod.dvsa.aws:8080/repository/dvsa-maven-raw/</url>
+            <url>http://nexus.shd.ci.nonprod.dvsa.aws/</url>
         </repository>
 
         <repository>
