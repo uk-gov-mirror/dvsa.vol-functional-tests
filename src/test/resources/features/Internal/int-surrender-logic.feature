@@ -23,9 +23,22 @@ Feature: Logic for Surrender menu item
     Then the modal box is hidden
     And the surrender menu should be hidden
 
-  Scenario: Cancel surrender withdraw
+  Scenario: Cancel valid licence surrender withdraw
     When the caseworker attempts to withdraw the surrender
     And the caseworker cancels the withdraw
     And the licence status should be "valid"
     Then the modal box is hidden
     And the surrender menu should be displayed
+
+  Scenario Outline: Cancel suspended, curtailed licence surrender withdraw
+    And the licence status is "<licence_status>"
+    When the caseworker attempts to withdraw the surrender
+    And the caseworker cancels the withdraw
+    And the licence status should be "<licence_status>"
+    Then the modal box is hidden
+    And the surrender menu should be displayed
+
+    Examples:
+      | licence_status |
+      | suspend        |
+      | curtail        |
