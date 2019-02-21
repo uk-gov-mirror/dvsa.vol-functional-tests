@@ -452,7 +452,7 @@ public class UpdateLicenceAPI extends BasePage {
         apiResponse.statusCode(HttpStatus.SC_OK);
     }
 
-    public void getDiscInformation(){
+    private void getDiscInformation(){
         Map<String,String> queryParams = new HashMap<>();
         {
             queryParams.put("niFlag","N");
@@ -485,7 +485,7 @@ public class UpdateLicenceAPI extends BasePage {
         confirmDiscPrint();
     }
 
-    public void confirmDiscPrint(){
+    private void confirmDiscPrint(){
         String operator;
         if(getOperatorTypeDetails().equals("Goods Vehicle")){
             operator = "goods";

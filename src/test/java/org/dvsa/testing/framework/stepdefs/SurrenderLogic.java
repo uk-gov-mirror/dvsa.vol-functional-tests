@@ -27,7 +27,7 @@ public class SurrenderLogic extends BasePage implements En {
             world.UIJourneySteps.startSurrender();
         });
         Given("^i update my address details on my licence$", () -> {
-            waitAndClick("form-actions[submit]",SelectorType.ID);
+            waitAndClick("form-actions[submit]", SelectorType.ID);
             clickByLinkText("Home");
             clickByLinkText(world.createLicence.getLicenceNumber());
             clickByLinkText("Addresses");
@@ -46,7 +46,7 @@ public class SurrenderLogic extends BasePage implements En {
             assertEquals(expectedChangedText, actualChangeText);
         });
         Given("^i remove a disc to my licence$", () -> {
-            waitAndClick("form-actions[submit]",SelectorType.ID);
+            waitAndClick("form-actions[submit]", SelectorType.ID);
             world.UIJourneySteps.addDiscInformation(discDestroyed, discLost, discStolen);
             clickByLinkText("Home");
             clickByLinkText(world.createLicence.getLicenceNumber());
@@ -105,7 +105,7 @@ public class SurrenderLogic extends BasePage implements En {
         });
         And("^i am on the community licence page$", () -> {
             if (world.createLicence.getLicenceType().equals("standard_international")) {
-                waitAndClick("form-actions[submit]",SelectorType.ID);
+                waitAndClick("form-actions[submit]", SelectorType.ID);
                 world.UIJourneySteps.addDiscInformation("2", "2", "1");
                 waitForTextToBePresent("In your possession");
                 world.UIJourneySteps.addOperatorLicenceDetails();
@@ -120,7 +120,7 @@ public class SurrenderLogic extends BasePage implements En {
             assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
         });
         And("^i am on the disc and doc review page$", () -> {
-            waitAndClick("form-actions[submit]",SelectorType.ID);
+            waitAndClick("form-actions[submit]", SelectorType.ID);
             world.UIJourneySteps.addDiscInformation("2", "2", "1");
             waitForTextToBePresent("In your possession");
             world.UIJourneySteps.addOperatorLicenceDetails();
@@ -135,7 +135,7 @@ public class SurrenderLogic extends BasePage implements En {
             assertTrue(Browser.navigate().getCurrentUrl().contains("review"));
         });
         And("^i am on the destroy disc page$", () -> {
-            waitAndClick("form-actions[submit]",SelectorType.ID);
+            waitAndClick("form-actions[submit]", SelectorType.ID);
             world.UIJourneySteps.addDiscInformation("2", "2", "1");
             waitForTextToBePresent("In your possession");
             world.UIJourneySteps.addOperatorLicenceDetails();
@@ -147,7 +147,7 @@ public class SurrenderLogic extends BasePage implements En {
             assertTrue(Browser.navigate().getCurrentUrl().contains("destroy"));
         });
         And("^i am on the declaration page$", () -> {
-            waitAndClick("form-actions[submit]",SelectorType.ID);
+            waitAndClick("form-actions[submit]", SelectorType.ID);
             world.UIJourneySteps.addDiscInformation("2", "2", "1");
             waitForTextToBePresent("In your possession");
             world.UIJourneySteps.addOperatorLicenceDetails();
@@ -164,31 +164,44 @@ public class SurrenderLogic extends BasePage implements En {
         });
         When("^the caseworker approves the surrender$", () -> {
             world.UIJourneySteps.caseworkManageSurrender();
-            //add logic to surrender
+            waitForTextToBePresent("Surrender details");
+            waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
+            waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
+            waitAndClick("actions[surrender]", SelectorType.ID);
         });
         Then("^the licence status should be \"([^\"]*)\"$", (String arg0) -> {
-            assertTrue(isTextPresent(arg0,40));
+            assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), arg0.toUpperCase());
         });
         And("^the surrender menu should be hidden$", () -> {
-            assertTrue(isElementNotPresent("//*[contains(text(),'Surrender')]",SelectorType.XPATH));
+            assertFalse(isLinkPresent("Surrender", 30));
         });
         And("^the licence details page should display$", () -> {
-            assertTrue(isTextPresent("Licence details",40));
+            assertTrue(isTextPresent("Licence details", 40));
         });
         When("^the caseworker attempts to withdraw the surrender$", () -> {
+            world.UIJourneySteps.caseworkManageSurrender();
+            waitForTextToBePresent("Surrender details");
+            waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
+            waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
+            waitAndClick("//*[contains(text(),'Withdraw')]", SelectorType.XPATH);
         });
         Then("^a modal box is displayed$", () -> {
+            assertTrue(isElementPresent("//*[@class='modal']", SelectorType.XPATH));
         });
         And("^a prompt message is displayed$", () -> {
+            assertTrue(isTextPresent("Confirm Withdraw", 30));
+            assertTrue(isTextPresent(String.format("Are you sure you wish to withdraw the application to surrender licence %s", world.createLicence.getLicenceNumber()), 30));
         });
         And("^the caseworker confirms the withdraw$", () -> {
+            waitAndClick("continue", SelectorType.ID);
         });
         Then("^the modal box is hidden$", () -> {
         });
         And("^the caseworker cancels the withdraw$", () -> {
+            waitAndClick("cancel", SelectorType.ID);
         });
         And("^the surrender menu should be displayed$", () -> {
-            assertTrue(isElementPresent("//*[contains(text(),'Surrender')]",SelectorType.XPATH));
+            assertTrue(isElementPresent("//*[contains(text(),'Surrender')]", SelectorType.XPATH));
         });
     }
 }

@@ -23,6 +23,7 @@ import org.openqa.selenium.By;
 
 import java.net.MalformedURLException;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getFutureDate;
@@ -753,13 +754,14 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void addOperatorLicenceDetails() throws IllegalBrowserException {
-        waitAndClick("//*//*[contains(text(),'In your possession')]", SelectorType.XPATH);
+        click("//*[contains(text(),'Lost')]", SelectorType.XPATH);
+        waitAndEnterText("//*[@id='operatorLicenceDocument[lostContent][details]']", SelectorType.XPATH, "lost in the washing");
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 
     public void addCommunityLicenceDetails() throws IllegalBrowserException {
-        waitAndClick("//*//*[contains(text(),'In your possession')]", SelectorType.XPATH);
-        waitForTextToBePresent("You must destroy all community licence documents and certified copies");
+        click("//*[contains(text(),'Stolen')]", SelectorType.XPATH);
+        waitAndEnterText("//*[@id='communityLicenceDocument[stolenContent][details]']", SelectorType.XPATH, "Stolen on the way here");
         waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 
@@ -793,10 +795,11 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void submitSurrender() throws MalformedURLException, IllegalBrowserException {
+        world.updateLicence.printLicenceDiscs();
         world.UIJourneySteps.navigateToSurrendersStartPage();
         world.UIJourneySteps.startSurrender();
         waitAndClick("form-actions[submit]",SelectorType.ID);
-        world.UIJourneySteps.addDiscInformation("2", "2", "1");
+        world.UIJourneySteps.addDiscInformation("1", "2", "1");
         waitForTextToBePresent("In your possession");
         world.UIJourneySteps.addOperatorLicenceDetails();
         if (world.createLicence.getLicenceType().equals("standard_international")) {
@@ -812,13 +815,13 @@ public class UIJourneySteps extends BasePage {
         Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("d MMM yyyy")), 20));
         assertTrue(isTextPresent("notifications@vehicle-operator-licensing.service.gov.uk", 10));
         waitAndClick("//*[contains(text(),'home')]", SelectorType.XPATH);
-        assertTrue(isTextPresent("Surrender under consideration", 10));
+        assertEquals(getText("//*[@class='overview__status green']", SelectorType.XPATH),"SURRENDER UNDER CONSIDERATION");
     }
 
     public void caseworkManageSurrender() throws MalformedURLException, IllegalBrowserException {
         world.APIJourneySteps.createAdminUser();
         world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewLicence();
-        waitAndClick("//*[@contains(text(),'Surrender')]",SelectorType.XPATH);
+        clickByLinkText("Surrender");
     }
 }
