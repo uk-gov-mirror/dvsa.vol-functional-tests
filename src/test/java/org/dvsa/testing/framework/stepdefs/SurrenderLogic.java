@@ -95,6 +95,7 @@ public class SurrenderLogic extends BasePage implements En {
             assertTrue(Browser.navigate().getCurrentUrl().contains("current-discs"));
         });
         And("^i am on the operator licence page$", () -> {
+            waitAndClick("form-actions[submit]", SelectorType.ID);
             world.UIJourneySteps.addDiscInformation(discDestroyed, discLost, discStolen);
             waitForTextToBePresent("In your possession");
             assertTrue(Browser.navigate().getCurrentUrl().contains("operator-licence"));
@@ -202,6 +203,10 @@ public class SurrenderLogic extends BasePage implements En {
         });
         And("^the surrender menu should be displayed$", () -> {
             assertTrue(isElementPresent("//*[contains(text(),'Surrender')]", SelectorType.XPATH));
+        });
+        Then("^the user should remain on the surrender details page$", () -> {
+            assertTrue(Browser.navigate().getCurrentUrl().contains("surrender-details"));
+            assertTrue(isTextPresent("Use this information to progress the operator's application:",30));
         });
     }
 }

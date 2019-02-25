@@ -361,10 +361,14 @@ public class CreateLicenceAPI {
     private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
     public CreateLicenceAPI() throws MissingRequiredArgument {
-        businessType = "limited_company";
-        niFlag = "N";
-        isInterim = "N";
-        isOwner = "Y";
+        if (licenceType == null) {
+            operatorType = "goods";
+            licenceType = "standard_international";
+            businessType = "limited_company";
+            niFlag = "N";
+            isInterim = "N";
+            isOwner = "Y";
+        }
     }
 
     public void registerUser() {
@@ -612,7 +616,7 @@ public class CreateLicenceAPI {
             String submitTransportManager = URL.build(env, String.format("transport-manager-application/%s/submit", getApplicationNumber())).toString();
             GenericBuilder genericBuilder = new GenericBuilder().withId(getTransportManagerApplicationId()).withVersion(1);
             apiResponse = RestUtils.put(genericBuilder, submitTransportManager, getHeaders());
-            assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+            apiResponse.statusCode(HttpStatus.SC_OK);
         }
         if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
             System.out.println(apiResponse.extract().statusCode());
@@ -670,29 +674,38 @@ public class CreateLicenceAPI {
     }
 
     public void addVehicleDetails() {
-        String vehiclesResource = null;
-        String vrm = null;
-
-        if (getOperatorType().equals("goods")) {
-            vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
-        } else if (getOperatorType().equals("public")) {
-            vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
-        }
-        do {
-            int i;
-            for (i = 0; i < getNoOfVehiclesRequired(); )
+        if (getOperatorType().equals("public") && (getOperatorType().equals("special_restricted"))) {
+            // no need to submit details
+        } else {
+            for (int i = 0; i < getNoOfVehiclesRequired(); ) {
+                String vehiclesResource = null;
+                String vrm;
                 vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
-            VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight("5000").withVersion(version);
-            apiResponse = RestUtils.post(vehiclesDetails, Objects.requireNonNull(vehiclesResource), getHeaders());
-            i++;
-        }
-        while ((apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)
-                || (apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY));
+                if (vrm.contains("q")) {
+                    vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
+                }
+                if (getOperatorType().equals("goods")) {
+                    vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
+                }
+                if (getOperatorType().equals("public")) {
+                    vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
+                }
 
-        if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
-            System.out.println(apiResponse.extract().statusCode());
-            System.out.println(apiResponse.extract().response().asString());
-            throw new HTTPException(apiResponse.extract().statusCode());
+                do {
+                    VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight("5000").withVersion(i);
+                    assert vehiclesResource != null;
+                    apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
+                    i++;
+                }
+                while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)
+                        || (apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY));
+
+                if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
+                    System.out.println(apiResponse.extract().statusCode());
+                    System.out.println(apiResponse.extract().response().asString());
+                    throw new HTTPException(apiResponse.extract().statusCode());
+                }
+            }
         }
     }
 
