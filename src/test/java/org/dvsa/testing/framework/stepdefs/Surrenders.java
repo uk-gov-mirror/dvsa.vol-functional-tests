@@ -181,11 +181,14 @@ public class Surrenders extends BasePage implements En {
             });
         });
         Then("^the surrender print and sign page is displayed$", () -> {
-            clickByLinkText("Print");
-            LinkedHashSet<String> windows = (LinkedHashSet<String>) Browser.navigate().getWindowHandles();
-            for (String d : windows) {
-                Browser.navigate().switchTo().window(d);
-            }
+            String defaultWindow = Browser.navigate().getWindowHandle();
+            waitAndClick("//*[contains(text(),'Print')]",SelectorType.XPATH);
+            waitForTextToBePresent("Print");
+            Set<String> windows = Browser.navigate().getWindowHandles();
+            String printWindow = windows.stream().reduce((first, second) -> second).get();
+            Browser.navigate().switchTo().window(printWindow).close();
+            Browser.navigate().switchTo().window(defaultWindow);
+            click("//*[contains(@title,'return to home')]",SelectorType.XPATH);
         });
     }
 }

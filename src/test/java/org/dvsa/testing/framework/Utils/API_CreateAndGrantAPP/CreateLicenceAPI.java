@@ -18,6 +18,7 @@ import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import javax.xml.ws.http.HTTPException;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
@@ -66,7 +67,7 @@ public class CreateLicenceAPI {
     private String phoneNumber;
     private String businessEmailAddress;
 
-    private int noOfVehiclesRequired = 4;
+    private int noOfVehiclesRequired = 5;
 
     public String getHours() {
         return hours;
@@ -670,26 +671,125 @@ public class CreateLicenceAPI {
 
     public void addVehicleDetails() {
         String vehiclesResource = null;
-        String vrm;
-        for (int i = 0; i < getNoOfVehiclesRequired(); ) {
-            if (getOperatorType().equals("goods")) {
-                vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
-            } else if (getOperatorType().equals("public")) {
-                vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
-            }
-            do {
+        String vrm = null;
+
+        if (getOperatorType().equals("goods")) {
+            vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
+        } else if (getOperatorType().equals("public")) {
+            vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
+        }
+        do {
+            int i;
+            for (i = 0; i < getNoOfVehiclesRequired(); )
                 vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
-                if(vrm.contains("q")){
-                    vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
+            VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight("5000").withVersion(version);
+            apiResponse = RestUtils.post(vehiclesDetails, Objects.requireNonNull(vehiclesResource), getHeaders());
+            i++;
+        }
+        while ((apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)
+                || (apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY));
+
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
+    }
+
+    public void submitVehicleDeclaration() {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+            // no need to submit details
+        } else {
+            String psvVehicleSize = "psvvs_both";
+            String psvNoSmallVhlConfirmation = "Y";
+            String psvOperateSmallVhl = "Y";
+            String psvSmallVhlNotes = "submitted through the API";
+            String psvLimousines = "Y";
+            String psvNoLimousineConfirmation = "Y";
+            String psvOnlyLimousinesConfirmation = "Y";
+            String vehicleDeclarationResource = URL.build(env, String.format(String.format("application/%s/vehicle-declaration", applicationNumber))).toString();
+            do {
+                VehicleDeclarationBuilder vehicleDeclarationBuilder = new VehicleDeclarationBuilder().withId(applicationNumber).withPsvVehicleSize(psvVehicleSize)
+                        .withPsvLimousines(psvLimousines).withPsvNoSmallVhlConfirmation(psvNoSmallVhlConfirmation).withPsvOperateSmallVhl(psvOperateSmallVhl).withPsvSmallVhlNotes(psvSmallVhlNotes)
+                        .withPsvNoLimousineConfirmation(psvNoLimousineConfirmation).withPsvOnlyLimousinesConfirmation(psvOnlyLimousinesConfirmation).withVersion(version);
+                apiResponse = RestUtils.put(vehicleDeclarationBuilder, vehicleDeclarationResource, getHeaders());
+                version++;
+                if (version > 20) {
+                    version = 1;
                 }
-                VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight("5000").withVersion(i);
-                apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
-                i++;
-
+            } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
             }
-            while ((apiResponse.extract().response().asString().contains("Vehicle exists on other licence"))
-                    || apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY);
+        }
+    }
 
+    public void addFinancialHistory() {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+            // no need to submit details
+        } else {
+            String financialHistoryAnswer = "N";
+            String insolvencyAnswer = "false";
+            String financialHistoryResource = URL.build(env, String.format("application/%s/financial-history", applicationNumber)).toString();
+
+            do {
+                FinancialHistoryBuilder financialHistoryBuilder = new FinancialHistoryBuilder().withId(applicationNumber).withVersion(String.valueOf(version)).withBankrupt(financialHistoryAnswer)
+                        .withLiquidation(financialHistoryAnswer).withReceivership(financialHistoryAnswer).withAdministration(financialHistoryAnswer).withAdministration(financialHistoryAnswer)
+                        .withDisqualified(financialHistoryAnswer).withInsolvencyDetails(insolvencyAnswer).withInsolvencyConfirmation(insolvencyAnswer);
+                apiResponse = RestUtils.put(financialHistoryBuilder, financialHistoryResource, getHeaders());
+                version++;
+                if (version > 20) {
+                    version = 1;
+                }
+            } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
+            }
+        }
+    }
+
+    public void addApplicationSafetyAndComplianceDetails() {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+            // no need to submit details
+        } else {
+            String tachographIns = "tach_na";
+            String safetyInsVaries = "N";
+            String safetyConfirmationOption = "Y";
+            String applicationSafetyResource = URL.build(env, String.format("application/%s/safety", applicationNumber)).toString();
+
+            do {
+                LicenceBuilder licence = new LicenceBuilder().withId(licenceNumber).withVersion(version).withSafetyInsVaries(safetyInsVaries).withSafetyInsVehicles(String.valueOf(noOfVehiclesRequired))
+                        .withSafetyInsTrailers(String.valueOf(noOfVehiclesRequired)).withTachographIns(tachographIns);
+                ApplicationSafetyBuilder applicationSafetyBuilder = new ApplicationSafetyBuilder().withId(applicationNumber).withVersion(version)
+                        .withSafetyConfirmation(safetyConfirmationOption).withLicence(licence);
+                apiResponse = RestUtils.put(applicationSafetyBuilder, applicationSafetyResource, getHeaders());
+                version++;
+                if (version > 20) {
+                    version = 1;
+                }
+            } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
+            }
+        }
+    }
+
+    public void addSafetyInspector() {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+            // no need to submit details
+        } else {
+            String safetyInspectorResource = URL.build(env, String.format("application/%s/workshop", applicationNumber)).toString();
+            AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+            ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withFao(foreName).withAddress(addressBuilder);
+            SafetyInspectorBuilder safetyInspectorBuilder = new SafetyInspectorBuilder().withApplication(applicationNumber).withLicence(licenceNumber).withIsExternal("N")
+                    .withContactDetails(contactDetailsBuilder);
+            apiResponse = RestUtils.post(safetyInspectorBuilder, safetyInspectorResource, getHeaders());
             if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
                 System.out.println(apiResponse.extract().statusCode());
                 System.out.println(apiResponse.extract().response().asString());
@@ -698,233 +798,21 @@ public class CreateLicenceAPI {
         }
     }
 
-        public void submitVehicleDeclaration () {
-            if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
-                // no need to submit details
-            } else {
-                String psvVehicleSize = "psvvs_both";
-                String psvNoSmallVhlConfirmation = "Y";
-                String psvOperateSmallVhl = "Y";
-                String psvSmallVhlNotes = "submitted through the API";
-                String psvLimousines = "Y";
-                String psvNoLimousineConfirmation = "Y";
-                String psvOnlyLimousinesConfirmation = "Y";
-                String vehicleDeclarationResource = URL.build(env, String.format(String.format("application/%s/vehicle-declaration", applicationNumber))).toString();
-                do {
-                    VehicleDeclarationBuilder vehicleDeclarationBuilder = new VehicleDeclarationBuilder().withId(applicationNumber).withPsvVehicleSize(psvVehicleSize)
-                            .withPsvLimousines(psvLimousines).withPsvNoSmallVhlConfirmation(psvNoSmallVhlConfirmation).withPsvOperateSmallVhl(psvOperateSmallVhl).withPsvSmallVhlNotes(psvSmallVhlNotes)
-                            .withPsvNoLimousineConfirmation(psvNoLimousineConfirmation).withPsvOnlyLimousinesConfirmation(psvOnlyLimousinesConfirmation).withVersion(version);
-                    apiResponse = RestUtils.put(vehicleDeclarationBuilder, vehicleDeclarationResource, getHeaders());
-                    version++;
-                    if (version > 20) {
-                        version = 1;
-                    }
-                } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-                if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-                    System.out.println(apiResponse.extract().statusCode());
-                    System.out.println(apiResponse.extract().response().asString());
-                    throw new HTTPException(apiResponse.extract().statusCode());
-                }
-            }
-        }
-
-        public void addFinancialHistory () {
-            if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
-                // no need to submit details
-            } else {
-                String financialHistoryAnswer = "N";
-                String insolvencyAnswer = "false";
-                String financialHistoryResource = URL.build(env, String.format("application/%s/financial-history", applicationNumber)).toString();
-
-                do {
-                    FinancialHistoryBuilder financialHistoryBuilder = new FinancialHistoryBuilder().withId(applicationNumber).withVersion(String.valueOf(version)).withBankrupt(financialHistoryAnswer)
-                            .withLiquidation(financialHistoryAnswer).withReceivership(financialHistoryAnswer).withAdministration(financialHistoryAnswer).withAdministration(financialHistoryAnswer)
-                            .withDisqualified(financialHistoryAnswer).withInsolvencyDetails(insolvencyAnswer).withInsolvencyConfirmation(insolvencyAnswer);
-                    apiResponse = RestUtils.put(financialHistoryBuilder, financialHistoryResource, getHeaders());
-                    version++;
-                    if (version > 20) {
-                        version = 1;
-                    }
-                } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-                if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-                    System.out.println(apiResponse.extract().statusCode());
-                    System.out.println(apiResponse.extract().response().asString());
-                    throw new HTTPException(apiResponse.extract().statusCode());
-                }
-            }
-        }
-
-        public void addApplicationSafetyAndComplianceDetails () {
-            if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
-                // no need to submit details
-            } else {
-                String tachographIns = "tach_na";
-                String safetyInsVaries = "N";
-                String safetyConfirmationOption = "Y";
-                String applicationSafetyResource = URL.build(env, String.format("application/%s/safety", applicationNumber)).toString();
-
-                do {
-                    LicenceBuilder licence = new LicenceBuilder().withId(licenceNumber).withVersion(version).withSafetyInsVaries(safetyInsVaries).withSafetyInsVehicles(String.valueOf(noOfVehiclesRequired))
-                            .withSafetyInsTrailers(String.valueOf(noOfVehiclesRequired)).withTachographIns(tachographIns);
-                    ApplicationSafetyBuilder applicationSafetyBuilder = new ApplicationSafetyBuilder().withId(applicationNumber).withVersion(version)
-                            .withSafetyConfirmation(safetyConfirmationOption).withLicence(licence);
-                    apiResponse = RestUtils.put(applicationSafetyBuilder, applicationSafetyResource, getHeaders());
-                    version++;
-                    if (version > 20) {
-                        version = 1;
-                    }
-                } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-                if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-                    System.out.println(apiResponse.extract().statusCode());
-                    System.out.println(apiResponse.extract().response().asString());
-                    throw new HTTPException(apiResponse.extract().statusCode());
-                }
-            }
-        }
-
-        public void addSafetyInspector () {
-            if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
-                // no need to submit details
-            } else {
-                String safetyInspectorResource = URL.build(env, String.format("application/%s/workshop", applicationNumber)).toString();
-                AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
-                ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withFao(foreName).withAddress(addressBuilder);
-                SafetyInspectorBuilder safetyInspectorBuilder = new SafetyInspectorBuilder().withApplication(applicationNumber).withLicence(licenceNumber).withIsExternal("N")
-                        .withContactDetails(contactDetailsBuilder);
-                apiResponse = RestUtils.post(safetyInspectorBuilder, safetyInspectorResource, getHeaders());
-                if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
-                    System.out.println(apiResponse.extract().statusCode());
-                    System.out.println(apiResponse.extract().response().asString());
-                    throw new HTTPException(apiResponse.extract().statusCode());
-                }
-            }
-        }
-
-        public void addConvictionsDetails () {
-            if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
-                // no need to submit details
-            } else {
-                String previousConvictionsResource = URL.build(env, String.format("application/%s/previous-convictions", applicationNumber)).toString();
-
-                do {
-                    CaseConvictionsPenaltiesBuilder convictionsPenaltiesBuilder = new CaseConvictionsPenaltiesBuilder().withId(applicationNumber).withConvictionsConfirmation("Y")
-                            .withPrevConviction("N").withVersion(version);
-                    apiResponse = RestUtils.put(convictionsPenaltiesBuilder, previousConvictionsResource, getHeaders());
-                    version++;
-                    if (version > 20) {
-                        version = 1;
-                    }
-                } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-                if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-                    System.out.println(apiResponse.extract().statusCode());
-                    System.out.println(apiResponse.extract().response().asString());
-                    throw new HTTPException(apiResponse.extract().statusCode());
-                }
-            }
-        }
-
-        public void addLicenceHistory () {
-
-            if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
-                // no need to submit details
-            } else {
-                String optionResponse = "N";
-                String licenceHistoryResource = URL.build(env, String.format("application/%s/licence-history", applicationNumber)).toString();
-
-                do {
-                    LicenceHistoryBuilder licenceHistoryBuilder = new LicenceHistoryBuilder().withId(applicationNumber).withPrevHadLicence(optionResponse).withPrevHasLicence(optionResponse)
-                            .withPrevBeenAtPi(optionResponse).withPrevBeenDisqualifiedTc(optionResponse).withPrevBeenRefused(optionResponse).withPrevBeenRevoked(optionResponse).withPrevPurchasedAssets(optionResponse)
-                            .withVersion(version);
-                    apiResponse = RestUtils.put(licenceHistoryBuilder, licenceHistoryResource, getHeaders());
-                    version++;
-                    if (version > 20) {
-                        version = 1;
-                    }
-                } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-                if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-                    System.out.println(apiResponse.extract().statusCode());
-                    System.out.println(apiResponse.extract().response().asString());
-                    throw new HTTPException(apiResponse.extract().statusCode());
-                }
-            }
-        }
-
-        public void submitTaxiPhv () {
-            String phLicenceNumber = "phv123456";
-            String councilName = "nottinghamshire";
-            if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
-                String submitResource = URL.build(env, String.format("application/%s/taxi-phv", applicationNumber)).toString();
-                do {
-                    AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
-                    PhvTaxiBuilder taxiBuilder = new PhvTaxiBuilder().withId(applicationNumber).withPrivateHireLicenceNo(phLicenceNumber).withCouncilName(councilName).withLicence(licenceNumber).withAddress(addressBuilder);
-                    apiResponse = RestUtils.post(taxiBuilder, submitResource, getHeaders());
-                    version++;
-                    if (version > 20) {
-                        version = 1;
-                    }
-                } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-                if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
-                    System.out.println(apiResponse.extract().statusCode());
-                    System.out.println(apiResponse.extract().response().asString());
-                    throw new HTTPException(apiResponse.extract().statusCode());
-                }
-            }
-        }
-
-        public void applicationReviewAndDeclare () {
-            String interimReason = "Testing through the API";
-            String declarationConfirmation = "Y";
-            String signatureRequired = "sig_physical_signature";
-            DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings();
-            String reviewResource = URL.build(env, String.format("application/%s/declaration/", applicationNumber)).toString();
+    public void addConvictionsDetails() {
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+            // no need to submit details
+        } else {
+            String previousConvictionsResource = URL.build(env, String.format("application/%s/previous-convictions", applicationNumber)).toString();
 
             do {
-                if (operatorType.equals("goods") && (getIsInterim().equals("Y"))) {
-                    undertakings.withId(applicationNumber).withVersion(String.valueOf(version)).withInterimRequested(getIsInterim())
-                            .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
-                } else {
-                    undertakings.withId(applicationNumber).withVersion(String.valueOf(version))
-                            .withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
-                }
-                apiResponse = RestUtils.put(undertakings, reviewResource, getHeaders());
+                CaseConvictionsPenaltiesBuilder convictionsPenaltiesBuilder = new CaseConvictionsPenaltiesBuilder().withId(applicationNumber).withConvictionsConfirmation("Y")
+                        .withPrevConviction("N").withVersion(version);
+                apiResponse = RestUtils.put(convictionsPenaltiesBuilder, previousConvictionsResource, getHeaders());
                 version++;
                 if (version > 20) {
                     version = 1;
                 }
             } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-                System.out.println(apiResponse.extract().statusCode());
-                System.out.println(apiResponse.extract().response().asString());
-                throw new HTTPException(apiResponse.extract().statusCode());
-            }
-        }
-
-        public void submitApplication () {
-            String submitResource = URL.build(env, String.format("application/%s/submit", applicationNumber)).toString();
-
-            do {
-                GenericBuilder genericBuilder = new GenericBuilder().withId(applicationNumber).withVersion(version);
-                apiResponse = RestUtils.put(genericBuilder, submitResource, getHeaders());
-                version++;
-                if (version > 20) {
-                    version = 1;
-                }
-            } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
-            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-                System.out.println(apiResponse.extract().statusCode());
-                System.out.println(apiResponse.extract().response().asString());
-                throw new HTTPException(apiResponse.extract().statusCode());
-            }
-        }
-
-        public void getApplicationLicenceDetails () {
-            Headers.headers.put("x-pid", adminApiHeader());
-
-            String getApplicationResource = URL.build(env, String.format("application/%s", applicationNumber)).toString();
-            apiResponse = RestUtils.get(getApplicationResource, getHeaders());
-            setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
-            setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
-            setApplicationStatus(apiResponse.extract().jsonPath().getString("licenceType.status.olbsKey"));
             if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
                 System.out.println(apiResponse.extract().statusCode());
                 System.out.println(apiResponse.extract().response().asString());
@@ -932,3 +820,113 @@ public class CreateLicenceAPI {
             }
         }
     }
+
+    public void addLicenceHistory() {
+
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+            // no need to submit details
+        } else {
+            String optionResponse = "N";
+            String licenceHistoryResource = URL.build(env, String.format("application/%s/licence-history", applicationNumber)).toString();
+
+            do {
+                LicenceHistoryBuilder licenceHistoryBuilder = new LicenceHistoryBuilder().withId(applicationNumber).withPrevHadLicence(optionResponse).withPrevHasLicence(optionResponse)
+                        .withPrevBeenAtPi(optionResponse).withPrevBeenDisqualifiedTc(optionResponse).withPrevBeenRefused(optionResponse).withPrevBeenRevoked(optionResponse).withPrevPurchasedAssets(optionResponse)
+                        .withVersion(version);
+                apiResponse = RestUtils.put(licenceHistoryBuilder, licenceHistoryResource, getHeaders());
+                version++;
+                if (version > 20) {
+                    version = 1;
+                }
+            } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
+            }
+        }
+    }
+
+    public void submitTaxiPhv() {
+        String phLicenceNumber = "phv123456";
+        String councilName = "nottinghamshire";
+        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+            String submitResource = URL.build(env, String.format("application/%s/taxi-phv", applicationNumber)).toString();
+            do {
+                AddressBuilder addressBuilder = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+                PhvTaxiBuilder taxiBuilder = new PhvTaxiBuilder().withId(applicationNumber).withPrivateHireLicenceNo(phLicenceNumber).withCouncilName(councilName).withLicence(licenceNumber).withAddress(addressBuilder);
+                apiResponse = RestUtils.post(taxiBuilder, submitResource, getHeaders());
+                version++;
+                if (version > 20) {
+                    version = 1;
+                }
+            } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
+            }
+        }
+    }
+
+    public void applicationReviewAndDeclare() {
+        String interimReason = "Testing through the API";
+        String declarationConfirmation = "Y";
+        String signatureRequired = "sig_physical_signature";
+        DeclarationsAndUndertakings undertakings = new DeclarationsAndUndertakings();
+        String reviewResource = URL.build(env, String.format("application/%s/declaration/", applicationNumber)).toString();
+
+        do {
+            if (operatorType.equals("goods") && (getIsInterim().equals("Y"))) {
+                undertakings.withId(applicationNumber).withVersion(String.valueOf(version)).withInterimRequested(getIsInterim())
+                        .withInterimReason(interimReason).withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
+            } else {
+                undertakings.withId(applicationNumber).withVersion(String.valueOf(version))
+                        .withSignatureType(signatureRequired).withDeclarationConfirmation(declarationConfirmation);
+            }
+            apiResponse = RestUtils.put(undertakings, reviewResource, getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
+    }
+
+    public void submitApplication() {
+        String submitResource = URL.build(env, String.format("application/%s/submit", applicationNumber)).toString();
+
+        do {
+            GenericBuilder genericBuilder = new GenericBuilder().withId(applicationNumber).withVersion(version);
+            apiResponse = RestUtils.put(genericBuilder, submitResource, getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
+    }
+
+    public void getApplicationLicenceDetails() {
+        Headers.headers.put("x-pid", adminApiHeader());
+
+        String getApplicationResource = URL.build(env, String.format("application/%s", applicationNumber)).toString();
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        setLicenceId(apiResponse.extract().jsonPath().getString("licence.id"));
+        setLicenceNumber(apiResponse.extract().jsonPath().getString("licence.licNo"));
+        setApplicationStatus(apiResponse.extract().jsonPath().getString("licenceType.status.olbsKey"));
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
+    }
+}
