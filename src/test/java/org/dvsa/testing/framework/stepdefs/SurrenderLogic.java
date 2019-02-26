@@ -171,6 +171,7 @@ public class SurrenderLogic extends BasePage implements En {
             waitAndClick("actions[surrender]", SelectorType.ID);
         });
         Then("^the licence status should be \"([^\"]*)\"$", (String arg0) -> {
+            waitForTextToBePresent("Overview");
             assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), arg0.toUpperCase());
         });
         And("^the surrender menu should be hidden$", () -> {
@@ -206,7 +207,14 @@ public class SurrenderLogic extends BasePage implements En {
         });
         Then("^the user should remain on the surrender details page$", () -> {
             assertTrue(Browser.navigate().getCurrentUrl().contains("surrender-details"));
-            assertTrue(isTextPresent("Use this information to progress the operator's application:",30));
+            assertTrue(isLinkPresent("Surrender",30));
+        });
+        And("^the licence should not displayed in selfserve$", () -> {
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
+            assertFalse(isLinkPresent(world.createLicence.getLicenceNumber(),30));
+        });
+        And("^the user should be able to re apply for a surrender in internal$", () -> {
+            world.UIJourneySteps.submitSurrender();
         });
     }
 }
