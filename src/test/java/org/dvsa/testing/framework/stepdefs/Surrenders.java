@@ -192,16 +192,20 @@ public class Surrenders extends BasePage implements En {
             waitForTextToBePresent(world.createLicence.getLicenceNumber());
         });
         Then("^any open cases should be displayed$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
+            world.updateLicence.createCase();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin();
+
+
+
+
+
         });
         And("^any open bus registrations should be displayed$", () -> {
             // Write code here that turns the phrase above into concrete actions
             throw new PendingException();
         });
         And("^the ECMS tick box should be displayed$", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new PendingException();
+         isTextPresent("Digital signature has been checked",5);
         });
     }
 }

@@ -11,8 +11,8 @@
     Scenario: Surrender should be displayed on Internal
       Then the internal surrender menu should be displayed
       When i click on the surrenders tab
-#      Then any open cases should be displayed
-#      And any open bus registrations should be displayed
+      Then any open cases should be displayed
+      And any open bus registrations should be displayed
       And the ECMS tick box should be displayed
 
 
