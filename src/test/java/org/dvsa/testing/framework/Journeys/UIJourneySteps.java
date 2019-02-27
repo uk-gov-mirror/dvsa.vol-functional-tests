@@ -795,7 +795,6 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void submitSurrender() throws MalformedURLException, IllegalBrowserException {
-        world.updateLicence.printLicenceDiscs();
         world.UIJourneySteps.navigateToSurrendersStartPage();
         world.UIJourneySteps.startSurrender();
         waitAndClick("form-actions[submit]",SelectorType.ID);

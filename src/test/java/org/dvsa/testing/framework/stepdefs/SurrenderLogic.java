@@ -2,10 +2,15 @@ package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
 import activesupport.driver.Browser;
+import cucumber.api.DataTable;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.openqa.selenium.By;
+
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
@@ -161,6 +166,7 @@ public class SurrenderLogic extends BasePage implements En {
             assertTrue(Browser.navigate().getCurrentUrl().contains("declaration"));
         });
         And("^my application to surrender is under consideration$", () -> {
+            world.updateLicence.printLicenceDiscs();
             world.UIJourneySteps.submitSurrender();
         });
         When("^the caseworker approves the surrender$", () -> {
@@ -174,8 +180,8 @@ public class SurrenderLogic extends BasePage implements En {
             waitForTextToBePresent("Overview");
             assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), arg0.toUpperCase());
         });
-        And("^the surrender menu should be hidden$", () -> {
-            assertFalse(isLinkPresent("Surrender", 30));
+        And("^the surrender menu should be hidden in internal$", () -> {
+            assertFalse(isElementPresent("//*[contains(@id,'menu-licence_surrender"));
         });
         And("^the licence details page should display$", () -> {
             assertTrue(isTextPresent("Licence details", 40));
@@ -207,14 +213,37 @@ public class SurrenderLogic extends BasePage implements En {
         });
         Then("^the user should remain on the surrender details page$", () -> {
             assertTrue(Browser.navigate().getCurrentUrl().contains("surrender-details"));
-            assertTrue(isLinkPresent("Surrender",30));
+            assertTrue(isLinkPresent("Surrender", 30));
         });
         And("^the licence should not displayed in selfserve$", () -> {
             world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
-            assertFalse(isLinkPresent(world.createLicence.getLicenceNumber(),30));
+            assertFalse(isLinkPresent(world.createLicence.getLicenceNumber(), 30));
         });
         And("^the user should be able to re apply for a surrender in internal$", () -> {
             world.UIJourneySteps.submitSurrender();
+        });
+        Then("^the quick actions links are not displayed$", (DataTable buttons) -> {
+            assertFalse(isTextPresent("Quick actions", 30));
+            List<String> section_button = buttons.asList(String.class);
+            for (String button : section_button) {
+                clickByLinkText(button);
+                String[] q_action_button = {"create variation", "print licence"};
+                assertTrue(Browser.navigate().findElements(By.xpath("//*[contains(@id,'menu-licence-quick-actions')]")).stream().noneMatch(x -> x.getText().toCharArray().equals(q_action_button)));
+            }
+        });
+        And("^the decision buttons are not displayed$", (DataTable buttons) -> {
+            assertTrue(isTextPresent("Decisions", 30));
+            List<String> sections = buttons.asList(String.class);
+            for (String button : sections) {
+                clickByLinkText(button);
+                String[] q_action_button = {"curtail", "revoke", "suspend", "surrender"};
+                assertTrue(Browser.navigate().findElements(By.xpath("//*[contains(@id,'menu-licence-decisions')]")).stream().noneMatch(x -> x.getText().toCharArray().equals(q_action_button)));
+            }
+        });
+        When("^i search for my licence$", () -> {
+            world.APIJourneySteps.createAdminUser();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
+            world.UIJourneySteps.searchAndViewLicence();
         });
     }
 }

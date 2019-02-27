@@ -37,7 +37,7 @@ Feature: User should be able to continue where they left off
     Examples:
       | OperatorType | LicenceType |
       | public       | sn          |
-#      | goods        | si          |
+      | goods        | si          |
 
   Scenario Outline: Leave current discs page and return back to current discs page
     Given i have a valid "<OperatorType>" "<LicenceType>" licence
@@ -50,7 +50,7 @@ Feature: User should be able to continue where they left off
     Examples:
       | OperatorType | LicenceType |
       | public       | sn          |
-#      | goods        | si          |
+      | goods        | si          |
 
   Scenario Outline: Leave operator licence page and return back to operator licence page
     Given i have a valid "<OperatorType>" "<LicenceType>" licence
@@ -63,7 +63,7 @@ Feature: User should be able to continue where they left off
     Examples:
       | OperatorType | LicenceType |
       | public       | sn          |
-#      | goods        | si          |
+      | goods        | si          |
 
   Scenario:  Leave community licence page and return back to community licence page
     Given i have a valid "goods" "si" licence
@@ -84,7 +84,7 @@ Feature: User should be able to continue where they left off
     Examples:
       | OperatorType | LicenceType |
       | public       | sn          |
-#      | goods        | si          |
+      | goods        | si          |
 
   Scenario Outline: Leave destroy disc page and navigate back to disc and doc review page
     Given i have a valid "<OperatorType>" "<LicenceType>" licence
@@ -97,7 +97,7 @@ Feature: User should be able to continue where they left off
     Examples:
       | OperatorType | LicenceType |
       | public       | sn          |
-#      | goods        | si          |
+      | goods        | si          |
 
   Scenario Outline: Leave declaration page and navigate back to disc and doc review page
     Given i have a valid "<OperatorType>" "<LicenceType>" licence
@@ -110,4 +110,4 @@ Feature: User should be able to continue where they left off
     Examples:
       | OperatorType | LicenceType |
       | public       | sn          |
-#      | goods        | si          |
+      | goods        | si          |
