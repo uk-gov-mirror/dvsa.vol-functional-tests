@@ -222,22 +222,13 @@ public class SurrenderLogic extends BasePage implements En {
         And("^the user should be able to re apply for a surrender in internal$", () -> {
             world.UIJourneySteps.submitSurrender();
         });
-        Then("^the quick actions links are not displayed$", (DataTable buttons) -> {
+        Then("^the quick actions and decision buttons are not displayed for the menu items listed$", (DataTable buttons) -> {
             assertFalse(isTextPresent("Quick actions", 30));
             List<String> section_button = buttons.asList(String.class);
             for (String button : section_button) {
                 clickByLinkText(button);
-                String[] q_action_button = {"create variation", "print licence"};
-                assertTrue(Browser.navigate().findElements(By.xpath("//*[contains(@id,'menu-licence-quick-actions')]")).stream().noneMatch(x -> x.getText().toCharArray().equals(q_action_button)));
-            }
-        });
-        And("^the decision buttons are not displayed$", (DataTable buttons) -> {
-            assertTrue(isTextPresent("Decisions", 30));
-            List<String> sections = buttons.asList(String.class);
-            for (String button : sections) {
-                clickByLinkText(button);
-                String[] q_action_button = {"curtail", "revoke", "suspend", "surrender"};
-                assertTrue(Browser.navigate().findElements(By.xpath("//*[contains(@id,'menu-licence-decisions')]")).stream().noneMatch(x -> x.getText().toCharArray().equals(q_action_button)));
+                assertTrue(isElementNotPresent("//*[contains(@id,'menu-licence-quick-actions')]",SelectorType.XPATH));
+                assertTrue(isElementNotPresent("//*[contains(@id,'menu-licence-decisions')]",SelectorType.XPATH));
             }
         });
         When("^i search for my licence$", () -> {

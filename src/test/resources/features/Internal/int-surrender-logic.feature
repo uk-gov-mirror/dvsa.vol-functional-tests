@@ -60,11 +60,11 @@ Feature: Logic for Surrender menu item
       | licence_status | licence     |
       | suspend        | Surrendered |
       | curtail        | Surrendered |
-
+#
   Scenario: Check links are hidden
     And my application to surrender is under consideration
     When i search for my licence
-    Then the quick actions links are not displayed
+    Then the quick actions and decision buttons are not displayed for the menu items listed
       | Cases           |
       | IRHP            |
       | Docs            |
@@ -72,8 +72,3 @@ Feature: Logic for Surrender menu item
       | Fees            |
       | Licence details |
 
-    And the decision buttons are not displayed
-      | Curtail   |
-      | Revoke    |
-      | Suspend   |
-      | Surrender |

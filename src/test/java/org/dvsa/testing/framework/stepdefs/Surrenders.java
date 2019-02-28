@@ -1,6 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import activesupport.IllegalBrowserException;
 import activesupport.driver.Browser;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
@@ -11,6 +12,7 @@ import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.WebElement;
 
+import java.net.MalformedURLException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -181,14 +183,7 @@ public class Surrenders extends BasePage implements En {
             });
         });
         Then("^the surrender print and sign page is displayed$", () -> {
-            String defaultWindow = Browser.navigate().getWindowHandle();
-            waitAndClick("//*[contains(text(),'Print')]",SelectorType.XPATH);
-            waitForTextToBePresent("Print");
-            Set<String> windows = Browser.navigate().getWindowHandles();
-            String printWindow = windows.stream().reduce((first, second) -> second).get();
-            Browser.navigate().switchTo().window(printWindow).close();
-            Browser.navigate().switchTo().window(defaultWindow);
-            click("//*[contains(@title,'return to home')]",SelectorType.XPATH);
+            world.UIJourneySteps.signManually();
         });
     }
 }
