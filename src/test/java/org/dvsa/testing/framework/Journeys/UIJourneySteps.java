@@ -20,8 +20,10 @@ import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
+import java.util.Optional;
 import java.util.Set;
 
 import static junit.framework.TestCase.assertEquals;
@@ -46,6 +48,7 @@ public class UIJourneySteps extends BasePage {
     private String externalTMUser;
     private String externalTMEmail;
     private String password;
+    private String licenceNumber;
 
 
     public String getPassword() {
@@ -116,6 +119,10 @@ public class UIJourneySteps extends BasePage {
     public void setExternalTMEmail(String externalTMEmail) {
         this.externalTMEmail = externalTMEmail;
     }
+
+    public String getLicenceNumber() { return licenceNumber; }
+
+    public void setLicenceNumber(String licenceNumber) { this.licenceNumber = licenceNumber; }
 
     public void internalSearchForBusReg() throws IllegalBrowserException {
         selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
@@ -681,7 +688,8 @@ public class UIJourneySteps extends BasePage {
 
     public void navigateToSurrendersStartPage() throws IllegalBrowserException, MalformedURLException {
         navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
-        clickByLinkText(world.createLicence.getLicenceNumber());
+        setLicenceNumber(Browser.navigate().findElements(By.xpath("//tr/td[1]")).stream().findFirst().get().getText());
+        Browser.navigate().findElements(By.xpath("//tr/td[1]")).stream().findFirst().ifPresent(WebElement::click);
         waitForTextToBePresent("Summary");
         clickByLinkText("Apply to");
     }

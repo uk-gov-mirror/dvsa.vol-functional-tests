@@ -217,7 +217,7 @@ public class SurrenderLogic extends BasePage implements En {
         });
         And("^the licence should not displayed in selfserve$", () -> {
             world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
-            assertFalse(isLinkPresent(world.createLicence.getLicenceNumber(), 30));
+            assertFalse(isLinkPresent(world.UIJourneySteps.getLicenceNumber(), 30));
         });
         And("^the user should be able to re apply for a surrender in internal$", () -> {
             world.UIJourneySteps.submitSurrender();
@@ -235,6 +235,9 @@ public class SurrenderLogic extends BasePage implements En {
             world.APIJourneySteps.createAdminUser();
             world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
             world.UIJourneySteps.searchAndViewLicence();
+        });
+        And("^i choose to surrender a single licence$", () -> {
+
         });
     }
 }

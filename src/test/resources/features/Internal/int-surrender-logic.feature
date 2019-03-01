@@ -60,7 +60,7 @@ Feature: Logic for Surrender menu item
       | licence_status | licence     |
       | suspend        | Surrendered |
       | curtail        | Surrendered |
-#
+
   Scenario: Check links are hidden
     And my application to surrender is under consideration
     When i search for my licence
@@ -71,4 +71,3 @@ Feature: Logic for Surrender menu item
       | Processing      |
       | Fees            |
       | Licence details |
-
