@@ -52,7 +52,6 @@ Feature: User should be able to continue where they left off
       | public       | sn          |
       | goods        | si          |
 
-
   Scenario Outline: Leave operator licence page and return back to operator licence page
     Given i have a valid "<OperatorType>" "<LicenceType>" licence
     When i have started a surrender
@@ -66,7 +65,6 @@ Feature: User should be able to continue where they left off
       | public       | sn          |
       | goods        | si          |
 
-#
   Scenario:  Leave community licence page and return back to community licence page
     Given i have a valid "goods" "si" licence
     When i have started a surrender
@@ -87,7 +85,6 @@ Feature: User should be able to continue where they left off
       | OperatorType | LicenceType |
       | public       | sn          |
       | goods        | si          |
-
 
   Scenario Outline: Leave destroy disc page and navigate back to disc and doc review page
     Given i have a valid "<OperatorType>" "<LicenceType>" licence

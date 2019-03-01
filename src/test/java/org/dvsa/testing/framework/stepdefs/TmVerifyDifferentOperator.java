@@ -18,6 +18,7 @@ import org.openqa.selenium.support.Color;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.junit.Assert.assertFalse;
@@ -159,7 +160,7 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
         } else {
             declarationText = "operator-NI-declaration.txt";
         }
-        return Paths.get(getClass().getClassLoader()
-                .getResource(declarationText).toURI());
+        return Paths.get(Objects.requireNonNull(getClass().getClassLoader()
+                .getResource(declarationText)).toURI());
     }
 }

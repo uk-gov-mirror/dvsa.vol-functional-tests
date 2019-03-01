@@ -18,7 +18,7 @@ public class UserResearch extends BasePage implements En {
 
         Given("^^I have applied for \"([^\"]*)\" \"([^\"]*)\" licences$", (String licenceType, String operator) -> {
             world.APIJourneySteps.registerAndGetUserDetails();
-            world.createLicence.setNoOfVehiclesRequired(3);
+            world.createLicence.setNoOfVehiclesRequired(5);
             for (int i = 0; i < trafficAreaList().length - 1; ) {
                 for (String ta : trafficAreaList()) {
                     world.createLicence.setPostcode(PostCode.getPostCode(TrafficArea.valueOf(ta)));
@@ -63,7 +63,7 @@ public class UserResearch extends BasePage implements En {
             }
         });
         Then("^the licence should be created and granted$", () -> {
-            world.genericUtils.writeToFile(world.createLicence.getLoginId(), world.UIJourneySteps.getExternalPassword(), fileName.concat("Operator.csv"));
+            world.genericUtils.writeToFile(world.createLicence.getLoginId(), world.UIJourneySteps.getPassword(), fileName.concat("Operator.csv"));
         });
         Then("^accounts should be created$", () -> {
 

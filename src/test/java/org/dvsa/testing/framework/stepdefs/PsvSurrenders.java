@@ -1,6 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import activesupport.driver.Browser;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -18,6 +19,15 @@ public class PsvSurrenders extends BasePage implements En {
         And("^i choose to surrender my licence$", () -> {
             world.UIJourneySteps.navigateToSurrendersStartPage();
             world.UIJourneySteps.startSurrender();
+            waitAndClick("form-actions[submit]",SelectorType.ID);
+            world.UIJourneySteps.addDiscInformation("2", "2", "1");
+            waitForTextToBePresent("In your possession");
+            world.UIJourneySteps.addOperatorLicenceDetails();
+            if (world.createLicence.getLicenceType().equals("standard_international")) {
+                assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
+                world.UIJourneySteps.addCommunityLicenceDetails();
+            }
+            world.UIJourneySteps.acknowledgeDestroyPage();
         });
 
         Then("^the correct licence details should be displayed$", () -> {
@@ -48,8 +58,6 @@ public class PsvSurrenders extends BasePage implements En {
             Assert.assertEquals(this.town, licenceTown);
         });
         Given("^i sign with verify$", () -> {
-            world.UIJourneySteps.navigateToSurrenderReviewPage("2", "2", "1");
-            world.UIJourneySteps.acknowledgeDestroyPage();
             waitAndClick("//*[@id='sign']", SelectorType.XPATH);
             world.UIJourneySteps.signWithVerify("pavlov", "Password1");
         });
@@ -63,7 +71,7 @@ public class PsvSurrenders extends BasePage implements En {
         });
         And("^the surrender status is \"([^\"]*)\"$", (String status) -> {
             waitForTextToBePresent("Current licences");
-           assertTrue(isTextPresent("Surrender under consideration",10));
+            Assertions.assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), status.toUpperCase());
         });
         Then("^the number of disc should match the vehicles registered on the licence$", () -> {
             assertEquals(getText("//*[@id=\"main\"]/div/div/div[2]/div/p[2]/strong", SelectorType.XPATH), String.valueOf(world.createLicence.getNoOfVehiclesRequired()));

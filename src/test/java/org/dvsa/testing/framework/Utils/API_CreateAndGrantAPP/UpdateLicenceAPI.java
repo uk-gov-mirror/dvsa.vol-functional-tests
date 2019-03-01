@@ -34,7 +34,7 @@ public class UpdateLicenceAPI extends BasePage {
     private String goodOrPsv;
     private String trafficAreaName;
     public String adminUserEmailAddress = "adminUser@dvsavol.org";
-    public String adminUserLogin = String.format("volAdminUser" + "%s", Str.randomWord(3));
+    public String adminUserLogin = String.format("vol" + "%s", Str.randomWord(10));
     private String adminUserId;
     private String licenceStatus;
     private String businessType;
@@ -330,7 +330,11 @@ public class UpdateLicenceAPI extends BasePage {
         if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
             System.out.println("+++ERROR+++" + apiResponse.extract().response().asString());
         }
-        setAdminUserId(apiResponse.extract().response().jsonPath().getString("id.user"));
+        else {
+
+            setAdminUserId(apiResponse.extract().response().jsonPath().getString("id.user"));
+        }
+
     }
 
     public ValidatableResponse grantVariation(String resource) throws MalformedURLException {
@@ -448,7 +452,7 @@ public class UpdateLicenceAPI extends BasePage {
         apiResponse.statusCode(HttpStatus.SC_OK);
     }
 
-    public void getDiscInformation(){
+    private void getDiscInformation(){
         Map<String,String> queryParams = new HashMap<>();
         {
             queryParams.put("niFlag","N");
@@ -481,7 +485,7 @@ public class UpdateLicenceAPI extends BasePage {
         confirmDiscPrint();
     }
 
-    public void confirmDiscPrint(){
+    private void confirmDiscPrint(){
         String operator;
         if(getOperatorTypeDetails().equals("Goods Vehicle")){
             operator = "goods";
