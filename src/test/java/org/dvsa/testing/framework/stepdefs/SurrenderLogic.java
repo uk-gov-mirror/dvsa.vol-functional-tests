@@ -204,6 +204,7 @@ public class SurrenderLogic extends BasePage implements En {
             waitAndClick("continue", SelectorType.ID);
         });
         Then("^the modal box is hidden$", () -> {
+            assertFalse(isElementPresent("//*[@class='modal']", SelectorType.XPATH));
         });
         And("^the caseworker cancels the withdraw$", () -> {
             waitAndClick("cancel", SelectorType.ID);
