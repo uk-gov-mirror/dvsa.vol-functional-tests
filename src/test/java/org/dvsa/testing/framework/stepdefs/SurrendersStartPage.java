@@ -27,7 +27,7 @@ public class SurrendersStartPage extends BasePage implements En {
             assertTrue(isTrue);
         });
         When("^i click on the surrenders tab$", () -> {
-            waitAndClick("//*[@id='menu-licence_surrender']",SelectorType.XPATH);
+
         });
     }
 }

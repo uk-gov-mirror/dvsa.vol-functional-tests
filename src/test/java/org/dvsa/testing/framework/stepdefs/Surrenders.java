@@ -192,12 +192,9 @@ public class Surrenders extends BasePage implements En {
             waitForTextToBePresent(world.createLicence.getLicenceNumber());
         });
         Then("^any open cases should be displayed$", () -> {
+            waitAndClick("//*[@id='menu-licence_surrender']",SelectorType.XPATH);
             world.updateLicence.createCase();
             world.UIJourneySteps.navigateToInternalAdminUserLogin();
-
-
-
-
 
         });
         And("^any open bus registrations should be displayed$", () -> {
@@ -206,6 +203,26 @@ public class Surrenders extends BasePage implements En {
         });
         And("^the ECMS tick box should be displayed$", () -> {
          isTextPresent("Digital signature has been checked",5);
+
+        });
+        And("^i have found my licence on internal$", () -> {
+            world.APIJourneySteps.createAdminUser();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin();
+            world.UIJourneySteps.searchAndViewApplication();
+
+
+        });
+        Given("^i have surrendered a valid \"([^\"]*)\" \"([^\"]*)\" licence$", (String arg0, String arg1) -> {
+            this.discsLost = "2";
+            this.discsToDestroy = "2";
+            this.discsStolen ="1";
+            world.UIJourneySteps.navigateToSurrendersStartPage();
+            click("//*[@id='submit']", SelectorType.XPATH);
+            waitForTextToBePresent("Review your contact information");
+            world.UIJourneySteps.navigateToSurrenderReviewPage(discsToDestroy,discsLost,discsStolen);
+            click("//*[@id='submit']", SelectorType.XPATH);
+            waitAndClick("//*[@id='sign']",SelectorType.XPATH);
+            world.UIJourneySteps.signWithVerify("pavlov","Password1");
         });
     }
 }
