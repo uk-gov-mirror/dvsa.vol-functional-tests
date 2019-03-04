@@ -4,7 +4,7 @@
 Feature: Change Validation On Interim Vehicle Authority
 
   Background:
-    Given i have a valid "goods"  "sn" licence
+    Given i have a valid "goods" "sn" licence
     And i have logged in to internal
     And i search for my licence
 

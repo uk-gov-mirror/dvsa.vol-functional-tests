@@ -18,6 +18,7 @@ import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import javax.xml.ws.http.HTTPException;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
@@ -360,10 +361,14 @@ public class CreateLicenceAPI {
     private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
 
     public CreateLicenceAPI() throws MissingRequiredArgument {
-        businessType = "limited_company";
-        niFlag = "N";
-        isInterim = "N";
-        isOwner = "Y";
+        if (licenceType == null) {
+            operatorType = "goods";
+            licenceType = "standard_international";
+            businessType = "limited_company";
+            niFlag = "N";
+            isInterim = "N";
+            isOwner = "Y";
+        }
     }
 
     public void registerUser() {
@@ -611,7 +616,7 @@ public class CreateLicenceAPI {
             String submitTransportManager = URL.build(env, String.format("transport-manager-application/%s/submit", getApplicationNumber())).toString();
             GenericBuilder genericBuilder = new GenericBuilder().withId(getTransportManagerApplicationId()).withVersion(1);
             apiResponse = RestUtils.put(genericBuilder, submitTransportManager, getHeaders());
-            assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+            apiResponse.statusCode(HttpStatus.SC_OK);
         }
         if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
             System.out.println(apiResponse.extract().statusCode());
@@ -675,9 +680,9 @@ public class CreateLicenceAPI {
             for (int i = 0; i < getNoOfVehiclesRequired(); ) {
                 String vehiclesResource = null;
                 String vrm;
-                vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999)));
-                if (vrm.contains("Q") || vrm.contains("q")) {
-                    vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999)));
+                vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
+                if (vrm.contains("q")) {
+                    vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
                 }
                 if (getOperatorType().equals("goods")) {
                     vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
@@ -688,11 +693,12 @@ public class CreateLicenceAPI {
 
                 do {
                     VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight("5000").withVersion(version);
+                    assert vehiclesResource != null;
                     apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
                     i++;
                 }
-                while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().response().asString().contains("Vehicle exists on other licence"))
-                        || apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY);
+                while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)
+                        || (apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY));
 
                 if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
                     System.out.println(apiResponse.extract().statusCode());
@@ -701,7 +707,6 @@ public class CreateLicenceAPI {
                 }
             }
         }
-
     }
 
     public void submitVehicleDeclaration() {

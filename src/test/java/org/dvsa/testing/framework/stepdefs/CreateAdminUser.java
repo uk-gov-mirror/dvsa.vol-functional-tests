@@ -12,7 +12,7 @@ public class CreateAdminUser implements En {
             world.updateLicence.createInternalAdminUser();
         });
         Then("^I should be able to login with my new credentials$", () -> {
-            world.UIJourneySteps.navigateToInternalAdminUserLogin();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
         });
     }
 }
