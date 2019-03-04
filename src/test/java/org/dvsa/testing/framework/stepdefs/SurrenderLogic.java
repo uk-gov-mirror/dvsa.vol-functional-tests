@@ -237,8 +237,5 @@ public class SurrenderLogic extends BasePage implements En {
             world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
             world.UIJourneySteps.searchAndViewLicence();
         });
-        And("^i choose to surrender a single licence$", () -> {
-
-        });
     }
 }
