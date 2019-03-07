@@ -38,6 +38,7 @@ public class GenerateLastTMLetter extends BasePage implements En {
                 world.APIJourneySteps.grandLicenceAndPayFees();
                 System.out.println("Licence: " + world.createLicence.getLicenceNumber());
             }
+            world.updateLicence.printLicenceDiscs();
         });
         Then("^a flag should be set in the DB$", () -> {
             ResultSet resultSet = DBUnit.checkResult(String.format("SELECT opt_out_tm_letter FROM OLCS_RDS_OLCSDB.licence\n" +

@@ -1,6 +1,6 @@
 @OLCS-22913
 @SS
-@SURRENDER-MLH
+@Surrender
 
 Feature: Multiple licence holder
 

@@ -166,7 +166,6 @@ public class SurrenderLogic extends BasePage implements En {
             assertTrue(Browser.navigate().getCurrentUrl().contains("declaration"));
         });
         And("^my application to surrender is under consideration$", () -> {
-            world.updateLicence.printLicenceDiscs();
             world.UIJourneySteps.submitSurrender();
         });
         When("^the caseworker approves the surrender$", () -> {
@@ -236,6 +235,10 @@ public class SurrenderLogic extends BasePage implements En {
             world.APIJourneySteps.createAdminUser();
             world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
             world.UIJourneySteps.searchAndViewLicence();
+        });
+        And("^the case worker undoes the surrender$", () -> {
+            waitAndClick("//*[contains(@id,'menu-licence-decisions-undo-surrender')]",SelectorType.XPATH);
+            waitAndClick("form-actions[submit]",SelectorType.ID);
         });
     }
 }

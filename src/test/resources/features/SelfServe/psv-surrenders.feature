@@ -1,4 +1,5 @@
 @OLCS-21939
+@Surrender
 Feature:Digital Surrender - PSV Surrender licence
 
   Background:

@@ -1,5 +1,6 @@
 @OLCS-22275
 @SS
+@Surrenders
 
 Feature: User should be able to continue where they left off
 
