@@ -125,7 +125,7 @@ public class UIJourneySteps extends BasePage {
     public void setLicenceNumber(String licenceNumber) { this.licenceNumber = licenceNumber; }
 
     public void internalSearchForBusReg() throws IllegalBrowserException {
-        selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
+        selectValueFromDropDown("//*[@id='search-select']", SelectorType.XPATH, "Bus registrations");
         do {
             SearchNavBar.search(world.createLicence.getLicenceNumber());
         } while (!isLinkPresent(world.createLicence.getLicenceNumber(), 60));
@@ -133,9 +133,8 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
-        clickByLinkText(world.createLicence.getLicenceNumber());
         waitForTextToBePresent("Overview");
-        clickByLinkText("Bus");
+        clickByLinkText("Bus registration");
         click(nameAttribute("button", "action"));
         waitForTextToBePresent("Service details");
         assertTrue(isTextPresent("Service No. & type", 5));
