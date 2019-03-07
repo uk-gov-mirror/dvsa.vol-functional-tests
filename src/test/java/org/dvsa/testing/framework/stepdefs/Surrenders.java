@@ -1,12 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-<<<<<<< HEAD
 import cucumber.api.PendingException;
-=======
-import activesupport.IllegalBrowserException;
-import activesupport.driver.Browser;
->>>>>>> 71a864fd3411ee982b83770d1095bc714586a73d
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
@@ -14,12 +9,6 @@ import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.hamcrest.Matchers;
-import org.openqa.selenium.WebElement;
-
-import java.net.MalformedURLException;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -188,21 +177,21 @@ public class Surrenders extends BasePage implements En {
         And("^i have completed a surrender application with verify$", () -> {
             this.discsLost = "2";
             this.discsToDestroy = "2";
-            this.discsStolen ="1";
+            this.discsStolen = "1";
             world.UIJourneySteps.navigateToSurrendersStartPage();
             click("//*[@id='submit']", SelectorType.XPATH);
             waitForTextToBePresent("Review your contact information");
-            world.UIJourneySteps.navigateToSurrenderReviewPage(discsToDestroy,discsLost,discsStolen);
+            world.UIJourneySteps.navigateToSurrenderReviewPage(discsToDestroy, discsLost, discsStolen);
             click("//*[@id='submit']", SelectorType.XPATH);
-            waitAndClick("//*[@id='sign']",SelectorType.XPATH);
-            world.UIJourneySteps.signWithVerify("pavlov","Password1");
+            waitAndClick("//*[@id='sign']", SelectorType.XPATH);
+            world.UIJourneySteps.signWithVerify("pavlov", "Password1");
 
         });
         Then("^the internal surrender menu should be displayed$", () -> {
             waitForTextToBePresent(world.createLicence.getLicenceNumber());
         });
         Then("^any open cases should be displayed$", () -> {
-            waitAndClick("//*[@id='menu-licence_surrender']",SelectorType.XPATH);
+            waitAndClick("//*[@id='menu-licence_surrender']", SelectorType.XPATH);
             world.updateLicence.createCase();
         });
         And("^any open bus registrations should be displayed$", () -> {
@@ -210,12 +199,7 @@ public class Surrenders extends BasePage implements En {
             throw new PendingException();
         });
         And("^the ECMS tick box should be displayed$", () -> {
-         isTextPresent("Digital signature has been checked",5);
-        });
-        And("^i have found my licence on internal$", () -> {
-            world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.navigateToInternalAdminUserLogin();
-            world.UIJourneySteps.searchAndViewApplication();
+            isTextPresent("Digital signature has been checked", 5);
         });
         Then("^the surrender print and sign page is displayed$", () -> {
             world.UIJourneySteps.signManually();
@@ -224,5 +208,25 @@ public class Surrenders extends BasePage implements En {
         When("^a caseworker views the surrender$", () -> {
             world.UIJourneySteps.caseworkManageSurrender();
         });
+        Given("^I have a \"([^\"]*)\" \"([^\"]*)\" licence$", (String operatorType, String country) -> {
+            world.genericUtils = new GenericUtils(world);
+            world.createLicence.setOperatorType(operatorType);
+            world.APIJourneySteps.nIAddressBuilder();
+            world.APIJourneySteps.registerAndGetUserDetails();
+            world.APIJourneySteps.createApplication();
+            world.APIJourneySteps.submitApplication();
+            if (String.valueOf(operatorType).equals("public")) {
+                world.APIJourneySteps.grandLicenceAndPayFees();
+                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+            } else {
+                world.APIJourneySteps.grandLicenceAndPayFees();
+                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+            }
+        });
+
     }
+
 }
+
+
+
