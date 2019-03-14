@@ -215,26 +215,6 @@ public class Surrenders extends BasePage implements En {
             world.UIJourneySteps.internalSiteAddBusNewReg(5);
             world.updateLicence.createCase();
         });
-        Given("^i have a valid \"([^\"]*)\" \"([^\"]*)\" licence$", (String operatorType, String licenceType) -> {
-            if (licenceType.equals("si")) {
-                world.createLicence.setLicenceType("standard_international");
-            } else if (licenceType.equals("sn")) {
-                world.createLicence.setLicenceType("standard_national");
-            } else {
-                world.createLicence.setLicenceType("standard_national");
-            }
-            world.createLicence.setOperatorType(operatorType);
-            world.APIJourneySteps.registerAndGetUserDetails();
-            world.APIJourneySteps.createApplication();
-            world.APIJourneySteps.submitApplication();
-            if (String.valueOf(operatorType).equals("public")) {
-                world.APIJourneySteps.grandLicenceAndPayFees();
-                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
-            } else {
-                world.APIJourneySteps.grandLicenceAndPayFees();
-                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
-            }
-        });
         Given("^i have a valid \"([^\"]*)\" \"([^\"]*)\" licence with an open case and bus reg$", (String operatorType, String licenceType) -> {
             world.UIJourneySteps.createLicenceWithOpenCaseAndBusReg(operatorType, licenceType);
         });
