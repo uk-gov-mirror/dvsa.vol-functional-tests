@@ -891,4 +891,26 @@ public class UIJourneySteps extends BasePage {
         clickByLinkText("Home");
         clickByLinkText(world.createLicence.getLicenceNumber());
     }
+
+    public void createLicence(World world, String operatorType, String licenceType) {
+        if (licenceType.equals("si")) {
+            world.createLicence.setLicenceType("standard_international");
+        } else if (licenceType.equals("sn")) {
+            world.createLicence.setLicenceType("standard_national");
+        } else {
+            world.createLicence.setLicenceType("standard_national");
+        }
+        world.createLicence.setOperatorType(operatorType);
+        world.APIJourneySteps.registerAndGetUserDetails();
+        world.APIJourneySteps.createApplication();
+        world.APIJourneySteps.submitApplication();
+        if (String.valueOf(operatorType).equals("public")) {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        } else {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        }
+        world.updateLicence.printLicenceDiscs();
+    }
 }

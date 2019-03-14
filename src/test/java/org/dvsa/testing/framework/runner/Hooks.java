@@ -24,18 +24,17 @@ public class Hooks {
 
 
     @Attachment(value = "Screenshot on failure", type = "image/png")
-    public byte[] attach(Scenario scenario) throws IOException, IllegalBrowserException {
+    public void attach(Scenario scenario) throws IOException, IllegalBrowserException {
         createDirectory();
         File screenshot = new File(String.format(directory + "/error%s.png", Instant.now().getEpochSecond()));
-        byte[] attachment = new byte[0];
         if (scenario.isFailed()) {
             FileOutputStream screenshotStream = new FileOutputStream(screenshot);
-            attachment = ((TakesScreenshot) Browser.navigate())
+            byte[] attachment = ((TakesScreenshot) Browser.navigate())
                     .getScreenshotAs(OutputType.BYTES);
+            scenario.embed(attachment, String.valueOf(screenshotStream));
             screenshotStream.write(attachment);
             screenshotStream.close();
         }
-        return attachment;
     }
 
     private void deleteDirectory() throws IOException {

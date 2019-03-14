@@ -1,4 +1,4 @@
-@Surrender-Off
+@backend-surrender-off
 @SS
 
 Feature: Surrenders toggle switched off

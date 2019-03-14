@@ -1,3 +1,5 @@
+@SS
+@backend-surrender-on
 @OLCS-22443
 
 Feature: Surrendering a licence
@@ -13,17 +15,17 @@ Feature: Surrendering a licence
     And as selfserve user I cannot delete my surrender
 
   Scenario Outline: Surrender Curtailed and Suspended licence
-      Given the licence status is "<licenceStatus>"
-      Then as "selfserve" user I can surrender a licence
+    Given the licence status is "<licenceStatus>"
+    Then as "selfserve" user I can surrender a licence
 
     Examples:
       | licenceStatus |
       | curtail       |
       | suspend       |
 
-Scenario: Another user attempts to surrender my licence
-  Given as a selfserve user i apply for a "goods" licence
-  Then as "selfserve" user I can surrender a licence
-  And another user is unable to surrender my licence
-  And another user is unable to update my surrender details
+  Scenario: Another user attempts to surrender my licence
+    Given as a selfserve user i apply for a "goods" licence
+    Then as "selfserve" user I can surrender a licence
+    And another user is unable to surrender my licence
+    And another user is unable to update my surrender details
 
