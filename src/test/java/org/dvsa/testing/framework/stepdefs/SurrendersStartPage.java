@@ -26,5 +26,8 @@ public class SurrendersStartPage extends BasePage implements En {
             boolean isTrue = findElement("//h3", SelectorType.XPATH,10).getText().contains(world.createLicence.getLicenceNumber());
             assertTrue(isTrue);
         });
+        When("^i click on the surrenders tab$", () -> {
+
+        });
     }
 }

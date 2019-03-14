@@ -1,7 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import activesupport.IllegalBrowserException;
 import activesupport.driver.Browser;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
@@ -9,13 +8,13 @@ import cucumber.api.java8.En;
 import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
-import org.dvsa.testing.lib.pages.exception.ElementDidNotAppearWithinSpecifiedTimeException;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SurrenderLogic extends BasePage implements En {
     private String discLost = "2";

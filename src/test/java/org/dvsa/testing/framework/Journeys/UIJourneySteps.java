@@ -24,7 +24,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
-import java.util.Optional;
 import java.util.Set;
 
 import static junit.framework.TestCase.assertEquals;
@@ -140,6 +139,7 @@ public class UIJourneySteps extends BasePage {
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
         waitForTextToBePresent("Overview");
         clickByLinkText("Bus registration");
+        clickByLinkText("Bus registrations");
         click(nameAttribute("button", "action"));
         waitForTextToBePresent("Service details");
         assertTrue(isTextPresent("Service No. & type", 5));
@@ -912,5 +912,83 @@ public class UIJourneySteps extends BasePage {
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
         }
         world.updateLicence.printLicenceDiscs();
+    }
+
+    public void closeCase() throws IllegalBrowserException, MalformedURLException {
+        clickByLinkText(""+ world.updateLicence.getCaseId()+"");
+        do {
+            System.out.println("waiting for page to load");
+            javaScriptExecutor("location.reload(true)");
+        }while (!Browser.navigate().getCurrentUrl().contains("case/details"));
+        clickByLinkText("Close");
+        waitForTextToBePresent("Close the case");
+        click("form-actions[confirm]", SelectorType.ID);
+
+    }
+
+    public void closeBusReg() throws IllegalBrowserException {
+        clickByLinkText(""+ world.createLicence.getLicenceNumber() +"");
+        click("menu-bus-registration-decisions-admin-cancel",SelectorType.ID);
+        waitForTextToBePresent("Update status");
+        enterText("fields[reason]","Mistake",SelectorType.ID);
+        click("form-actions[submit]",SelectorType.ID);
+    }
+
+    public void payFeesAndGrantNewBusReg() throws IllegalBrowserException {
+        clickByLinkText("Fees");
+        world.UIJourneySteps.selectFee();
+        world.UIJourneySteps.payFee("60", "cash", null, null, null);
+        do {
+            System.out.println("link not present");
+            javaScriptExecutor("location.reload(true)");
+        }while (!isLinkPresent("Register service",5));
+        clickByLinkText("Register service");
+        findSelectAllRadioButtonsByValue("Y");
+        clickByName("form-actions[submit]");
+        clickByLinkText("Service details");
+        clickByLinkText("TA's");
+        click("//*[@class='chosen-choices']", SelectorType.XPATH);
+        selectFirstValueInList("//*[@class=\"active-result\"]");
+        click("//*[@id='localAuthoritys_chosen']/ul[@class='chosen-choices']",SelectorType.XPATH);
+        selectFirstValueInList("//*[@class=\"active-result group-option\"]");
+        clickByName("form-actions[submit]");
+        waitAndClick("//*[contains(text(),'Grant')]",SelectorType.XPATH);
+    }
+
+    public void createLicenceWithOpenCaseAndBusReg(String operatorType, String licenceType) throws IllegalBrowserException, MalformedURLException {
+        if (licenceType.equals("si")) {
+            world.createLicence.setLicenceType("standard_international");
+        } else if (licenceType.equals("sn")) {
+            world.createLicence.setLicenceType("standard_national");
+        } else {
+            world.createLicence.setLicenceType("standard_national");
+        }
+        world.createLicence.setTrafficArea("B");
+        world.createLicence.setEnforcementArea("EA-B");
+        world.createLicence.setOperatorType(operatorType);
+        world.APIJourneySteps.registerAndGetUserDetails();
+        world.APIJourneySteps.createApplication();
+        world.APIJourneySteps.submitApplication();
+        if (String.valueOf(operatorType).equals("public")) {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        } else {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        }
+        world.APIJourneySteps.createAdminUser();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
+        world.UIJourneySteps.searchAndViewLicence();
+        world.UIJourneySteps.internalSiteAddBusNewReg(5);
+        world.UIJourneySteps.payFeesAndGrantNewBusReg();
+        world.updateLicence.createCase();
+    }
+    public void internalDigitalSurrenderMenu() throws IllegalBrowserException {
+        do {
+            System.out.println("waiting for page to load");
+            javaScriptExecutor("location.reload(true)");
+        } while (!isLinkPresent("" + world.createLicence.getLicenceNumber() + "", 10));
+        clickByLinkText("" + world.createLicence.getLicenceNumber() + "");
+        click("menu-licence_surrender", SelectorType.ID);
     }
 }
