@@ -1,3 +1,4 @@
+@SS
 @SURRENDER-START-PAGE
 @OLCS-21944
 Feature: Checking the start page for surrenders
@@ -13,7 +14,3 @@ Feature: Checking the start page for surrenders
       | LicenceType |
       | public      |
       | goods       |
-
-
-
-

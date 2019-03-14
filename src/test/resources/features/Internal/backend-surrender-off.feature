@@ -12,5 +12,3 @@ Feature: Surrenders toggle switched off
     Then as "internal" user I cannot surrender a licence
     Then as "internal" user I cannot update a surrender
     Then as "internal" user I cannot delete a surrender
-
-

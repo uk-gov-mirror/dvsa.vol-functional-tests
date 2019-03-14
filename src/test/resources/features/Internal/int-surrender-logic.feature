@@ -1,10 +1,10 @@
 @OLCS-22913
 @INT
-@SURRENDER-INT
+@Surrender-int
 Feature: Logic for Surrender menu item
 
   Background:
-    Given i have a valid "goods" "si" licence
+    Given i have a valid "goods" "sn" licence
 
   Scenario: Surrender Licence
     And my application to surrender is under consideration
@@ -17,7 +17,6 @@ Feature: Logic for Surrender menu item
     And my application to surrender is under consideration
     When the caseworker attempts to withdraw the surrender
     Then a modal box is displayed
-    And a prompt message is displayed
 
   Scenario: Withdrawn and re apply for a surrender
     And my application to surrender is under consideration
@@ -47,6 +46,19 @@ Feature: Logic for Surrender menu item
       | licence_status |
       | suspend        |
       | curtail        |
+
+  Scenario Outline: Undo a surrender
+    And the licence status is "<licence_status>"
+    And my application to surrender is under consideration
+    When the caseworker approves the surrender
+    And the licence status should be "surrendered"
+    And the case worker undoes the surrender
+    Then the licence status should be "<licence>"
+
+    Examples:
+      | licence_status | licence   |
+      | suspend        | suspended |
+      | curtail        | curtailed |
 
   Scenario Outline: Surrender suspended, curtailed licence
     And the licence status is "<licence_status>"

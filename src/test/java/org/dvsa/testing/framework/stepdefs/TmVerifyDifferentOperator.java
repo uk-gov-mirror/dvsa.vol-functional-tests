@@ -104,14 +104,14 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             assertFalse(isLinkPresent("download a TM1 form (PDF 150KB).", 30));
         });
         And("^the user chooses to print and sign$", () -> {
-            click("//*[contains(text(),'Print')]", SelectorType.XPATH);
+            waitAndClick("//*[contains(text(),'Print')]", SelectorType.XPATH);
         });
         And("^I am the operator and not the transport manager$", () -> {
             world.createLicence.setIsOwner("N");
         });
         And("^i add an existing person as a transport manager who is not the operator$", () -> {
             world.UIJourneySteps.addInternalAdmin();
-            world.UIJourneySteps.addOperatorUserAsTransportManager(1, "No");
+            world.UIJourneySteps.addOperatorUserAsTransportManager(1, "N");
         });
         And("^the operator countersigns digitally$", () -> {
             waitForTextToBePresent("What happens next?");

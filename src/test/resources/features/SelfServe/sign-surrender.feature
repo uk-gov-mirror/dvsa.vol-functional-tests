@@ -1,8 +1,8 @@
 @SS
-@Surrender-Verify
+@Surrender
 Feature: Sign surrender
 
-  Background: 
+  Background:
     Given i have a valid "goods" "sn" licence
     And i choose to surrender my licence
 

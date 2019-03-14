@@ -19,6 +19,7 @@ import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -119,12 +120,16 @@ public class UIJourneySteps extends BasePage {
         this.externalTMEmail = externalTMEmail;
     }
 
-    public String getLicenceNumber() { return licenceNumber; }
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
 
-    public void setLicenceNumber(String licenceNumber) { this.licenceNumber = licenceNumber; }
+    public void setLicenceNumber(String licenceNumber) {
+        this.licenceNumber = licenceNumber;
+    }
 
     public void internalSearchForBusReg() throws IllegalBrowserException {
-        selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
+        selectValueFromDropDown("//*[@id='search-select']", SelectorType.XPATH, "Bus registrations");
         do {
             SearchNavBar.search(world.createLicence.getLicenceNumber());
         } while (!isLinkPresent(world.createLicence.getLicenceNumber(), 60));
@@ -133,6 +138,7 @@ public class UIJourneySteps extends BasePage {
 
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
         waitForTextToBePresent("Overview");
+        clickByLinkText("Bus registration");
         clickByLinkText("Bus registrations");
         click(nameAttribute("button", "action"));
         waitForTextToBePresent("Service details");
@@ -587,7 +593,7 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Add Transport Manager");
         selectValueFromDropDownByIndex("data[registeredUser]", SelectorType.ID, user);
         click("//*[@id='form-actions[continue]']", SelectorType.XPATH);
-        updateTMDetailsAndNavigateToDeclarationsPage("Yes", "No", "No", "No", "No");
+        updateTMDetailsAndNavigateToDeclarationsPage("Y", "N", "N", "N", "N");
     }
 
     public void navigateToTransportManagersPage() throws IllegalBrowserException {
@@ -620,12 +626,12 @@ public class UIJourneySteps extends BasePage {
     public void updateTMDetailsAndNavigateToDeclarationsPage(String isOwner, String OtherLicence, String hasEmployment, String hasConvictions, String hasPreviousLicences) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
         String tmEmailAddress = "externalTM@vol.com";
         String hours = "8";
-        findElement("//*[@id='responsibilities']//*[contains(text(),'Internal')]", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + OtherLicence + "')]//*[@name='responsibilities[otherLicencesFieldset][hasOtherLicences]']", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + isOwner + "')]//*[@name='responsibilities[isOwner]']", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + hasEmployment + "')]//*[@name='otherEmployments[hasOtherEmployment]']", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + hasConvictions + "')]//*[@name='previousHistory[hasConvictions]']", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + hasPreviousLicences + "')]//*[@name='previousHistory[hasPreviousLicences]']", SelectorType.XPATH, 10).click();
+        findElement("//*[@value='" + OtherLicence +"'][@name='responsibilities[otherLicencesFieldset][hasOtherLicences]']", SelectorType.XPATH,30).click();
+        findElement("//*[@value='" + isOwner + "'][@name='responsibilities[isOwner]']", SelectorType.XPATH,30).click();
+        findElement("//*[@value='" + hasEmployment + "'][@name='otherEmployments[hasOtherEmployment]']", SelectorType.XPATH,20).click();
+        findElement("//*[@value='" + hasConvictions + "'][@name='previousHistory[hasConvictions]']", SelectorType.XPATH,30).click();
+        findElement("//*[@value='" + hasPreviousLicences + "'][@name='previousHistory[hasPreviousLicences]']", SelectorType.XPATH,30).click();
+        findElement("//*[@id='responsibilities']//*[contains(text(),'Internal')]", SelectorType.XPATH,30).click();
         findElement("emailAddress", SelectorType.ID, 10).clear();
         if (findElement("emailAddress", SelectorType.ID, 10).getText().isEmpty()) {
             waitAndEnterText("emailAddress", SelectorType.ID, tmEmailAddress);
@@ -658,11 +664,11 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Transport Managers");
         clickByLinkText("Transport");
         clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
-        updateTMDetailsAndNavigateToDeclarationsPage(isOwner, "No", "No", "No", "No");
+        updateTMDetailsAndNavigateToDeclarationsPage(isOwner, "N", "N", "N", "N");
     }
 
     public void submitTMApplicationAndNavigateToTMLandingPage() throws ElementDidNotAppearWithinSpecifiedTimeException, IllegalBrowserException {
-        updateTMDetailsAndNavigateToDeclarationsPage("Yes", "No", "No", "No", "No");
+        updateTMDetailsAndNavigateToDeclarationsPage("Y", "N", "N", "N", "N");
         click("form-actions[submit]", SelectorType.ID);
         clickByLinkText("Back to Transport");
         waitForTextToBePresent("Transport Managers");
@@ -834,17 +840,78 @@ public class UIJourneySteps extends BasePage {
         world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewLicence();
         clickByLinkText("Surrender");
+        waitForTextToBePresent("Surrender details");
+        waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
+        waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
+        waitAndClick("actions[surrender]", SelectorType.ID);
     }
 
     public void signManually() throws IllegalBrowserException, MalformedURLException {
         String defaultWindow = Browser.navigate().getWindowHandle();
-        waitAndClick("//*[contains(text(),'Print declaration')]", SelectorType.XPATH);
-        waitForTextToBePresent("Print");
+        do {
+            waitAndClick("//*[contains(text(),'Print declaration')]", SelectorType.XPATH);
+        } while (!isTextPresent("Print", 40));
         Set<String> windows = Browser.navigate().getWindowHandles();
         String printWindow = windows.stream().reduce((first, second) -> second).get();
         Browser.navigate().switchTo().window(printWindow).close();
         Browser.navigate().switchTo().window(defaultWindow);
-        click("//*[contains(@title,'return to home')]",SelectorType.XPATH);
+        click("//*[contains(@title,'return to home')]", SelectorType.XPATH);
+    }
+
+    public void checkLicenceStatus(String arg0) throws IllegalBrowserException {
+        do {
+            System.out.println("Page not loaded yet");
+        }
+        while (!isTextPresent("Licence details", 2));//condition
+        Assertions.assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), arg0.toUpperCase());
+    }
+
+    public void removeDisc(String discDestroyed, String discLost, String discStolen) throws IllegalBrowserException, MalformedURLException, ElementDidNotAppearWithinSpecifiedTimeException {
+        waitAndClick("form-actions[submit]", SelectorType.ID);
+        world.UIJourneySteps.addDiscInformation(discDestroyed, discLost, discStolen);
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+        clickByLinkText("Licence discs");
+        waitAndClick("//*[@value='Remove']", SelectorType.XPATH);
+        untilElementPresent("//*[@id='modal-title']", SelectorType.XPATH);
+        waitAndClick("form-actions[submit]", SelectorType.NAME);
+        javaScriptExecutor("location.reload(true)");
+        waitForTextToBePresent("Disc number");
+        clickByLinkText("Back");
+    }
+
+    public void addDisc() throws IllegalBrowserException {
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+        clickByLinkText("Licence discs");
+        waitAndClick("//*[@id='add']", SelectorType.XPATH);
+        waitAndEnterText("data[additionalDiscs]", SelectorType.ID, "2");
+        waitAndClick("form-actions[submit]", SelectorType.NAME);
+        world.updateLicence.printLicenceDiscs();
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+    }
+
+    public void createLicence(World world, String operatorType, String licenceType) {
+        if (licenceType.equals("si")) {
+            world.createLicence.setLicenceType("standard_international");
+        } else if (licenceType.equals("sn")) {
+            world.createLicence.setLicenceType("standard_national");
+        } else {
+            world.createLicence.setLicenceType("standard_national");
+        }
+        world.createLicence.setOperatorType(operatorType);
+        world.APIJourneySteps.registerAndGetUserDetails();
+        world.APIJourneySteps.createApplication();
+        world.APIJourneySteps.submitApplication();
+        if (String.valueOf(operatorType).equals("public")) {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        } else {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        }
+        world.updateLicence.printLicenceDiscs();
     }
 
     public void closeCase() throws IllegalBrowserException, MalformedURLException {

@@ -677,34 +677,36 @@ public class CreateLicenceAPI {
         if (getOperatorType().equals("public") && (getOperatorType().equals("special_restricted"))) {
             // no need to submit details
         } else {
-            for (int i = 0; i < getNoOfVehiclesRequired(); ) {
-                String vehiclesResource = null;
-                String vrm;
-                vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
-                if (vrm.contains("q")) {
-                    vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
-                }
-                if (getOperatorType().equals("goods")) {
-                    vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
-                }
-                if (getOperatorType().equals("public")) {
-                    vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
-                }
+            String vehiclesResource = null;
+            String[] licencePlates = {"q", "x", "y", "g"};
+            String vrm;
 
-                do {
-                    VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight("5000").withVersion(version);
+            if (getOperatorType().equals("goods")) {
+                vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
+            }
+            if (getOperatorType().equals("public")) {
+                vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
+            }
+            do {
+                for (int i = 0; i < getNoOfVehiclesRequired(); ) {
+                    vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
+                    for (String letters : licencePlates) {
+                        if (vrm.contains(letters))
+                            vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
+                    }
+                    VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).withVersion(version);
                     assert vehiclesResource != null;
                     apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
                     i++;
                 }
-                while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)
-                        || (apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY));
+            }
+            while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)
+                    || (apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY));
 
-                if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
-                    System.out.println(apiResponse.extract().statusCode());
-                    System.out.println(apiResponse.extract().response().asString());
-                    throw new HTTPException(apiResponse.extract().statusCode());
-                }
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
             }
         }
     }

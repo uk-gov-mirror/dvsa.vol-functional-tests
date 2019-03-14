@@ -86,11 +86,5 @@ public class ESBRupload extends BasePage implements En {
             String trafficArea = findElement("//*[@id=\"bus-reg-ta\"]/ul/li[1]/dd",SelectorType.XPATH,10).getText();
             Assert.assertNotNull(trafficArea);
         });
-
-        After(new String[]{"@SS"}, 0, 1, (Scenario scenario) -> {
-            String[] args = new String[0];
-            Hooks hooks = new Hooks();
-            hooks.main(args);
-        });
     }
 }

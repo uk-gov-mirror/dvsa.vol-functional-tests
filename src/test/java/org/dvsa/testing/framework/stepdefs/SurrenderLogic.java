@@ -3,13 +3,16 @@ package org.dvsa.testing.framework.stepdefs;
 import Injectors.World;
 import activesupport.driver.Browser;
 import cucumber.api.DataTable;
+import cucumber.api.Scenario;
 import cucumber.api.java8.En;
+import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -47,32 +50,14 @@ public class SurrenderLogic extends BasePage implements En {
             assertEquals(expectedChangedText, actualChangeText);
         });
         Given("^i remove a disc to my licence$", () -> {
-            waitAndClick("form-actions[submit]", SelectorType.ID);
-            world.UIJourneySteps.addDiscInformation(discDestroyed, discLost, discStolen);
-            clickByLinkText("Home");
-            clickByLinkText(world.createLicence.getLicenceNumber());
-            clickByLinkText("Licence discs");
-            waitAndClick("//*[@value='Remove']", SelectorType.XPATH);
-            untilElementPresent("//*[@id='modal-title']", SelectorType.XPATH);
-            waitAndClick("form-actions[submit]", SelectorType.NAME);
-            javaScriptExecutor("location.reload(true)");
-            waitForTextToBePresent("Disc number");
-            clickByLinkText("Back");
+            world.UIJourneySteps.removeDisc(discDestroyed, discLost, discStolen);
         });
         And("^the new correspondence details are displayed on correspondence page$", () -> {
             click("//*[contains(text(),'Review')]", SelectorType.XPATH);
             assertEquals(world.UIJourneySteps.getSurrenderAddressLine1(), addressLine1 + "\n" + addressLine2);
         });
         Given("^i add a disc to my licence$", () -> {
-            clickByLinkText("Home");
-            clickByLinkText(world.createLicence.getLicenceNumber());
-            clickByLinkText("Licence discs");
-            waitAndClick("//*[@id='add']", SelectorType.XPATH);
-            waitAndEnterText("data[additionalDiscs]", SelectorType.ID, "2");
-            waitAndClick("form-actions[submit]", SelectorType.NAME);
-            world.updateLicence.printLicenceDiscs();
-            clickByLinkText("Home");
-            clickByLinkText(world.createLicence.getLicenceNumber());
+            world.UIJourneySteps.addDisc();
         });
         Given("^i am on the surrenders review contact details page$", () -> {
             assertTrue(Browser.navigate().getCurrentUrl().contains("review-contact-details"));
@@ -162,19 +147,13 @@ public class SurrenderLogic extends BasePage implements En {
             assertTrue(Browser.navigate().getCurrentUrl().contains("declaration"));
         });
         And("^my application to surrender is under consideration$", () -> {
-            world.updateLicence.printLicenceDiscs();
             world.UIJourneySteps.submitSurrender();
         });
         When("^the caseworker approves the surrender$", () -> {
             world.UIJourneySteps.caseworkManageSurrender();
-            waitForTextToBePresent("Surrender details");
-            waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
-            waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
-            waitAndClick("actions[surrender]", SelectorType.ID);
         });
         Then("^the licence status should be \"([^\"]*)\"$", (String arg0) -> {
-            waitForTextToBePresent("Overview");
-            assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), arg0.toUpperCase());
+            world.UIJourneySteps.checkLicenceStatus(arg0);
         });
         And("^the surrender menu should be hidden in internal$", () -> {
             assertFalse(isElementPresent("//*[contains(@id,'menu-licence_surrender"));
@@ -190,11 +169,7 @@ public class SurrenderLogic extends BasePage implements En {
             waitAndClick("//*[contains(text(),'Withdraw')]", SelectorType.XPATH);
         });
         Then("^a modal box is displayed$", () -> {
-            assertTrue(isElementPresent("//*[@class='modal']", SelectorType.XPATH));
-        });
-        And("^a prompt message is displayed$", () -> {
-            assertTrue(isTextPresent("Confirm Withdraw", 30));
-            assertTrue(isTextPresent(String.format("Are you sure you wish to withdraw the application to surrender licence %s", world.createLicence.getLicenceNumber()), 30));
+            assertTrue(isElementPresent("//*[contains(text(),'Continue')]", SelectorType.XPATH));
         });
         And("^the caseworker confirms the withdraw$", () -> {
             waitAndClick("continue", SelectorType.ID);
@@ -224,17 +199,25 @@ public class SurrenderLogic extends BasePage implements En {
             List<String> section_button = buttons.asList(String.class);
             for (String button : section_button) {
                 clickByLinkText(button);
-                assertTrue(isElementNotPresent("//*[contains(@id,'menu-licence-quick-actions')]",SelectorType.XPATH));
-                assertTrue(isElementNotPresent("//*[contains(@id,'menu-licence-decisions')]",SelectorType.XPATH));
+                assertTrue(isElementNotPresent("//*[contains(@id,'menu-licence-quick-actions')]", SelectorType.XPATH));
+                assertTrue(isElementNotPresent("//*[contains(@id,'menu-licence-decisions')]", SelectorType.XPATH));
             }
         });
         When("^i search for my licence$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
             world.UIJourneySteps.searchAndViewLicence();
         });
-        And("^i choose to surrender a single licence$", () -> {
+        And("^the case worker undoes the surrender$", () -> {
+            waitAndClick("//*[contains(@id,'menu-licence-decisions-undo-surrender')]", SelectorType.XPATH);
+            waitForTextToBePresent("Are you sure you want to undo the surrender of this licence?");
+            waitAndClick("form-actions[submit]", SelectorType.ID);
+        });
 
+        After((Scenario scenario) -> {
+            Hooks hooks = new Hooks();
+            hooks.attach(scenario);
+            hooks.tearDown();
         });
     }
 }
