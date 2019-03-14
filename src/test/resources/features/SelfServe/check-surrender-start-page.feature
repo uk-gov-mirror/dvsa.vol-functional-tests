@@ -13,7 +13,3 @@ Feature: Checking the start page for surrenders
       | LicenceType |
       | public      |
       | goods       |
-
-
-
-

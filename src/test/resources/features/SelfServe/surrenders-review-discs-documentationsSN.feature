@@ -20,7 +20,3 @@ Feature: Review Discs and Documentation Page
 
   Scenario: Documentation Details
    And the correct operator details should be displayed
-
-
-
-

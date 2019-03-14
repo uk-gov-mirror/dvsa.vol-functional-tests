@@ -13,4 +13,3 @@ Feature: Multiple licence holder
     Then the licence status should be "surrendered"
     And the surrender menu should be hidden in internal
     And the licence should not displayed in selfserve
-

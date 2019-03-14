@@ -146,7 +146,7 @@
                         <configuration>
                             <forkCount>5</forkCount>
                             <reuseForks>true</reuseForks>
-                            <rerunFailingTestsCount>4</rerunFailingTestsCount>
+                            <rerunFailingTestsCount>3</rerunFailingTestsCount>
                         </configuration>
                     </execution>
                 </executions>

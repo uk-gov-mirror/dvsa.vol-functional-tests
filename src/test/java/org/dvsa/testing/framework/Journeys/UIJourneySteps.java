@@ -19,6 +19,7 @@ import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -120,9 +121,13 @@ public class UIJourneySteps extends BasePage {
         this.externalTMEmail = externalTMEmail;
     }
 
-    public String getLicenceNumber() { return licenceNumber; }
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
 
-    public void setLicenceNumber(String licenceNumber) { this.licenceNumber = licenceNumber; }
+    public void setLicenceNumber(String licenceNumber) {
+        this.licenceNumber = licenceNumber;
+    }
 
     public void internalSearchForBusReg() throws IllegalBrowserException {
         selectValueFromDropDown("//*[@id='search-select']", SelectorType.XPATH, "Bus registrations");
@@ -835,16 +840,55 @@ public class UIJourneySteps extends BasePage {
         world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewLicence();
         clickByLinkText("Surrender");
+        waitForTextToBePresent("Surrender details");
+        waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
+        waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
+        waitAndClick("actions[surrender]", SelectorType.ID);
     }
 
     public void signManually() throws IllegalBrowserException, MalformedURLException {
         String defaultWindow = Browser.navigate().getWindowHandle();
-        waitAndClick("//*[contains(text(),'Print declaration')]", SelectorType.XPATH);
-        waitForTextToBePresent("Print");
+        do {
+            waitAndClick("//*[contains(text(),'Print declaration')]", SelectorType.XPATH);
+        } while (!isTextPresent("Print", 40));
         Set<String> windows = Browser.navigate().getWindowHandles();
         String printWindow = windows.stream().reduce((first, second) -> second).get();
         Browser.navigate().switchTo().window(printWindow).close();
         Browser.navigate().switchTo().window(defaultWindow);
-        click("//*[contains(@title,'return to home')]",SelectorType.XPATH);
+        click("//*[contains(@title,'return to home')]", SelectorType.XPATH);
+    }
+
+    public void checkLicenceStatus(String arg0) throws IllegalBrowserException {
+        do {
+            System.out.println("Page not loaded yet");
+        }
+        while (!isTextPresent("Licence details", 2));//condition
+        Assertions.assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), arg0.toUpperCase());
+    }
+
+    public void removeDisc(String discDestroyed, String discLost, String discStolen) throws IllegalBrowserException, MalformedURLException, ElementDidNotAppearWithinSpecifiedTimeException {
+        waitAndClick("form-actions[submit]", SelectorType.ID);
+        world.UIJourneySteps.addDiscInformation(discDestroyed, discLost, discStolen);
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+        clickByLinkText("Licence discs");
+        waitAndClick("//*[@value='Remove']", SelectorType.XPATH);
+        untilElementPresent("//*[@id='modal-title']", SelectorType.XPATH);
+        waitAndClick("form-actions[submit]", SelectorType.NAME);
+        javaScriptExecutor("location.reload(true)");
+        waitForTextToBePresent("Disc number");
+        clickByLinkText("Back");
+    }
+
+    public void addDisc() throws IllegalBrowserException {
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+        clickByLinkText("Licence discs");
+        waitAndClick("//*[@id='add']", SelectorType.XPATH);
+        waitAndEnterText("data[additionalDiscs]", SelectorType.ID, "2");
+        waitAndClick("form-actions[submit]", SelectorType.NAME);
+        world.updateLicence.printLicenceDiscs();
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getLicenceNumber());
     }
 }
