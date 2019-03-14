@@ -43,10 +43,10 @@ public class VerifySwitchedOff extends BasePage implements En {
             world.UIJourneySteps.nominateOperatorUserAsTransportManager(1);
         });
         When("^the transport manager is the owner$", () -> {
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("Yes", "No", "No", "No", "No");
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("Y", "N", "N", "N", "N");
         });
         And("^the transport manager is not the owner$", () -> {
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("N", "N", "N", "N", "N");
         });
         When("^i submit the application$", () -> {
             click("form-actions[submit]", SelectorType.ID);
@@ -77,7 +77,7 @@ public class VerifySwitchedOff extends BasePage implements En {
             world.updateLicence.enableDisableVerify("0");
         });
         And("^i navigate to the declarations page$", () -> {
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("N", "N", "N", "N", "N");
         });
         Given("^verify has been switched \"([^\"]*)\"$", (String arg0) -> {
           if (arg0.equals("On")){
