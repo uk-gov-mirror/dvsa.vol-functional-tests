@@ -6,14 +6,10 @@ import cucumber.api.DataTable;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.By;
 
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 

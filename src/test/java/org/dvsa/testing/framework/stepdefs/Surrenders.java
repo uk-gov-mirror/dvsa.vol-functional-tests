@@ -1,7 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import activesupport.IllegalBrowserException;
 import activesupport.driver.Browser;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
@@ -10,17 +9,14 @@ import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.hamcrest.Matchers;
-import org.openqa.selenium.WebElement;
-
-import java.net.MalformedURLException;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import org.junit.Assert;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class Surrenders extends BasePage implements En {
     ValidatableResponse apiResponse;
@@ -175,15 +171,105 @@ public class Surrenders extends BasePage implements En {
             assertEquals(operatorLicence, operatorLicenceStatus);
         });
         And("^the correct community licence details should be displayed$", () -> {
-
             And("^the correct licence number is be displayed$", () -> {
                 this.communityLicence = "to be destroyed";
                 String communityLicenceStatus = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][3]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
                 assertEquals(communityLicence, communityLicenceStatus);
             });
         });
+        And("^i have completed a surrender application with verify$", () -> {
+            this.discsLost = "2";
+            this.discsToDestroy = "2";
+            this.discsStolen = "1";
+            world.UIJourneySteps.navigateToSurrendersStartPage();
+            click("//*[@id='submit']", SelectorType.XPATH);
+            waitForTextToBePresent("Review your contact information");
+            world.UIJourneySteps.navigateToSurrenderReviewPage(discsToDestroy, discsLost, discsStolen);
+            click("//*[@id='submit']", SelectorType.XPATH);
+            waitAndClick("//*[@id='sign']", SelectorType.XPATH);
+            world.UIJourneySteps.signWithVerify("pavlov", "Password1");
+
+        });
+        Then("^the internal surrender menu should be displayed$", () -> {
+            waitForTextToBePresent(world.createLicence.getLicenceNumber());
+        });
+        Then("^any open cases should be displayed$", () -> {
+            isLinkPresent(toString(),world.updateLicence.getCaseId());
+        });
+        And("^any open bus registrations should be displayed$", () -> {
+            isLinkPresent("PB2026379/1",5);
+
+        });
+        And("^tick boxes should be displayed$", () -> {
+            isTextPresent("Digital signature has been checked", 5);
+            isTextPresent("ECMS has been checked", 5);
+
+        });
         Then("^the surrender print and sign page is displayed$", () -> {
             world.UIJourneySteps.signManually();
         });
+        When("^a caseworker views the surrender$", () -> {
+            world.UIJourneySteps.caseworkManageSurrender();
+        });
+        And("^an open case and bus reg are created$", () -> {
+            world.UIJourneySteps.internalSiteAddBusNewReg(5);
+            world.updateLicence.createCase();
+        });
+        Given("^i have a valid \"([^\"]*)\" \"([^\"]*)\" licence with an open case and bus reg$", (String operatorType, String licenceType) -> {
+            world.UIJourneySteps.createLicenceWithOpenCaseAndBusReg(operatorType, licenceType);
+        });
+        When("^a caseworker views the surrender details$", () -> {
+            world.APIJourneySteps.createAdminUser();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
+            world.UIJourneySteps.searchAndViewLicence();
+            waitAndClick("menu-licence_surrender",SelectorType.ID);
+        });
+        And("^i choose to surrender my licence with verify$", () -> {
+            world.UIJourneySteps.navigateToSurrendersStartPage();
+            world.UIJourneySteps.startSurrender();
+            waitAndClick("form-actions[submit]",SelectorType.ID);
+            world.UIJourneySteps.addDiscInformation("2", "2", "1");
+            waitForTextToBePresent("In your possession");
+            world.UIJourneySteps.addOperatorLicenceDetails();
+            if (world.createLicence.getLicenceType().equals("standard_international")) {
+                assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
+                world.UIJourneySteps.addCommunityLicenceDetails();
+            }
+            world.UIJourneySteps.acknowledgeDestroyPage();
+            waitAndClick("//*[@id='sign']", SelectorType.XPATH);
+            world.UIJourneySteps.signWithVerify("pavlov", "Password1");
+            waitForTextToBePresent("What happens next");
+            Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
+            Assert.assertTrue(isTextPresent(String.format("Application to surrender licence %s", world.createLicence.getLicenceNumber()), 10));
+            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("d MMM yyyy")), 20));
+            assertTrue(isTextPresent("notifications@vehicle-operator-licensing.service.gov.uk", 10));
+            waitAndClick("//*[contains(text(),'home')]", SelectorType.XPATH);
+        });
+        Then("^the Surrender button should not be clickable$", () -> {
+        assertFalse(isElementPresent("//*[contains(@name,'actions[surrender]')]",SelectorType.XPATH));
+        });
+        And("^the open case and bus reg is closed$", () -> {
+            world.UIJourneySteps.closeCase();
+            world.UIJourneySteps.internalDigitalSurrenderMenu();
+            world.UIJourneySteps.closeBusReg();
+            world.UIJourneySteps.internalDigitalSurrenderMenu();
+        });
+        And("^the tick boxes are checked$", () -> {
+            waitAndClick("//*[contains(text(),'Digital signature')]",SelectorType.XPATH);
+            waitAndClick("//*[contains(text(),'ECMS')]",SelectorType.XPATH);
+
+        });
+        When("^the Surrender button is clicked$", () -> {
+            click("actions[surrender]",SelectorType.ID);
+        });
+        Then("^the licence should be surrendered$", () -> {
+            assertTrue(isElementPresent("//*[contains(text(),'Surrendered')]",SelectorType.XPATH));
+        });
+
     }
+
 }
+
+
+
+
