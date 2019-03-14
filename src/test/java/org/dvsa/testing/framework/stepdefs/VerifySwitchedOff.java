@@ -17,7 +17,6 @@ public class VerifySwitchedOff extends BasePage implements En {
 
     public VerifySwitchedOff(World world) {
         Given("^i have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String operatorType, String country) -> {
-            world.genericUtils = new GenericUtils(world);
             world.createLicence.setOperatorType(operatorType);
             if (country.equals("NI")) {
                 world.APIJourneySteps.nIAddressBuilder();
