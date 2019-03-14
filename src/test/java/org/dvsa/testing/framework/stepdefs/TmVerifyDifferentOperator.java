@@ -18,6 +18,7 @@ import org.openqa.selenium.support.Color;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.junit.Assert.assertFalse;
@@ -102,15 +103,15 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             assertFalse(isTextPresent("Alternatively they can download a TM1 form (PDF 150KB).", 30));
             assertFalse(isLinkPresent("download a TM1 form (PDF 150KB).", 30));
         });
-        And("^the users chooses to sign print and sign$", () -> {
-            click("//*[contains(text(),'Print')]", SelectorType.XPATH);
+        And("^the user chooses to print and sign$", () -> {
+            waitAndClick("//*[contains(text(),'Print')]", SelectorType.XPATH);
         });
         And("^I am the operator and not the transport manager$", () -> {
             world.createLicence.setIsOwner("N");
         });
         And("^i add an existing person as a transport manager who is not the operator$", () -> {
             world.UIJourneySteps.addInternalAdmin();
-            world.UIJourneySteps.addOperatorUserAsTransportManager(1, "No");
+            world.UIJourneySteps.addOperatorUserAsTransportManager(1, "N");
         });
         And("^the operator countersigns digitally$", () -> {
             waitForTextToBePresent("What happens next?");
@@ -119,8 +120,9 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             clickByLinkText(world.createLicence.getApplicationNumber());
             waitForTextToBePresent("Apply for a new licence");
             clickByLinkText("Transport");
-            clickByLinkText(forename + " " + familyName);
+            clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
             click("form-actions[submit]", SelectorType.ID);
+            world.UIJourneySteps.signDeclaration();
             world.UIJourneySteps.signWithVerify("pavlov", "Password1");
         });
         Then("^the 'Review and declarations' post signature page is displayed$", () -> {
@@ -134,28 +136,20 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             clickByLinkText(world.createLicence.getApplicationNumber());
             world.UIJourneySteps.addOperatorAdminAsTransportManager(1);
         });
-        When("^i add a new person as a transport manager who is not the operator$", () -> {
+        And("^i sign the declaration$", () -> {
+            world.UIJourneySteps.signDeclaration();
+        });
+        And("^the operator countersigns by print and sign$", () -> {
+            waitForTextToBePresent("What happens next?");
+            clickByLinkText("Sign out");
             world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getApplicationNumber());
-            clickByLinkText("Transport");
-            clickByLinkText("Or add");
-        });
-        When("^i add an external person as a transport manager$", () -> {
-            String emailAddress = "tme".concat(Str.randomWord(2)).concat("externalTM@vol.gov");
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             waitForTextToBePresent("Apply for a new licence");
-            clickByLinkText(world.createLicence.getApplicationNumber());
             clickByLinkText("Transport");
-            world.UIJourneySteps.addNewPersonAsTransportManager(forename, familyName,emailAddress);
-            world.UIJourneySteps.navigateToExternalUserLogin(world.UIJourneySteps.getExternalTMUser(), world.UIJourneySteps.getExternalTMEmail());
-            waitForTextToBePresent("Open applications");
-            clickByLinkText("Provide details");
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
-        });
-        And("^i add a transport manager and navigate to the declarations page$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
-            clickByLinkText(world.createLicence.getApplicationNumber());
-            world.UIJourneySteps.addOperatorAdminAsTransportManager(1);
+            clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
+            click("form-actions[submit]", SelectorType.ID);
+            click("//*[contains(text(),'Print')]",SelectorType.XPATH);
+            click("//*[@name='form-actions[submit]']", SelectorType.XPATH);
         });
     }
 
@@ -166,7 +160,7 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
         } else {
             declarationText = "operator-NI-declaration.txt";
         }
-        return Paths.get(getClass().getClassLoader()
-                .getResource(declarationText).toURI());
+        return Paths.get(Objects.requireNonNull(getClass().getClassLoader()
+                .getResource(declarationText)).toURI());
     }
 }

@@ -4,7 +4,7 @@
 Feature: Set and check criteria for triggering automatic letter
 
   Background:
-    Given i have a valid "goods" licence
+    Given i have a valid "goods" "" licence
 
   Scenario: Generate letter for valid licence
     And the transport manager has been removed by an internal user

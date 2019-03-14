@@ -35,7 +35,7 @@ public class ESBRupload extends BasePage implements En {
         });
         And("^A short notice tab should be displayed in internal$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.navigateToInternalAdminUserLogin();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
             world.UIJourneySteps.internalSearchForBusReg();
             assertTrue(isTextPresent("Short notice", 60));
         });
@@ -48,7 +48,7 @@ public class ESBRupload extends BasePage implements En {
 
         And("^A short notice tab should not be displayed in internal$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.navigateToInternalAdminUserLogin();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
             world.UIJourneySteps.internalSearchForBusReg();
             assertFalse(isTextPresent("Short notice", 60));
         });
@@ -58,7 +58,7 @@ public class ESBRupload extends BasePage implements En {
             world.UIJourneySteps.uploadAndSubmitESBR("futureDay", Integer.parseInt(arg0));
         });
         Given("^i add a new bus registration$", () -> {
-            world.UIJourneySteps.searchAndViewApplication();
+            world.UIJourneySteps.searchAndViewLicence();
             world.UIJourneySteps.internalSiteAddBusNewReg(5);
             clickByLinkText("Register");
             findSelectAllRadioButtonsByValue("Y");
@@ -85,12 +85,6 @@ public class ESBRupload extends BasePage implements En {
             clickByLinkText("TA's");
             String trafficArea = findElement("//*[@id=\"bus-reg-ta\"]/ul/li[1]/dd",SelectorType.XPATH,10).getText();
             Assert.assertNotNull(trafficArea);
-        });
-
-        After(new String[]{"@SS"}, 0, 1, (Scenario scenario) -> {
-            String[] args = new String[0];
-            Hooks hooks = new Hooks();
-            hooks.main(args);
         });
     }
 }

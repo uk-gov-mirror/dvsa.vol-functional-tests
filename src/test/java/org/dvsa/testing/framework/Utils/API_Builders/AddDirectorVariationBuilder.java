@@ -3,6 +3,8 @@ package org.dvsa.testing.framework.Utils.API_Builders;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.junit.platform.commons.util.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -120,7 +122,13 @@ public class AddDirectorVariationBuilder {
 
     @Override
     public String toString() {
-        return "receivedDate:" + getReceivedDate() + ",feeRequired:" + getFeeRequired() + ",licenceType:" + getLicenceType()
-        + ",appliedVia:" + getAppliedVia() + ",variationType:" + getVariationType() + ",id:" + getId();
+        return new ToStringBuilder(ToStringStyle.JSON_STYLE)
+                .append("receivedDate", getReceivedDate())
+                .append("feeRequired", getFeeRequired())
+                .append("licenceType", getLicenceType())
+                .append("appliedVia", getAppliedVia())
+                .append("variationType", getVariationType())
+                .append("id:", getId())
+                .toString();
     }
 }

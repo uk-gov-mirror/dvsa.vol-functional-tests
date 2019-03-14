@@ -3,7 +3,7 @@
 Feature: Add case details
 
   Background:
-    Given i have a valid "goods" licence
+    Given i have a valid "goods" "sn" licence
     And I create a new case
 
   @Complaint

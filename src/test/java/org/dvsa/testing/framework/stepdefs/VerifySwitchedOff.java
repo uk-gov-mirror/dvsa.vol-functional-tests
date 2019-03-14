@@ -1,7 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import cucumber.api.PendingException;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
@@ -17,12 +16,12 @@ import static org.junit.Assert.assertTrue;
 public class VerifySwitchedOff extends BasePage implements En {
 
     public VerifySwitchedOff(World world) {
-        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String arg0, String arg1) -> {
-            world.genericUtils = new GenericUtils(world);
-            world.createLicence.setOperatorType(arg0);
-            if (arg1.equals("NI")) {
+        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" partial application$", (String operatorType, String country) -> {
+            world.createLicence.setOperatorType(operatorType);
+            if (country.equals("NI")) {
                 world.APIJourneySteps.nIAddressBuilder();
             }
+            world.APIJourneySteps.registerAndGetUserDetails();
             world.APIJourneySteps.createPartialApplication();
         });
         Then("^Signing options are not displayed on the page$", () -> {
@@ -43,17 +42,16 @@ public class VerifySwitchedOff extends BasePage implements En {
             world.UIJourneySteps.nominateOperatorUserAsTransportManager(1);
         });
         When("^the transport manager is the owner$", () -> {
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("Yes", "No", "No", "No", "No");
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("Y", "N", "N", "N", "N");
         });
         And("^the transport manager is not the owner$", () -> {
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("N", "N", "N", "N", "N");
         });
         When("^i submit the application$", () -> {
             click("form-actions[submit]", SelectorType.ID);
         });
         Then("^the print and sign page is displayed$", () -> {
             Assert.assertTrue(isTextPresent("Transport Manager details approved", 10));
-            Assert.assertTrue(isTextPresent(world.createLicence.getForeName() + " " + world.createLicence.getFamilyName(), 10));
             Assert.assertTrue(isTextPresent("Print, sign and return", 10));
         });
         And("^the application status is \"([^\"]*)\"$", (String arg0) -> {
@@ -75,16 +73,16 @@ public class VerifySwitchedOff extends BasePage implements En {
         });
         After(new String[]{"@SS-Verify-Off"}, (Scenario scenario) -> {
             if(scenario.isFailed() || !scenario.isFailed())
-            world.APIJourneySteps.enableDisableVerify("0");
+            world.updateLicence.enableDisableVerify("0");
         });
         And("^i navigate to the declarations page$", () -> {
-            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("No", "No", "No", "No", "No");
+            world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("N", "N", "N", "N", "N");
         });
         Given("^verify has been switched \"([^\"]*)\"$", (String arg0) -> {
           if (arg0.equals("On")){
-              world.APIJourneySteps.enableDisableVerify("0");
+              world.updateLicence.enableDisableVerify("0");
           } else {
-              world.APIJourneySteps.enableDisableVerify("1");
+              world.updateLicence.enableDisableVerify("1");
           }
         });
         Then("^the 'Awaiting operator review' verify off page is displayed$", () -> {
