@@ -32,7 +32,7 @@ public class FeesBuilder {
     @JsonProperty("paymentMethod")
     private String paymentMethod;
     @JsonProperty("received")
-    private Integer received;
+    private Double received = null;
     @JsonProperty("receiptDate")
     private String receiptDate;
     @JsonProperty("payer")
@@ -56,6 +56,22 @@ public class FeesBuilder {
         this.feeIds = feeIds;
         return this;
     }
+
+    @JsonProperty("received")
+    public Double getReceived() {
+        return received;
+    }
+
+    @JsonProperty("received")
+    public void setReceived(Double received) {
+        this.received = received;
+    }
+
+    public FeesBuilder withReceived(Double received) {
+        this.received = received;
+        return this;
+    }
+
 
     @JsonProperty("organisationId")
     public String getOrganisationId() {
@@ -114,21 +130,6 @@ public class FeesBuilder {
 
     public FeesBuilder withPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
-        return this;
-    }
-
-    @JsonProperty("received")
-    public Integer getReceived() {
-        return received;
-    }
-
-    @JsonProperty("received")
-    public void setReceived(Integer received) {
-        this.received = received;
-    }
-
-    public FeesBuilder withReceived(Integer received) {
-        this.received = received;
         return this;
     }
 

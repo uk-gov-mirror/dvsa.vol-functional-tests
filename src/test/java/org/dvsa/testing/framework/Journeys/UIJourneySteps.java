@@ -905,10 +905,10 @@ public class UIJourneySteps extends BasePage {
         world.APIJourneySteps.createApplication();
         world.APIJourneySteps.submitApplication();
         if (String.valueOf(operatorType).equals("public")) {
-            world.APIJourneySteps.grandLicenceAndPayFees();
+            world.APIJourneySteps.grantLicenceAndPayFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
         } else {
-            world.APIJourneySteps.grandLicenceAndPayFees();
+            world.APIJourneySteps.grantLicenceAndPayFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
         }
         world.updateLicence.printLicenceDiscs();
@@ -970,10 +970,10 @@ public class UIJourneySteps extends BasePage {
         world.APIJourneySteps.createApplication();
         world.APIJourneySteps.submitApplication();
         if (String.valueOf(operatorType).equals("public")) {
-            world.APIJourneySteps.grandLicenceAndPayFees();
+            world.APIJourneySteps.grantLicenceAndPayFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
         } else {
-            world.APIJourneySteps.grandLicenceAndPayFees();
+            world.APIJourneySteps.grantLicenceAndPayFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
         }
         world.APIJourneySteps.createAdminUser();

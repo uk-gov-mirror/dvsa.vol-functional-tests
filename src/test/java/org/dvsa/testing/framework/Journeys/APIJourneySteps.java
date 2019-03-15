@@ -104,7 +104,7 @@ public class APIJourneySteps {
         world.createLicence.getUserDetails();
     }
 
-    public void grandLicenceAndPayFees(){
+    public void grantLicenceAndPayFees(){
         world.grantLicence.grantLicence();
         world.grantLicence.payGrantFees();
     }

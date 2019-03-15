@@ -3,6 +3,7 @@ package org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP;
 import activesupport.MissingRequiredArgument;
 import activesupport.http.RestUtils;
 import activesupport.system.Properties;
+import cucumber.api.java.sl.In;
 import io.restassured.response.ValidatableResponse;
 import org.apache.http.HttpStatus;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
@@ -13,8 +14,12 @@ import org.dvsa.testing.lib.url.api.URL;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import javax.xml.ws.http.HTTPException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.dvsa.testing.framework.Utils.API_Headers.Headers.getHeaders;
 
@@ -27,6 +32,7 @@ public class GrantLicenceAPI {
     private World world;
 
     private EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+    private List<Double> feesToPay = new ArrayList<>();
 
     public GrantLicenceAPI(World world) throws MissingRequiredArgument {
         this.world = world;
@@ -38,7 +44,7 @@ public class GrantLicenceAPI {
         String overrideOption = "Y";
         String transportArea = "D";
         String trackingId = "12345";
-        String overviewResource = URL.build(env,String.format("application/%s/overview/", applicationNumber)).toString();
+        String overviewResource = URL.build(env, String.format("application/%s/overview/", applicationNumber)).toString();
         Headers.headers.put("x-pid", world.APIJourneySteps.adminApiHeader());
 
         do {
@@ -62,7 +68,7 @@ public class GrantLicenceAPI {
         }
     }
 
-    public void getOutstandingFees(String applicationNumber){
+    public void getOutstandingFees(String applicationNumber) {
         String getOutstandingFeesResource = URL.build(env, String.format("application/%s/outstanding-fees/", applicationNumber)).toString();
         apiResponse = RestUtils.get(getOutstandingFeesResource, getHeaders());
         if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
@@ -71,18 +77,25 @@ public class GrantLicenceAPI {
             throw new HTTPException(apiResponse.extract().statusCode());
         }
         outstandingFeesIds = apiResponse.extract().response().body().jsonPath().getList("outstandingFees.id");
+        List<String> fees = apiResponse.extract().response().body().jsonPath().get("outstandingFees.grossAmount");
+        for (String d: fees)
+              {
+                  try {
+                      feesToPay.add(Double.parseDouble(d));
+                  }catch (NumberFormatException e){}
+
+        }
     }
 
-    public void payOutstandingFees(String organisationId, String applicationNumber){
-        int feesAmount = 405;
+    public void payOutstandingFees(String organisationId, String applicationNumber) {
         String payer = "apiUser";
         String paymentMethod = "fpm_cash";
         String slipNo = "123456";
 
-        String payOutstandingFeesResource = URL.build(env,"transaction/pay-outstanding-fees/").toString();
+        String payOutstandingFeesResource = URL.build(env, "transaction/pay-outstanding-fees/").toString();
         FeesBuilder feesBuilder = new FeesBuilder().withFeeIds(outstandingFeesIds).withOrganisationId(organisationId).withApplicationId(applicationNumber)
-                .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(GenericUtils.getDates("current",0)).withPayer(payer).withSlipNo(slipNo);
-        apiResponse = RestUtils.post(feesBuilder,payOutstandingFeesResource, getHeaders());
+                .withPaymentMethod(paymentMethod).withReceived(feesToPay.stream().mapToDouble(Double::doubleValue).sum()).withReceiptDate(GenericUtils.getDates("current", 0)).withPayer(payer).withSlipNo(slipNo);
+        apiResponse = RestUtils.post(feesBuilder, payOutstandingFeesResource, getHeaders());
         if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
             System.out.println(apiResponse.extract().statusCode());
             System.out.println(apiResponse.extract().response().asString());
@@ -95,18 +108,16 @@ public class GrantLicenceAPI {
         GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withDuePeriod("9").withCaseworkerNotes("This notes are from the API");
         apiResponse = RestUtils.put(grantApplication, grantApplicationResource, getHeaders());
 
-            if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-                System.out.println(apiResponse.extract().statusCode());
-                System.out.println(apiResponse.extract().response().asString());
-                throw new HTTPException(apiResponse.extract().statusCode());
-            }
-        else  if (apiResponse.extract().response().asString().contains("fee")) {
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        } else if (apiResponse.extract().response().asString().contains("fee")) {
             feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
         }
     }
 
-    public ValidatableResponse payGrantFees(){
-        int feesAmount = 450;
+    public ValidatableResponse payGrantFees() {
         String payer = "apiUser";
         String paymentMethod = "fpm_cash";
         String slipNo = "123456";
@@ -114,10 +125,10 @@ public class GrantLicenceAPI {
         String applicationNumber = world.createLicence.getApplicationNumber();
         feeId = world.grantLicence.feeId;
 
-        String payOutstandingFeesResource = URL.build(env,"transaction/pay-outstanding-fees/").toString();
+        String payOutstandingFeesResource = URL.build(env, "transaction/pay-outstanding-fees/").toString();
         FeesBuilder feesBuilder = new FeesBuilder().withFeeIds(Collections.singletonList(feeId)).withOrganisationId(organisationId).withApplicationId(applicationNumber)
-                .withPaymentMethod(paymentMethod).withReceived(feesAmount).withReceiptDate(GenericUtils.getDates("current",0)).withPayer(payer).withSlipNo(slipNo);
-        apiResponse = RestUtils.post(feesBuilder,payOutstandingFeesResource, getHeaders());
+                .withPaymentMethod(paymentMethod).withReceived(feesToPay.stream().mapToDouble(Double::doubleValue).sum()).withReceiptDate(GenericUtils.getDates("current", 0)).withPayer(payer).withSlipNo(slipNo);
+        apiResponse = RestUtils.post(feesBuilder, payOutstandingFeesResource, getHeaders());
 
         if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
             System.out.println(apiResponse.extract().statusCode());
@@ -142,7 +153,7 @@ public class GrantLicenceAPI {
     }
 
     private void variationGrant(String applicationNumber) {
-        String grantApplicationResource = URL.build(env,String.format("variation/%s/grant/", applicationNumber)).toString();
+        String grantApplicationResource = URL.build(env, String.format("variation/%s/grant/", applicationNumber)).toString();
         GenericBuilder grantVariationBuilder = new GenericBuilder().withId(applicationNumber);
         apiResponse = RestUtils.put(grantVariationBuilder, grantApplicationResource, getHeaders());
 
@@ -150,6 +161,34 @@ public class GrantLicenceAPI {
             System.out.println(apiResponse.extract().statusCode());
             System.out.println(apiResponse.extract().response().asString());
             throw new HTTPException(apiResponse.extract().statusCode());
+        }
+    }
+
+    public void refuse(String applicationNumber) {
+        String grantApplicationResource = URL.build(env, String.format("application/%s/refuse/", applicationNumber)).toString();
+        GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withDuePeriod("9").withCaseworkerNotes("This notes are from the API");
+        apiResponse = RestUtils.put(grantApplication, grantApplicationResource, getHeaders());
+
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        } else if (apiResponse.extract().response().asString().contains("fee")) {
+            feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
+        }
+    }
+
+    public void withdraw(String applicationNumber) {
+        String grantApplicationResource = URL.build(env, String.format("application/%s/withdraw/", applicationNumber)).toString();
+        GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withReason("reg_in_error");
+        apiResponse = RestUtils.put(grantApplication, grantApplicationResource, getHeaders());
+
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        } else if (apiResponse.extract().response().asString().contains("fee")) {
+            feeId = apiResponse.extract().response().jsonPath().getInt("id.fee");
         }
     }
 }
