@@ -9,3 +9,6 @@ then
 else
   mvn clean verify -Denv=qa -Dbrowser=firefox -Dwebdriver-manager=false -Dcucumber.options="--tags $CUCUMBER_TAGS"
 fi
+
+[ -d allure-results ] || mkdir allure-results
+cp target/allure-results/* allure-results/
