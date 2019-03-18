@@ -166,7 +166,7 @@ public class GrantLicenceAPI {
 
     public void refuse(String applicationNumber) {
         String grantApplicationResource = URL.build(env, String.format("application/%s/refuse/", applicationNumber)).toString();
-        GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withDuePeriod("9").withCaseworkerNotes("This notes are from the API");
+        GrantApplicationBuilder grantApplication = new GrantApplicationBuilder().withId(applicationNumber).withCaseworkerNotes("This notes are from the API");
         apiResponse = RestUtils.put(grantApplication, grantApplicationResource, getHeaders());
 
         if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
