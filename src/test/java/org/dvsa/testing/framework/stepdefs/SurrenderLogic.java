@@ -147,6 +147,7 @@ public class SurrenderLogic extends BasePage implements En {
             assertTrue(Browser.navigate().getCurrentUrl().contains("declaration"));
         });
         And("^my application to surrender is under consideration$", () -> {
+            world.updateLicence.printLicenceDiscs();
             world.UIJourneySteps.submitSurrender();
         });
         When("^the caseworker approves the surrender$", () -> {

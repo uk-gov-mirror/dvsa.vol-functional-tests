@@ -910,7 +910,6 @@ public class UIJourneySteps extends BasePage {
             world.APIJourneySteps.grandLicenceAndPayFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
         }
-        world.updateLicence.printLicenceDiscs();
     }
 
     public void closeCase() throws IllegalBrowserException, MalformedURLException {
