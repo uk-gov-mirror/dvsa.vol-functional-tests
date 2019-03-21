@@ -7,7 +7,7 @@ Feature: Change Date Validation On Interim Applications
     Given i have a valid "goods" "sn" licence
     And i create a variation
     And i have logged in to internal
-    And i search for my licence
+    And i search for my application
 
   Scenario: Date not required when creating an interim application
     When I create an interim application with no start and end dates
