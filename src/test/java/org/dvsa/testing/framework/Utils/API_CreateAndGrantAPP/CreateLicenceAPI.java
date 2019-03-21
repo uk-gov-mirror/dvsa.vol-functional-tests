@@ -385,7 +385,6 @@ public class CreateLicenceAPI {
         SelfServeUserRegistrationDetailsBuilder selfServeUserRegistrationDetailsBuilder = new SelfServeUserRegistrationDetailsBuilder().withLoginId(getLoginId()).withContactDetails(contactDetailsBuilder)
                 .withOrganisationName(getOrganisationName()).withBusinessType(String.valueOf(BusinessType.getEnum(getBusinessType())));
 
-
         apiResponse = RestUtils.post(selfServeUserRegistrationDetailsBuilder, registerResource, getHeaders());
         userId = apiResponse.extract().jsonPath().getString("id.user");
 
@@ -401,7 +400,7 @@ public class CreateLicenceAPI {
 
         String userDetailsResource = URL.build(env, String.format("user/selfserve/%s", userId)).toString();
         apiResponse = RestUtils.get(userDetailsResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        apiResponse.statusCode(HttpStatus.SC_OK);
         setPid(apiResponse.extract().jsonPath().getString("pid"));
         organisationId = apiResponse.extract().jsonPath().prettyPeek().getString("organisationUsers.organisation.id");
         setOrganisationId(organisationId);
@@ -523,7 +522,7 @@ public class CreateLicenceAPI {
         }
         if (operatorType.equals("public") && (licenceType.equals("restricted"))) {
             AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(getPostcode()).withCountryCode(countryCode);
-            operatingCentreBuilder.withApplication(getApplicationNumber()).withNoOfVehiclesRequired(getApplicationNumber()).withPermission(permissionOption).withAddress(address);
+            operatingCentreBuilder.withApplication(getApplicationNumber()).withNoOfVehiclesRequired(String.valueOf(restrictedVehicles)).withPermission(permissionOption).withAddress(address);
         }
         if (!licenceType.equals("special_restricted")) {
             apiResponse = RestUtils.post(operatingCentreBuilder, operatingCentreResource, getHeaders());

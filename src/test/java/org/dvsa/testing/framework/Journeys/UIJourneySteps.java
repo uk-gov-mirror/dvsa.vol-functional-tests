@@ -138,7 +138,6 @@ public class UIJourneySteps extends BasePage {
 
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
         waitForTextToBePresent("Overview");
-        clickByLinkText("Bus registration");
         clickByLinkText("Bus registrations");
         click(nameAttribute("button", "action"));
         waitForTextToBePresent("Service details");

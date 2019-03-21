@@ -80,6 +80,8 @@ public class InterimLicence extends BasePage implements En {
             world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
         });
         And("^i search for my application", () -> {
+            world.APIJourneySteps.createAdminUser();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
             world.UIJourneySteps.searchAndViewApplication();
         });
         When("^I create an interim application with a start and no end date$", () -> {
