@@ -842,7 +842,6 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Surrender details");
         waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
         waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
-        waitAndClick("actions[surrender]", SelectorType.ID);
     }
 
     public void signManually() throws IllegalBrowserException, MalformedURLException {

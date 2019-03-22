@@ -26,14 +26,14 @@ Feature: Logic for Surrender menu item
     And the surrender menu should be hidden in internal
     And the user should be able to re apply for a surrender in internal
 
-  Scenario: Cancel valid licence surrender withdraw
+  Scenario: Cancel surrender withdraw for valid licence
     And my application to surrender is under consideration
     When the caseworker attempts to withdraw the surrender
     And the caseworker cancels the withdraw
     Then the modal box is hidden
     And the surrender menu should be displayed
 
-  Scenario Outline: Cancel suspended, curtailed licence surrender withdraw
+  Scenario Outline: Cancel surrender withdraw for suspended and curtailed licence
     And the licence status is "<licence_status>"
     And my application to surrender is under consideration
     When the caseworker attempts to withdraw the surrender

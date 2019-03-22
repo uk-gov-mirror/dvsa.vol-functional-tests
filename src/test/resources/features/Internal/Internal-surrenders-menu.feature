@@ -19,6 +19,3 @@ Feature: View Surrender Menu and details on Internal
     And the tick boxes are checked
     When the Surrender button is clicked
     Then the licence should be surrendered
-
-
-

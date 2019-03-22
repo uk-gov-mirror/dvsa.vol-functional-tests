@@ -677,7 +677,7 @@ public class CreateLicenceAPI {
             // no need to submit details
         } else {
             String vehiclesResource = null;
-            String[] licencePlates = {"q", "x", "y", "g"};
+            String[] licencePlates = {"a", "s", "q", "x", "y", "g"};
             String vrm;
 
             if (getOperatorType().equals("goods")) {
@@ -688,10 +688,12 @@ public class CreateLicenceAPI {
             }
             do {
                 for (int i = 0; i < getNoOfVehiclesRequired(); ) {
-                    vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
+                    vrm = "v".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 999))))
+                           .toLowerCase();
                     for (String letters : licencePlates) {
                         if (vrm.contains(letters))
-                            vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).toLowerCase();
+                            vrm = "vg".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))))
+                                    .toLowerCase();
                     }
                     VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).withVersion(version);
                     assert vehiclesResource != null;
