@@ -17,6 +17,7 @@ Feature: Remove last Transport Manager (TM) pop up
     Then the remove TM popup should not be displaying new TM remove text
 
   Scenario: Pop up should display new warning message when the last TM is removed from an application
+    And the licence has been granted
     When the transport manager has been removed by an internal user
     Then the remove TM popup should not be displaying new TM remove text
 
