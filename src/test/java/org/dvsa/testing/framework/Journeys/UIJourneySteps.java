@@ -138,7 +138,6 @@ public class UIJourneySteps extends BasePage {
 
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
         waitForTextToBePresent("Overview");
-        clickByLinkText("Bus registration");
         clickByLinkText("Bus registrations");
         click(nameAttribute("button", "action"));
         waitForTextToBePresent("Service details");
@@ -843,7 +842,6 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Surrender details");
         waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
         waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
-        waitAndClick("actions[surrender]", SelectorType.ID);
     }
 
     public void signManually() throws IllegalBrowserException, MalformedURLException {
@@ -911,7 +909,6 @@ public class UIJourneySteps extends BasePage {
             world.APIJourneySteps.grandLicenceAndPayFees();
             System.out.println("Licence: " + world.createLicence.getLicenceNumber());
         }
-        world.updateLicence.printLicenceDiscs();
     }
 
     public void closeCase() throws IllegalBrowserException, MalformedURLException {
