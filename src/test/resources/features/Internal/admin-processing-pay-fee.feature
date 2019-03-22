@@ -13,3 +13,6 @@ Feature: Admin payment process
     Examples:
       | payment-method |
       | card           |
+      | cash           |
+      | cheque         |
+      | postal         |
