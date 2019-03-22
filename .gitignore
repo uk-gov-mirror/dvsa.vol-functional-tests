@@ -135,3 +135,4 @@ target/
 /allure-report.zip
 /src/test/resources/Operator.csv
 /src/test/resources/TM.csv
+/src/test/java/org/dvsa/testing/framework/stepdefs/UpgradingApps.java

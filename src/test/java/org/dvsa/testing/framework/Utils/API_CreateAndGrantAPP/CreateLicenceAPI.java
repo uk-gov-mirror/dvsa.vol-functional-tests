@@ -18,7 +18,6 @@ import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import javax.xml.ws.http.HTTPException;
 import java.util.HashMap;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
@@ -363,7 +362,7 @@ public class CreateLicenceAPI {
     public CreateLicenceAPI() throws MissingRequiredArgument {
         if (licenceType == null) {
             operatorType = "goods";
-            licenceType = "standard_international";
+            licenceType = "standard_national";
             businessType = "limited_company";
             niFlag = "N";
             isInterim = "N";

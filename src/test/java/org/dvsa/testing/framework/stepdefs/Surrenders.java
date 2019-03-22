@@ -143,8 +143,8 @@ public class Surrenders extends BasePage implements En {
             this.discsLost = "2";
             this.discsToDestroy = "2";
             this.discsStolen = "1";
-            click("//*[@id='submit']", SelectorType.XPATH);
-            waitForTextToBePresent("Review your contact information");
+//            click("//*[@id='submit']", SelectorType.XPATH);
+            waitForTextToBePresent("Review your surrender information");
             click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
             world.UIJourneySteps.navigateToSurrenderReviewPage(discsToDestroy, discsLost, discsStolen);
         });

@@ -1,4 +1,4 @@
-@SS
+
 @Surrender
 Feature: Sign surrender
 

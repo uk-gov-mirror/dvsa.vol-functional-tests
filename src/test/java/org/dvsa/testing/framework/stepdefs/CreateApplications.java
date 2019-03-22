@@ -9,8 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateApplications extends BasePage implements En  {
     public CreateApplications(World world) {
-        Given("^i have a \"([^\"]*)\" application$", (String operatorType) -> {
+        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" application$", (String operatorType,String licenceType) -> {
             world.createLicence.setOperatorType(operatorType);
+            world.createLicence.setLicenceType(licenceType);
             world.APIJourneySteps.registerAndGetUserDetails();
             world.APIJourneySteps.createApplication();
         });
