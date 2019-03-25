@@ -4,6 +4,7 @@ import activesupport.MissingRequiredArgument;
 import activesupport.http.RestUtils;
 import activesupport.string.Str;
 import activesupport.system.Properties;
+import enums.BusinessType;
 import enums.LicenceType;
 import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
@@ -12,10 +13,12 @@ import org.assertj.core.api.Assertions;
 import org.dvsa.testing.framework.Utils.API_Builders.*;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import Injectors.World;
+import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 import org.hamcrest.Matchers;
 
+import javax.xml.ws.http.HTTPException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -498,5 +501,27 @@ public class UpdateLicenceAPI extends BasePage {
                 .withLicenceType(String.valueOf(LicenceType.getEnum(world.createLicence.getLicenceType()))).withNiFlag(world.createLicence.getNiFlag()).withQueueId(getQueueId());
         apiResponse = RestUtils.post(confirmPrintBuilder,discConfirmResource,getHeaders());
         apiResponse.statusCode(HttpStatus.SC_CREATED);
+    }
+
+    public void grantInterimApplication(){
+        Headers.getHeaders().put("x-pid",adminApiHeader());
+        String interimApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env,String.format("application/%s/interim/",world.createLicence.getApplicationNumber())).toString();
+
+        do {
+            InterimApplicationBuilder interimApplicationBuilder = new InterimApplicationBuilder().withAuthVehicles(String.valueOf(world.createLicence.getNoOfVehiclesRequired())).withAuthTrailers(String.valueOf(world.createLicence.getNoOfVehiclesRequired()))
+                    .withRequested("Y").withReason("Interim granted through the API").withStartDate(GenericUtils.getCurrentDate("yyyy-MM-dd")).withEndDate(GenericUtils.getFutureFormattedDate(2,"yyyy-MM-dd"))
+                    .withAction("grant").withId(world.createLicence.getApplicationNumber()).withVersion(version);
+            apiResponse = RestUtils.put(interimApplicationBuilder,interimApplicationResource,getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
     }
 }

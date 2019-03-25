@@ -176,6 +176,12 @@ public class GenericUtils extends BasePage {
         return formatDateTime;
     }
 
+    public static String getFutureFormattedDate(@NotNull int months, String datePattern) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
+        String formatDateTime = LocalDate.now().plusMonths(months).format(formatter);
+        return formatDateTime;
+    }
+
     public String confirmationPanel(String locator, String cssValue) throws IllegalBrowserException, MalformedURLException {
         return Browser.navigate().findElement(By.xpath(locator)).getCssValue(cssValue);
     }

@@ -22,16 +22,25 @@ Feature: Fee paid on new application
 #
 #    Examples:
 #      | OperatorType | LicenceType |
-#      | goods        | si          |
+#      | goods        | sn          |
+
+#  Scenario Outline: Interim fee has been paid and licence has been granted
+#    Given i have an interim "<OperatorType>" "<LicenceType>" application
+#    When the interim fee has been paid
+#    And the licence is granted
+#    Then the interim fee should be refunded
+#
+#    Examples:
+#      | OperatorType | LicenceType |
 #      | goods        | sn          |
 
   Scenario Outline: Interim fee has been paid and licence has been granted
     Given i have an interim "<OperatorType>" "<LicenceType>" application
     When the interim fee has been paid
-    And the licence and interim have been granted
-    Then the interim fee should not be refunded
+    And the interim is granted
+    And the licence is granted
+    Then the interim fee should be refunded
 
     Examples:
       | OperatorType | LicenceType |
-      | goods        | si          |
-#      | goods        | sn          |
+      | goods        | sn          |

@@ -34,8 +34,11 @@ public class RefundInterim implements En {
         });
         Then("^the interim fee should not be refunded$", () -> {
         });
-        And("^the licence and interim have been granted$", () -> {
+        And("^the licence is granted$", () -> {
             world.APIJourneySteps.grantLicenceAndPayFees();
+        });
+        And("^the interim is granted$", () -> {
+            world.updateLicence.grantInterimApplication();
         });
     }
 }
