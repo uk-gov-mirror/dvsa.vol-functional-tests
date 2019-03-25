@@ -45,8 +45,12 @@ public class DirectorVariation extends BasePage implements En {
             assertEquals(isSelected, "");
         });
         When("^i enter \"([^\"]*)\" previous convictions details question$", (String arg0) -> {
-            selectAllExternalRadioButtons(arg0);
-            if (arg0.equals("Yes")) {
+            if (arg0.equals("No")) {
+                arg0 = "N";
+                findSelectAllRadioButtonsByValue(arg0);
+            } else {
+                arg0 = "Y";
+                findSelectAllRadioButtonsByValue(arg0);
                 click("add", SelectorType.ID);
                 world.UIJourneySteps.addPreviousConviction();
             }
@@ -60,8 +64,12 @@ public class DirectorVariation extends BasePage implements En {
             assertEquals(isSelected, "selected");
         });
         And("^i enter \"([^\"]*)\" to financial details question$", (String arg0) -> {
-            selectAllExternalRadioButtons(arg0);
-            if (arg0.equals("Yes")) {
+            if (arg0.equals("No")) {
+                arg0 = "N";
+                findSelectAllRadioButtonsByValue(arg0);
+            } else {
+                arg0 = "Y";
+                findSelectAllRadioButtonsByValue(arg0);
                 enterText("data[insolvencyDetails]", Str.randomWord(150), SelectorType.ID);
             }
             clickByName("form-actions[saveAndContinue]");
@@ -76,13 +84,13 @@ public class DirectorVariation extends BasePage implements En {
         });
         Given("^i add a director$", () -> {
             world.UIJourneySteps.navigateToDirectorsPage();
-            world.UIJourneySteps.addDirector(firstName,lastName);
+            world.UIJourneySteps.addDirector(firstName, lastName);
         });
         Then("^i should have multiple directors on my application$", () -> {
             waitForTextToBePresent("Directors");
             List<WebElement> director = listOfWebElements("//*/tbody/tr[*]/td[1]/input", SelectorType.XPATH);
             long directors = director.size();
-            MatcherAssert.assertThat(directors,greaterThan(1L));
+            MatcherAssert.assertThat(directors, greaterThan(1L));
             assertTrue(director.stream().anyMatch(d -> d.getAttribute("value").contains(firstName)));
         });
         When("^i add a new director$", () -> {
@@ -98,13 +106,14 @@ public class DirectorVariation extends BasePage implements En {
         });
 
         When("^i remove a the last director$", () -> {
-            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
+            world.APIJourneySteps.createAdminUser();
+            world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             world.UIJourneySteps.navigateToDirectorsPage();
             world.UIJourneySteps.removeDirector();
         });
 
         Then("^a task should be created in internal$", () -> {
-            world.UIJourneySteps.navigateToInternalAdminUserLogin();
+           world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
             world.UIJourneySteps.searchAndViewApplication();
         });
 

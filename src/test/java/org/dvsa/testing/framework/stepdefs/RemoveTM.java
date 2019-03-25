@@ -34,8 +34,8 @@ public class RemoveTM extends BasePage implements En {
         });
         When("^the transport manager has been removed by an internal user$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.navigateToInternalAdminUserLogin();
-            world.UIJourneySteps.searchAndViewApplication();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
+            world.UIJourneySteps.searchAndViewLicence();
             world.UIJourneySteps.removeInternalTransportManager();
         });
         Then("^a pop up message should be displayed$", () -> {

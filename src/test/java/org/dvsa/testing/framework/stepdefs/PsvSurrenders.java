@@ -3,10 +3,10 @@ package org.dvsa.testing.framework.stepdefs;
 import Injectors.World;
 import activesupport.driver.Browser;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -18,76 +18,73 @@ public class PsvSurrenders extends BasePage implements En {
     public PsvSurrenders(World world) {
         And("^i choose to surrender my licence$", () -> {
             world.UIJourneySteps.navigateToSurrendersStartPage();
-        });
-        When("^i am on the review contact details page$", () -> {
-            click("//*[@id='submit']", SelectorType.XPATH);
-            waitForTextToBePresent("Review your contact information");
+            world.UIJourneySteps.startSurrender();
+            waitAndClick("form-actions[submit]",SelectorType.ID);
+            world.UIJourneySteps.addDiscInformation("2", "2", "1");
+            waitForTextToBePresent("In your possession");
+            world.UIJourneySteps.addOperatorLicenceDetails();
+            if (world.createLicence.getLicenceType().equals("standard_international")) {
+                assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
+                world.UIJourneySteps.addCommunityLicenceDetails();
+            }
         });
 
         Then("^the correct licence details should be displayed$", () -> {
             String licenceNumber = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][1]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
-            Assert.assertEquals(world.updateLicence.getLicenceStatusDetails(),licenceNumber);
-            String licenceHolder = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][1]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
-            Assert.assertEquals(world.createLicence.getForeName()+" "+world.createLicence.getFamilyName(),licenceHolder);
+            Assert.assertEquals(world.createLicence.getLicenceNumber(), licenceNumber);
         });
         And("^the correct correspondence details should be displayed$", () -> {
-            String licenceAddress1 = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
-            Assert.assertEquals(world.createLicence.getAddressLine1(),licenceAddress1);
-            String licenceTown = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][3]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
-            Assert.assertEquals(world.createLicence.getTown(),licenceTown);
+            Assertions.assertEquals(world.UIJourneySteps.getSurrenderAddressLine1(), world.createLicence.getAddressLine1());
+            Assertions.assertEquals(world.UIJourneySteps.getSurrenderTown(), world.createLicence.getTown());
         });
         And("^the correct contact details should be displayed$", () -> {
             String contactNumber = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][3]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
-            Assert.assertEquals(world.createLicence.getPhoneNumber(),contactNumber);
+            Assert.assertEquals(world.createLicence.getPhoneNumber(), contactNumber);
             String emailAddress = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][3]/div[@class='app-check-your-answers__contents'][3]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
-            Assert.assertEquals(world.createLicence.getBusinessEmailAddress(),emailAddress);
+            Assert.assertEquals(world.createLicence.getBusinessEmailAddress(), emailAddress);
         });
         And("^i update my correspondence address$", () -> {
             this.town = "Leicester";
             click("//a[contains(text(),'Change')][1]", SelectorType.XPATH);
             waitForTextToBePresent("Addresses");
-            findElement("addressTown", SelectorType.ID,5).clear();
-            enterText("addressTown",this.town,SelectorType.ID);
-            click("//*[@id='form-actions[save]']",SelectorType.XPATH);
+            findElement("addressTown", SelectorType.ID, 5).clear();
+            enterText("addressTown", this.town, SelectorType.ID);
+            click("//*[@id='form-actions[save]']", SelectorType.XPATH);
             waitForTextToBePresent("Review your contact information");
         });
         Then("^the new correspondence details should be displayed on the review page$", () -> {
             String licenceTown = getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
-            Assert.assertEquals(this.town,licenceTown);
+            Assert.assertEquals(this.town, licenceTown);
         });
         Given("^i sign with verify$", () -> {
-            String declarationUrl = GenericUtils.scanText(Browser.navigate().getCurrentUrl(),"review-contact-details/").next();
-            Browser.navigate().get(declarationUrl.concat("declaration"));
-            waitAndClick("//*[@id='sign']",SelectorType.XPATH);
-            world.UIJourneySteps.signWithVerify("pavlov","Password1");
+            waitAndClick("//*[@id='sign']", SelectorType.XPATH);
+            world.UIJourneySteps.signWithVerify("pavlov", "Password1");
         });
         Then("^the post verify success page is displayed$", () -> {
             waitForTextToBePresent("What happens next");
             Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
-            Assert.assertTrue(isTextPresent(String.format("Application to surrender licence %s", world.createLicence.getLicenceNumber()),10));
-            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("dd MMM yyyy")), 20));
-            assertTrue(isTextPresent("notifications@vehicle-operator-licensing.service.gov.uk",10));
-            waitAndClick("//*[@id='return']",SelectorType.ID);
+            Assert.assertTrue(isTextPresent(String.format("Application to surrender licence %s", world.createLicence.getLicenceNumber()), 10));
+            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("d MMM yyyy")), 20));
+            assertTrue(isTextPresent("notifications@vehicle-operator-licensing.service.gov.uk", 10));
+            waitAndClick("//*[contains(text(),'home')]", SelectorType.XPATH);
         });
         And("^the surrender status is \"([^\"]*)\"$", (String status) -> {
             waitForTextToBePresent("Current licences");
-            //TODO check for label belonging to licence
-//            String surrenderStatus = status;
-//            assertEquals(SurrenderStatus,getText());
+            Assertions.assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), status.toUpperCase());
         });
         Then("^the number of disc should match the vehicles registered on the licence$", () -> {
-            assertEquals(getText("//*[@id=\"main\"]/div/div/div[2]/div/p[2]/strong",SelectorType.XPATH),String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
+            assertEquals(getText("//*[@id=\"main\"]/div/div/div[2]/div/p[2]/strong", SelectorType.XPATH), String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
         });
         And("^discs have been added to my licence$", () -> {
-           world.updateLicence.printLicenceDiscs();
+            world.updateLicence.printLicenceDiscs();
         });
         And("^i navigate to the current discs page$", () -> {
-            click("//*[@id='form-actions[submit]']",SelectorType.XPATH);
+            click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
         });
         And("^i navigate to the review page$", () -> {
             world.updateLicence.printLicenceDiscs();
-            click("//*[@id='form-actions[submit]']",SelectorType.XPATH);
-            world.UIJourneySteps.navigateToSurrenderReviewPage();
+            click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+            world.UIJourneySteps.navigateToSurrenderReviewPage("2", "2", "1");
         });
     }
 }

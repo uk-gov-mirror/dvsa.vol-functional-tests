@@ -6,7 +6,6 @@ import activesupport.jenkins.Jenkins;
 import activesupport.jenkins.JenkinsParameterKey;
 import activesupport.system.Properties;
 import cucumber.api.java8.En;
-import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
@@ -20,25 +19,13 @@ public class GenerateLastTMLetter extends BasePage implements En {
 
     public GenerateLastTMLetter(World world) {
 
-        Given("^i have a valid \"([^\"]*)\" licence$", (String arg0) -> {
-            world.genericUtils = new GenericUtils(world);
-            world.createLicence.setOperatorType(arg0);
-            world.APIJourneySteps.registerAndGetUserDetails();
-            world.APIJourneySteps.createApplication();
-            world.APIJourneySteps.submitApplication();
-            if(String.valueOf(arg0).equals("public")){
-                world.APIJourneySteps.grandLicenceAndPayFees();
-                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
-            }
-            else {
-                world.APIJourneySteps.grandLicenceAndPayFees();
-                System.out.println("Licence: " + world.createLicence.getLicenceNumber());
-            }
+        Given("^i have a valid \"([^\"]*)\" \"([^\"]*)\" licence$", (String operatorType, String licenceType) -> {
+            world.UIJourneySteps.createLicence(world, operatorType, licenceType);
         });
         Then("^a flag should be set in the DB$", () -> {
             ResultSet resultSet = DBUnit.checkResult(String.format("SELECT opt_out_tm_letter FROM OLCS_RDS_OLCSDB.licence\n" +
-                    "WHERE lic_no='%s';",world.createLicence.getLicenceNumber()));
-            if(resultSet.next()) {
+                    "WHERE lic_no='%s';", world.createLicence.getLicenceNumber()));
+            if (resultSet.next()) {
                 int columnValue = Integer.parseInt(resultSet.getString("opt_out_tm_letter"));
                 assertEquals(0, columnValue);
             }
@@ -48,7 +35,7 @@ public class GenerateLastTMLetter extends BasePage implements En {
         });
         And("^the user confirms they want to send letter$", () -> {
             waitForTextToBePresent(alertHeaderValue);
-            click("//*[@class='form-control form-control--radio form-control--inline'][1]", SelectorType.XPATH);
+            findSelectAllRadioButtonsByValue("Y");
             click("//*[@id='form-actions[submit]']", SelectorType.XPATH);
         });
         And("^the batch job has run$", () -> {

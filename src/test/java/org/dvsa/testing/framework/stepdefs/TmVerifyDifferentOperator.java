@@ -19,6 +19,7 @@ import org.openqa.selenium.support.Color;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.junit.Assert.assertFalse;
@@ -107,13 +108,14 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
             String declarationUrl = GenericUtils.scanText(Browser.navigate().getCurrentUrl(),"review-contact-details/").next();
             Browser.navigate().get(declarationUrl.concat("declaration"));
             click("//*[contains(text(),'Print')]", SelectorType.XPATH);
+            waitAndClick("//*[contains(text(),'Print')]", SelectorType.XPATH);
         });
         And("^I am the operator and not the transport manager$", () -> {
             world.createLicence.setIsOwner("N");
         });
         And("^i add an existing person as a transport manager who is not the operator$", () -> {
             world.UIJourneySteps.addInternalAdmin();
-            world.UIJourneySteps.addOperatorUserAsTransportManager(1, "No");
+            world.UIJourneySteps.addOperatorUserAsTransportManager(1, "N");
         });
         And("^the operator countersigns digitally$", () -> {
             waitForTextToBePresent("What happens next?");
@@ -162,7 +164,7 @@ public class TmVerifyDifferentOperator extends BasePage implements En {
         } else {
             declarationText = "operator-NI-declaration.txt";
         }
-        return Paths.get(getClass().getClassLoader()
-                .getResource(declarationText).toURI());
+        return Paths.get(Objects.requireNonNull(getClass().getClassLoader()
+                .getResource(declarationText)).toURI());
     }
 }

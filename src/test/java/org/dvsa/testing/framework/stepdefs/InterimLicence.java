@@ -1,7 +1,9 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import activesupport.driver.Browser;
 import cucumber.api.java8.En;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.dvsa.testing.lib.pages.internal.*;
 import org.joda.time.LocalDate;
 import org.dvsa.testing.lib.pages.BasePage;
@@ -21,7 +23,7 @@ public class InterimLicence extends BasePage implements En {
 
         When("^I have an interim vehicle authority greater than my application vehicle authority$", () -> {
             clickByLinkText("add interim");
-            InterimPage.addInterim();
+            findSelectAllRadioButtonsByValue("Y");
             InterimPage.startDate(LocalDate.now().getDayOfWeek(), LocalDate.now().getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.endDate(LocalDate.now().plusDays(7).getDayOfWeek(), LocalDate.now().plusMonths(2).getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.vehicleAuthority(world.createLicence.getNoOfVehiclesRequired() + 1);
@@ -29,7 +31,7 @@ public class InterimLicence extends BasePage implements En {
 
         When("^I have an interim vehicle authority equal to my application vehicle authority$", () -> {
             clickByLinkText("add interim");
-            InterimPage.addInterim();
+            findSelectAllRadioButtonsByValue("Y");
             InterimPage.enterInterimDetail("Test Test");
             InterimPage.startDate(LocalDate.now().getDayOfWeek(), LocalDate.now().getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.endDate(LocalDate.now().plusDays(7).getDayOfWeek(), LocalDate.now().plusMonths(2).getMonthOfYear(), LocalDate.now().getYear());
@@ -38,7 +40,7 @@ public class InterimLicence extends BasePage implements En {
 
         When("^I have an interim vehicle authority less than my application vehicle authority$", () -> {
             clickByLinkText("add interim");
-            InterimPage.addInterim();
+            findSelectAllRadioButtonsByValue("Y");
             InterimPage.enterInterimDetail("Test Test");
             InterimPage.startDate(LocalDate.now().getDayOfWeek(), LocalDate.now().getMonthOfYear(), LocalDate.now().getYear());
             InterimPage.endDate(LocalDate.now().plusDays(7).getDayOfWeek(), LocalDate.now().plusMonths(2).getMonthOfYear(), LocalDate.now().getYear());
@@ -47,7 +49,7 @@ public class InterimLicence extends BasePage implements En {
 
         When("^I create an interim application with no start and end dates$", () -> {
             clickByLinkText("add interim");
-            InterimPage.addInterim();
+            findSelectAllRadioButtonsByValue("Y");
             InterimPage.enterInterimDetail("Test Test");
             InterimPage.vehicleAuthority(world.createLicence.getNoOfVehiclesRequired());
             InterimPage.trailerAuthority(world.createLicence.getNoOfVehiclesRequired());
@@ -77,14 +79,20 @@ public class InterimLicence extends BasePage implements En {
         });
         And("^i have logged in to internal$", () -> {
             world.APIJourneySteps.createAdminUser();
-            world.UIJourneySteps.navigateToInternalAdminUserLogin();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
         });
-        And("^i search for my licence$", () -> {
-            world.UIJourneySteps.searchAndViewApplication();
+        And("^i search for my application", () -> {
+            if (isElementPresent("//select[@id='search-select']", SelectorType.XPATH)) {
+                world.UIJourneySteps.searchAndViewApplication();
+            } else {
+                world.APIJourneySteps.createAdminUser();
+                world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
+                world.UIJourneySteps.searchAndViewApplication();
+            }
         });
         When("^I create an interim application with a start and no end date$", () -> {
             clickByLinkText("add interim");
-            InterimPage.addInterim();
+            findSelectAllRadioButtonsByValue("Y");
             InterimPage.startDate(10, 8, 2017);
             InterimPage.enterInterimDetail("Test Test");
             InterimPage.vehicleAuthority(world.createLicence.getNoOfVehiclesRequired());

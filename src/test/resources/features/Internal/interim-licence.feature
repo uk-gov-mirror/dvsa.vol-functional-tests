@@ -4,9 +4,10 @@
 Feature: Change Validation On Interim Vehicle Authority
 
   Background:
-    Given i have a valid "goods" licence
-    And i have logged in to internal
-    And i search for my licence
+    Given i have a valid "goods" "sn" licence
+    And i create a variation
+    When i have logged in to internal
+    And i search for my application
 
   Scenario: Interim Vehicle Authority Greater than Application Vehicle Authority
     When  I have an interim vehicle authority greater than my application vehicle authority

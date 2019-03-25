@@ -18,6 +18,7 @@ import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import javax.xml.ws.http.HTTPException;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dvsa.testing.framework.Journeys.APIJourneySteps.adminApiHeader;
@@ -362,7 +363,7 @@ public class CreateLicenceAPI {
     public CreateLicenceAPI() throws MissingRequiredArgument {
         if (licenceType == null) {
             operatorType = "goods";
-            licenceType = "standard_national";
+            licenceType = "standard_international";
             businessType = "limited_company";
             niFlag = "N";
             isInterim = "N";
@@ -384,7 +385,6 @@ public class CreateLicenceAPI {
         SelfServeUserRegistrationDetailsBuilder selfServeUserRegistrationDetailsBuilder = new SelfServeUserRegistrationDetailsBuilder().withLoginId(getLoginId()).withContactDetails(contactDetailsBuilder)
                 .withOrganisationName(getOrganisationName()).withBusinessType(String.valueOf(BusinessType.getEnum(getBusinessType())));
 
-
         apiResponse = RestUtils.post(selfServeUserRegistrationDetailsBuilder, registerResource, getHeaders());
         userId = apiResponse.extract().jsonPath().getString("id.user");
 
@@ -400,7 +400,7 @@ public class CreateLicenceAPI {
 
         String userDetailsResource = URL.build(env, String.format("user/selfserve/%s", userId)).toString();
         apiResponse = RestUtils.get(userDetailsResource, getHeaders());
-        assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+        apiResponse.statusCode(HttpStatus.SC_OK);
         setPid(apiResponse.extract().jsonPath().getString("pid"));
         organisationId = apiResponse.extract().jsonPath().prettyPeek().getString("organisationUsers.organisation.id");
         setOrganisationId(organisationId);
@@ -474,10 +474,9 @@ public class CreateLicenceAPI {
 
     public void addAddressDetails() {
         String phoneNumber = "0712345678";
-        String establishmentAddress = "establishment";
         String businessEmail = Str.randomWord(6).concat(".volBusiness@dvsa.com");
         String applicationAddressResource = URL.build(env, String.format("application/%s/addresses/", applicationNumber)).toString();
-        AddressBuilder address = new AddressBuilder().withAddressLine1(establishmentAddress).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
+        AddressBuilder address = new AddressBuilder().withAddressLine1(addressLine1).withTown(town).withPostcode(postcode).withCountryCode(countryCode);
         ContactDetailsBuilder contactDetailsBuilder = new ContactDetailsBuilder().withPhoneNumber(phoneNumber).withEmailAddress(businessEmail);
         ApplicationAddressBuilder addressBuilder = new ApplicationAddressBuilder().withId(applicationNumber).withConsultant("Consult").withContact(contactDetailsBuilder)
                 .withCorrespondenceAddress(address).withEstablishmentAddress(address);
@@ -523,7 +522,7 @@ public class CreateLicenceAPI {
         }
         if (operatorType.equals("public") && (licenceType.equals("restricted"))) {
             AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(getPostcode()).withCountryCode(countryCode);
-            operatingCentreBuilder.withApplication(getApplicationNumber()).withNoOfVehiclesRequired(getApplicationNumber()).withPermission(permissionOption).withAddress(address);
+            operatingCentreBuilder.withApplication(getApplicationNumber()).withNoOfVehiclesRequired(String.valueOf(restrictedVehicles)).withPermission(permissionOption).withAddress(address);
         }
         if (!licenceType.equals("special_restricted")) {
             apiResponse = RestUtils.post(operatingCentreBuilder, operatingCentreResource, getHeaders());
@@ -616,7 +615,7 @@ public class CreateLicenceAPI {
             String submitTransportManager = URL.build(env, String.format("transport-manager-application/%s/submit", getApplicationNumber())).toString();
             GenericBuilder genericBuilder = new GenericBuilder().withId(getTransportManagerApplicationId()).withVersion(1);
             apiResponse = RestUtils.put(genericBuilder, submitTransportManager, getHeaders());
-            assertThat(apiResponse.statusCode(HttpStatus.SC_OK));
+            apiResponse.statusCode(HttpStatus.SC_OK);
         }
         if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
             System.out.println(apiResponse.extract().statusCode());
@@ -677,36 +676,40 @@ public class CreateLicenceAPI {
         if (getOperatorType().equals("public") && (getOperatorType().equals("special_restricted"))) {
             // no need to submit details
         } else {
-            for (int i = 0; i < getNoOfVehiclesRequired(); ) {
-                String vehiclesResource = null;
-                String vrm;
-                vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999)));
-                if (vrm.contains("Q") || vrm.contains("q")) {
-                    vrm = "vr".concat(Str.randomWord(1)).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999)));
-                }
-                if (getOperatorType().equals("goods")) {
-                    vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
-                }
-                if (getOperatorType().equals("public")) {
-                    vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
-                }
+            String vehiclesResource = null;
+            String[] licencePlates = {"a", "s", "q", "x", "y", "g"};
+            String vrm;
 
-                do {
-                    VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight("5000").withVersion(version);
+            if (getOperatorType().equals("goods")) {
+                vehiclesResource = URL.build(env, String.format("application/%s/goods-vehicles", getApplicationNumber())).toString();
+            }
+            if (getOperatorType().equals("public")) {
+                vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
+            }
+            do {
+                for (int i = 0; i < getNoOfVehiclesRequired(); ) {
+                    vrm = "v".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 999))))
+                           .toLowerCase();
+                    for (String letters : licencePlates) {
+                        if (vrm.contains(letters))
+                            vrm = "vg".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))))
+                                    .toLowerCase();
+                    }
+                    VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).withVersion(version);
+                    assert vehiclesResource != null;
                     apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
                     i++;
                 }
-                while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().response().asString().contains("Vehicle exists on other licence"))
-                || apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY);
+            }
+            while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)
+                    || (apiResponse.extract().statusCode() == HttpStatus.SC_UNPROCESSABLE_ENTITY));
 
-                if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
-                    System.out.println(apiResponse.extract().statusCode());
-                    System.out.println(apiResponse.extract().response().asString());
-                    throw new HTTPException(apiResponse.extract().statusCode());
-                }
+            if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
+                System.out.println(apiResponse.extract().statusCode());
+                System.out.println(apiResponse.extract().response().asString());
+                throw new HTTPException(apiResponse.extract().statusCode());
             }
         }
-
     }
 
     public void submitVehicleDeclaration() {

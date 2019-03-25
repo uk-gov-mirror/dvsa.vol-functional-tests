@@ -18,11 +18,17 @@ import org.dvsa.testing.lib.url.utils.EnvironmentType;
 import org.dvsa.testing.lib.url.webapp.URL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
+import java.util.Set;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getCurrentDate;
 import static org.dvsa.testing.framework.Utils.Generic.GenericUtils.getFutureDate;
 
 
@@ -30,6 +36,8 @@ public class UIJourneySteps extends BasePage {
 
     private World world;
     EnvironmentType env = EnvironmentType.getEnum(Properties.get("env", true));
+    private String localUser = Properties.get("localUser", false);
+    private String localDefaultPassword = Properties.get("localDefaultPassword", false);
     static int tmCount;
     private static final String zipFilePath = "/src/test/resources/ESBR.zip";
     private String verifyUsername;
@@ -37,11 +45,19 @@ public class UIJourneySteps extends BasePage {
     private String operatorUserEmail;
     private String operatorForeName;
     private String operatorFamilyName;
-    private String externalPassword;
     private String externalTMUser;
     private String externalTMEmail;
     private String password;
+    private String licenceNumber;
 
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getVerifyUsername() {
         return verifyUsername;
@@ -87,13 +103,6 @@ public class UIJourneySteps extends BasePage {
         this.operatorFamilyName = operatorFamilyName;
     }
 
-    public String getExternalPassword() {
-        return externalPassword;
-    }
-
-    public void setExternalPassword(String externalPassword) {
-        this.externalPassword = externalPassword;
-    }
 
     public String getExternalTMUser() {
         return externalTMUser;
@@ -111,8 +120,16 @@ public class UIJourneySteps extends BasePage {
         this.externalTMEmail = externalTMEmail;
     }
 
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
+
+    public void setLicenceNumber(String licenceNumber) {
+        this.licenceNumber = licenceNumber;
+    }
+
     public void internalSearchForBusReg() throws IllegalBrowserException {
-        selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Bus registrations");
+        selectValueFromDropDown("//*[@id='search-select']", SelectorType.XPATH, "Bus registrations");
         do {
             SearchNavBar.search(world.createLicence.getLicenceNumber());
         } while (!isLinkPresent(world.createLicence.getLicenceNumber(), 60));
@@ -120,9 +137,8 @@ public class UIJourneySteps extends BasePage {
     }
 
     public void internalSiteAddBusNewReg(int month) throws IllegalBrowserException {
-        clickByLinkText(world.createLicence.getLicenceNumber());
         waitForTextToBePresent("Overview");
-        clickByLinkText("Bus");
+        clickByLinkText("Bus registrations");
         click(nameAttribute("button", "action"));
         waitForTextToBePresent("Service details");
         assertTrue(isTextPresent("Service No. & type", 5));
@@ -190,6 +206,14 @@ public class UIJourneySteps extends BasePage {
             if (isLinkPresent("Interim", 60))
                 clickByLinkText("Interim ");
         }
+    }
+
+    public void searchAndViewLicence() throws IllegalBrowserException, MalformedURLException {
+        selectValueFromDropDown("//select[@id='search-select']", SelectorType.XPATH, "Licence");
+        do {
+            SearchNavBar.search(String.valueOf(world.createLicence.getLicenceNumber()));
+        } while (!isLinkPresent(world.createLicence.getLicenceNumber(), 200));
+        clickByLinkText(world.createLicence.getLicenceNumber());
     }
 
     public void createAdminFee(String amount, String feeType) throws IllegalBrowserException {
@@ -315,9 +339,9 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Directors");
     }
 
-    public void navigateToInternalTask() throws IllegalBrowserException, MissingDriverException, MalformedURLException {
+    public void navigateToInternalTask() throws IllegalBrowserException, MalformedURLException {
         world.APIJourneySteps.createAdminUser();
-        world.UIJourneySteps.navigateToInternalAdminUserLogin();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewApplication();
         waitForTextToBePresent("Processing");
         clickByLinkText("Processing");
@@ -338,67 +362,65 @@ public class UIJourneySteps extends BasePage {
         clickByName("form-actions[submit]");
     }
 
-    public void navigateToInternalAdminUserLogin() throws MissingRequiredArgument, IllegalBrowserException, MalformedURLException {
+    public void navigateToInternalAdminUserLogin(String username, String emailAddress) throws MissingRequiredArgument, IllegalBrowserException, MalformedURLException {
+        String newPassword = "Password1";
         String myURL = URL.build(ApplicationType.INTERNAL, env).toString();
-        String newPassword = "Password1";
-        String password = S3.getTempPassword(world.updateLicence.adminUserEmailAddress);
 
         if (Browser.isBrowserOpen()) {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        System.out.println(world.updateLicence.adminUserLogin + "UserLogin");
-
-        if (Browser.navigate().getCurrentUrl().contains("da")) {
-            signIn(world.updateLicence.adminUserLogin, password);
-        }
-        if (isTextPresent("Username", 60))
-            signIn(world.updateLicence.adminUserLogin, password);
-        if (isTextPresent("Current password", 60)) {
-            enterField(nameAttribute("input", "oldPassword"), password);
-            enterField(nameAttribute("input", "newPassword"), newPassword);
-            enterField(nameAttribute("input", "confirmPassword"), newPassword);
-            click(nameAttribute("input", "submit"));
-        }
-    }
-
-    private String getBucketName() {
-        String s3bucketName;
-        if (env == EnvironmentType.LOCAL) {
-            s3bucketName = "devapp-olcs-pri-olcs-autotest-s3";
-        } else {
-            s3bucketName = "devapp-olcs-pri-olcs-autotest-s3";
-        }
-        return s3bucketName;
-    }
-
-    public void navigateToExternalUserLogin(String username, String emailAddress) throws MissingRequiredArgument, IllegalBrowserException, MalformedURLException {
-        String newPassword = "Password1";
-        String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
-
-        if (!emailAddress.contains("@")) {
-            this.password = emailAddress;
-        } else {
-            this.password = S3.getTempPassword(emailAddress, getBucketName());
-        }
-
-        if (Browser.isBrowserOpen()) {
-            Browser.navigate().manage().deleteAllCookies();
-        }
-        Browser.navigate().get(myURL);
+        String password = S3.getTempPassword(emailAddress, getBucketName());
 
         try {
             signIn(username, password);
         } catch (Exception e) {
             //User is already registered
-            signIn(username, getExternalPassword());
+            signIn(username, getPassword());
         } finally {
             if (isTextPresent("Current password", 60)) {
                 enterField(nameAttribute("input", "oldPassword"), password);
                 enterField(nameAttribute("input", "newPassword"), newPassword);
                 enterField(nameAttribute("input", "confirmPassword"), newPassword);
                 click(nameAttribute("input", "submit"));
-                setExternalPassword(newPassword);
+                setPassword(newPassword);
+            }
+        }
+    }
+
+    private String getTempPassword(String emailAddress) {
+        if (env == EnvironmentType.LOCAL) {
+            return localDefaultPassword;
+        }
+        return S3.getTempPassword(emailAddress, getBucketName());
+    }
+
+    private String getBucketName() {
+        return "devapp-olcs-pri-olcs-autotest-s3";
+    }
+
+    public void navigateToExternalUserLogin(String username, String emailAddress) throws MissingRequiredArgument, IllegalBrowserException, MalformedURLException {
+        String newPassword = "Password1";
+        String myURL = URL.build(ApplicationType.EXTERNAL, env).toString();
+
+        if (Browser.isBrowserOpen()) {
+            Browser.navigate().manage().deleteAllCookies();
+        }
+        Browser.navigate().get(myURL);
+        String password = getTempPassword(emailAddress);
+
+        try {
+            signIn(username, password);
+        } catch (Exception e) {
+            //User is already registered
+            signIn(username, getPassword());
+        } finally {
+            if (isTextPresent("Current password", 60)) {
+                enterField(nameAttribute("input", "oldPassword"), password);
+                enterField(nameAttribute("input", "newPassword"), newPassword);
+                enterField(nameAttribute("input", "confirmPassword"), newPassword);
+                click(nameAttribute("input", "submit"));
+                setPassword(newPassword);
             }
         }
     }
@@ -433,9 +455,9 @@ public class UIJourneySteps extends BasePage {
     public void addDirectorWithoutConvictions(String firstName, String lastName) throws MissingDriverException, IllegalBrowserException, MalformedURLException {
         world.UIJourneySteps.navigateToDirectorsPage();
         world.UIJourneySteps.addPerson(firstName, lastName);
-        selectAllExternalRadioButtons("No");
+        findSelectAllRadioButtonsByValue("N");
         clickByName("form-actions[saveAndContinue]");
-        selectAllExternalRadioButtons("No");
+        findSelectAllRadioButtonsByValue("N");
         clickByName("form-actions[saveAndContinue]");
     }
 
@@ -491,9 +513,9 @@ public class UIJourneySteps extends BasePage {
 
     public void addDirector(String forename, String familyName) throws IllegalBrowserException {
         addPerson(forename, familyName);
-        world.genericUtils.selectAllExternalRadioButtons("No");
+        world.genericUtils.findSelectAllRadioButtonsByValue("N");
         clickByName("form-actions[saveAndContinue]");
-        world.genericUtils.selectAllExternalRadioButtons("No");
+        world.genericUtils.findSelectAllRadioButtonsByValue("N");
         clickByName("form-actions[saveAndContinue]");
     }
 
@@ -506,7 +528,7 @@ public class UIJourneySteps extends BasePage {
 
     public void internalUserNavigateToDocsTable() throws IllegalBrowserException, MalformedURLException {
         world.APIJourneySteps.createAdminUser();
-        world.UIJourneySteps.navigateToInternalAdminUserLogin();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewApplication();
         clickByLinkText("Docs");
     }
@@ -527,6 +549,20 @@ public class UIJourneySteps extends BasePage {
         enterText("dob_year", date[0], SelectorType.ID);
         enterText("birthPlace", birthPlace, SelectorType.ID);
         //Add Home Address
+        addAddressDetails();
+        //Add Responsibilities
+        click("//*[contains(text(),'External')]", SelectorType.XPATH);
+        world.genericUtils.findSelectAllRadioButtonsByValue("Y");
+        //Add Other Licences
+        String role = "Transport Manager";
+        click("//*[contains(text(),'Add other licences')]", SelectorType.XPATH);
+        waitForTextToBePresent("Add other licence");
+        enterText("licNo", "PB123456", SelectorType.ID);
+        selectValueFromDropDown("data[role]", SelectorType.ID, role);
+    }
+
+    public void addAddressDetails() throws IllegalBrowserException {
+        //Add Home Address
         String postCode = world.createLicence.getPostcode();
         enterText("postcodeInput1", postCode, SelectorType.ID);
         clickByName("homeAddress[searchPostcode][search]");
@@ -535,15 +571,6 @@ public class UIJourneySteps extends BasePage {
         enterText("postcodeInput2", postCode, SelectorType.ID);
         clickByName("workAddress[searchPostcode][search]");
         selectValueFromDropDownByIndex("workAddress[searchPostcode][addresses]", SelectorType.ID, 1);
-        //Add Responsibilities
-        click("//*[contains(text(),'External')]", SelectorType.XPATH);
-        world.genericUtils.selectAllExternalRadioButtons("Y");
-        //Add Other Licences
-        String role = "Transport Manager";
-        click("//*[contains(text(),'Add other licences')]", SelectorType.XPATH);
-        waitForTextToBePresent("Add other licence");
-        enterText("licNo", "PB123456", SelectorType.ID);
-        selectValueFromDropDown("data[role]", SelectorType.ID, role);
     }
 
     public void nominateOperatorUserAsTransportManager(int user) throws IllegalBrowserException {
@@ -565,7 +592,7 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Add Transport Manager");
         selectValueFromDropDownByIndex("data[registeredUser]", SelectorType.ID, user);
         click("//*[@id='form-actions[continue]']", SelectorType.XPATH);
-        updateTMDetailsAndNavigateToDeclarationsPage("Yes", "No", "No", "No", "No");
+        updateTMDetailsAndNavigateToDeclarationsPage("Y", "N", "N", "N", "N");
     }
 
     public void navigateToTransportManagersPage() throws IllegalBrowserException {
@@ -598,12 +625,12 @@ public class UIJourneySteps extends BasePage {
     public void updateTMDetailsAndNavigateToDeclarationsPage(String isOwner, String OtherLicence, String hasEmployment, String hasConvictions, String hasPreviousLicences) throws IllegalBrowserException, ElementDidNotAppearWithinSpecifiedTimeException {
         String tmEmailAddress = "externalTM@vol.com";
         String hours = "8";
-        findElement("//*[@id='responsibilities']//*[contains(text(),'Internal')]", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + OtherLicence + "')]//*[@name='responsibilities[otherLicencesFieldset][hasOtherLicences]']", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + isOwner + "')]//*[@name='responsibilities[isOwner]']", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + hasEmployment + "')]//*[@name='otherEmployments[hasOtherEmployment]']", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + hasConvictions + "')]//*[@name='previousHistory[hasConvictions]']", SelectorType.XPATH, 10).click();
-        findElement("//*[contains(text(),'" + hasPreviousLicences + "')]//*[@name='previousHistory[hasPreviousLicences]']", SelectorType.XPATH, 10).click();
+        findElement("//*[@value='" + OtherLicence +"'][@name='responsibilities[otherLicencesFieldset][hasOtherLicences]']", SelectorType.XPATH,30).click();
+        findElement("//*[@value='" + isOwner + "'][@name='responsibilities[isOwner]']", SelectorType.XPATH,30).click();
+        findElement("//*[@value='" + hasEmployment + "'][@name='otherEmployments[hasOtherEmployment]']", SelectorType.XPATH,20).click();
+        findElement("//*[@value='" + hasConvictions + "'][@name='previousHistory[hasConvictions]']", SelectorType.XPATH,30).click();
+        findElement("//*[@value='" + hasPreviousLicences + "'][@name='previousHistory[hasPreviousLicences]']", SelectorType.XPATH,30).click();
+        findElement("//*[@id='responsibilities']//*[contains(text(),'Internal')]", SelectorType.XPATH,30).click();
         findElement("emailAddress", SelectorType.ID, 10).clear();
         if (findElement("emailAddress", SelectorType.ID, 10).getText().isEmpty()) {
             waitAndEnterText("emailAddress", SelectorType.ID, tmEmailAddress);
@@ -636,11 +663,11 @@ public class UIJourneySteps extends BasePage {
         waitForTextToBePresent("Transport Managers");
         clickByLinkText("Transport");
         clickByLinkText(world.UIJourneySteps.getOperatorForeName() + " " + world.UIJourneySteps.getOperatorFamilyName());
-        updateTMDetailsAndNavigateToDeclarationsPage(isOwner, "No", "No", "No", "No");
+        updateTMDetailsAndNavigateToDeclarationsPage(isOwner, "N", "N", "N", "N");
     }
 
     public void submitTMApplicationAndNavigateToTMLandingPage() throws ElementDidNotAppearWithinSpecifiedTimeException, IllegalBrowserException {
-        updateTMDetailsAndNavigateToDeclarationsPage("Yes", "No", "No", "No", "No");
+        updateTMDetailsAndNavigateToDeclarationsPage("Y", "N", "N", "N", "N");
         click("form-actions[submit]", SelectorType.ID);
         clickByLinkText("Back to Transport");
         waitForTextToBePresent("Transport Managers");
@@ -664,7 +691,8 @@ public class UIJourneySteps extends BasePage {
 
     public void navigateToSurrendersStartPage() throws IllegalBrowserException, MalformedURLException {
         navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
-        clickByLinkText(world.createLicence.getLicenceNumber());
+        setLicenceNumber(Browser.navigate().findElements(By.xpath("//tr/td[1]")).stream().findFirst().get().getText());
+        Browser.navigate().findElements(By.xpath("//tr/td[1]")).stream().findFirst().ifPresent(WebElement::click);
         waitForTextToBePresent("Summary");
         clickByLinkText("Apply to");
     }
@@ -708,13 +736,256 @@ public class UIJourneySteps extends BasePage {
         click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
     }
 
-    public void navigateToSurrenderReviewPage() throws IllegalBrowserException, MalformedURLException {
-        click("//*[contains(text(),'In your possession')]",SelectorType.XPATH);
-        waitForTextToBePresent("Number of discs you will destroy");
-        waitAndEnterText("//*[@id='possessionSection[info][number]']",SelectorType.XPATH,String.valueOf(world.createLicence.getNoOfVehiclesRequired()));
-        waitAndClick("//*[@id='submit']", SelectorType.XPATH);
-        waitAndClick("//*//*[contains(text(),'In your possession')]",SelectorType.XPATH);
-        waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+    public void navigateToSurrenderReviewPage(String discToDestroy, String discsLost, String discsStolen) throws IllegalBrowserException, MalformedURLException {
+        addDiscInformation(discToDestroy, discsLost, discsStolen);
+        addOperatorLicenceDetails();
+        if (world.createLicence.getLicenceType().equals("standard_international")) {
+            addCommunityLicenceDetails();
+        }
         assertTrue(Browser.navigate().getCurrentUrl().contains("review"));
+        assertTrue(isTextPresent("Review your surrender", 40));
+    }
+
+    public void startSurrender() throws IllegalBrowserException {
+        click("//*[@id='submit']", SelectorType.XPATH);
+        waitForTextToBePresent("Review your contact information");
+    }
+
+    public void addDiscInformation(String discToDestroy, String discsLost, String discsStolen) throws IllegalBrowserException, MalformedURLException {
+        assertTrue(Browser.navigate().getCurrentUrl().contains("current-discs"));
+        click("//*[contains(text(),'In your possession')]", SelectorType.XPATH);
+        waitForTextToBePresent("Number of discs you will destroy");
+        waitAndEnterText("//*[@id='possessionSection[info][number]']", SelectorType.XPATH, discToDestroy);
+        click("//*[contains(text(),'Lost')]", SelectorType.XPATH);
+        waitAndEnterText("//*[@id='lostSection[info][number]']", SelectorType.XPATH, discsLost);
+        waitAndEnterText("//*[@id='lostSection[info][details]']", SelectorType.XPATH, "lost");
+        click("//*[contains(text(),'Stolen')]", SelectorType.XPATH);
+        waitAndEnterText("//*[@id='stolenSection[info][number]']", SelectorType.XPATH, discsStolen);
+        waitAndEnterText("//*[@id='stolenSection[info][details]']", SelectorType.XPATH, "stolen");
+        waitAndClick("//*[@id='submit']", SelectorType.XPATH);
+    }
+
+    public void addOperatorLicenceDetails() throws IllegalBrowserException {
+        click("//*[contains(text(),'Lost')]", SelectorType.XPATH);
+        waitAndEnterText("//*[@id='operatorLicenceDocument[lostContent][details]']", SelectorType.XPATH, "lost in the washing");
+        waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public void addCommunityLicenceDetails() throws IllegalBrowserException {
+        click("//*[contains(text(),'Stolen')]", SelectorType.XPATH);
+        waitAndEnterText("//*[@id='communityLicenceDocument[stolenContent][details]']", SelectorType.XPATH, "Stolen on the way here");
+        waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public void acknowledgeDestroyPage() throws IllegalBrowserException {
+        waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+        waitForTextToBePresent("Securely destroy");
+        waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+        waitForTextToBePresent("Declaration");
+    }
+
+    public void updateContactDetails(String addressLine1, String addressLine2, String contactNumber) throws IllegalBrowserException {
+        findElement("addressLine1", SelectorType.ID, 10).clear();
+        enterText("addressLine1", addressLine1, SelectorType.ID);
+        findElement("correspondence_address[addressLine2]", SelectorType.ID, 10).clear();
+        enterText("correspondence_address[addressLine2]", addressLine2, SelectorType.ID);
+        findElement("phone_primary", SelectorType.ID, 10).clear();
+        enterText("phone_primary", contactNumber, SelectorType.ID);
+        waitAndClick("form-actions[save]", SelectorType.ID);
+    }
+
+    public String getSurrenderAddressLine1() throws IllegalBrowserException {
+        return getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+    }
+
+    public String getSurrenderTown() throws IllegalBrowserException {
+        return getText("//*[@class='app-check-your-answers app-check-your-answers--long'][2]/div[@class='app-check-your-answers__contents'][2]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+    }
+
+    public String getSurrenderContactNumber() throws IllegalBrowserException {
+        return getText("//*[@class='app-check-your-answers app-check-your-answers--long'][3]/div[@class='app-check-your-answers__contents'][1]/dd[@class='app-check-your-answers__answer']", SelectorType.XPATH);
+    }
+
+    public void submitSurrender() throws MalformedURLException, IllegalBrowserException {
+        world.UIJourneySteps.navigateToSurrendersStartPage();
+        world.UIJourneySteps.startSurrender();
+        waitAndClick("form-actions[submit]", SelectorType.ID);
+        world.UIJourneySteps.addDiscInformation("2", "2", "1");
+        waitForTextToBePresent("In your possession");
+        world.UIJourneySteps.addOperatorLicenceDetails();
+        if (world.createLicence.getLicenceType().equals("standard_international")) {
+            assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
+            world.UIJourneySteps.addCommunityLicenceDetails();
+        }
+        world.UIJourneySteps.acknowledgeDestroyPage();
+        if (Browser.navigate().getCurrentUrl().contains("qa")) {
+            waitAndClick("//*[@id='sign']", SelectorType.XPATH);
+            world.UIJourneySteps.signWithVerify("pavlov", "Password1");
+            waitForTextToBePresent("What happens next");
+            Assert.assertTrue(isElementPresent("//*[@class='govuk-panel govuk-panel--confirmation']", SelectorType.XPATH));
+            Assert.assertTrue(isTextPresent(String.format("Application to surrender licence %s", world.createLicence.getLicenceNumber()), 10));
+            Assert.assertTrue(isTextPresent(String.format("Signed by Veena Pavlov on %s", getCurrentDate("d MMM yyyy")), 20));
+            assertTrue(isTextPresent("notifications@vehicle-operator-licensing.service.gov.uk", 10));
+            waitAndClick("//*[contains(text(),'home')]", SelectorType.XPATH);
+        } else {
+            waitAndClick("//*[contains(text(),'Print')]", SelectorType.XPATH);
+            world.UIJourneySteps.signManually();
+        }
+        assertEquals(getText("//*[@class='overview__status green']", SelectorType.XPATH), "SURRENDER UNDER CONSIDERATION");
+    }
+
+    public void caseworkManageSurrender() throws MalformedURLException, IllegalBrowserException {
+        world.APIJourneySteps.createAdminUser();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
+        world.UIJourneySteps.searchAndViewLicence();
+        clickByLinkText("Surrender");
+        waitForTextToBePresent("Surrender details");
+        waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
+        waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
+    }
+
+    public void signManually() throws IllegalBrowserException, MalformedURLException {
+        String defaultWindow = Browser.navigate().getWindowHandle();
+        do {
+            waitAndClick("//*[contains(text(),'Print declaration')]", SelectorType.XPATH);
+        } while (!isTextPresent("Print", 40));
+        Set<String> windows = Browser.navigate().getWindowHandles();
+        String printWindow = windows.stream().reduce((first, second) -> second).get();
+        Browser.navigate().switchTo().window(printWindow).close();
+        Browser.navigate().switchTo().window(defaultWindow);
+        click("//*[contains(@title,'return to home')]", SelectorType.XPATH);
+    }
+
+    public void checkLicenceStatus(String arg0) throws IllegalBrowserException {
+        do {
+            System.out.println("Page not loaded yet");
+        }
+        while (!isTextPresent("Licence details", 2));//condition
+        Assertions.assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), arg0.toUpperCase());
+    }
+
+    public void removeDisc(String discDestroyed, String discLost, String discStolen) throws IllegalBrowserException, MalformedURLException, ElementDidNotAppearWithinSpecifiedTimeException {
+        waitAndClick("form-actions[submit]", SelectorType.ID);
+        world.UIJourneySteps.addDiscInformation(discDestroyed, discLost, discStolen);
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+        clickByLinkText("Licence discs");
+        waitAndClick("//*[@value='Remove']", SelectorType.XPATH);
+        untilElementPresent("//*[@id='modal-title']", SelectorType.XPATH);
+        waitAndClick("form-actions[submit]", SelectorType.NAME);
+        javaScriptExecutor("location.reload(true)");
+        waitForTextToBePresent("Disc number");
+        clickByLinkText("Back");
+    }
+
+    public void addDisc() throws IllegalBrowserException {
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+        clickByLinkText("Licence discs");
+        waitAndClick("//*[@id='add']", SelectorType.XPATH);
+        waitAndEnterText("data[additionalDiscs]", SelectorType.ID, "2");
+        waitAndClick("form-actions[submit]", SelectorType.NAME);
+        world.updateLicence.printLicenceDiscs();
+        clickByLinkText("Home");
+        clickByLinkText(world.createLicence.getLicenceNumber());
+    }
+
+    public void createLicence(World world, String operatorType, String licenceType) {
+        if (licenceType.equals("si")) {
+            world.createLicence.setLicenceType("standard_international");
+        } else if (licenceType.equals("sn")) {
+            world.createLicence.setLicenceType("standard_national");
+        } else {
+            world.createLicence.setLicenceType("standard_national");
+        }
+        world.createLicence.setOperatorType(operatorType);
+        world.APIJourneySteps.registerAndGetUserDetails();
+        world.APIJourneySteps.createApplication();
+        world.APIJourneySteps.submitApplication();
+        if (String.valueOf(operatorType).equals("public")) {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        } else {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        }
+    }
+
+    public void closeCase() throws IllegalBrowserException, MalformedURLException {
+        clickByLinkText(""+ world.updateLicence.getCaseId()+"");
+        do {
+            System.out.println("waiting for page to load");
+            javaScriptExecutor("location.reload(true)");
+        }while (!Browser.navigate().getCurrentUrl().contains("case/details"));
+        clickByLinkText("Close");
+        waitForTextToBePresent("Close the case");
+        click("form-actions[confirm]", SelectorType.ID);
+
+    }
+
+    public void closeBusReg() throws IllegalBrowserException {
+        clickByLinkText(""+ world.createLicence.getLicenceNumber() +"");
+        click("menu-bus-registration-decisions-admin-cancel",SelectorType.ID);
+        waitForTextToBePresent("Update status");
+        enterText("fields[reason]","Mistake",SelectorType.ID);
+        click("form-actions[submit]",SelectorType.ID);
+    }
+
+    public void payFeesAndGrantNewBusReg() throws IllegalBrowserException {
+        clickByLinkText("Fees");
+        world.UIJourneySteps.selectFee();
+        world.UIJourneySteps.payFee("60", "cash", null, null, null);
+        do {
+            System.out.println("link not present");
+            javaScriptExecutor("location.reload(true)");
+        }while (!isLinkPresent("Register service",5));
+        clickByLinkText("Register service");
+        findSelectAllRadioButtonsByValue("Y");
+        clickByName("form-actions[submit]");
+        clickByLinkText("Service details");
+        clickByLinkText("TA's");
+        click("//*[@class='chosen-choices']", SelectorType.XPATH);
+        selectFirstValueInList("//*[@class=\"active-result\"]");
+        click("//*[@id='localAuthoritys_chosen']/ul[@class='chosen-choices']",SelectorType.XPATH);
+        selectFirstValueInList("//*[@class=\"active-result group-option\"]");
+        clickByName("form-actions[submit]");
+        waitAndClick("//*[contains(text(),'Grant')]",SelectorType.XPATH);
+    }
+
+    public void createLicenceWithOpenCaseAndBusReg(String operatorType, String licenceType) throws IllegalBrowserException, MalformedURLException {
+        if (licenceType.equals("si")) {
+            world.createLicence.setLicenceType("standard_international");
+        } else if (licenceType.equals("sn")) {
+            world.createLicence.setLicenceType("standard_national");
+        } else {
+            world.createLicence.setLicenceType("standard_national");
+        }
+        world.createLicence.setTrafficArea("B");
+        world.createLicence.setEnforcementArea("EA-B");
+        world.createLicence.setOperatorType(operatorType);
+        world.APIJourneySteps.registerAndGetUserDetails();
+        world.APIJourneySteps.createApplication();
+        world.APIJourneySteps.submitApplication();
+        if (String.valueOf(operatorType).equals("public")) {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        } else {
+            world.APIJourneySteps.grandLicenceAndPayFees();
+            System.out.println("Licence: " + world.createLicence.getLicenceNumber());
+        }
+        world.APIJourneySteps.createAdminUser();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
+        world.UIJourneySteps.searchAndViewLicence();
+        world.UIJourneySteps.internalSiteAddBusNewReg(5);
+        world.UIJourneySteps.payFeesAndGrantNewBusReg();
+        world.updateLicence.createCase();
+    }
+    public void internalDigitalSurrenderMenu() throws IllegalBrowserException {
+        do {
+            System.out.println("waiting for page to load");
+            javaScriptExecutor("location.reload(true)");
+        } while (!isLinkPresent("" + world.createLicence.getLicenceNumber() + "", 10));
+        clickByLinkText("" + world.createLicence.getLicenceNumber() + "");
+        click("menu-licence_surrender", SelectorType.ID);
     }
 }
