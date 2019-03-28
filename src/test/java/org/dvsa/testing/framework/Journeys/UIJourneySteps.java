@@ -370,7 +370,16 @@ public class UIJourneySteps extends BasePage {
             Browser.navigate().manage().deleteAllCookies();
         }
         Browser.navigate().get(myURL);
-        String password = S3.getTempPassword(emailAddress, getBucketName());
+
+
+        if (env == EnvironmentType.LOCAL) {
+            //login locally so get local user and password(s) and try till successful
+            // I would suggest we  tidy all this to set things up in one place
+            username = localUser;
+            emailAddress = "e@example,com";
+        }
+
+        String password = getTempPassword(emailAddress);
 
         try {
             signIn(username, password);
