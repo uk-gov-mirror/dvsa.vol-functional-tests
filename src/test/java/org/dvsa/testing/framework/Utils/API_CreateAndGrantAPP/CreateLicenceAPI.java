@@ -363,7 +363,7 @@ public class CreateLicenceAPI {
     public CreateLicenceAPI() throws MissingRequiredArgument {
         if (licenceType == null) {
             operatorType = "goods";
-            licenceType = "standard_international";
+            licenceType = "standard_national";
             businessType = "limited_company";
             niFlag = "N";
             isInterim = "N";
@@ -542,7 +542,8 @@ public class CreateLicenceAPI {
         do {
             if (operatorType.equals("goods") && (!licenceType.equals("special_restricted")) || (getNiFlag().equals("Y"))) {
                 updateOperatingCentre.withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
-                        .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withVersion(version);
+                        .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTotCommunityLicences(Integer.parseInt(restrictedVehicles))
+                        .withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withVersion(version);
             }
             if (operatorType.equals("public") && (!licenceType.equals("special_restricted"))) {
                 updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(noOfVehiclesRequired)
@@ -550,7 +551,7 @@ public class CreateLicenceAPI {
             }
             if (operatorType.equals("public") && (licenceType.equals("restricted"))) {
                 updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(Integer.parseInt(restrictedVehicles))
-                        .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTotCommunityLicences(Integer.parseInt(restrictedVehicles)).withVersion(version);
+                        .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withVersion(version);
             }
             if (!licenceType.equals("special_restricted")) {
                 apiResponse = RestUtils.put(updateOperatingCentre, updateOperatingCentreResource, getHeaders());

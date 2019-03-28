@@ -302,10 +302,7 @@ public class UIJourneySteps extends BasePage {
         click("//*[@id='scp_confirmationPage_buttons_payment_button']", SelectorType.XPATH);
         if (isElementPresent("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH)) {
             waitForTextToBePresent("Online Payments");
-            click("//*[@id='scp_storeCardConfirmationPage_buttons_back_button']", SelectorType.XPATH);
-            waitForTextToBePresent("Payment successful");
-            clickByLinkText("Back");
-            waitForTextToBePresent("There are currently no outstanding fees to pay");
+            click("//*[@id='scp_storeCardConfirmationPage_buttons_save_button']", SelectorType.XPATH);
         }
     }
 
