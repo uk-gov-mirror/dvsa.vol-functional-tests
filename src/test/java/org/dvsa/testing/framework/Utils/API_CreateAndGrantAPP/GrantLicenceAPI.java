@@ -76,14 +76,17 @@ public class GrantLicenceAPI {
             System.out.println(apiResponse.extract().response().asString());
             throw new HTTPException(apiResponse.extract().statusCode());
         }
-        outstandingFeesIds = apiResponse.extract().response().body().jsonPath().getList("outstandingFees.id");
-        List<String> fees = apiResponse.extract().response().body().jsonPath().get("outstandingFees.grossAmount");
-        for (String d: fees)
-              {
-                  try {
-                      feesToPay.add(Double.parseDouble(d));
-                  }catch (NumberFormatException e){}
+        else if (!apiResponse.extract().response().body().jsonPath().getList("outstandingFees.id").isEmpty()) {
+            outstandingFeesIds = apiResponse.extract().response().body().jsonPath().getList("outstandingFees.id");
+            List<String> fees = apiResponse.extract().response().body().jsonPath().get("outstandingFees.grossAmount");
+            for (String d : fees) {
+                try {
+                    feesToPay.add(Double.parseDouble(d));
+                } catch (NumberFormatException e) {
+                    e.fillInStackTrace();
+                }
 
+            }
         }
     }
 
@@ -119,6 +122,7 @@ public class GrantLicenceAPI {
 
     public ValidatableResponse payGrantFees() {
         String payer = "apiUser";
+        Double grantFees = 401.00;
         String paymentMethod = "fpm_cash";
         String slipNo = "123456";
         String organisationId = world.createLicence.getOrganisationId();
@@ -127,7 +131,7 @@ public class GrantLicenceAPI {
 
         String payOutstandingFeesResource = URL.build(env, "transaction/pay-outstanding-fees/").toString();
         FeesBuilder feesBuilder = new FeesBuilder().withFeeIds(Collections.singletonList(feeId)).withOrganisationId(organisationId).withApplicationId(applicationNumber)
-                .withPaymentMethod(paymentMethod).withReceived(feesToPay.stream().mapToDouble(Double::doubleValue).sum()).withReceiptDate(GenericUtils.getDates("current", 0)).withPayer(payer).withSlipNo(slipNo);
+                .withPaymentMethod(paymentMethod).withReceived(grantFees).withReceiptDate(GenericUtils.getDates("current", 0)).withPayer(payer).withSlipNo(slipNo);
         apiResponse = RestUtils.post(feesBuilder, payOutstandingFeesResource, getHeaders());
 
         if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
