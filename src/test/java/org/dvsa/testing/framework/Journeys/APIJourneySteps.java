@@ -47,7 +47,6 @@ public class APIJourneySteps {
     }
 
     public void createApplication(){
-        if(world.createLicence.getApplicationNumber() == null) {
             world.createLicence.createApplication();
             world.createLicence.updateBusinessType();
             world.createLicence.updateBusinessDetails();
@@ -69,7 +68,6 @@ public class APIJourneySteps {
             world.createLicence.addConvictionsDetails();
             world.createLicence.addLicenceHistory();
             world.createLicence.applicationReviewAndDeclare();
-        }
     }
 
     public void createSpecialRestrictedLicence(){

@@ -674,7 +674,7 @@ public class CreateLicenceAPI {
     }
 
     public void addVehicleDetails() {
-        if (getOperatorType().equals("public") && (getOperatorType().equals("special_restricted"))) {
+        if (getOperatorType().equals("special_restricted")) {
             // no need to submit details
         } else {
             String vehiclesResource = null;
@@ -689,7 +689,7 @@ public class CreateLicenceAPI {
             }
             do {
                 for (int i = 0; i < getNoOfVehiclesRequired(); ) {
-                    vrm = "v".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 999))))
+                    vrm = "vg".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))))
                            .toLowerCase();
                     for (String letters : licencePlates) {
                         if (vrm.contains(letters))
@@ -714,7 +714,7 @@ public class CreateLicenceAPI {
     }
 
     public void submitVehicleDeclaration() {
-        if (operatorType.equals("public") && (licenceType.equals("special_restricted"))) {
+        if (licenceType.equals("special_restricted")) {
             // no need to submit details
         } else {
             String psvVehicleSize = "psvvs_both";
