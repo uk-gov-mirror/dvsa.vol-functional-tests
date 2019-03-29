@@ -15,7 +15,18 @@ public class UpgradeApplicationTask extends BasePage implements En {
             clickByLinkText("change your licence");
             waitForTextToBePresent("Applying to change a licence");
             waitAndClick("form-actions[submit]", SelectorType.ID);
-
+            do {
+//                javaScriptExecutor("location.reload(true)");
+            }
+            while (!isTextPresent("Type of licence",30));//condition
+            waitAndClick("//*[contains(text(),'Standard International')]",SelectorType.XPATH);
+            click("form-actions[save]",SelectorType.ID);
+            waitForTextToBePresent("Apply to change a licence");
+            clickByLinkText("Review and declarations");
+            click("//*[@id='declarationsAndUndertakings[declarationConfirmation]']",SelectorType.XPATH);
+            click("submit",SelectorType.ID);
+            waitForTextToBePresent("Application overview");
+            click("//*[@class='action--primary large']",SelectorType.XPATH);
         });
     }
 }
