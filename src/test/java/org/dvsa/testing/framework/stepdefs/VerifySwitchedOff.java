@@ -79,7 +79,7 @@ public class VerifySwitchedOff extends BasePage implements En {
             world.UIJourneySteps.updateTMDetailsAndNavigateToDeclarationsPage("N", "N", "N", "N", "N");
         });
         Given("^verify has been switched \"([^\"]*)\"$", (String arg0) -> {
-          if (arg0.equals("On")){
+          if (arg0.toLowerCase().equals("on")){
               world.updateLicence.enableDisableVerify("0");
           } else {
               world.updateLicence.enableDisableVerify("1");

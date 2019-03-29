@@ -28,7 +28,7 @@ public class UserResearch extends BasePage implements En {
                     world.createLicence.setEnforcementArea(EnforcementArea.getEnforcementArea(TrafficArea.valueOf(ta)));
                     world.APIJourneySteps.createApplication();
                     world.APIJourneySteps.submitApplication();
-                    world.APIJourneySteps.grandLicenceAndPayFees();
+                    world.APIJourneySteps.grantLicenceAndPayFees();
                     world.createLicence.setApplicationNumber(null);
                     i++;
                 }

@@ -3,6 +3,8 @@ package org.dvsa.testing.framework.Utils.API_Builders;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.junit.platform.commons.util.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -18,6 +20,8 @@ public class GrantApplicationBuilder {
     private String duePeriod;
     @JsonProperty("caseworkerNotes")
     private String caseworkerNotes;
+    @JsonProperty("reason")
+    private String reason;
 
     @JsonProperty("id")
     public String getId() {
@@ -64,8 +68,28 @@ public class GrantApplicationBuilder {
         return this;
     }
 
+    @JsonProperty("reason")
+    public String getReason() {
+        return reason;
+    }
+
+    @JsonProperty("reason")
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public GrantApplicationBuilder withReason(String reason) {
+        this.reason = reason;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return "id:" + getId() + ",duePeriod:" + getDuePeriod() + ",caseworkerNotes:" + getCaseworkerNotes();
+        return new ToStringBuilder(ToStringStyle.JSON_STYLE)
+                .append("id", getId())
+                .append("duePeriod", getDuePeriod())
+                .append("caseworkerNotes", getCaseworkerNotes())
+                .append("reason", getReason())
+                .toString();
     }
 }

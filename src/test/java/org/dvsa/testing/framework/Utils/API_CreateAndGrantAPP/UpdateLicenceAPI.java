@@ -4,6 +4,7 @@ import activesupport.MissingRequiredArgument;
 import activesupport.http.RestUtils;
 import activesupport.string.Str;
 import activesupport.system.Properties;
+import enums.BusinessType;
 import enums.LicenceType;
 import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
@@ -12,10 +13,12 @@ import org.assertj.core.api.Assertions;
 import org.dvsa.testing.framework.Utils.API_Builders.*;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
 import Injectors.World;
+import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 import org.hamcrest.Matchers;
 
+import javax.xml.ws.http.HTTPException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,70 +56,135 @@ public class UpdateLicenceAPI extends BasePage {
     private static String variationApplicationNumber;
     private static int version = 1;
 
-    private void setBusinessType(String businessType) { this.businessType = businessType; }
-    public String getBusinessType() { return businessType; }
-    public void setLicenceType(String licenceType) { this.licenceType = licenceType; }
-    public String getLicenceType() { return licenceType; }
+    private void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+
+    public String getBusinessType() {
+        return businessType;
+    }
+
+    public void setLicenceType(String licenceType) {
+        this.licenceType = licenceType;
+    }
+
+    public String getLicenceType() {
+        return licenceType;
+    }
+
     public String getVariationApplicationNumber() {
         return variationApplicationNumber;
     }
-    private static void setVariationApplicationNumber(String variationApplicationNumber) { UpdateLicenceAPI.variationApplicationNumber = variationApplicationNumber; }
-    private void setAdminUserId(String adminUserId) { this.adminUserId = adminUserId; }
+
+    private static void setVariationApplicationNumber(String variationApplicationNumber) {
+        UpdateLicenceAPI.variationApplicationNumber = variationApplicationNumber;
+    }
+
+    private void setAdminUserId(String adminUserId) {
+        this.adminUserId = adminUserId;
+    }
+
     public String getTrafficAreaName() {
         return trafficAreaName;
     }
+
     private void setTrafficAreaName(String trafficAreaName) {
         this.trafficAreaName = trafficAreaName;
     }
+
     public int getCaseId() {
         return caseId;
     }
+
     private void setCaseId(int caseId) {
         this.caseId = caseId;
     }
+
     public int getComplaintId() {
         return complaintId;
     }
+
     private void setComplaintId(int complaintId) {
         this.complaintId = complaintId;
     }
+
     public int getConvictionId() {
         return convictionId;
     }
+
     private void setConvictionId(int convictionId) {
         this.convictionId = convictionId;
     }
+
     public int getConditionUndertaking() {
         return conditionUndertaking;
     }
+
     private void setConditionUndertaking(int conditionUndertaking) {
         this.conditionUndertaking = conditionUndertaking;
     }
+
     public int getSubmissionsId() {
         return submissionsId;
     }
+
     private void setSubmissionsId(int submissionsId) {
         this.submissionsId = submissionsId;
     }
+
     public int getCaseNoteId() {
         return caseNoteId;
     }
+
     private void setCaseNoteId(int caseNoteId) {
         this.caseNoteId = caseNoteId;
     }
+
     private void setLicenceStatus(String licenceStatus) {
         this.licenceStatus = licenceStatus;
     }
+
     public String getGoodOrPsv() { return goodOrPsv; }
+
+    public String getAdminUserEmailAddress() { return adminUserEmailAddress; }
+
+    public void setAdminUserEmailAddress(String adminUserEmailAddress) { this.adminUserEmailAddress = adminUserEmailAddress; }
+
+    public String getAdminUserLogin() {
+        return adminUserLogin;
+    }
+
+    public void setAdminUserLogin(String adminUserLogin) {
+        this.adminUserLogin = adminUserLogin;
+    }
+
     private void setGoodOrPsv(String goodOrPsv) {
         this.goodOrPsv = goodOrPsv;
     }
-    private String getStartNumber() { return startNumber; }
-    private void setStartNumber(String startNumber) { this.startNumber = startNumber; }
-    public String getEndNumber() { return endNumber; }
-    public void setEndNumber(String endNumber) { this.endNumber = endNumber; }
-    public String getQueueId() { return queueId; }
-    public void setQueueId(String queueId) { this.queueId = queueId; }
+
+    private String getStartNumber() {
+        return startNumber;
+    }
+
+    private void setStartNumber(String startNumber) {
+        this.startNumber = startNumber;
+    }
+
+    public String getEndNumber() {
+        return endNumber;
+    }
+
+    public void setEndNumber(String endNumber) {
+        this.endNumber = endNumber;
+    }
+
+    public String getQueueId() {
+        return queueId;
+    }
+
+    public void setQueueId(String queueId) {
+        this.queueId = queueId;
+    }
 
     private static EnvironmentType env;
 
@@ -329,8 +397,7 @@ public class UpdateLicenceAPI extends BasePage {
 
         if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
             System.out.println("+++ERROR+++" + apiResponse.extract().response().asString());
-        }
-        else {
+        } else {
 
             setAdminUserId(apiResponse.extract().response().jsonPath().getString("id.user"));
         }
@@ -380,7 +447,9 @@ public class UpdateLicenceAPI extends BasePage {
         setBusinessType(apiResponse.extract().jsonPath().getString("organisation.type.description"));
         return businessType;
 
-    }  public String getLicenceTypeDetails() {
+    }
+
+    public String getLicenceTypeDetails() {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s", world.createLicence.getLicenceId())).toString();
 
@@ -390,7 +459,7 @@ public class UpdateLicenceAPI extends BasePage {
     }
 
     public void updateLicenceStatus(String licenceId, String status) {
-        Headers.getHeaders().put("x-pid",adminApiHeader());
+        Headers.getHeaders().put("x-pid", adminApiHeader());
         String typeOfLicenceResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/decisions/%s", licenceId, status)).toString();
 
         GenericBuilder genericBuilder = new GenericBuilder().withId(licenceId);
@@ -398,7 +467,7 @@ public class UpdateLicenceAPI extends BasePage {
         apiResponse.statusCode(HttpStatus.SC_CREATED);
     }
 
-    public ValidatableResponse surrenderLicence(String licenceId, String userPid){
+    public ValidatableResponse surrenderLicence(String licenceId, String userPid) {
         Headers.getHeaders().put("x-pid", userPid);
         String surrenderLicence = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
@@ -407,7 +476,7 @@ public class UpdateLicenceAPI extends BasePage {
         return apiResponse;
     }
 
-    public ValidatableResponse updateSurrender (String licenceId, String userPid, Integer surrenderId){
+    public ValidatableResponse updateSurrender(String licenceId, String userPid, Integer surrenderId) {
         Headers.getHeaders().put("x-pid", userPid);
         String updateSurrender = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
@@ -419,7 +488,7 @@ public class UpdateLicenceAPI extends BasePage {
         return apiResponse;
     }
 
-    public ValidatableResponse deleteSurrender (String licenceId, String userPid, Integer surrenderId){
+    public ValidatableResponse deleteSurrender(String licenceId, String userPid, Integer surrenderId) {
         Headers.getHeaders().put("x-pid", userPid);
         String deleteSurrender = org.dvsa.testing.lib.url.api.URL.build(env, String.format("licence/%s/surrender", licenceId)).toString();
 
@@ -430,7 +499,7 @@ public class UpdateLicenceAPI extends BasePage {
         return apiResponse;
     }
 
-    public void enableDisableVerify(String toggle){
+    public void enableDisableVerify(String toggle) {
         Headers.getHeaders().put("x-pid", adminApiHeader());
         String enableDisableVerifyResource = org.dvsa.testing.lib.url.api.URL.build(env, "system-parameter/DISABLE_GDS_VERIFY_SIGNATURES/").toString();
 
@@ -443,7 +512,7 @@ public class UpdateLicenceAPI extends BasePage {
 
     public void updateFeatureToggle(String id, String friendlyName, String configName, String status) {
         Headers.getHeaders().put("x-pid", adminApiHeader());
-        String updateFeatureToggleResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("feature-toggle/%s/",id)).toString();
+        String updateFeatureToggleResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("feature-toggle/%s/", id)).toString();
 
         FeatureToggleBuilder featureToggleBuilder = new FeatureToggleBuilder().withId(id).withFriendlyName(friendlyName).withConfigName(configName)
                 .withStatus(status);
@@ -452,51 +521,88 @@ public class UpdateLicenceAPI extends BasePage {
         apiResponse.statusCode(HttpStatus.SC_OK);
     }
 
-    private void getDiscInformation(){
-        Map<String,String> queryParams = new HashMap<>();
+    private void getDiscInformation() {
+        Map<String, String> queryParams = new HashMap<>();
         {
-            queryParams.put("niFlag","N");
-            queryParams.put("licenceType",String.valueOf(LicenceType.getEnum(world.createLicence.getLicenceType())));
-            queryParams.put("operatorType",String.valueOf(OperatorType.getEnum(world.createLicence.getOperatorType())));
-            queryParams.put("discSequence","6");
+            queryParams.put("niFlag", "N");
+            queryParams.put("licenceType", String.valueOf(LicenceType.getEnum(world.createLicence.getLicenceType())));
+            queryParams.put("operatorType", String.valueOf(OperatorType.getEnum(world.createLicence.getOperatorType())));
+            queryParams.put("discSequence", "6");
         }
-        Headers.getHeaders().put("x-pid",adminApiHeader());
-        String discNumberingResource = org.dvsa.testing.lib.url.api.URL.build(env,"disc-sequence/discs-numbering").toString();
-        apiResponse = RestUtils.getWithQueryParams(discNumberingResource,queryParams,getHeaders());
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String discNumberingResource = org.dvsa.testing.lib.url.api.URL.build(env, "disc-sequence/discs-numbering").toString();
+        apiResponse = RestUtils.getWithQueryParams(discNumberingResource, queryParams, getHeaders());
         setStartNumber(apiResponse.extract().jsonPath().get("results.startNumber").toString());
         setEndNumber(apiResponse.extract().jsonPath().get("results.endNumber").toString());
     }
 
-    public void printLicenceDiscs(){
+    public void printLicenceDiscs() {
         String operator;
         getDiscInformation();
-        Headers.getHeaders().put("x-pid",adminApiHeader());
-        if(getOperatorTypeDetails().equals("Goods Vehicle")){
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        if (getOperatorTypeDetails().equals("Goods Vehicle")) {
             operator = "goods";
-        }else{
+        } else {
             operator = "psv";
         }
-        String discPrintResource = org.dvsa.testing.lib.url.api.URL.build(env,String.format("%s-disc/print-discs/",operator)).toString();
+        String discPrintResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("%s-disc/print-discs/", operator)).toString();
         PrintDiscBuilder printDiscBuilder = new PrintDiscBuilder().withDiscSequence("6").withLicenceType(String.valueOf(LicenceType.getEnum(world.createLicence.getLicenceType()))).withNiFlag(world.createLicence.getNiFlag())
                 .withStartNumber(String.valueOf(getStartNumber()));
-        apiResponse = RestUtils.post(printDiscBuilder,discPrintResource,getHeaders());
+        apiResponse = RestUtils.post(printDiscBuilder, discPrintResource, getHeaders());
         assertThat(apiResponse.extract().body().jsonPath().get("id.queue"), Matchers.notNullValue());
         setQueueId(apiResponse.extract().jsonPath().get("id.queue").toString());
         confirmDiscPrint();
     }
 
-    private void confirmDiscPrint(){
+    private void confirmDiscPrint() {
         String operator;
-        if(getOperatorTypeDetails().equals("Goods Vehicle")){
+        if (getOperatorTypeDetails().equals("Goods Vehicle")) {
             operator = "goods";
-        }else{
+        } else {
             operator = "psv";
         }
-        Headers.getHeaders().put("x-pid",adminApiHeader());
-        String discConfirmResource = org.dvsa.testing.lib.url.api.URL.build(env,String.format("%s-disc/confirm-printing/",operator)).toString();
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String discConfirmResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("%s-disc/confirm-printing/", operator)).toString();
         ConfirmPrintBuilder confirmPrintBuilder = new ConfirmPrintBuilder().withDiscSequence("6").withEndNumber(getEndNumber()).withStartNumber(getStartNumber()).withIsSuccessfull(true)
                 .withLicenceType(String.valueOf(LicenceType.getEnum(world.createLicence.getLicenceType()))).withNiFlag(world.createLicence.getNiFlag()).withQueueId(getQueueId());
-        apiResponse = RestUtils.post(confirmPrintBuilder,discConfirmResource,getHeaders());
+        apiResponse = RestUtils.post(confirmPrintBuilder, discConfirmResource, getHeaders());
         apiResponse.statusCode(HttpStatus.SC_CREATED);
+    }
+
+    public void submitInterimApplication() {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String interimApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/interim/", world.createLicence.getApplicationNumber())).toString();
+
+        do {
+            InterimApplicationBuilder interimApplicationBuilder = new InterimApplicationBuilder().withAuthVehicles(String.valueOf(world.createLicence.getNoOfVehiclesRequired())).withAuthTrailers(String.valueOf(world.createLicence.getNoOfVehiclesRequired()))
+                    .withRequested("Y").withReason("Interim granted through the API").withStartDate(GenericUtils.getCurrentDate("yyyy-MM-dd")).withEndDate(GenericUtils.getFutureFormattedDate(2, "yyyy-MM-dd"))
+                    .withAction("grant").withId(world.createLicence.getApplicationNumber()).withVersion(version);
+            apiResponse = RestUtils.put(interimApplicationBuilder, interimApplicationResource, getHeaders());
+            version++;
+            if (version > 20) {
+                version = 1;
+            }
+        } while (apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT);
+
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
+    }
+
+    public void grantInterimApplication() {
+        submitInterimApplication();
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String interimApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/interim/grant/", world.createLicence.getApplicationNumber())).toString();
+
+        InterimApplicationBuilder interimApplicationBuilder = new InterimApplicationBuilder().withId(world.createLicence.getApplicationNumber());
+        apiResponse = RestUtils.post(interimApplicationBuilder, interimApplicationResource, getHeaders());
+
+        if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
+            System.out.println(apiResponse.extract().statusCode());
+            System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
+        }
     }
 }

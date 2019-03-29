@@ -28,9 +28,5 @@ public class InternalApplication extends BasePage implements En {
             assertNotNull(docStoreLink);
             assertTrue(docStoreLink.contains(".rtf"));
         });
-
-        When("^I generate a letter$", () -> {
-            generateLetter();
-        });
     }
 }

@@ -695,10 +695,14 @@ public class CreateLicenceAPI {
                             vrm = "vg".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))))
                                     .toLowerCase();
                     }
-                    VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm).withPlatedWeight(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).withVersion(version);
+                    VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm)
+                            .withPlatedWeight(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).withVersion(version);
                     assert vehiclesResource != null;
                     apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
                     i++;
+                    if (version > 10) {
+                        version = 1;
+                    }
                 }
             }
             while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)
