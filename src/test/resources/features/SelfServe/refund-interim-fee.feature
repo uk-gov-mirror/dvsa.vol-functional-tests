@@ -1,4 +1,5 @@
 @OLCS-23724
+@SS-interim-refund
 @SS
 
 Feature: Fee paid on new application
@@ -34,7 +35,7 @@ Feature: Fee paid on new application
       | OperatorType | LicenceType |
       | goods        | sn          |
 
-  Scenario Outline: Interim fee has been paid and licence has been granted
+  Scenario Outline: Interim fee has been paid and granted and licence has been granted
     Given i have an interim "<OperatorType>" "<LicenceType>" application
     When the interim fee has been paid
     And the interim is granted
