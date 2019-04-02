@@ -20,14 +20,12 @@ public class GoodVarIncreaseVehicle extends BasePage implements En  {
 
         Then("^a status of update required should be shown next to financial evidence$", () -> {
         untilExpectedTextInElement("//*[@id=\"overview-item__financial_evidence\"]",  SelectorType.XPATH,"REQUIRES ATTENTION", 10);
-
         });
 
         When("^A selfserve user increases the vehicle required count by invalid characters$", () -> {
             world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
             clickByLinkText(world.createLicence.getLicenceNumber());
             world.UIJourneySteps.changeVehicleReq("+6");
-
         });
         Then("^An error message should appear$", () -> {
             isTextPresent("//*[@id=\"OperatingCentre\"]/fieldset[2]/div[1]/div/p",  20);
