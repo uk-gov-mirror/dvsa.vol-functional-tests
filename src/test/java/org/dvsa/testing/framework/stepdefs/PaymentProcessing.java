@@ -1,6 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import activesupport.IllegalBrowserException;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -58,7 +59,9 @@ public class PaymentProcessing extends BasePage implements En {
             waitForTextToBePresent("Paid");
         });
         And("^when i pay for the fee by \"([^\"]*)\"$", (String arg0) -> {
+            this.getFeeNumber();
             setFeeNumber(world.genericUtils.stripAlphaCharacters(String.valueOf(findElement("//*/tbody/tr[1]/td[1]", SelectorType.XPATH, 10).getText())));
+
             world.UIJourneySteps.selectFee();
             if (arg0.equals("card")) {
                 String bankCardNumber = "4006000000000600";
