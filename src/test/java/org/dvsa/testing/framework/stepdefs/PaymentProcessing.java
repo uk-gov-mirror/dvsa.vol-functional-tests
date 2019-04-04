@@ -56,7 +56,8 @@ public class PaymentProcessing extends BasePage implements En {
             waitForTextToBePresent("Fee No.");
             // Refresh page
             javaScriptExecutor("location.reload(true)");
-            selectValueFromDropDown("status", SelectorType.ID, "Historic");
+            selectValueFromDropDown("status", SelectorType.ID, "All");
+            waitForTextToBePresent("Paid");
             assertEquals(getText("//*[contains(text(),'" + getFeeNumber() + "')]//*[contains(@class,'status')]", SelectorType.XPATH), "PAID");
         });
         And("^when i pay for the fee by \"([^\"]*)\"$", (String arg0) -> {
