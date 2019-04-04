@@ -4,6 +4,7 @@ import Injectors.World;
 import activesupport.IllegalBrowserException;
 import activesupport.driver.Browser;
 import cucumber.api.java8.En;
+import org.dvsa.testing.framework.Journeys.APIJourneySteps;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.openqa.selenium.By;
@@ -47,7 +48,7 @@ public class RefundInterim extends BasePage implements En {
                 waitAndClick("//*[@id=\"status\"]/option[@value='all']", SelectorType.XPATH);
             } while (!isTextPresent("Paid",10));
             assertTrue(checkForPartialMatch("£68.00"));
-            assertTrue(returnFeeStatus("CANCELLED"));
+            assertTrue(world.genericUtils.returnFeeStatus("CANCELLED"));
         });
         And("^the licence has been withdrawn$", () -> {
             world.grantLicence.withdraw(world.createLicence.getApplicationNumber());
@@ -61,17 +62,34 @@ public class RefundInterim extends BasePage implements En {
                 waitAndClick("//*[@id=\"status\"]/option[@value='all']", SelectorType.XPATH);
             } while (!isTextPresent("Paid",10));
             assertTrue(checkForPartialMatch("£68.00"));
-            assertFalse(returnFeeStatus("CANCELLED"));
+            assertFalse(world.genericUtils.returnFeeStatus("CANCELLED"));
         });
         And("^the licence is granted$", () -> {
             world.APIJourneySteps.grantLicenceAndPayFees();
         });
         And("^the interim is granted$", () -> {
-            world.updateLicence.grantInterimApplication();
+            world.updateLicence.grantInterimApplication(world.createLicence.getApplicationNumber());
         });
-    }
-
-    public boolean returnFeeStatus(String searchTerm) throws MalformedURLException, IllegalBrowserException {
-        return Browser.navigate().findElements(By.xpath("//*[contains(@class,'status')]")).stream().anyMatch(a -> a.getText().contains(searchTerm.toUpperCase()));
+        When("^i pay for the interim application$", () -> {
+            clickByLinkText("Financial");
+            waitAndClick("//*[contains(text(),'Send')]",SelectorType.XPATH);
+            waitAndClick("form-actions[save]",SelectorType.NAME);
+            clickByLinkText("Review");
+            click("declarationsAndUndertakings[declarationConfirmation]",SelectorType.ID);
+            waitAndClick("//*[contains(text(),'Yes')]",SelectorType.XPATH);
+            enterText("interim[goodsApplicationInterimReason]","Testing",SelectorType.NAME);
+            click("submitAndPay",SelectorType.ID);
+            click("//*[@name='form-actions[pay]']", SelectorType.XPATH);
+            world.UIJourneySteps.payFee(null, "card", "4006000000000600", "10", "20");
+        });
+        And("^the application has been refused$", () -> {
+            world.grantLicence.refuse(String.valueOf(Integer.parseInt(world.createLicence.getApplicationNumber()) + 1));
+        });
+        And("^the application has been withdrawn$", () -> {
+            world.grantLicence.withdraw(String.valueOf(Integer.parseInt(world.createLicence.getApplicationNumber()) + 1));
+        });
+        And("^the variation interim is granted$", () -> {
+            world.updateLicence.grantInterimApplication(String.valueOf(Integer.parseInt(world.createLicence.getApplicationNumber()) + 1));
+        });
     }
 }

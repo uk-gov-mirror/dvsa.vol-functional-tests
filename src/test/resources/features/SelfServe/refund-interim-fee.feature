@@ -1,5 +1,5 @@
 @OLCS-23724
-@SS-interim-refund
+@ss-interim-refund
 @SS
 
 Feature: Fee paid on new application
@@ -45,3 +45,24 @@ Feature: Fee paid on new application
     Examples:
       | OperatorType | LicenceType |
       | goods        | sn          |
+
+  Scenario: Interim fee has been paid and variation application has been refused
+    Given i have a valid "goods" "sn" licence
+    And i increase my vehicle authority count
+    When i pay for the interim application
+    And the application has been refused
+    Then the interim fee should be refunded
+
+  Scenario: Interim fee has been paid and variation application has been withdrawn
+    Given i have a valid "goods" "si" licence
+    And i increase my vehicle authority count
+    When i pay for the interim application
+    And the application has been withdrawn
+    Then the interim fee should be refunded
+
+  Scenario: Interim fee has been paid and granted
+    Given i have a valid "goods" "si" licence
+    And i increase my vehicle authority count
+    When i pay for the interim application
+    And the variation interim is granted
+    Then the interim fee should not be refunded

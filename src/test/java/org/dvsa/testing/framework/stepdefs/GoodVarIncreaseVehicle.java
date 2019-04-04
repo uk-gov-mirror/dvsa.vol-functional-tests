@@ -11,7 +11,7 @@ public class GoodVarIncreaseVehicle extends BasePage implements En  {
 
     public GoodVarIncreaseVehicle(World world) {
 
-        When("^A selfserve user increases the vehicle authority count$", () -> {
+        When("^i increase my vehicle authority count$", () -> {
          world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(),world.createLicence.getEmailAddress());
          clickByLinkText(world.createLicence.getLicenceNumber());
          world.UIJourneySteps.changeVehicleReq(String.valueOf(world.createLicence.getNoOfVehiclesRequired() + 1 ));

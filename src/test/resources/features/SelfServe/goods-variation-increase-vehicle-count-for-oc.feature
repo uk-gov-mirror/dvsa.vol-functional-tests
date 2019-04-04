@@ -8,7 +8,7 @@ Feature: Goods Variation increase vehicle count for an OC
     Given i have a valid "goods" "sn" licence
 
   Scenario: Create a variation and increase vehicle count
-    When A selfserve user increases the vehicle authority count
+    When i increase my vehicle authority count
     Then a status of update required should be shown next to financial evidence
 
   Scenario: Increasing the vehicle count to an invalid character for required vehicles

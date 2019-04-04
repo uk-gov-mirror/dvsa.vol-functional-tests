@@ -569,9 +569,9 @@ public class UpdateLicenceAPI extends BasePage {
         apiResponse.statusCode(HttpStatus.SC_CREATED);
     }
 
-    public void submitInterimApplication() {
+    public void submitInterimApplication(String application) {
         Headers.getHeaders().put("x-pid", adminApiHeader());
-        String interimApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/interim/", world.createLicence.getApplicationNumber())).toString();
+        String interimApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/interim/", application)).toString();
 
         do {
             InterimApplicationBuilder interimApplicationBuilder = new InterimApplicationBuilder().withAuthVehicles(String.valueOf(world.createLicence.getNoOfVehiclesRequired())).withAuthTrailers(String.valueOf(world.createLicence.getNoOfVehiclesRequired()))
@@ -591,10 +591,10 @@ public class UpdateLicenceAPI extends BasePage {
         }
     }
 
-    public void grantInterimApplication() {
-        submitInterimApplication();
+    public void grantInterimApplication(String application) {
+        submitInterimApplication(application);
         Headers.getHeaders().put("x-pid", adminApiHeader());
-        String interimApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/interim/grant/", world.createLicence.getApplicationNumber())).toString();
+        String interimApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, String.format("application/%s/interim/grant/", application)).toString();
 
         InterimApplicationBuilder interimApplicationBuilder = new InterimApplicationBuilder().withId(world.createLicence.getApplicationNumber());
         apiResponse = RestUtils.post(interimApplicationBuilder, interimApplicationResource, getHeaders());
