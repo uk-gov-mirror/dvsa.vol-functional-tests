@@ -71,16 +71,7 @@ public class RefundInterim extends BasePage implements En {
             world.updateLicence.grantInterimApplication(world.createLicence.getApplicationNumber());
         });
         When("^i pay for the interim application$", () -> {
-            clickByLinkText("Financial");
-            waitAndClick("//*[contains(text(),'Send')]",SelectorType.XPATH);
-            waitAndClick("form-actions[save]",SelectorType.NAME);
-            clickByLinkText("Review");
-            click("declarationsAndUndertakings[declarationConfirmation]",SelectorType.ID);
-            waitAndClick("//*[contains(text(),'Yes')]",SelectorType.XPATH);
-            enterText("interim[goodsApplicationInterimReason]","Testing",SelectorType.NAME);
-            click("submitAndPay",SelectorType.ID);
-            click("//*[@name='form-actions[pay]']", SelectorType.XPATH);
-            world.UIJourneySteps.payFee(null, "card", "4006000000000600", "10", "20");
+            world.UIJourneySteps.payForInterimApp();
         });
         And("^the application has been refused$", () -> {
             world.grantLicence.refuse(String.valueOf(Integer.parseInt(world.createLicence.getApplicationNumber()) + 1));

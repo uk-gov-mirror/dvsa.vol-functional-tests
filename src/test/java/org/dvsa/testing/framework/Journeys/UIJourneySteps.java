@@ -989,4 +989,17 @@ public class UIJourneySteps extends BasePage {
         clickByLinkText("" + world.createLicence.getLicenceNumber() + "");
         click("menu-licence_surrender", SelectorType.ID);
     }
+
+    public void payForInterimApp() throws IllegalBrowserException {
+        clickByLinkText("Financial");
+        waitAndClick("//*[contains(text(),'Send')]", SelectorType.XPATH);
+        waitAndClick("form-actions[save]",SelectorType.NAME);
+        clickByLinkText("Review");
+        click("declarationsAndUndertakings[declarationConfirmation]",SelectorType.ID);
+        waitAndClick("//*[contains(text(),'Yes')]",SelectorType.XPATH);
+        enterText("interim[goodsApplicationInterimReason]","Testing",SelectorType.NAME);
+        click("submitAndPay",SelectorType.ID);
+        click("//*[@name='form-actions[pay]']", SelectorType.XPATH);
+        world.UIJourneySteps.payFee(null, "card", "4006000000000600", "10", "20");
+    }
 }
