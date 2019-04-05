@@ -23,6 +23,7 @@ public class CreateApplications extends BasePage implements En {
             world.APIJourneySteps.registerAndGetUserDetails();
             for (int i = 0; i < trafficAreas.size();) {
                 for (String ta : trafficAreas) {
+                    world.createLicence.setNiFlag("Y");
                     world.createLicence.setPostcode(PostCode.getPostCode(TrafficArea.valueOf(ta.toUpperCase())));
                     world.createLicence.setOperatorType(operatorType);
                     world.createLicence.setLicenceType(licenceType);
