@@ -2,6 +2,7 @@ package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
 import activesupport.MissingRequiredArgument;
+import activesupport.driver.Browser;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.dvsa.testing.framework.Journeys.APIJourneySteps;
@@ -10,6 +11,7 @@ import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.junit.Assert;
+import org.openqa.selenium.By;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
