@@ -9,6 +9,7 @@ import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
+import org.dvsa.testing.framework.stepdefs.PaymentProcessing;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.LoginPage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -276,6 +277,16 @@ public class UIJourneySteps extends BasePage {
                 customerPaymentModule(bankCardNumber, cardExpiryMonth, cardExpiryYear);
                 break;
         }
+    }
+    public void selectFeeById(String feeNumber) throws IllegalBrowserException {
+        do {
+            //nothing
+        } while (isElementPresent("//button[@id='form-actions[submit]']", SelectorType.XPATH));
+        selectValueFromDropDown("status", SelectorType.ID, "Current");
+        waitForTextToBePresent("Outstanding");
+        waitAndClick("//*[@value='"+feeNumber+"']", SelectorType.XPATH);
+        waitAndClick("//*[@value='Pay']", SelectorType.XPATH);
+        waitForTextToBePresent("Pay fee");
     }
 
     public void selectFee() throws IllegalBrowserException {

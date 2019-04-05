@@ -18,12 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateApplications extends BasePage implements En {
     public CreateApplications(World world) {
-        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" application in traffic area$", (String operatorType, String licenceType, DataTable trafficAreaTable) -> {
+        Given("^i have a \"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\" application in traffic area$", (String operatorType, String licenceType, String Region,DataTable trafficAreaTable) -> {
+            if(Region.equals("NI".toUpperCase())){
+                Region = "Y";
+            }else{
+                Region = "N";
+            }
             List<String> trafficAreas = trafficAreaTable.asList(String.class);
             world.APIJourneySteps.registerAndGetUserDetails();
             for (int i = 0; i < trafficAreas.size();) {
                 for (String ta : trafficAreas) {
-                    world.createLicence.setNiFlag("Y");
+                    world.createLicence.setNiFlag(Region);
                     world.createLicence.setPostcode(PostCode.getPostCode(TrafficArea.valueOf(ta.toUpperCase())));
                     world.createLicence.setOperatorType(operatorType);
                     world.createLicence.setLicenceType(licenceType);
