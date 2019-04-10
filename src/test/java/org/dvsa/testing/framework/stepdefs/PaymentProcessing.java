@@ -5,8 +5,7 @@ import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 public class PaymentProcessing extends BasePage implements En {
     private World world;
@@ -49,24 +48,29 @@ public class PaymentProcessing extends BasePage implements En {
             // Refresh page
             javaScriptExecutor("location.reload(true)");
             String newFeeCount = world.genericUtils.stripAlphaCharacters(getElementValueByText("//div[@class='table__header']/h3", SelectorType.XPATH));
-            waitForTextToBePresent("Outstanding");
+            assertEquals(getText("//*[contains(text(),'" + getFeeNumber() + "')]//*[contains(@class,'status')]", SelectorType.XPATH), "OUTSTANDING");
             assertNotEquals(currentFeeCount, newFeeCount);
         });
         Then("^the fee should be paid and no longer visible in the fees table$", () -> {
-            assertFalse(checkForFullMatch(getFeeNumber()));
-            selectValueFromDropDown("status", SelectorType.ID, "Historic");
+            waitForTextToBePresent("Fee No.");
+            // Refresh page
+            javaScriptExecutor("location.reload(true)");
+            selectValueFromDropDown("status", SelectorType.ID, "All");
             waitForTextToBePresent("Paid");
+            assertEquals(getText("//*[contains(text(),'" + getFeeNumber() + "')]//*[contains(@class,'status')]", SelectorType.XPATH), "PAID");
         });
         And("^when i pay for the fee by \"([^\"]*)\"$", (String arg0) -> {
+            waitForTextToBePresent("Fee No.");
+            String feeAmount = String.valueOf(findElement("//*/tbody/tr[1]/td[5]", SelectorType.XPATH, 10).getText()).substring(1);
             setFeeNumber(world.genericUtils.stripAlphaCharacters(String.valueOf(findElement("//*/tbody/tr[1]/td[1]", SelectorType.XPATH, 10).getText())));
-            world.UIJourneySteps.selectFee();
+            world.UIJourneySteps.selectFeeById(feeNumber);
             if (arg0.equals("card")) {
                 String bankCardNumber = "4006000000000600";
                 String cardExpiryMonth = "10";
                 String cardExpiryYear = "50";
                 world.UIJourneySteps.payFee(null, arg0, bankCardNumber, cardExpiryMonth, cardExpiryYear);
             } else {
-                world.UIJourneySteps.payFee("100", arg0, null, null, null);
+                world.UIJourneySteps.payFee(feeAmount, arg0, null, null, null);
             }
         });
     }

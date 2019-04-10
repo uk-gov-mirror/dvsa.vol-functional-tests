@@ -3,7 +3,7 @@
 Feature: Self Serve Apply for goods licence
 
   Scenario Outline: Create and pay application fees
-    Given i have a "<operatorType>" "<licenceType>" application in traffic area
+    Given i have a "<operatorType>" "<licenceType>" "GB" application in traffic area
       | b |
     And i choose to print and sign
     When i pay for my application
@@ -15,7 +15,7 @@ Feature: Self Serve Apply for goods licence
       | public       | standard_national      |
 
   Scenario Outline: Saved card payment
-    Given i have a "<operatorType>" "<licenceType>" application in traffic area
+    Given i have a "<operatorType>" "<licenceType>" "GB" application in traffic area
       | b |
       | c |
     And i choose to print and sign
@@ -28,3 +28,14 @@ Feature: Self Serve Apply for goods licence
       | operatorType | licenceType            |
       | goods        | standard_international |
       | public       | standard_national      |
+
+  Scenario Outline: Create and pay NI application fees
+    Given i have a "<operatorType>" "<licenceType>" "NI" application in traffic area
+      | N |
+    And i choose to print and sign
+    When i pay for my application
+    Then the application should be submitted
+
+    Examples:
+      | operatorType | licenceType            |
+      | goods        | standard_international |

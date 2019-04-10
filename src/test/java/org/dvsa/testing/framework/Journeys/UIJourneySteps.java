@@ -9,6 +9,7 @@ import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
+import org.dvsa.testing.framework.stepdefs.PaymentProcessing;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.LoginPage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -276,6 +277,16 @@ public class UIJourneySteps extends BasePage {
                 customerPaymentModule(bankCardNumber, cardExpiryMonth, cardExpiryYear);
                 break;
         }
+    }
+    public void selectFeeById(String feeNumber) throws IllegalBrowserException {
+        do {
+            //nothing
+        } while (isElementPresent("//button[@id='form-actions[submit]']", SelectorType.XPATH));
+        selectValueFromDropDown("status", SelectorType.ID, "Current");
+        waitForTextToBePresent("Outstanding");
+        waitAndClick("//*[@value='"+feeNumber+"']", SelectorType.XPATH);
+        waitAndClick("//*[@value='Pay']", SelectorType.XPATH);
+        waitForTextToBePresent("Pay fee");
     }
 
     public void selectFee() throws IllegalBrowserException {
@@ -988,6 +999,19 @@ public class UIJourneySteps extends BasePage {
         } while (!isLinkPresent("" + world.createLicence.getLicenceNumber() + "", 10));
         clickByLinkText("" + world.createLicence.getLicenceNumber() + "");
         click("menu-licence_surrender", SelectorType.ID);
+    }
+
+    public void payForInterimApp() throws IllegalBrowserException {
+        clickByLinkText("Financial");
+        waitAndClick("//*[contains(text(),'Send')]", SelectorType.XPATH);
+        waitAndClick("form-actions[save]",SelectorType.NAME);
+        clickByLinkText("Review");
+        click("declarationsAndUndertakings[declarationConfirmation]",SelectorType.ID);
+        waitAndClick("//*[contains(text(),'Yes')]",SelectorType.XPATH);
+        enterText("interim[goodsApplicationInterimReason]","Testing",SelectorType.NAME);
+        click("submitAndPay",SelectorType.ID);
+        click("//*[@name='form-actions[pay]']", SelectorType.XPATH);
+        world.UIJourneySteps.payFee(null, "card", "4006000000000600", "10", "20");
     }
 
     public void addNewOperatingCentre() throws IllegalBrowserException, MalformedURLException {

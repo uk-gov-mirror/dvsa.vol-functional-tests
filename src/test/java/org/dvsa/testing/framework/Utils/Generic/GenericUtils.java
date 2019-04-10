@@ -235,4 +235,8 @@ public class GenericUtils extends BasePage {
         scanner.useDelimiter(delimeter);
         return scanner;
     }
+
+    public boolean returnFeeStatus(String searchTerm) throws MalformedURLException, IllegalBrowserException {
+        return Browser.navigate().findElements(By.xpath("//*[contains(@class,'status')]")).stream().anyMatch(a -> a.getText().contains(searchTerm.toUpperCase()));
+    }
 }

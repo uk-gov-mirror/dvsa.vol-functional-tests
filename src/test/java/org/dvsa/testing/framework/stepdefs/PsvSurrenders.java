@@ -27,6 +27,7 @@ public class PsvSurrenders extends BasePage implements En {
                 assertTrue(Browser.navigate().getCurrentUrl().contains("community-licence"));
                 world.UIJourneySteps.addCommunityLicenceDetails();
             }
+            world.UIJourneySteps.acknowledgeDestroyPage();
         });
 
         Then("^the correct licence details should be displayed$", () -> {
