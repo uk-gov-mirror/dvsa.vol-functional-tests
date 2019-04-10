@@ -1013,4 +1013,21 @@ public class UIJourneySteps extends BasePage {
         click("//*[@name='form-actions[pay]']", SelectorType.XPATH);
         world.UIJourneySteps.payFee(null, "card", "4006000000000600", "10", "20");
     }
+
+    public void addNewOperatingCentre() throws IllegalBrowserException, MalformedURLException {
+        world.APIJourneySteps.createAdminUser();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
+        world.UIJourneySteps.searchAndViewLicence();
+        clickByLinkText("Operating centres and authorisation");
+        click("//*[@id='add']",SelectorType.XPATH);
+        enterText("//*[@id='postcodeInput1']", "FK10 1AA", SelectorType.XPATH);
+        click("//*[@id='address[searchPostcode][search]']", SelectorType.XPATH);
+        waitForTextToBePresent("Please select");
+        selectValueFromDropDownByIndex("address[searchPostcode][addresses]", SelectorType.ID, 1);
+        waitForTextToBePresent("Total number of vehicles");
+        assertTrue(isElementPresent("//*[@id='noOfVehiclesRequired']",SelectorType.XPATH));
+        waitAndEnterText("noOfVehiclesRequired", SelectorType.ID,"1");
+        findSelectAllRadioButtonsByValue("adPlaced");
+        click("form-actions[submit]",SelectorType.ID);
+    }
 }

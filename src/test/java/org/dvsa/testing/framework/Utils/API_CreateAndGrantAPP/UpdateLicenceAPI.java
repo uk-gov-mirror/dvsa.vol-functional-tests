@@ -1,10 +1,10 @@
 package org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP;
 
+import Injectors.World;
 import activesupport.MissingRequiredArgument;
 import activesupport.http.RestUtils;
 import activesupport.string.Str;
 import activesupport.system.Properties;
-import enums.BusinessType;
 import enums.LicenceType;
 import enums.OperatorType;
 import io.restassured.response.ValidatableResponse;
@@ -12,7 +12,6 @@ import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
 import org.dvsa.testing.framework.Utils.API_Builders.*;
 import org.dvsa.testing.framework.Utils.API_Headers.Headers;
-import Injectors.World;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;

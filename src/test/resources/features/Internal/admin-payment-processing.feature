@@ -1,6 +1,6 @@
 @INT
-@Admin-Payment-create-fee
-Feature: Admin payment process
+@Admin-Payment
+Feature: Admin create fees
 
   Background:
     Given i have logged in to internal

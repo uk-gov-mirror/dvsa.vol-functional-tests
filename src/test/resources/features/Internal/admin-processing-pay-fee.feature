@@ -1,6 +1,6 @@
 @INT
 @Admin-Payment-Processing
-Feature: Admin payment process
+Feature: Admin paying fees
 
   Background:
     Given i have logged in to internal
