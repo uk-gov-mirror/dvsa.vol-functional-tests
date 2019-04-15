@@ -1,6 +1,7 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import activesupport.IllegalBrowserException;
 import activesupport.driver.Browser;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
@@ -9,7 +10,11 @@ import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.hamcrest.Matchers;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -246,7 +251,9 @@ public class Surrenders extends BasePage implements En {
             waitAndClick("//*[contains(text(),'home')]", SelectorType.XPATH);
         });
         Then("^the Surrender button should not be clickable$", () -> {
-        assertFalse(isElementPresent("//*[contains(@name,'actions[surrender]')]",SelectorType.XPATH));
+        if (isElementPresent("//*[contains(@name,'actions[surrender]')]",SelectorType.XPATH)) {
+            isElementEnabled("//*[@id='actions[surrender]']",SelectorType.XPATH);
+            }
         });
         And("^the open case and bus reg is closed$", () -> {
             world.UIJourneySteps.closeCase();
@@ -269,7 +276,3 @@ public class Surrenders extends BasePage implements En {
     }
 
 }
-
-
-
-

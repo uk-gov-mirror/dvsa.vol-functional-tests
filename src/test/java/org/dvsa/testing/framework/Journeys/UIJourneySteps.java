@@ -353,7 +353,7 @@ public class UIJourneySteps extends BasePage {
         world.UIJourneySteps.searchAndViewApplication();
         waitForTextToBePresent("Processing");
         clickByLinkText("Processing");
-        waitUntilElementIsEnabled("//body", SelectorType.XPATH);
+        isElementEnabled("//body", SelectorType.XPATH);
     }
 
     public void addPreviousConviction() throws IllegalBrowserException {
@@ -1029,5 +1029,29 @@ public class UIJourneySteps extends BasePage {
         waitAndEnterText("noOfVehiclesRequired", SelectorType.ID,"1");
         findSelectAllRadioButtonsByValue("adPlaced");
         click("form-actions[submit]",SelectorType.ID);
+    }
+
+    public void caseWorkerCompleteConditionsAndUndertakings() throws IllegalBrowserException {
+        clickByLinkText("Conditions and undertakings");
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
+    }
+
+    public void caseWorkerCompleteReviewAndDeclarations() throws IllegalBrowserException {
+        clickByLinkText("Review and declarations");
+        waitAndClick("//*[@id='declarations[declarationConfirmation]']", SelectorType.XPATH);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
+    }
+
+    public void caseWorkerCompleteOverview() throws IllegalBrowserException, MalformedURLException {
+        click("//*[@id='details[overrideOppositionDate]']", SelectorType.XPATH);
+        Browser.navigate().findElements(By.xpath("//*[contains(@id,'tracking')]/option[2]")).stream().forEach(WebElement::click);
+        click("//*[@id='form-actions[saveAndContinue]']", SelectorType.XPATH);
+    }
+
+    public void caseWorkerGrantApplication() throws IllegalBrowserException {
+        javaScriptExecutor("location.reload(true)");
+        waitAndClick("//*[@id='menu-application-decisions-grant']", SelectorType.XPATH);
+        waitAndClick("//*[@id='inspection-request-confirm[createInspectionRequest]']", SelectorType.XPATH);
+        click("//*[@id='form-actions[grant]']", SelectorType.XPATH);
     }
 }

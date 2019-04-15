@@ -1,9 +1,17 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import activesupport.IllegalBrowserException;
+import activesupport.driver.Browser;
+import cucumber.api.java.eo.Se;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
+
+import java.net.MalformedURLException;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertNotNull;
@@ -31,11 +39,42 @@ public class InternalApplication extends BasePage implements En {
             world.UIJourneySteps.addNewOperatingCentre();
         });
         Then("^the postcode warning message should be displayed on internal$", () -> {
-            assertTrue(isTextPresent("This operating centre is in a different traffic area from the other centres.",10));
-            click("form-actions[confirm-add]",SelectorType.ID);
-            click("form-actions[submit]",SelectorType.ID);
+            assertTrue(isTextPresent("This operating centre is in a different traffic area from the other centres.", 10));
+            click("form-actions[confirm-add]", SelectorType.ID);
+            click("form-actions[submit]", SelectorType.ID);
             waitForTextToBePresent("Operating centres and authorisation");
-            assertTrue(isElementPresent("//*[@value='2 MAR PLACE, ALLOA, FK10 1AA']",SelectorType.XPATH));
+            assertTrue(isElementPresent("//*[@value='2 MAR PLACE, ALLOA, FK10 1AA']", SelectorType.XPATH));
+        });
+        Given("^I have partially applied for a \"([^\"]*)\" \"([^\"]*)\" licence$", (String operator, String licenceType) -> {
+            world.createLicence.setOperatorType(operator);
+            world.createLicence.setLicenceType(licenceType);
+            if (licenceType.equals("special_restricted") && (world.createLicence.getApplicationNumber() == null)) {
+                world.APIJourneySteps.registerAndGetUserDetails();
+                world.APIJourneySteps.createSpecialRestrictedLicence();
+            } else if (world.createLicence.getApplicationNumber() == null) {
+                world.APIJourneySteps.registerAndGetUserDetails();
+                world.APIJourneySteps.createApplication();
+
+            }
+        });
+        When("^the caseworker completes and submits the application$", () -> {
+            world.APIJourneySteps.createAdminUser();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
+            Browser.navigate().get("https://iuap1.olcs.qa.nonprod.dvsa.aws/application/" + world.createLicence.getApplicationNumber());
+            click("//*[@id='menu-application-decisions-submit']", SelectorType.XPATH);
+            waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
+            javaScriptExecutor("location.reload(true)");
+            waitForTextToBePresent("Application details");
+            world.UIJourneySteps.caseWorkerCompleteConditionsAndUndertakings();
+            world.UIJourneySteps.caseWorkerCompleteReviewAndDeclarations();
+            world.UIJourneySteps.caseWorkerCompleteOverview();
+        });
+
+        And("^grants the application$", () -> {
+            waitAndClick("//*[@id='menu-application_fee']", SelectorType.XPATH);
+            world.UIJourneySteps.selectFee();
+            world.UIJourneySteps.payFee("209", "cash", null, null, null);
+            world.UIJourneySteps.caseWorkerGrantApplication();
         });
     }
 }
