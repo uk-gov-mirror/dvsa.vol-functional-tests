@@ -14,8 +14,7 @@ The following technologies should be installed on your system.
 
 
 ## Executing
-``mvn clean verify -Denv= -Dbrowser= -DlicenceType= -DbusinessType= -Dni=(Defaults to GB) -DJENKINS_USERNAME= -DJENKINS_PASSWORD= -DdbUsername=
-  -DdbPassword=``
+``mvn clean verify -Denv= -Dbrowser= ``
   
 The environment and browser properties need to be set otherwise the test will not execute. If only environment and browser properties are set, the harness will
 create by default ``a GB goods standard national limited company licence``
@@ -29,3 +28,6 @@ create by default ``a GB goods standard national limited company licence``
 ## Reports
 To produce the reports run the following command in your terminal
 ``mvn allure:report``
+
+## Dependency Vulnerability Scanner
+To scan use the following command ``mvn verify -DskipTests``   

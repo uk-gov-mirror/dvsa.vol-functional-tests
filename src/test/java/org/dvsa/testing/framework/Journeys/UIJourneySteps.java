@@ -9,6 +9,7 @@ import activesupport.driver.Browser;
 import activesupport.string.Str;
 import activesupport.system.Properties;
 import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
+import org.dvsa.testing.framework.stepdefs.PaymentProcessing;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.LoginPage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -276,6 +277,16 @@ public class UIJourneySteps extends BasePage {
                 customerPaymentModule(bankCardNumber, cardExpiryMonth, cardExpiryYear);
                 break;
         }
+    }
+    public void selectFeeById(String feeNumber) throws IllegalBrowserException {
+        do {
+            //nothing
+        } while (isElementPresent("//button[@id='form-actions[submit]']", SelectorType.XPATH));
+        selectValueFromDropDown("status", SelectorType.ID, "Current");
+        waitForTextToBePresent("Outstanding");
+        waitAndClick("//*[@value='"+feeNumber+"']", SelectorType.XPATH);
+        waitAndClick("//*[@value='Pay']", SelectorType.XPATH);
+        waitForTextToBePresent("Pay fee");
     }
 
     public void selectFee() throws IllegalBrowserException {
@@ -1001,5 +1012,22 @@ public class UIJourneySteps extends BasePage {
         click("submitAndPay",SelectorType.ID);
         click("//*[@name='form-actions[pay]']", SelectorType.XPATH);
         world.UIJourneySteps.payFee(null, "card", "4006000000000600", "10", "20");
+    }
+
+    public void addNewOperatingCentre() throws IllegalBrowserException, MalformedURLException {
+        world.APIJourneySteps.createAdminUser();
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
+        world.UIJourneySteps.searchAndViewLicence();
+        clickByLinkText("Operating centres and authorisation");
+        click("//*[@id='add']",SelectorType.XPATH);
+        enterText("//*[@id='postcodeInput1']", "FK10 1AA", SelectorType.XPATH);
+        click("//*[@id='address[searchPostcode][search]']", SelectorType.XPATH);
+        waitForTextToBePresent("Please select");
+        selectValueFromDropDownByIndex("address[searchPostcode][addresses]", SelectorType.ID, 1);
+        waitForTextToBePresent("Total number of vehicles");
+        assertTrue(isElementPresent("//*[@id='noOfVehiclesRequired']",SelectorType.XPATH));
+        waitAndEnterText("noOfVehiclesRequired", SelectorType.ID,"1");
+        findSelectAllRadioButtonsByValue("adPlaced");
+        click("form-actions[submit]",SelectorType.ID);
     }
 }

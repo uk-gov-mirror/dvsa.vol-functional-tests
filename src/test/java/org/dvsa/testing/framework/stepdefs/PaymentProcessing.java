@@ -1,7 +1,6 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import activesupport.driver.Browser;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -64,7 +63,7 @@ public class PaymentProcessing extends BasePage implements En {
             waitForTextToBePresent("Fee No.");
             String feeAmount = String.valueOf(findElement("//*/tbody/tr[1]/td[5]", SelectorType.XPATH, 10).getText()).substring(1);
             setFeeNumber(world.genericUtils.stripAlphaCharacters(String.valueOf(findElement("//*/tbody/tr[1]/td[1]", SelectorType.XPATH, 10).getText())));
-            world.UIJourneySteps.selectFee();
+            world.UIJourneySteps.selectFeeById(feeNumber);
             if (arg0.equals("card")) {
                 String bankCardNumber = "4006000000000600";
                 String cardExpiryMonth = "10";
