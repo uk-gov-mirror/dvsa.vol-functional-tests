@@ -1,5 +1,6 @@
 @INT
 @Generate-Letter
+@int_regression
 Feature: Generate letter pop up should contain letter details
 
   Background:

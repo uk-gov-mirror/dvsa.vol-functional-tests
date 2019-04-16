@@ -1,6 +1,6 @@
 @SS
 @SS-ADD-DIRECTOR
-@regression
+@ss_regression
 Feature: Add a director variation
 
   Background:

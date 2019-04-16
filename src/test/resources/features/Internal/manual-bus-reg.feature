@@ -1,6 +1,6 @@
 @INT
 @MANUAL-BUS-REG
-@regression
+@int_regression
 Feature: Complete Manual Bus Registration Steps
 
   Background:

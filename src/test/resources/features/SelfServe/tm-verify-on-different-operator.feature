@@ -1,6 +1,6 @@
 @SS-Verify-On
 @OLCS-19792
-@regression
+@ss_regression
 Feature: TM signs through verify
 
   Background:

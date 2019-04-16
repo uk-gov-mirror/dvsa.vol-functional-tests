@@ -1,6 +1,6 @@
 @INT
 @Admin-Payment-Processing
-@regression
+@int_regression
 Feature: Admin paying fees
 
   Background:

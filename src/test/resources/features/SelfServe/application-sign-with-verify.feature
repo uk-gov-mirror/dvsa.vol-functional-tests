@@ -1,6 +1,6 @@
 @OLCS-7284
 @SS-Verify-On
-@regression
+@ss_regression
 
 Feature: Operator signs with verify
 
