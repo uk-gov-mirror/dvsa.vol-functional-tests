@@ -1,6 +1,7 @@
 @OLCS-22913
 @INT
 @Surrender-int
+@regression
 Feature: Logic for Surrender menu item
 
   Background:

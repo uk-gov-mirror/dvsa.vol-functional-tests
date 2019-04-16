@@ -70,7 +70,7 @@ public class PsvSurrenders extends BasePage implements En {
             waitAndClick("//*[contains(text(),'home')]", SelectorType.XPATH);
         });
         And("^the surrender status is \"([^\"]*)\"$", (String status) -> {
-            waitForTextToBePresent("Current licences");
+            waitForTextToBePresent(world.createLicence.getLicenceNumber());
             Assertions.assertEquals(getText("//*[contains(@class,'status')]", SelectorType.XPATH), status.toUpperCase());
         });
         Then("^the number of disc should match the vehicles registered on the licence$", () -> {

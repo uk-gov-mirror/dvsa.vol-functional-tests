@@ -1,6 +1,7 @@
 @OLCS-20956
 @SS
 @SS-EXTERNAL-SEARCH
+@regression
 
 Feature: External user search by Address, Business name, Licence Number and Person's name
 

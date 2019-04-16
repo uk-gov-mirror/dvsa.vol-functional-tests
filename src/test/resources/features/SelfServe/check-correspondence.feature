@@ -1,5 +1,6 @@
 @SS
 @SS-CHECK-DOCUMENTS
+@regression
 Feature: Check correspondence
 
   Background:

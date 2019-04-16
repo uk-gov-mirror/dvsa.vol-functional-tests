@@ -39,6 +39,7 @@ public class PaymentProcessing extends BasePage implements En {
             selectValueFromDropDown("status", SelectorType.ID, "Current");
             // Refresh page
             javaScriptExecutor("location.reload(true)");
+            waitForTextToBePresent("Payment Processing");
             String feeCountBeforeAddingNewFee = getElementValueByText("//div[@class='table__header']/h3", SelectorType.XPATH);
             setCurrentFeeCount(world.genericUtils.stripAlphaCharacters(feeCountBeforeAddingNewFee));
             findElement("status", SelectorType.ID, 30).getAttribute("value").equals("current");

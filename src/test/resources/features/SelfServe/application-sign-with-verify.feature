@@ -1,9 +1,10 @@
 @OLCS-7284
 @SS-Verify-On
+@regression
 
 Feature: Operator signs with verify
 
-  Scenario Outline: Operator chooses to sign with verify latin and non latin characters
+  Scenario Outline: Operator chooses to sign with verify latin
     Given verify has been switched "on"
     And i have an application in progress
     When i choose to sign with verify with "<user>"

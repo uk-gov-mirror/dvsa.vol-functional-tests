@@ -1,5 +1,6 @@
 @INT
 @APPLY-PSV-LICENCE
+  @regression
 Feature: Apply for a psv licence
   Scenario: Apply for a restricted licence
     Given I have applied for a "public" "restricted" licence

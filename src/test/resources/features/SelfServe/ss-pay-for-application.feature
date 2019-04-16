@@ -1,6 +1,7 @@
 @SS
 @ss-pay-app
-Feature: Self Serve Apply for goods licence
+@regression
+Feature: Self Serve Apply for licence
 
   Scenario Outline: Create and pay application fees
     Given i have a "<operatorType>" "<licenceType>" "GB" application in traffic area

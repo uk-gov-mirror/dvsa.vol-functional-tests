@@ -1,6 +1,7 @@
 @OLCS-13203
 @INT
 @INTERIM
+@regression
 Feature: Change Validation On Interim Vehicle Authority
 
   Background:

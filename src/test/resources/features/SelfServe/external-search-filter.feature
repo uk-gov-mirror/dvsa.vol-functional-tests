@@ -1,5 +1,6 @@
 @SS
 @External-Search-Filter
+@regression
 Feature: Using filters on External Search
 
   Background:

@@ -6,6 +6,7 @@ Feature: Sign surrender
     Given i have a valid "goods" "sn" licence
     And i choose to surrender my licence
 
+  @regression
   Scenario: Sign with verify - check that surrender has been created
     When i sign with verify
     Then the post verify success page is displayed

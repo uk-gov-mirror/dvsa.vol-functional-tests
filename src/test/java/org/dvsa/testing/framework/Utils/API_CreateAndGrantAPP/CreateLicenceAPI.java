@@ -363,7 +363,7 @@ public class CreateLicenceAPI {
     public CreateLicenceAPI() throws MissingRequiredArgument {
         if (licenceType == null) {
             operatorType = "goods";
-            licenceType = "standard_national";
+            licenceType = "standard_international";
             businessType = "limited_company";
             niFlag = "N";
             isInterim = "N";
@@ -678,7 +678,6 @@ public class CreateLicenceAPI {
             // no need to submit details
         } else {
             String vehiclesResource = null;
-            String[] licencePlates = {"a", "s", "q", "x", "y", "g"};
             String vrm;
 
             if (getOperatorType().equals("goods")) {
@@ -688,22 +687,14 @@ public class CreateLicenceAPI {
                 vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
             }
             do {
-                for (int i = 0; i < getNoOfVehiclesRequired(); ) {
-                    vrm = "vg".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))))
+                for (int i = 0; i < getNoOfVehiclesRequired(); i++ ) {
+                    vrm = Str.randomWord(2).concat(String.valueOf(GenericUtils.getRandomNumberInts(99, 99)).concat(Str.randomWord(3)))
                            .toLowerCase();
-                    for (String letters : licencePlates) {
-                        if (vrm.contains(letters))
-                            vrm = "vg".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))))
-                                    .toLowerCase();
-                    }
                     VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm)
                             .withPlatedWeight(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).withVersion(version);
                     assert vehiclesResource != null;
                     apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
-                    i++;
-                    if (version > 10) {
-                        version = 1;
-                    }
+                    System.out.println("This is the VRM: ".concat(vrm));
                 }
             }
             while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)
