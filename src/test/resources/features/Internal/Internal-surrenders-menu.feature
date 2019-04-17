@@ -16,6 +16,6 @@ Feature: View Surrender Menu and details on Internal
 
   Scenario: Surrender after closing cases & bus Reg
     And the open case and bus reg is closed
-    And the tick boxes are checked
+    And the tick boxes are checked and saved
     When the Surrender button is clicked
     Then the licence should be surrendered

@@ -254,9 +254,10 @@ public class Surrenders extends BasePage implements En {
             world.UIJourneySteps.closeBusReg();
             world.UIJourneySteps.internalDigitalSurrenderMenu();
         });
-        And("^the tick boxes are checked$", () -> {
+        And("^the tick boxes are checked and saved$", () -> {
             waitAndClick("//*[contains(text(),'Digital signature')]",SelectorType.XPATH);
             waitAndClick("//*[contains(text(),'ECMS')]",SelectorType.XPATH);
+            assertTrue(isTextPresent("Your changes have been successfully saved", 10));
 
         });
         When("^the Surrender button is clicked$", () -> {
