@@ -511,7 +511,7 @@ public class CreateLicenceAPI {
         operatingCentreAddress = String.valueOf(buildingNumber).concat(" API_Operating_Centre");
         OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder();
 
-        if (operatorType.equals("goods") && (!licenceType.equals("special_restricted")) || (getNiFlag().equals("Y"))) {
+        if (operatorType.equals("goods")) {
             AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(getPostcode()).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(getApplicationNumber()).withNoOfVehiclesRequired(String.valueOf(getNoOfVehiclesRequired()))
                     .withNoOfTrailersRequired(String.valueOf(getNoOfVehiclesRequired())).withPermission(permissionOption).withAddress(address);
@@ -540,19 +540,21 @@ public class CreateLicenceAPI {
         OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater();
 
         do {
-            if (operatorType.equals("goods") && (!licenceType.equals("special_restricted")) || (getNiFlag().equals("Y"))) {
+            if (operatorType.equals("goods")) {
                 updateOperatingCentre.withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
                         .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTotCommunityLicences(Integer.parseInt(restrictedVehicles))
                         .withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withVersion(version);
             }
-            if (operatorType.equals("public") && (!licenceType.equals("special_restricted"))) {
+            if (operatorType.equals("public") && (!licenceType.equals("restricted"))) {
                 updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(noOfVehiclesRequired)
                         .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
             }
+
             if (operatorType.equals("public") && (licenceType.equals("restricted"))) {
-                updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(Integer.parseInt(restrictedVehicles))
+                updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(Integer.valueOf(String.valueOf(restrictedVehicles)))
                         .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withVersion(version);
             }
+
             if (!licenceType.equals("special_restricted")) {
                 apiResponse = RestUtils.put(updateOperatingCentre, updateOperatingCentreResource, getHeaders());
                 version++;
