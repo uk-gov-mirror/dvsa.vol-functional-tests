@@ -1,19 +1,13 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
-import activesupport.IllegalBrowserException;
 import activesupport.driver.Browser;
-import cucumber.api.java.eo.Se;
 import cucumber.api.java8.En;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
-
-import java.net.MalformedURLException;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class InternalApplication extends BasePage implements En {
@@ -65,16 +59,30 @@ public class InternalApplication extends BasePage implements En {
             waitAndClick("//*[@id='form-actions[submit]']", SelectorType.XPATH);
             javaScriptExecutor("location.reload(true)");
             waitForTextToBePresent("Application details");
+
             world.UIJourneySteps.caseWorkerCompleteConditionsAndUndertakings();
+
             world.UIJourneySteps.caseWorkerCompleteReviewAndDeclarations();
+
             world.UIJourneySteps.caseWorkerCompleteOverview();
         });
 
         And("^grants the application$", () -> {
+            int tableColumns;
             waitAndClick("//*[@id='menu-application_fee']", SelectorType.XPATH);
             world.UIJourneySteps.selectFee();
             world.UIJourneySteps.payFee("209", "cash", null, null, null);
-            world.UIJourneySteps.caseWorkerGrantApplication();
+            do {
+                tableColumns = returnTableRows("//tbody/tr/*",SelectorType.XPATH);
+                javaScriptExecutor("location.reload(true)");
+            }while (tableColumns>1);
+            waitAndClick("//*[@id='menu-application-decisions-grant']", SelectorType.XPATH);
+            waitAndClick("//*[@id='inspection-request-confirm[createInspectionRequest]']", SelectorType.XPATH);
+            click("//*[@id='form-actions[grant]']", SelectorType.XPATH);
+        });
+        Then("^the licence is granted in Internal$", () -> {
+            waitForTextToBePresent("Overview");
+            world.UIJourneySteps.checkLicenceStatus("Granted");
         });
     }
 }
