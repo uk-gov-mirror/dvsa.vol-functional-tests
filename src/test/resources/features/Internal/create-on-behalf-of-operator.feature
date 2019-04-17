@@ -9,4 +9,4 @@ Feature: Internal User should be able to create an operator account
     Scenario: Caseworker submits application
       When the caseworker completes and submits the application
       And grants the application
-#      Then the licence is granted
+      Then the licence is granted in Internal
