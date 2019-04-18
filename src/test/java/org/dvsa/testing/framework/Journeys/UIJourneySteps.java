@@ -295,7 +295,7 @@ public class UIJourneySteps extends BasePage {
             //nothing
         } while (isElementPresent("//button[@id='form-actions[submit]']", SelectorType.XPATH));
         selectValueFromDropDown("status", SelectorType.ID, "Current");
-        waitUntilElementIsEnabled("//tbody",SelectorType.XPATH);
+        isElementEnabled("//tbody",SelectorType.XPATH);
         waitAndClick("//tbody/tr/td[7]/input", SelectorType.XPATH);
         waitAndClick("//*[@value='Pay']", SelectorType.XPATH);
         waitForTextToBePresent("Pay fee");
@@ -354,7 +354,7 @@ public class UIJourneySteps extends BasePage {
         world.UIJourneySteps.searchAndViewApplication();
         waitForTextToBePresent("Processing");
         clickByLinkText("Processing");
-        waitUntilElementIsEnabled("//body", SelectorType.XPATH);
+        isElementEnabled("//body", SelectorType.XPATH);
     }
 
     public void addPreviousConviction() throws IllegalBrowserException {
