@@ -1,0 +1,17 @@
+Feature: Public enquiry added and published and deletion of case notes
+
+  Background:
+    Given i have a valid "goods" "sn" licence
+    And I create a new case
+    And i have logged in to internal
+    When i search for my licence
+
+  Scenario: Publish public inquiry
+    And i add a new public inquiry
+    And i add and publish a hearing
+    Then the public inquiry should be published
+
+  Scenario: Delete case note
+    And I add notes
+    And delete a case note
+    Then the note should be deleted

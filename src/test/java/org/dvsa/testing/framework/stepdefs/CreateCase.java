@@ -1,14 +1,18 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import cucumber.api.java.eo.Se;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.UpdateLicenceAPI;
+import org.dvsa.testing.lib.pages.BasePage;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.hamcrest.Matchers;
+import org.openqa.selenium.WebElement;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class CreateCase implements En {
+public class CreateCase extends BasePage implements En {
 
     private World world;
     private ValidatableResponse response;
@@ -63,6 +67,39 @@ public class CreateCase implements En {
         Then("^case notes should be created$", () -> {
             response = world.updateLicence.getCaseDetails("processing/note",world.updateLicence.getCaseNoteId());
             assertThat(response.body("comment", Matchers.equalTo("case note submitted through the API")));
+        });
+        And("^i add a new public inquiry$", () -> {
+            click("//*[@id='menu-licence/cases']", SelectorType.XPATH);
+            clickByLinkText(Integer.toString(world.updateLicence.getCaseId()));
+            click("//*[@id='menu-case_hearings_appeals']",SelectorType.XPATH);
+            clickByLinkText("Add Public Inquiry");
+
+            // Creation of public inquiry
+            enterText("//*[@id='fields[agreedDate]_day']","21",SelectorType.XPATH);
+            enterText("//*[@id='fields[agreedDate]_month']","6",SelectorType.XPATH);
+            enterText("//*[@id='fields[agreedDate]_year']","2014",SelectorType.XPATH);
+            selectValueFromDropDown("//*[@id='fields[agreedByTc]']",SelectorType.XPATH,"Nick Jones");
+            selectValueFromDropDown("//*[@id='fields[agreedByTcRole]']",SelectorType.XPATH,"Traffic Commissioner");
+            selectValueFromDropDown("//*[@id='assignedCaseworker']",SelectorType.XPATH,"ANDREW DREW");
+            selectFirstValueInList("//*[@id='fields_piTypes__chosen']/ul");
+            selectFirstValueInList("//*[@id='fields_reasons__chosen']/ul/li/input");
+            click("//*[@id='form-actions[submit]']",SelectorType.XPATH);
+
+            // Creation of hearing
+            clickByLinkText("Add hearing");
+
+
+
+
+
+        });
+        And("^i add and publish a hearing$", () -> {
+        });
+        Then("^the public inquiry should be published$", () -> {
+        });
+        And("^delete a case note$", () -> {
+        });
+        Then("^the note should be deleted$", () -> {
         });
     }
 }
