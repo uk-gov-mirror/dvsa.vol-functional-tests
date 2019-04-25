@@ -1,4 +1,3 @@
-@INT
 @Admin-Payment
 Feature: Admin create fees
 
