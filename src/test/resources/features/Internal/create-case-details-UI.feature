@@ -13,5 +13,5 @@ Feature: Public enquiry added and published and deletion of case notes
 
   Scenario: Delete case note
     And I add notes
-    And delete a case note
+    And I delete a case note
     Then the note should be deleted

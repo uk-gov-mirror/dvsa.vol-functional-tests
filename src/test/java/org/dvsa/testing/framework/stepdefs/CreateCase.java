@@ -8,6 +8,7 @@ import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.UpdateLicenceAPI;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.hamcrest.Matchers;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 
@@ -116,15 +117,17 @@ public class CreateCase extends BasePage implements En {
             waitForTextToBePresent("There is currently no decision");
         });
 
-        And("^delete a case note$", () -> {
+        And("^I delete a case note$", () -> {
             clickByLinkText("Processing");
             clickByLinkText("Notes");
-            int numberOfNotes = 7;
-            selectRadioButtonByName("id");
+            click("//*[@name='id']",SelectorType.XPATH);
             click("//*[@id='delete']",SelectorType.XPATH);
+            waitForTextToBePresent("Delete record");
+            click("//*[@id='form-actions[confirm]']",SelectorType.XPATH);
         });
 
         Then("^the note should be deleted$", () -> {
+            waitForTextToBePresent("The table is empty");
         });
     }
 }
