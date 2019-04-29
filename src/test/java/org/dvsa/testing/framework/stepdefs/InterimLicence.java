@@ -92,9 +92,9 @@ public class InterimLicence extends BasePage implements En {
         });
         When("^I create an interim application with a start and no end date$", () -> {
             clickByLinkText("add interim");
-            InterimPage.addInterim();
+            findSelectAllRadioButtonsByValue("Y");
             InterimPage.startDate(10, 8, 2017);
-            InterimPage.enterInterimDetail("Test Test");
+            InterimPage.enterInterimDetail("Interim with no dates");
             InterimPage.vehicleAuthority(world.createLicence.getNoOfVehiclesRequired());
             InterimPage.trailerAuthority(world.createLicence.getNoOfVehiclesRequired());
         });
