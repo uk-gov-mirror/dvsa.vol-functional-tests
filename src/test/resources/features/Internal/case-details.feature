@@ -1,5 +1,6 @@
 @INT
 @CASE-DETAILS
+@int_regression
 Feature: Add case details
 
   Background:

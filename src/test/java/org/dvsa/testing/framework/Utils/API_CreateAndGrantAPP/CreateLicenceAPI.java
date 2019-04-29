@@ -363,7 +363,7 @@ public class CreateLicenceAPI {
     public CreateLicenceAPI() throws MissingRequiredArgument {
         if (licenceType == null) {
             operatorType = "goods";
-            licenceType = "standard_national";
+            licenceType = "standard_international";
             businessType = "limited_company";
             niFlag = "N";
             isInterim = "N";
@@ -511,7 +511,7 @@ public class CreateLicenceAPI {
         operatingCentreAddress = String.valueOf(buildingNumber).concat(" API_Operating_Centre");
         OperatingCentreBuilder operatingCentreBuilder = new OperatingCentreBuilder();
 
-        if (operatorType.equals("goods") && (!licenceType.equals("special_restricted")) || (getNiFlag().equals("Y"))) {
+        if (operatorType.equals("goods")) {
             AddressBuilder address = new AddressBuilder().withAddressLine1(operatingCentreAddress).withTown(town).withPostcode(getPostcode()).withCountryCode(countryCode);
             operatingCentreBuilder.withApplication(getApplicationNumber()).withNoOfVehiclesRequired(String.valueOf(getNoOfVehiclesRequired()))
                     .withNoOfTrailersRequired(String.valueOf(getNoOfVehiclesRequired())).withPermission(permissionOption).withAddress(address);
@@ -540,19 +540,21 @@ public class CreateLicenceAPI {
         OperatingCentreUpdater updateOperatingCentre = new OperatingCentreUpdater();
 
         do {
-            if (operatorType.equals("goods") && (!licenceType.equals("special_restricted")) || (getNiFlag().equals("Y"))) {
+            if (operatorType.equals("goods")) {
                 updateOperatingCentre.withId(applicationNumber).withTotAuthVehicles(noOfVehiclesRequired)
                         .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTotCommunityLicences(Integer.parseInt(restrictedVehicles))
                         .withTAuthTrailers(Integer.parseInt(String.valueOf(noOfVehiclesRequired))).withVersion(version);
             }
-            if (operatorType.equals("public") && (!licenceType.equals("special_restricted"))) {
+            if (operatorType.equals("public") && (!licenceType.equals("restricted"))) {
                 updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(noOfVehiclesRequired)
                         .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withTotCommunityLicences(noOfVehiclesRequired).withVersion(version);
             }
+
             if (operatorType.equals("public") && (licenceType.equals("restricted"))) {
-                updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(Integer.parseInt(restrictedVehicles))
+                updateOperatingCentre.withId(getApplicationNumber()).withTotAuthVehicles(Integer.valueOf(String.valueOf(restrictedVehicles)))
                         .withTrafficArea(getTrafficArea()).withEnforcementArea(getEnforcementArea()).withVersion(version);
             }
+
             if (!licenceType.equals("special_restricted")) {
                 apiResponse = RestUtils.put(updateOperatingCentre, updateOperatingCentreResource, getHeaders());
                 version++;
@@ -678,7 +680,6 @@ public class CreateLicenceAPI {
             // no need to submit details
         } else {
             String vehiclesResource = null;
-            String[] licencePlates = {"a", "s", "q", "x", "y", "g"};
             String vrm;
 
             if (getOperatorType().equals("goods")) {
@@ -688,22 +689,14 @@ public class CreateLicenceAPI {
                 vehiclesResource = URL.build(env, String.format("application/%s/psv-vehicles", getApplicationNumber())).toString();
             }
             do {
-                for (int i = 0; i < getNoOfVehiclesRequired(); ) {
-                    vrm = "vg".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))))
+                for (int i = 0; i < getNoOfVehiclesRequired(); i++ ) {
+                    vrm = Str.randomWord(2).concat(String.valueOf(GenericUtils.getRandomNumberInts(99, 99)).concat(Str.randomWord(3)))
                            .toLowerCase();
-                    for (String letters : licencePlates) {
-                        if (vrm.contains(letters))
-                            vrm = "vg".concat(Str.randomWord(1).concat(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))))
-                                    .toLowerCase();
-                    }
                     VehiclesBuilder vehiclesDetails = new VehiclesBuilder().withId(getApplicationNumber()).withApplication(getApplicationNumber()).withHasEnteredReg("Y").withVrm(vrm)
                             .withPlatedWeight(String.valueOf(GenericUtils.getRandomNumberInts(0, 9999))).withVersion(version);
                     assert vehiclesResource != null;
                     apiResponse = RestUtils.post(vehiclesDetails, vehiclesResource, getHeaders());
-                    i++;
-                    if (version > 10) {
-                        version = 1;
-                    }
+                    System.out.println("This is the VRM: ".concat(vrm));
                 }
             }
             while ((apiResponse.extract().statusCode() == HttpStatus.SC_CONFLICT) || (apiResponse.extract().statusCode() == HttpStatus.SC_BAD_REQUEST)

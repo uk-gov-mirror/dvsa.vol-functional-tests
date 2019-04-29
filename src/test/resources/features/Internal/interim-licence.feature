@@ -1,13 +1,13 @@
 @OLCS-13203
 @INT
 @INTERIM
+@int_regression
 Feature: Change Validation On Interim Vehicle Authority
 
   Background:
     Given i have a valid "goods" "sn" licence
-    And i create a variation
-    When i have logged in to internal
-    And i search for my application
+    And i search for my licence
+    And i create a variation in internal
 
   Scenario: Interim Vehicle Authority Greater than Application Vehicle Authority
     When  I have an interim vehicle authority greater than my application vehicle authority

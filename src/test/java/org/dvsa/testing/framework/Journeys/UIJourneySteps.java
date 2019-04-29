@@ -278,13 +278,14 @@ public class UIJourneySteps extends BasePage {
                 break;
         }
     }
+
     public void selectFeeById(String feeNumber) throws IllegalBrowserException {
         do {
             //nothing
         } while (isElementPresent("//button[@id='form-actions[submit]']", SelectorType.XPATH));
         selectValueFromDropDown("status", SelectorType.ID, "Current");
         waitForTextToBePresent("Outstanding");
-        waitAndClick("//*[@value='"+feeNumber+"']", SelectorType.XPATH);
+        waitAndClick("//*[@value='" + feeNumber + "']", SelectorType.XPATH);
         waitAndClick("//*[@value='Pay']", SelectorType.XPATH);
         waitForTextToBePresent("Pay fee");
     }
@@ -857,10 +858,12 @@ public class UIJourneySteps extends BasePage {
 
     public void signManually() throws IllegalBrowserException, MalformedURLException {
         String defaultWindow = Browser.navigate().getWindowHandle();
+        Set<String> windows;
+        waitForTextToBePresent("A business owner");
         do {
-            waitAndClick("//*[contains(text(),'Print declaration')]", SelectorType.XPATH);
-        } while (!isTextPresent("Print", 40));
-        Set<String> windows = Browser.navigate().getWindowHandles();
+            clickByLinkText("Print");
+            windows = Browser.navigate().getWindowHandles();
+        } while (windows.size() == 1);
         String printWindow = windows.stream().reduce((first, second) -> second).get();
         Browser.navigate().switchTo().window(printWindow).close();
         Browser.navigate().switchTo().window(defaultWindow);
@@ -1004,31 +1007,31 @@ public class UIJourneySteps extends BasePage {
     public void payForInterimApp() throws IllegalBrowserException {
         clickByLinkText("Financial");
         waitAndClick("//*[contains(text(),'Send')]", SelectorType.XPATH);
-        waitAndClick("form-actions[save]",SelectorType.NAME);
+        waitAndClick("form-actions[save]", SelectorType.NAME);
         clickByLinkText("Review");
-        click("declarationsAndUndertakings[declarationConfirmation]",SelectorType.ID);
-        waitAndClick("//*[contains(text(),'Yes')]",SelectorType.XPATH);
-        enterText("interim[goodsApplicationInterimReason]","Testing",SelectorType.NAME);
-        click("submitAndPay",SelectorType.ID);
+        click("declarationsAndUndertakings[declarationConfirmation]", SelectorType.ID);
+        waitAndClick("//*[contains(text(),'Yes')]", SelectorType.XPATH);
+        enterText("interim[goodsApplicationInterimReason]", "Testing", SelectorType.NAME);
+        click("submitAndPay", SelectorType.ID);
         click("//*[@name='form-actions[pay]']", SelectorType.XPATH);
         world.UIJourneySteps.payFee(null, "card", "4006000000000600", "10", "20");
     }
 
     public void addNewOperatingCentre() throws IllegalBrowserException, MalformedURLException {
         world.APIJourneySteps.createAdminUser();
-        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin,world.updateLicence.adminUserEmailAddress);
+        world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.adminUserLogin, world.updateLicence.adminUserEmailAddress);
         world.UIJourneySteps.searchAndViewLicence();
         clickByLinkText("Operating centres and authorisation");
-        click("//*[@id='add']",SelectorType.XPATH);
+        click("//*[@id='add']", SelectorType.XPATH);
         enterText("//*[@id='postcodeInput1']", "FK10 1AA", SelectorType.XPATH);
         click("//*[@id='address[searchPostcode][search]']", SelectorType.XPATH);
         waitForTextToBePresent("Please select");
         selectValueFromDropDownByIndex("address[searchPostcode][addresses]", SelectorType.ID, 1);
         waitForTextToBePresent("Total number of vehicles");
-        assertTrue(isElementPresent("//*[@id='noOfVehiclesRequired']",SelectorType.XPATH));
-        waitAndEnterText("noOfVehiclesRequired", SelectorType.ID,"1");
+        assertTrue(isElementPresent("//*[@id='noOfVehiclesRequired']", SelectorType.XPATH));
+        waitAndEnterText("noOfVehiclesRequired", SelectorType.ID, "1");
         findSelectAllRadioButtonsByValue("adPlaced");
-        click("form-actions[submit]",SelectorType.ID);
+        click("form-actions[submit]", SelectorType.ID);
     }
 
     public void caseWorkerCompleteConditionsAndUndertakings() throws IllegalBrowserException {

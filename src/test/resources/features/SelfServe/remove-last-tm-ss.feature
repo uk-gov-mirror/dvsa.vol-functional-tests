@@ -1,6 +1,7 @@
 @SS
 @SS-LAST-TM-TRIGGER
 @OLCS-19479
+@ss_regression
 
 Feature: Set and check criteria for triggering automatic letter
 

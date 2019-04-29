@@ -94,9 +94,17 @@ public class InterimLicence extends BasePage implements En {
             clickByLinkText("add interim");
             findSelectAllRadioButtonsByValue("Y");
             InterimPage.startDate(10, 8, 2017);
-            InterimPage.enterInterimDetail("Test Test");
+            InterimPage.enterInterimDetail("Interim with no dates");
             InterimPage.vehicleAuthority(world.createLicence.getNoOfVehiclesRequired());
             InterimPage.trailerAuthority(world.createLicence.getNoOfVehiclesRequired());
+        });
+        And("^i create a variation in internal$", () -> {
+            waitAndClick("//*[@id='menu-licence-quick-actions-create-variation']",SelectorType.XPATH);
+            waitForTextToBePresent("Applying to change a licence");
+            waitAndClick("//*[contains(text(),'No')]", SelectorType.XPATH);
+            waitAndClick("//*[contains(text(),'Phone')]", SelectorType.XPATH);
+            waitAndClick("form-actions[submit]",SelectorType.ID);
+            waitForTextToBePresent("Variation details");
         });
     }
 }

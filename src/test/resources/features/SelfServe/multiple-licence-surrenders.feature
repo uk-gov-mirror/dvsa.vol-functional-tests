@@ -1,6 +1,7 @@
 @OLCS-22913
 @SS
 @Surrender
+@ss_regression
 
 Feature: Multiple licence holder
 
