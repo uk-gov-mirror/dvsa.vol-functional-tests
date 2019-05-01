@@ -852,8 +852,10 @@ public class UIJourneySteps extends BasePage {
         world.UIJourneySteps.searchAndViewLicence();
         clickByLinkText("Surrender");
         waitForTextToBePresent("Surrender details");
+        waitAndClick("//*[@for='checks[ecms]']",SelectorType.XPATH);
+        // Refresh page
+        javaScriptExecutor("location.reload(true)");
         waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
-        waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
     }
 
     public void signManually() throws IllegalBrowserException, MalformedURLException {

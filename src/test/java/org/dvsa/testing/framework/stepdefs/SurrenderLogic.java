@@ -152,6 +152,8 @@ public class SurrenderLogic extends BasePage implements En {
         });
         When("^the caseworker approves the surrender$", () -> {
             world.UIJourneySteps.caseworkManageSurrender();
+            // Refresh page
+            javaScriptExecutor("location.reload(true)");
             waitAndClick("actions[surrender]", SelectorType.ID);
         });
         Then("^the licence status should be \"([^\"]*)\"$", (String arg0) -> {
@@ -166,8 +168,7 @@ public class SurrenderLogic extends BasePage implements En {
         When("^the caseworker attempts to withdraw the surrender$", () -> {
             world.UIJourneySteps.caseworkManageSurrender();
             waitForTextToBePresent("Surrender details");
-            waitAndClick("//*[contains(text(),'Digital signature')]", SelectorType.XPATH);
-            waitAndClick("//*[contains(text(),'ECMS')]", SelectorType.XPATH);
+            javaScriptExecutor("location.reload(true)");
             waitAndClick("//*[contains(text(),'Withdraw')]", SelectorType.XPATH);
         });
         Then("^a modal box is displayed$", () -> {
