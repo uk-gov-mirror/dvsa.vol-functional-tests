@@ -4,6 +4,7 @@ import Injectors.World;
 import activesupport.IllegalBrowserException;
 import activesupport.driver.Browser;
 import cucumber.api.java8.En;
+import io.restassured.response.ValidatableResponse;
 import org.dvsa.testing.framework.Journeys.APIJourneySteps;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
@@ -81,6 +82,35 @@ public class RefundInterim extends BasePage implements En {
         });
         And("^the variation interim is granted$", () -> {
             world.updateLicence.grantInterimApplication(String.valueOf(Integer.parseInt(world.createLicence.getApplicationNumber()) + 1));
+        });
+        Then("^the report should be generated$", () -> {
+            ValidatableResponse interimTable = world.updateLicence.getInterimRefunds();
+            world.updateLicence.createInternalAdminUser();
+            world.UIJourneySteps.navigateToInternalAdminUserLogin(world.updateLicence.getAdminUserLogin(), world.updateLicence.getAdminUserEmailAddress());
+            click("//*[@class='admin__title']");
+            click("//*[@id='menu-admin-dashboard/admin-report']");
+            click("//*[@id='menu-admin-dashboard/admin-interim-refunds']");
+            waitForTextToBePresent(interimTable.extract().body().jsonPath().get()+ " Interim Refunds"); // Change to any table heading for a count.
+            isTextPresent("The table is currently empty",5);
+
+            enterText("//*[@id='feeStartDate_day']","2", SelectorType.XPATH);
+            enterText("//*[@id='feeStartDate_month']","12", SelectorType.XPATH);
+            enterText("//*[@id='feeStartDate_year']","2018", SelectorType.XPATH);
+
+            enterText("//*[@id='feeEndDate_day']","2", SelectorType.XPATH);
+            enterText("//*[@id='feeEndDate_month']","12", SelectorType.XPATH);
+            enterText("//*[@id='feeEndDate_year']","2018", SelectorType.XPATH);
+
+            selectValueFromDropDown("//*[@id='trafficAreas']",SelectorType.XPATH, "North East of England");
+
+            click("//*[@id='submit']");
+
+            // Now target table and stream of its data.
+
+            // Check there is a restart button and that it does return the page to as it was before.
+        });
+        And("^the refund should be displayed$", () -> {
+
         });
     }
 }

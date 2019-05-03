@@ -445,7 +445,6 @@ public class UpdateLicenceAPI extends BasePage {
         apiResponse = RestUtils.get(getApplicationResource, getHeaders());
         setBusinessType(apiResponse.extract().jsonPath().getString("organisation.type.description"));
         return businessType;
-
     }
 
     public String getLicenceTypeDetails() {
@@ -603,5 +602,13 @@ public class UpdateLicenceAPI extends BasePage {
             System.out.println(apiResponse.extract().response().asString());
             throw new HTTPException(apiResponse.extract().statusCode());
         }
+    }
+
+    public ValidatableResponse getInterimRefunds() {
+        Headers.getHeaders().put("x-pid", adminApiHeader());
+        String getApplicationResource = org.dvsa.testing.lib.url.api.URL.build(env, "application/interim-refunds").toString();
+
+        apiResponse = RestUtils.get(getApplicationResource, getHeaders());
+        return apiResponse;
     }
 }
