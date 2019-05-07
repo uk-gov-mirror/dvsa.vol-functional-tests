@@ -11,3 +11,4 @@ Feature: Generate report for interim fees
   Scenario: Interim fee has been paid and licence has been refused
     Then the report should be generated
     And the refund should be displayed
+    And a working restart button is present

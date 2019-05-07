@@ -6,12 +6,17 @@ import activesupport.driver.Browser;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.dvsa.testing.framework.Journeys.APIJourneySteps;
+import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.lib.pages.BasePage;
 import org.dvsa.testing.lib.pages.enums.SelectorType;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import static junit.framework.TestCase.assertTrue;
@@ -105,12 +110,22 @@ public class RefundInterim extends BasePage implements En {
 
             click("//*[@id='submit']");
 
-            // Now target table and stream of its data.
-
-            // Check there is a restart button and that it does return the page to as it was before.
+            // Write way of checking if page has changed and that the filters work.
         });
         And("^the refund should be displayed$", () -> {
-
+            List<WebElement> table = listOfWebElements("//tbody/tr",SelectorType.XPATH);
+            table.forEach(row-> {
+                assertTrue(checkForPartialMatch(world.createLicence.getLicenceNumber()));
+                if (row.getText().contains(world.createLicence.getLicenceNumber()) && row.getText().contains(GenericUtils.getCurrentDate("dd/MM/yyyy"))){
+                    assertTrue(row.getText().contains("refunded"));
+                    assertTrue(row.getText().contains("68.00"));
+                }
+            });
         });
+        And("^a working restart button is present$", () -> {
+            clickByLinkText("Restart");
+            waitForTextToBePresent("Start date");
+        });
+
     }
 }
