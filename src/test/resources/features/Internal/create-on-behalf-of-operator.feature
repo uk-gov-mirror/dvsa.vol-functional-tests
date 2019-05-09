@@ -1,6 +1,7 @@
 @INT
 @OLCS-24241
 @Create-On-Behalf-Of-User
+@int_regression
 Feature: Internal User should be able to create an operator account
 
   Background:
