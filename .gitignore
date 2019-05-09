@@ -137,8 +137,4 @@ target/
 /src/test/resources/TM.csv
 /Reports/
 Report.html
-Reports/
-src/test/java/org/dvsa/testing/framework/stepdefs/KeyboardAccessibility.java
-src/test/resources/axe/
-src/test/resources/features/SelfServe/accessibility.feature
 /src/test/java/Test.java
