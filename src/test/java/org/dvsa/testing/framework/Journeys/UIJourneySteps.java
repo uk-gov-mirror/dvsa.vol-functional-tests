@@ -1059,4 +1059,49 @@ public class UIJourneySteps extends BasePage {
         waitAndClick("//*[@id='inspection-request-confirm[createInspectionRequest]']", SelectorType.XPATH);
         click("//*[@id='form-actions[grant]']", SelectorType.XPATH);
     }
+
+    public void createPublicInquiry() throws IllegalBrowserException {
+        click("//*[@id='menu-case_hearings_appeals']",SelectorType.XPATH);
+        clickByLinkText("Add Public Inquiry");
+        waitForTextToBePresent("Add Traffic Commissioner agreement and legislation");
+        enterText("//*[@id='fields[agreedDate]_day']","21", SelectorType.XPATH);
+        enterText("//*[@id='fields[agreedDate]_month']","6",SelectorType.XPATH);
+        enterText("//*[@id='fields[agreedDate]_year']","2014",SelectorType.XPATH);
+        selectValueFromDropDown("//*[@id='fields[agreedByTc]']",SelectorType.XPATH,"Nick Jones");
+        selectValueFromDropDown("//*[@id='fields[agreedByTcRole]']",SelectorType.XPATH,"Traffic Commissioner");
+        selectValueFromDropDown("//*[@id='assignedCaseworker']",SelectorType.XPATH,"ANDREW DREW");
+        click("//*[@id='fields_piTypes__chosen']/ul",SelectorType.XPATH);
+        selectFirstValueInList("//*[@id='fields_piTypes__chosen']/ul");
+        click("//*[@id='fields_piTypes__chosen']/div/ul/li[1]",SelectorType.XPATH);
+        selectFirstValueInList("//*[@id='fields_reasons__chosen']/ul/li/input");
+        click("//*[@id='fields_reasons__chosen']/div/ul/li[2]",SelectorType.XPATH);
+        click("//*[@id='form-actions[submit]']",SelectorType.XPATH);
+    }
+
+    public void addAndPublishHearing() throws IllegalBrowserException {
+        waitForTextToBePresent("Add hearing");
+        clickByLinkText("Add hearing");
+        waitForTextToBePresent("Venue");
+        selectValueFromDropDown("//*[@id='venue']", SelectorType.XPATH,"Other");
+        enterText("//*[@id='venueOther']","Test",SelectorType.XPATH);
+        enterText("//*[@id='hearingDate_day']","21",SelectorType.XPATH);
+        enterText("//*[@id='hearingDate_month']","6",SelectorType.XPATH);
+        enterText("//*[@id='hearingDate_year']","2014",SelectorType.XPATH);
+        selectValueFromDropDown("//*[@id='hearingDate_hour']",SelectorType.XPATH,"16");
+        selectValueFromDropDown("//*[@id='hearingDate_minute']",SelectorType.XPATH,"00");
+        selectValueFromDropDown("//*[@id='presidingTc']",SelectorType.XPATH,"Nick Jones");
+        selectValueFromDropDown("//*[@id='presidedByRole']",SelectorType.XPATH,"Traffic Commissioner");
+        enterText("//*[@id='fields[witnesses]']","1",SelectorType.XPATH);
+        enterText("//*[@id='fields[drivers]']","1",SelectorType.XPATH);
+        click("//*[@id='form-actions[publish]']",SelectorType.XPATH);
+    }
+
+    public void deleteCaseNote() throws IllegalBrowserException {
+        clickByLinkText("Processing");
+        clickByLinkText("Notes");
+        click("//*[@name='id']", SelectorType.XPATH);
+        click("//*[@id='delete']",SelectorType.XPATH);
+        waitForTextToBePresent("Delete record");
+        click("//*[@id='form-actions[confirm]']",SelectorType.XPATH);
+    }
 }

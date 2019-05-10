@@ -1,14 +1,20 @@
 package org.dvsa.testing.framework.stepdefs;
 
 import Injectors.World;
+import activesupport.IllegalBrowserException;
+import cucumber.api.java.eo.Se;
 import cucumber.api.java8.En;
 import io.restassured.response.ValidatableResponse;
 import org.dvsa.testing.framework.Utils.API_CreateAndGrantAPP.UpdateLicenceAPI;
+import org.dvsa.testing.lib.pages.BasePage;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.hamcrest.Matchers;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class CreateCase implements En {
+public class CreateCase extends BasePage implements En {
 
     private World world;
     private ValidatableResponse response;
@@ -63,6 +69,23 @@ public class CreateCase implements En {
         Then("^case notes should be created$", () -> {
             response = world.updateLicence.getCaseDetails("processing/note",world.updateLicence.getCaseNoteId());
             assertThat(response.body("comment", Matchers.equalTo("case note submitted through the API")));
+        });
+        And("^i add a new public inquiry$", () -> {
+            click("//*[@id='menu-licence/cases']", SelectorType.XPATH);
+            clickByLinkText(Integer.toString(world.updateLicence.getCaseId()));
+            world.UIJourneySteps.createPublicInquiry();
+        });
+        And("^i add and publish a hearing$", () -> {
+            world.UIJourneySteps.addAndPublishHearing();
+        });
+        Then("^the public inquiry should be published$", () -> {
+            waitForTextToBePresent("There is currently no decision");
+        });
+        And("^I delete a case note$", () -> {
+            world.UIJourneySteps.deleteCaseNote();
+        });
+        Then("^the note should be deleted$", () -> {
+            waitForTextToBePresent("The table is empty");
         });
     }
 }
