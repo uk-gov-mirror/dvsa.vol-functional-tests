@@ -6,8 +6,10 @@ import com.deque.axe.AXE;
 import cucumber.api.Scenario;
 import cucumber.api.java8.En;
 import org.apache.commons.io.FileUtils;
+import org.dvsa.testing.framework.Utils.Generic.GenericUtils;
 import org.dvsa.testing.framework.runner.Hooks;
 import org.dvsa.testing.lib.pages.BasePage;
+import org.dvsa.testing.lib.pages.enums.SelectorType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
@@ -32,6 +34,9 @@ public class KeyboardAccessibility extends BasePage implements En {
             world.UIJourneySteps.navigateToExternalUserLogin(world.createLicence.getLoginId(), world.createLicence.getEmailAddress());
             Browser.navigate().findElements(By.xpath("//*[@class='table__wrapper'][last()]//td")).stream().findFirst().ifPresent(WebElement::click);
             clickByLinkText("Vehicles");
+            waitForTextToBePresent("Vehicle details");
+            waitAndClick("//*[@class='more-actions__button']", SelectorType.XPATH);
+            untilElementPresent("//*[@class='more-actions__list']",SelectorType.XPATH);
         });
         Then("^i should be able to navigate page using my keyboard$", () -> {
              axeResponse = new AXE.Builder(getDriver(), scriptUrl)
@@ -82,7 +87,9 @@ public class KeyboardAccessibility extends BasePage implements En {
         StringBuilder sb = new StringBuilder();
         sb.append("<html><body><h1 align=center>")
                 .append("VOL Accessibility Report")
-                .append("</h1><br>")
+                .append("</h1>")
+                .append(String.format("<h2 align=center>Date Run: %s", GenericUtils.getCurrentDate("dd MMM yyyy")))
+                .append("</h2><br>")
                 .append("<table width=45% border=0>")
                 .append("<tr bgcolor=#666666><td width=45% height=24><strong>")
                 .append("<font color=#FFFFFF size=2 face=Arial, Helvetica, sans-serif>URLs SCANNED</font></strong>")
