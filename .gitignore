@@ -121,7 +121,6 @@ pom.xml.releaseBackup
 pom.xml.tag
 
 # Testing
-target/
 /.gradle/
 /src/test/java/org/dvsa/testing/framework/stepdefs/Utils/AdminGrantInterimAPI.java
 /src/test/resources/features/Internal/interim-zero-vehicles.feature
@@ -137,8 +136,4 @@ target/
 /src/test/resources/TM.csv
 /Reports/
 Report.html
-Reports/
-src/test/java/org/dvsa/testing/framework/stepdefs/KeyboardAccessibility.java
-src/test/resources/axe/
-src/test/resources/features/SelfServe/accessibility.feature
 /src/test/java/Test.java
