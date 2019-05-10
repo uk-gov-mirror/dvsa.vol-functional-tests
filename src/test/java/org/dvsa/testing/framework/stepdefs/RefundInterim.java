@@ -115,7 +115,11 @@ public class RefundInterim extends BasePage implements En {
         And("^the refund should be displayed$", () -> {
             List<WebElement> table = listOfWebElements("//tbody/tr",SelectorType.XPATH);
             table.forEach(row-> {
-                assertTrue(checkForPartialMatch(world.createLicence.getLicenceNumber()));
+                try {
+                    assertTrue(checkForPartialMatch(world.createLicence.getLicenceNumber()));
+                } catch (IllegalBrowserException e) {
+                    e.printStackTrace();
+                }
                 if (row.getText().contains(world.createLicence.getLicenceNumber()) && row.getText().contains(GenericUtils.getCurrentDate("dd/MM/yyyy"))){
                     assertTrue(row.getText().contains("refunded"));
                     assertTrue(row.getText().contains("68.00"));
