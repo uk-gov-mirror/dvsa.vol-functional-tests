@@ -603,11 +603,11 @@ public class CreateLicenceAPI {
             TransportManagerBuilder transportManagerBuilder = new TransportManagerBuilder().withApplication(getApplicationNumber()).withFirstName(getForeName())
                     .withFamilyName(getFamilyName()).withHasEmail(hasEmail).withUsername(getTmUserName()).withEmailAddress(getTransManEmailAddress()).withBirthDate(birthDate);
             apiResponse = RestUtils.post(transportManagerBuilder, addTransportManager, getHeaders());
-            apiResponse.statusCode(HttpStatus.SC_CREATED);
             setTransportManagerApplicationId(apiResponse.extract().jsonPath().getString("id.transportManagerApplicationId"));
         }
         if (apiResponse.extract().statusCode() != HttpStatus.SC_CREATED) {
             System.out.println(apiResponse.extract().response().asString());
+            throw new HTTPException(apiResponse.extract().statusCode());
         }
     }
 
@@ -618,10 +618,8 @@ public class CreateLicenceAPI {
             String submitTransportManager = URL.build(env, String.format("transport-manager-application/%s/submit", getApplicationNumber())).toString();
             GenericBuilder genericBuilder = new GenericBuilder().withId(getTransportManagerApplicationId()).withVersion(1);
             apiResponse = RestUtils.put(genericBuilder, submitTransportManager, getHeaders());
-            apiResponse.statusCode(HttpStatus.SC_OK);
         }
         if (apiResponse.extract().statusCode() != HttpStatus.SC_OK) {
-            System.out.println(apiResponse.extract().statusCode());
             System.out.println(apiResponse.extract().response().asString());
             throw new HTTPException(apiResponse.extract().statusCode());
         }
