@@ -257,8 +257,8 @@ public class CreateCase extends BasePage {
                 "'Generate letter' link should be visible");
         assertTrue(isTextPresent(world.internalNavigation.nonPiHearingType),
                 "Type should be displayed: " + world.internalNavigation.nonPiHearingType);
-        assertTrue(isTextPresent(world.internalNavigation.nonPiHearingDate + " 10:30"),
-                "Meeting date & time should be displayed: " + world.internalNavigation.nonPiHearingDate + " 10:30");
+        assertTrue(isTextPresent(world.internalNavigation.nonPiHearingDate + " " + world.internalNavigation.nonPiHearingTime),
+                "Meeting date & time should be displayed: " + world.internalNavigation.nonPiHearingDate + " " + world.internalNavigation.nonPiHearingTime);
         assertTrue(isTextPresent(world.internalNavigation.nonPiPresidingStaff),
                 "Presiding staff member should be displayed");
         assertTrue(isTextPresent(world.internalNavigation.nonPiAgreedByTcDate),
@@ -269,6 +269,35 @@ public class CreateCase extends BasePage {
                 "Number of witnesses should be displayed: " + world.internalNavigation.nonPiWitnessCount);
         assertTrue(isTextPresent(world.internalNavigation.nonPiOutcome),
                 "Outcome should be displayed: " + world.internalNavigation.nonPiOutcome);
+    }
+
+    @When("I navigate to Impoundings")
+    public void iNavigateToImpoundings() {
+        world.internalNavigation.getImpoundings();
+    }
+
+    @Then("I add an impounding to the case")
+    public void iAddAnImpoundingToTheCase() {
+        world.internalNavigation.addImpounding();
+    }
+
+    @Then("the impounding should be created")
+    public void theImpoundingShouldBeCreated() {
+        waitForElementToBePresent("//table[contains(@class,'govuk-table')]//caption[contains(normalize-space(),'Impounding')]");
+        String rowXpath = String.format(
+                "//table[contains(@class,'govuk-table')]//tbody//tr[" +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        ".//a[normalize-space()='%s']]",
+                world.internalNavigation.impoundingType,
+                world.internalNavigation.impoundingAgreedBy,
+                world.internalNavigation.impoundingOutcome,
+                world.internalNavigation.impoundingOutcomeSentDate,
+                world.internalNavigation.impoundingApplicationDate);
+        assertTrue(isElementPresent(rowXpath, SelectorType.XPATH),
+                "Impounding row should be present with the submitted values");
     }
 
     @Then("the public inquiry should be created")

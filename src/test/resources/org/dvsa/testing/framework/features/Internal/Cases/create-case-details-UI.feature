@@ -4,7 +4,7 @@
 @FullRegression
 @printAndSign
 
-Feature: Public enquiry added and published and deletion of case notes
+Feature: Public inquiry added and published and deletion of case notes
 
   Background:
     Given i have a valid "goods" "standard_national" licence
@@ -77,6 +77,12 @@ Feature: Public enquiry added and published and deletion of case notes
       When I navigate to Non-Public Inquiry
       Then I add a non-public inquiry to the case
       Then the non-public inquiry should be created
+
+    @Add_impounding_to_case
+    Scenario: UI - Add an impounding to a case
+      When I navigate to Impoundings
+      Then I add an impounding to the case
+      Then the impounding should be created
 
 
 
