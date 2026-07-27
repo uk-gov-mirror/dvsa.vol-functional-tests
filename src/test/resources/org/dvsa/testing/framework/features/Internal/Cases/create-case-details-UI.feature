@@ -72,6 +72,21 @@ Feature: Public inquiry added and published and deletion of case notes
       Then I add a public inquiry to the case
       Then the public inquiry should be created
 
+    @Add_hearing_to_public_inquiry
+    Scenario: UI - Add a hearing to a public inquiry
+      When I navigate to Public Inquiry
+      Then I add a public inquiry to the case
+      Then I add a hearing to the public inquiry
+      Then the hearing should be added to the public inquiry
+
+    @Add_decision_to_public_inquiry
+    Scenario: UI - Add a decision to a public inquiry
+      When I navigate to Public Inquiry
+      Then I add a public inquiry to the case
+      Then I add a hearing to the public inquiry
+      Then I add a decision to the public inquiry
+      Then the decision should be added to the public inquiry
+
     @Add_non_public_inquiry_to_case
     Scenario: UI - Add a non-public inquiry to a case
       When I navigate to Non-Public Inquiry

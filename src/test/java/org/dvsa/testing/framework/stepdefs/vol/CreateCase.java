@@ -238,6 +238,52 @@ public class CreateCase extends BasePage {
         world.internalNavigation.addPublicInquiry();
     }
 
+    @Then("I add a hearing to the public inquiry")
+    public void iAddAHearingToThePublicInquiry() {
+        world.internalNavigation.addPiHearing();
+    }
+
+    @Then("I add a decision to the public inquiry")
+    public void iAddADecisionToThePublicInquiry() {
+        world.internalNavigation.addPiDecision();
+    }
+
+    @Then("the decision should be added to the public inquiry")
+    public void theDecisionShouldBeAddedToThePublicInquiry() {
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionPresidingTc),
+                "Presiding commissioner should be displayed: " + world.internalNavigation.piDecisionPresidingTc);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionPresidingTcRole),
+                "Presiding role should be displayed: " + world.internalNavigation.piDecisionPresidingTcRole);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionDecision),
+                "Decision should be displayed: " + world.internalNavigation.piDecisionDecision);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionDate),
+                "Date of decision should be displayed: " + world.internalNavigation.piDecisionDate);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionNotificationDate),
+                "Date of notification should be displayed: " + world.internalNavigation.piDecisionNotificationDate);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionNotes),
+                "Details to be published should include the submitted notes");
+    }
+
+    @Then("the hearing should be added to the public inquiry")
+    public void theHearingShouldBeAddedToThePublicInquiry() {
+        waitForElementToBePresent("//table[contains(@class,'govuk-table')]//caption[contains(normalize-space(),'Hearing')]");
+        String rowXpath = String.format(
+                "//table[contains(@class,'govuk-table')]//tbody//tr[" +
+                        ".//a[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='N' and @data-heading='Adjourned'] and " +
+                        "td[normalize-space()='N' and @data-heading='Cancelled']]",
+                world.internalNavigation.piHearingDate,
+                world.internalNavigation.piHearingVenue,
+                world.internalNavigation.piHearingLength);
+        assertTrue(isElementPresent(rowXpath, SelectorType.XPATH),
+                "Hearing row should be present with the submitted values (date="
+                        + world.internalNavigation.piHearingDate + ", venue="
+                        + world.internalNavigation.piHearingVenue + ", length="
+                        + world.internalNavigation.piHearingLength + ")");
+    }
+
     @When("I navigate to Non-Public Inquiry")
     public void iNavigateToNonPublicInquiry() {
         world.internalNavigation.getNonPublicInquiry();
