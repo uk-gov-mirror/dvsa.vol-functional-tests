@@ -243,6 +243,33 @@ public class CreateCase extends BasePage {
         world.internalNavigation.addPiHearing();
     }
 
+    @Then("I add an SLA exception to the public inquiry")
+    public void iAddAnSlaExceptionToThePublicInquiry() {
+        world.internalNavigation.addSlaException();
+    }
+
+    @Then("the SLA exception should be added")
+    public void theSlaExceptionShouldBeAdded() {
+        assertTrue(isTextPresent(world.internalNavigation.slaException),
+                "SLA exception option should be displayed: " + world.internalNavigation.slaException);
+    }
+
+    @Then("I edit the service level agreement")
+    public void iEditTheServiceLevelAgreement() {
+        world.internalNavigation.editServiceLevelAgreement();
+    }
+
+    @Then("the service level agreement should be updated")
+    public void theServiceLevelAgreementShouldBeUpdated() {
+        waitForElementToBePresent("//h3[contains(@class,'read-only__title') and normalize-space()='Service level agreement']");
+        assertTrue(isTextPresent(world.internalNavigation.slaCallUpLetterDate),
+                "Call up letter date should be displayed: " + world.internalNavigation.slaCallUpLetterDate);
+        assertTrue(isTextPresent(world.internalNavigation.slaBriefSentDate),
+                "Brief to TC date should be displayed: " + world.internalNavigation.slaBriefSentDate);
+        assertTrue(isTextPresent(world.internalNavigation.slaWrittenOutcome),
+                "Written outcome should be displayed: " + world.internalNavigation.slaWrittenOutcome);
+    }
+
     @Then("I add a decision to the public inquiry")
     public void iAddADecisionToThePublicInquiry() {
         world.internalNavigation.addPiDecision();
