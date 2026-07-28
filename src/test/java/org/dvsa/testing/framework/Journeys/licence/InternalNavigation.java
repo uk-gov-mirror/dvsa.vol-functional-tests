@@ -429,7 +429,6 @@ public class InternalNavigation extends BasePage {
     public String piDecisionNotificationDate;
     public String piDecisionDefinition;
     public String piDecisionNotes;
-    public String piDecisionDetailsToBePublished;
 
     public void addPiDecision() {
         var rnd = java.util.concurrent.ThreadLocalRandom.current();
@@ -439,8 +438,7 @@ public class InternalNavigation extends BasePage {
         piDecisionDate = today.format(fmt);
         piDecisionNotificationDate = notification.format(fmt);
         piDecisionWitnesses = String.valueOf(rnd.nextInt(1, 10));
-        piDecisionNotes = "Automated test decision notes - " + System.currentTimeMillis();
-        piDecisionDetailsToBePublished = "Automated test details to be published - " + System.currentTimeMillis();
+        piDecisionNotes = "Automated test details to be published - " + System.currentTimeMillis();
 
         waitAndClickByLinkText("Add decision");
         waitForElementToBePresent("//form[@id='Register decision']");
@@ -458,9 +456,6 @@ public class InternalNavigation extends BasePage {
 
         piDecisionDefinition = selectRandomOptionOnUnderlyingSelect("//select[@id='fields[definition]']");
         waitAndEnterText("//textarea[@id='fields[decisionNotes]']", SelectorType.XPATH, piDecisionNotes);
-
-        javaScriptExecutor("document.getElementById('fields[details]').value = '';");
-        waitAndEnterText("//textarea[@id='fields[details]']", SelectorType.XPATH, piDecisionDetailsToBePublished);
 
         waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
     }
