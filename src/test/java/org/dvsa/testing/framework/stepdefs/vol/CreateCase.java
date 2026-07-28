@@ -351,6 +351,8 @@ public class CreateCase extends BasePage {
                 "Date of notification should be displayed: " + world.internalNavigation.piDecisionNotificationDate);
         assertTrue(isTextPresent(world.internalNavigation.piDecisionNotes),
                 "Details to be published should include the submitted notes");
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionDetailsToBePublished),
+                "Details to be published field should match the submitted value: " + world.internalNavigation.piDecisionDetailsToBePublished);
     }
 
     @Then("the hearing should be added to the public inquiry")
