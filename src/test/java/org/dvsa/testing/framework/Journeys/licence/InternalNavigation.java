@@ -9,6 +9,9 @@ import org.dvsa.testing.framework.enums.SelfServeSection;
 import org.dvsa.testing.framework.pageObjects.BasePage;
 import org.dvsa.testing.framework.pageObjects.enums.SelectorType;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.dvsa.testing.lib.url.webapp.webAppURL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.dvsa.testing.framework.pageObjects.enums.AdminOption;
@@ -142,6 +145,23 @@ public class InternalNavigation extends BasePage {
         get(this.url.concat(String.format("variation/%s", world.updateLicence.getVariationApplicationId())));
     }
 
+    public void getHearingAppeal() {
+        get(this.url.concat(String.format("case/%s/hearing-appeal/", world.updateLicence.getCaseId())));
+    }
+
+    public void getPublicInquiry() {
+        get(this.url.concat(String.format("case/%s/pi/", world.updateLicence.getCaseId())));
+    }
+
+    public void getNonPublicInquiry() {
+        get(this.url.concat(String.format("case/%s/non-pi/details/", world.updateLicence.getCaseId())));
+    }
+
+    public void getImpoundings() {
+        get(this.url.concat(String.format("case/%s/impounding/", world.updateLicence.getCaseId())));
+    }
+
+
     public void getAdminEditFee(String feeNumber) {
         get(this.url.concat(String.format("admin/payment-processing/fees/edit-fee/%s", feeNumber)));
     }
@@ -200,5 +220,276 @@ public class InternalNavigation extends BasePage {
     public void navigateToLoginPage() {
         var myURL = webAppURL.build(ApplicationType.INTERNAL, world.configuration.env, "auth/login/").toString();
         navigate().get(myURL);
+    }
+
+    public String appealNumber;
+    public String appealDate;
+    public String appealDeadline;
+    public String appealReason;
+    public String appealOutlineGround;
+
+    public void addAppeal() {
+        long uniqueId = System.currentTimeMillis() % 100000;
+        appealNumber = String.format("APP-%d", uniqueId);
+        LocalDate today = LocalDate.now();
+        LocalDate deadline = today.plusDays(java.util.concurrent.ThreadLocalRandom.current().nextInt(7, 30));
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        appealDate = today.format(fmt);
+        appealDeadline = deadline.format(fmt);
+        appealOutlineGround = "Automated test appeal outline ground - " + uniqueId;
+
+        waitAndClickByLinkText("Add appeal");
+        waitForElementToBePresent("//form[@id='appeal']");
+
+        enterDateParts("appealDate", today);
+        enterDateParts("deadlineDate", deadline);
+
+        waitAndEnterText("//input[@id='fields[appealNo]']", SelectorType.XPATH, appealNumber);
+        appealReason = selectRandomOption("//select[@id='fields[reason]']");
+        waitAndEnterText("//textarea[@id='fields[outlineGround]']", SelectorType.XPATH, appealOutlineGround);
+
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public String piAgreedDate;
+    public String piAgreedByTc;
+    public String piAgreedByRole;
+    public String piAssignedCaseworker;
+    public String piType;
+    public String piLegislation;
+    public String piComment;
+
+    public void addPublicInquiry() {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        piAgreedDate = today.format(fmt);
+        piComment = "Automated test PI comment - " + System.currentTimeMillis();
+
+        waitAndClickByLinkText("Add Public Inquiry");
+        waitForElementToBePresent("//form[@id='traffic-commissioner-agreement-legislation']");
+
+        enterDateParts("agreedDate", today);
+
+        piAgreedByTc = selectRandomOption("//select[@id='fields[agreedByTc]']");
+        piAgreedByRole = selectRandomOption("//select[@id='fields[agreedByTcRole]']");
+        piAssignedCaseworker = selectRandomOption("//select[@id='assignedCaseworker']");
+
+        piType = selectRandomOptionOnChosen("fields_piTypes__chosen");
+        piLegislation = selectRandomOptionOnChosen("fields_reasons__chosen");
+
+        waitAndEnterText("//textarea[@id='fields[comment]']", SelectorType.XPATH, piComment);
+
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public String nonPiAgreedByTcDate;
+    public String nonPiHearingType;
+    public String nonPiHearingDate;
+    public String nonPiHearingTime;
+    public String nonPiVenue;
+    public String nonPiWitnessCount;
+    public String nonPiPresidingStaff;
+    public String nonPiOutcome;
+
+    public void addNonPublicInquiry() {
+        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+        LocalDate today = LocalDate.now();
+        LocalDate hearing = today.plusDays(rnd.nextInt(3, 30));
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        nonPiAgreedByTcDate = today.format(fmt);
+        nonPiHearingDate = hearing.format(fmt);
+        String hour = String.format("%02d", rnd.nextInt(9, 17));
+        String[] minuteValues = {"00", "15", "30", "45"};
+        String minute = minuteValues[rnd.nextInt(minuteValues.length)];
+        nonPiHearingTime = hour + ":" + minute;
+        nonPiWitnessCount = String.valueOf(rnd.nextInt(1, 10));
+        nonPiPresidingStaff = "Automated test presiding staff - " + System.currentTimeMillis();
+
+        waitAndClickByLinkText("Add Non-Public Inquiry");
+        waitForElementToBePresent("//form[@id='Non-Public Inquiry']");
+
+        enterDateParts("agreedByTcDate", today);
+
+        nonPiHearingType = selectRandomOption("//select[@id='hearingType']");
+
+        enterDateParts("hearingDate", hearing);
+        waitAndSelectValueFromDropDown("//select[@id='hearingDate_hour']", SelectorType.XPATH, hour);
+        waitAndSelectValueFromDropDown("//select[@id='hearingDate_minute']", SelectorType.XPATH, minute);
+
+        nonPiVenue = selectRandomOption("//select[@id='venue']");
+        waitAndEnterText("//input[@id='fields[witnessCount]']", SelectorType.XPATH, nonPiWitnessCount);
+        waitAndEnterText("//textarea[@id='fields[presidingStaffName]']", SelectorType.XPATH, nonPiPresidingStaff);
+        nonPiOutcome = selectRandomOption("//select[@id='outcome']");
+
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public String impoundingType;
+    public String impoundingApplicationDate;
+    public String impoundingVrm;
+    public String impoundingLegislation;
+    public String impoundingHearingDate;
+    public String impoundingHearingTime;
+    public String impoundingAgreedBy;
+    public String impoundingOutcome;
+    public String impoundingOutcomeSentDate;
+    public String impoundingNotes;
+
+    public void addImpounding() {
+        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+        LocalDate today = LocalDate.now();
+        LocalDate hearing = today.plusDays(rnd.nextInt(7, 60));
+        LocalDate outcomeSent = today;
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        impoundingApplicationDate = today.format(fmt);
+        impoundingHearingDate = hearing.format(fmt);
+        impoundingOutcomeSentDate = outcomeSent.format(fmt);
+        impoundingVrm = String.format("AB%05dCD", rnd.nextInt(100000));
+        String hour = String.format("%02d", rnd.nextInt(9, 17));
+        String[] minuteValues = {"00", "15", "30", "45"};
+        String minute = minuteValues[rnd.nextInt(minuteValues.length)];
+        impoundingHearingTime = hour + ":" + minute;
+        impoundingNotes = "Automated test impounding notes - " + System.currentTimeMillis();
+
+        waitAndClick("//button[@id='add' and @value='Add']", SelectorType.XPATH);
+        waitForElementToBePresent("//form[@id='Impounding']");
+
+        impoundingType = selectRandomOption("//select[@id='impoundingType']");
+        enterDateParts("applicationReceiptDate", today);
+        waitAndEnterText("//input[@id='vrm']", SelectorType.XPATH, impoundingVrm);
+
+        impoundingLegislation = selectRandomOptionOnChosen("impoundingLegislationTypes_chosen");
+
+        enterDateParts("hearingDate", hearing);
+        waitAndSelectValueFromDropDown("//select[@id='hearingDate_hour']", SelectorType.XPATH, hour);
+        waitAndSelectValueFromDropDown("//select[@id='hearingDate_minute']", SelectorType.XPATH, minute);
+
+        impoundingAgreedBy = selectRandomOption("//select[@id='presidingTc']");
+        impoundingOutcome = selectRandomOption("//select[@id='outcome']");
+        enterDateParts("outcomeSentDate", outcomeSent);
+        waitAndEnterText("//textarea[@id='fields[notes]']", SelectorType.XPATH, impoundingNotes);
+
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public String piHearingVenue;
+    public String piHearingDate;
+    public String piHearingTime;
+    public String piHearingLength;
+    public String piHearingPresidingTc;
+    public String piHearingPresidedByRole;
+    public String piHearingWitnesses;
+    public String piHearingDrivers;
+    public String piHearingDefinition;
+    public String piHearingDetails;
+
+    public void addPiHearing() {
+        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+        LocalDate hearing = LocalDate.now();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        piHearingDate = hearing.format(fmt);
+        String hour = String.format("%02d", rnd.nextInt(9, 17));
+        String[] minuteValues = {"00", "15", "30", "45"};
+        String minute = minuteValues[rnd.nextInt(minuteValues.length)];
+        piHearingTime = hour + ":" + minute;
+        piHearingWitnesses = String.valueOf(rnd.nextInt(1, 10));
+        piHearingDrivers = String.valueOf(rnd.nextInt(1, 10));
+        piHearingDetails = "Automated test hearing details - " + System.currentTimeMillis();
+
+        waitAndClickByLinkText("Add hearing");
+        waitForElementToBePresent("//form[@id='Hearing']");
+
+        piHearingVenue = selectRandomOption("//select[@id='venue']");
+        enterDateParts("hearingDate", hearing);
+        waitAndSelectValueFromDropDown("//select[@id='hearingDate_hour']", SelectorType.XPATH, hour);
+        waitAndSelectValueFromDropDown("//select[@id='hearingDate_minute']", SelectorType.XPATH, minute);
+
+        String[] lengthChoices = {"Half day", "Full day"};
+        piHearingLength = lengthChoices[rnd.nextInt(lengthChoices.length)];
+        waitAndClick(String.format("//div[contains(@class,'govuk-radios__item')]/label[normalize-space()='%s']", piHearingLength), SelectorType.XPATH);
+
+        piHearingPresidingTc = selectRandomOption("//select[@id='presidingTc']");
+        piHearingPresidedByRole = selectRandomOption("//select[@id='presidedByRole']");
+
+        waitAndEnterText("//input[@id='fields[witnesses]']", SelectorType.XPATH, piHearingWitnesses);
+        waitAndEnterText("//input[@id='fields[drivers]']", SelectorType.XPATH, piHearingDrivers);
+
+        piHearingDefinition = selectRandomOptionOnUnderlyingSelect("//select[@id='fields[definition]']");
+        waitAndEnterText("//textarea[@id='fields[details]']", SelectorType.XPATH, piHearingDetails);
+
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public String piDecisionPresidingTc;
+    public String piDecisionPresidingTcRole;
+    public String piDecisionDecision;
+    public String piDecisionTmDecision;
+    public String piDecisionWitnesses;
+    public String piDecisionDate;
+    public String piDecisionNotificationDate;
+    public String piDecisionDefinition;
+    public String piDecisionNotes;
+
+    public void addPiDecision() {
+        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+        LocalDate today = LocalDate.now();
+        LocalDate notification = today;
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        piDecisionDate = today.format(fmt);
+        piDecisionNotificationDate = notification.format(fmt);
+        piDecisionWitnesses = String.valueOf(rnd.nextInt(1, 10));
+        piDecisionNotes = "Automated test decision notes - " + System.currentTimeMillis();
+
+        waitAndClickByLinkText("Add decision");
+        waitForElementToBePresent("//form[@id='Register decision']");
+
+        piDecisionPresidingTc = selectRandomOption("//select[@id='fields[decidedByTc]']");
+        piDecisionPresidingTcRole = selectRandomOption("//select[@id='fields[decidedByTcRole]']");
+
+        piDecisionDecision = selectRandomOptionOnChosen("fields_decisions__chosen");
+        piDecisionTmDecision = selectRandomOptionOnChosen("fields_tmDecisions__chosen");
+
+        waitAndEnterText("//input[@id='fields[witnesses]']", SelectorType.XPATH, piDecisionWitnesses);
+
+        enterDateParts("decisionDate", today);
+        enterDateParts("notificationDate", notification);
+
+        piDecisionDefinition = selectRandomOptionOnUnderlyingSelect("//select[@id='fields[definition]']");
+        waitAndEnterText("//textarea[@id='fields[decisionNotes]']", SelectorType.XPATH, piDecisionNotes);
+
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public String slaCallUpLetterDate;
+    public String slaBriefSentDate;
+    public String slaWrittenOutcome;
+
+    public void editServiceLevelAgreement() {
+        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+        LocalDate today = LocalDate.now();
+        LocalDate callUp = today.minusDays(rnd.nextInt(14, 60));
+        LocalDate brief = today.minusDays(rnd.nextInt(1, 13));
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        slaCallUpLetterDate = callUp.format(fmt);
+        slaBriefSentDate = brief.format(fmt);
+        slaWrittenOutcome = "Verbal decision only";
+
+        waitAndClick("//a[normalize-space()='Edit' and contains(@href,'/pi/sla/')]", SelectorType.XPATH);
+        waitForElementToBePresent("//form[@id='Service level agreement']");
+
+        enterDateParts("callUpLetterDate", callUp);
+        enterDateParts("briefToTcDate", brief);
+        waitAndSelectValueFromDropDown("//select[@id='fields[writtenOutcome]']", SelectorType.XPATH, slaWrittenOutcome);
+
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public String slaException;
+
+    public void addSlaException() {
+        waitAndClick("//button[@id='addCasePiSlaException']", SelectorType.XPATH);
+        waitForElementToBePresent("//form[@id='SLA Exception']");
+        slaException = selectRandomOptionOnUnderlyingSelect("//select[@id='slaException']");
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
     }
 }

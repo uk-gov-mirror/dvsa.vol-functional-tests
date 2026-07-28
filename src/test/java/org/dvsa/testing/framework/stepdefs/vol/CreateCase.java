@@ -198,4 +198,197 @@ public class CreateCase extends BasePage {
     public void iAddANote() {
         world.convictionsAndPenaltiesJourney.addANote();
     }
+
+    @When("I navigate to Hearings & appeals")
+    public void iNavigateToHearingsAppeals() {
+        world.internalNavigation.getHearingAppeal();
+    }
+
+    @Then("I add an appeal to the case")
+    public void iAddAnAppealToTheCase() {
+        world.internalNavigation.addAppeal();
+    }
+
+    @Then("the appeal should be created")
+    public void theAppealShouldBeCreated() {
+        waitForElementToBePresent("//h3[contains(@class,'read-only__title') and normalize-space()='Appeal and stays']");
+        assertTrue(isElementPresent("//a[normalize-space()='Edit appeal']", SelectorType.XPATH),
+                "Edit appeal link should be visible on the appeal details page");
+        assertTrue(isTextPresent(world.internalNavigation.appealNumber),
+                "Appeal number should be displayed: " + world.internalNavigation.appealNumber);
+        assertTrue(isTextPresent(world.internalNavigation.appealDeadline),
+                "Appeals deadline should be displayed: " + world.internalNavigation.appealDeadline);
+        assertTrue(isTextPresent(world.internalNavigation.appealDate),
+                "Date of appeal should be displayed: " + world.internalNavigation.appealDate);
+        assertTrue(isTextPresent(world.internalNavigation.appealReason),
+                "Reason should be displayed: " + world.internalNavigation.appealReason);
+        assertTrue(isTextPresent(world.internalNavigation.appealOutlineGround),
+                "Outline ground should be displayed");
+        assertTrue(isTextPresent("Appeal in progress"),
+                "'Appeal in progress' warning should be displayed in the sidebar");
+    }
+
+    @When("I navigate to Public Inquiry")
+    public void iNavigateToPublicInquiry() {
+        world.internalNavigation.getPublicInquiry();
+    }
+
+    @Then("I add a public inquiry to the case")
+    public void iAddAPublicInquiryToTheCase() {
+        world.internalNavigation.addPublicInquiry();
+    }
+
+    @Then("I add a hearing to the public inquiry")
+    public void iAddAHearingToThePublicInquiry() {
+        world.internalNavigation.addPiHearing();
+    }
+
+    @Then("I add an SLA exception to the public inquiry")
+    public void iAddAnSlaExceptionToThePublicInquiry() {
+        world.internalNavigation.addSlaException();
+    }
+
+    @Then("the SLA exception should be added")
+    public void theSlaExceptionShouldBeAdded() {
+        assertTrue(isTextPresent(world.internalNavigation.slaException),
+                "SLA exception option should be displayed: " + world.internalNavigation.slaException);
+    }
+
+    @Then("I edit the service level agreement")
+    public void iEditTheServiceLevelAgreement() {
+        world.internalNavigation.editServiceLevelAgreement();
+    }
+
+    @Then("the service level agreement should be updated")
+    public void theServiceLevelAgreementShouldBeUpdated() {
+        waitForElementToBePresent("//h3[contains(@class,'read-only__title') and normalize-space()='Service level agreement']");
+        assertTrue(isTextPresent(world.internalNavigation.slaCallUpLetterDate),
+                "Call up letter date should be displayed: " + world.internalNavigation.slaCallUpLetterDate);
+        assertTrue(isTextPresent(world.internalNavigation.slaBriefSentDate),
+                "Brief to TC date should be displayed: " + world.internalNavigation.slaBriefSentDate);
+        assertTrue(isTextPresent(world.internalNavigation.slaWrittenOutcome),
+                "Written outcome should be displayed: " + world.internalNavigation.slaWrittenOutcome);
+    }
+
+    @Then("I add a decision to the public inquiry")
+    public void iAddADecisionToThePublicInquiry() {
+        world.internalNavigation.addPiDecision();
+    }
+
+    @Then("the decision should be added to the public inquiry")
+    public void theDecisionShouldBeAddedToThePublicInquiry() {
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionPresidingTc),
+                "Presiding commissioner should be displayed: " + world.internalNavigation.piDecisionPresidingTc);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionPresidingTcRole),
+                "Presiding role should be displayed: " + world.internalNavigation.piDecisionPresidingTcRole);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionDecision),
+                "Decision should be displayed: " + world.internalNavigation.piDecisionDecision);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionDate),
+                "Date of decision should be displayed: " + world.internalNavigation.piDecisionDate);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionNotificationDate),
+                "Date of notification should be displayed: " + world.internalNavigation.piDecisionNotificationDate);
+        assertTrue(isTextPresent(world.internalNavigation.piDecisionNotes),
+                "Details to be published should include the submitted notes");
+    }
+
+    @Then("the hearing should be added to the public inquiry")
+    public void theHearingShouldBeAddedToThePublicInquiry() {
+        waitForElementToBePresent("//table[contains(@class,'govuk-table')]//caption[contains(normalize-space(),'Hearing')]");
+        String rowXpath = String.format(
+                "//table[contains(@class,'govuk-table')]//tbody//tr[" +
+                        ".//a[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='N' and @data-heading='Adjourned'] and " +
+                        "td[normalize-space()='N' and @data-heading='Cancelled']]",
+                world.internalNavigation.piHearingDate,
+                world.internalNavigation.piHearingVenue,
+                world.internalNavigation.piHearingLength);
+        assertTrue(isElementPresent(rowXpath, SelectorType.XPATH),
+                "Hearing row should be present with the submitted values (date="
+                        + world.internalNavigation.piHearingDate + ", venue="
+                        + world.internalNavigation.piHearingVenue + ", length="
+                        + world.internalNavigation.piHearingLength + ")");
+    }
+
+    @When("I navigate to Non-Public Inquiry")
+    public void iNavigateToNonPublicInquiry() {
+        world.internalNavigation.getNonPublicInquiry();
+    }
+
+    @Then("I add a non-public inquiry to the case")
+    public void iAddANonPublicInquiryToTheCase() {
+        world.internalNavigation.addNonPublicInquiry();
+    }
+
+    @Then("the non-public inquiry should be created")
+    public void theNonPublicInquiryShouldBeCreated() {
+        waitForElementToBePresent("//h3[contains(@class,'read-only__title') and normalize-space()='Non-Public Inquiry']");
+        assertTrue(isElementPresent("//a[normalize-space()='Edit' and contains(@href,'/non-pi/edit/')]", SelectorType.XPATH),
+                "Edit link for non-public inquiry should be visible");
+        assertTrue(isElementPresent("//a[normalize-space()='Generate letter']", SelectorType.XPATH),
+                "'Generate letter' link should be visible");
+        assertTrue(isTextPresent(world.internalNavigation.nonPiHearingType),
+                "Type should be displayed: " + world.internalNavigation.nonPiHearingType);
+        assertTrue(isTextPresent(world.internalNavigation.nonPiHearingDate + " " + world.internalNavigation.nonPiHearingTime),
+                "Meeting date & time should be displayed: " + world.internalNavigation.nonPiHearingDate + " " + world.internalNavigation.nonPiHearingTime);
+        assertTrue(isTextPresent(world.internalNavigation.nonPiPresidingStaff),
+                "Presiding staff member should be displayed");
+        assertTrue(isTextPresent(world.internalNavigation.nonPiAgreedByTcDate),
+                "TC/DTC/TR/DTR agreed date should be displayed: " + world.internalNavigation.nonPiAgreedByTcDate);
+        assertTrue(isTextPresent(world.internalNavigation.nonPiVenue),
+                "Meeting venue should be displayed: " + world.internalNavigation.nonPiVenue);
+        assertTrue(isTextPresent(world.internalNavigation.nonPiWitnessCount),
+                "Number of witnesses should be displayed: " + world.internalNavigation.nonPiWitnessCount);
+        assertTrue(isTextPresent(world.internalNavigation.nonPiOutcome),
+                "Outcome should be displayed: " + world.internalNavigation.nonPiOutcome);
+    }
+
+    @When("I navigate to Impoundings")
+    public void iNavigateToImpoundings() {
+        world.internalNavigation.getImpoundings();
+    }
+
+    @Then("I add an impounding to the case")
+    public void iAddAnImpoundingToTheCase() {
+        world.internalNavigation.addImpounding();
+    }
+
+    @Then("the impounding should be created")
+    public void theImpoundingShouldBeCreated() {
+        waitForElementToBePresent("//table[contains(@class,'govuk-table')]//caption[contains(normalize-space(),'Impounding')]");
+        String rowXpath = String.format(
+                "//table[contains(@class,'govuk-table')]//tbody//tr[" +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        "td[normalize-space()='%s'] and " +
+                        ".//a[normalize-space()='%s']]",
+                world.internalNavigation.impoundingType,
+                world.internalNavigation.impoundingAgreedBy,
+                world.internalNavigation.impoundingOutcome,
+                world.internalNavigation.impoundingOutcomeSentDate,
+                world.internalNavigation.impoundingApplicationDate);
+        assertTrue(isElementPresent(rowXpath, SelectorType.XPATH),
+                "Impounding row should be present with the submitted values");
+    }
+
+    @Then("the public inquiry should be created")
+    public void thePublicInquiryShouldBeCreated() {
+        waitForElementToBePresent("//h3[contains(@class,'read-only__title') and normalize-space()='TC/DTC/HTRU/DHTRU agreement and legislation']");
+        assertTrue(isElementPresent("//a[normalize-space()='Edit' and contains(@href,'/pi/agreed/edit/')]", SelectorType.XPATH),
+                "Edit link for PI agreement should be visible");
+        assertTrue(isTextPresent(world.internalNavigation.piAgreedDate),
+                "Agreed date should be displayed: " + world.internalNavigation.piAgreedDate);
+        assertTrue(isTextPresent(world.internalNavigation.piAgreedByRole),
+                "Agreed by role should be displayed: " + world.internalNavigation.piAgreedByRole);
+        assertTrue(isTextPresent(world.internalNavigation.piType),
+                "Type of Public Inquiry should be displayed: " + world.internalNavigation.piType);
+        assertTrue(isTextPresent(world.internalNavigation.piLegislation),
+                "Legislation should be displayed: " + world.internalNavigation.piLegislation);
+        assertTrue(isTextPresent(world.internalNavigation.piComment),
+                "Comment should be displayed");
+        assertTrue(isElementPresent("//a[normalize-space()='Add hearing']", SelectorType.XPATH),
+                "'Add hearing' link should be present under the Hearing section");
+    }
 }

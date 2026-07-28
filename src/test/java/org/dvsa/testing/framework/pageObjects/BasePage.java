@@ -737,6 +737,68 @@ public abstract class BasePage extends DriverUtils {
         return findElements("//table/tbody/tr[*]", SelectorType.XPATH).stream().allMatch(w -> w.getText().contains(searchTerm));
     }
 
+    public String selectRandomOption(String selectXpath) {
+        var select = new Select(findElement(selectXpath, SelectorType.XPATH));
+        var options = select.getOptions().stream()
+                .filter(o -> {
+                    String v = o.getAttribute("value");
+                    if (v == null || v.isEmpty()) return false;
+                    String lv = v.toLowerCase();
+                    return !lv.equals("other") && !lv.equals("not-set");
+                })
+                .toList();
+        if (options.isEmpty()) {
+            throw new IllegalStateException("No selectable option found for " + selectXpath);
+        }
+        var chosen = options.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(options.size()));
+        String value = chosen.getAttribute("value");
+        String text = chosen.getText().trim();
+        select.selectByValue(value);
+        return text;
+    }
+
+    public String selectRandomOptionOnChosen(String chosenContainerId) {
+        waitAndClick(String.format("//div[@id='%s']//ul[@class='chosen-choices']", chosenContainerId), SelectorType.XPATH);
+        String optionsXpath = String.format("//div[@id='%s']//ul[@class='chosen-results']/li[contains(concat(' ',normalize-space(@class),' '),' active-result ')]", chosenContainerId);
+        waitForElementToBePresent(optionsXpath);
+        var options = findElements(optionsXpath, SelectorType.XPATH);
+        var target = options.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(options.size()));
+        String text = target.getText().trim();
+        target.click();
+        return text;
+    }
+
+    public String selectRandomOptionOnUnderlyingSelect(String selectXpath) {
+        var element = findElement(selectXpath, SelectorType.XPATH);
+        var options = element.findElements(By.tagName("option")).stream()
+                .filter(o -> {
+                    String v = o.getAttribute("value");
+                    return v != null && !v.isEmpty();
+                })
+                .toList();
+        if (options.isEmpty()) {
+            throw new IllegalStateException("No selectable option found for " + selectXpath);
+        }
+        var chosen = options.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(options.size()));
+        String value = chosen.getAttribute("value");
+        String text = chosen.getText().trim();
+        javaScriptExecutor(
+                "var el = arguments[0]; el.value = arguments[1]; " +
+                        "if (window.jQuery) { jQuery(el).val(arguments[1]).trigger('change').trigger('chosen:updated'); } " +
+                        "else { el.dispatchEvent(new Event('change', {bubbles:true})); }",
+                element, value);
+        return text;
+    }
+
+    public void enterDateParts(String fieldName, java.time.LocalDate date) {
+        waitAndEnterText(String.format("//input[@id='fields[%s]_day' or @id='%s_day']", fieldName, fieldName), SelectorType.XPATH,
+                String.format("%02d", date.getDayOfMonth()));
+        waitAndEnterText(String.format("//input[@id='fields[%s]_month' or @id='%s_month']", fieldName, fieldName), SelectorType.XPATH,
+                String.format("%02d", date.getMonthValue()));
+        waitAndEnterText(String.format("//input[@id='fields[%s]_year' or @id='%s_year']", fieldName, fieldName), SelectorType.XPATH,
+                String.valueOf(date.getYear()));
+    }
+
     public boolean checkForPartialMatch(String searchTerm) {
         return findElements("//table/tbody/tr[*]", SelectorType.XPATH).stream().anyMatch(w -> w.getText().contains(searchTerm));
     }

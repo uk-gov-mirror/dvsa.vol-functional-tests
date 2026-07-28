@@ -4,7 +4,7 @@
 @FullRegression
 @printAndSign
 
-Feature: Public enquiry added and published and deletion of case notes
+Feature: Public inquiry added and published and deletion of case notes
 
   Background:
     Given i have a valid "goods" "standard_national" licence
@@ -59,4 +59,7 @@ Feature: Public enquiry added and published and deletion of case notes
     And I navigate to a case
     And I add conviction to the case
     Then the conviction should be created
+
+
+
 
