@@ -571,6 +571,7 @@ public class InternalNavigation extends BasePage {
         }
 
         waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+        getHearingAppeal();
         return new String[]{requestDateStr, decisionDateStr, opts.outcome, notes, withdrawnDateStr};
     }
 }

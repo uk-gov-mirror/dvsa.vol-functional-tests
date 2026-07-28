@@ -282,7 +282,7 @@ public class CreateCase extends BasePage {
     private void assertStaySection(String sectionTitle, String outcome, String requestDate, String decisionDate,
                                     String notes, String dvsaNotified, String isWithdrawn, String withdrawnDate) {
         String sectionBase = String.format(
-                "//h3[contains(@class,'read-only__title') and normalize-space()='%s']/ancestor::div[contains(@class,'read-only')][1]",
+                "//h3[contains(@class,'read-only__title') and normalize-space()='%s']/ancestor::div[@class='read-only'][1]",
                 sectionTitle);
         waitForElementToBePresent(sectionBase);
         assertTrue(isElementPresent(sectionBase + "//li[dt[normalize-space()='Outcome'] and dd[normalize-space()='" + outcome + "']]", SelectorType.XPATH),
