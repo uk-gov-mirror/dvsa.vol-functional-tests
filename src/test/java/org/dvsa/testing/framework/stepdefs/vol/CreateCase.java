@@ -243,6 +243,68 @@ public class CreateCase extends BasePage {
         world.internalNavigation.addPiHearing();
     }
 
+    @Then("I add a TC/Transport Regulator stay to the appeal with outcome {string}, DVSA notified {string}, withdrawn {string}")
+    public void iAddATcStayToTheAppealWithOptions(String outcome, String dvsaNotified, String withdrawn) {
+        world.internalNavigation.addTcStay(new org.dvsa.testing.framework.Journeys.licence.InternalNavigation.StayOptions(
+                outcome, dvsaNotified.equalsIgnoreCase("yes"), withdrawn.equalsIgnoreCase("yes")));
+    }
+
+    @Then("the TC/Transport Regulator stay should be created")
+    public void theTcStayShouldBeCreated() {
+        assertStaySection("Traffic commissioner / Transport Regulator",
+                world.internalNavigation.tcStayOutcome,
+                world.internalNavigation.tcStayRequestDate,
+                world.internalNavigation.tcStayDecisionDate,
+                world.internalNavigation.tcStayNotes,
+                world.internalNavigation.tcStayDvsaNotified,
+                world.internalNavigation.tcStayIsWithdrawn,
+                world.internalNavigation.tcStayWithdrawnDate);
+    }
+
+    @Then("I add an Upper Tribunal stay to the appeal with outcome {string}, DVSA notified {string}, withdrawn {string}")
+    public void iAddAnUtStayToTheAppealWithOptions(String outcome, String dvsaNotified, String withdrawn) {
+        world.internalNavigation.addUtStay(new org.dvsa.testing.framework.Journeys.licence.InternalNavigation.StayOptions(
+                outcome, dvsaNotified.equalsIgnoreCase("yes"), withdrawn.equalsIgnoreCase("yes")));
+    }
+
+    @Then("the Upper Tribunal stay should be created")
+    public void theUtStayShouldBeCreated() {
+        assertStaySection("Upper tribunal",
+                world.internalNavigation.utStayOutcome,
+                world.internalNavigation.utStayRequestDate,
+                world.internalNavigation.utStayDecisionDate,
+                world.internalNavigation.utStayNotes,
+                world.internalNavigation.utStayDvsaNotified,
+                world.internalNavigation.utStayIsWithdrawn,
+                world.internalNavigation.utStayWithdrawnDate);
+    }
+
+    private void assertStaySection(String sectionTitle, String outcome, String requestDate, String decisionDate,
+                                    String notes, String dvsaNotified, String isWithdrawn, String withdrawnDate) {
+        String sectionBase = String.format(
+                "//h3[contains(@class,'read-only__title') and normalize-space()='%s']/ancestor::div[contains(@class,'read-only')][1]",
+                sectionTitle);
+        waitForElementToBePresent(sectionBase);
+        assertTrue(isElementPresent(sectionBase + "//li[dt[normalize-space()='Outcome'] and dd[normalize-space()='" + outcome + "']]", SelectorType.XPATH),
+                sectionTitle + " outcome should be '" + outcome + "'");
+        assertTrue(isElementPresent(sectionBase + "//li[dt[normalize-space()='Requested date'] and dd[normalize-space()='" + requestDate + "']]", SelectorType.XPATH),
+                sectionTitle + " requested date should be '" + requestDate + "'");
+        assertTrue(isElementPresent(sectionBase + "//li[dt[normalize-space()='Decision date'] and dd[normalize-space()='" + decisionDate + "']]", SelectorType.XPATH),
+                sectionTitle + " decision date should be '" + decisionDate + "'");
+        assertTrue(isElementPresent(sectionBase + "//li[dt[normalize-space()='Is withdrawn'] and dd[normalize-space()='" + isWithdrawn + "']]", SelectorType.XPATH),
+                sectionTitle + " 'Is withdrawn' should be '" + isWithdrawn + "'");
+        if ("Yes".equals(isWithdrawn)) {
+            assertTrue(isElementPresent(sectionBase + "//li[dt[normalize-space()='Withdrawn date'] and dd[normalize-space()='" + withdrawnDate + "']]", SelectorType.XPATH),
+                    sectionTitle + " withdrawn date should be '" + withdrawnDate + "'");
+        }
+        assertTrue(isElementPresent(sectionBase + "//li[dt[normalize-space()='DVSA/DVA notified?'] and dd[normalize-space()='" + dvsaNotified + "']]", SelectorType.XPATH),
+                sectionTitle + " 'DVSA/DVA notified?' should be '" + dvsaNotified + "'");
+        assertTrue(isElementPresent(sectionBase + "//li[dt[normalize-space()='Notes'] and dd[normalize-space()='" + notes + "']]", SelectorType.XPATH),
+                sectionTitle + " notes should match submitted value");
+        assertTrue(isElementPresent(sectionBase + "//a[normalize-space()='Edit']", SelectorType.XPATH),
+                sectionTitle + " Edit link should be visible");
+    }
+
     @Then("I add an SLA exception to the public inquiry")
     public void iAddAnSlaExceptionToThePublicInquiry() {
         world.internalNavigation.addSlaException();
