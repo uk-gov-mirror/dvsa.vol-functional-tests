@@ -1,5 +1,6 @@
 @int_regression
 @FullRegression
+ @hearings
 
 Feature: Case hearings and appeals - appeals, public inquiries, non-public inquiries, impoundings
 
