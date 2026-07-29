@@ -133,6 +133,116 @@ public class InternalNavigation extends BasePage {
         get(this.url.concat(String.format("transport-manager/%s/details/", transportManagerId)));
     }
 
+    public String transportManagerId;
+
+    /**
+     * Navigates to the internal licence Transport Managers tab and captures the first Transport
+     * Manager's id from the listing. Stores the id in {@link #transportManagerId} for use by
+     * subsequent {@code getTm*} navigation methods.
+     */
+    public String captureFirstTransportManagerIdFromLicence() {
+        get(this.url.concat(String.format("licence/%s/transport-managers", world.createApplication.getLicenceId())));
+        waitForElementToBePresent("//a[starts-with(@href,'/transport-manager/')]");
+        String href = findElement(
+                "//a[starts-with(@href,'/transport-manager/')][1]",
+                SelectorType.XPATH).getAttribute("href");
+        transportManagerId = href.replaceAll(".*/transport-manager/(\\d+)/.*", "$1");
+        return transportManagerId;
+    }
+
+    private String tmUrl(String tail) {
+        return this.url.concat(String.format("transport-manager/%s/%s", transportManagerId, tail));
+    }
+
+    public void getTmDetails()               { get(tmUrl("details/")); }
+    public void getTmCompetences()           { get(tmUrl("details/competences/")); }
+    public void getTmCompetencesEdit(String competenceId) { get(tmUrl("details/competences/edit/" + competenceId + "/")); }
+    public void getTmEmployment()            { get(tmUrl("details/employment/")); }
+    public void getTmPreviousHistory()       { get(tmUrl("details/previous-history/")); }
+    public void getTmResponsibilitiesEdit(String tmLicenceId) { get(tmUrl("details/responsibilities/edit-tm-licence/" + tmLicenceId + "/")); }
+    public void getTmDocuments()             { get(tmUrl("documents/")); }
+    public void getTmCases()                 { get(tmUrl("cases/")); }
+    public void getTmCasesEdit(String caseId){ get(tmUrl("cases/edit/" + caseId + "/")); }
+    public void getTmProcessingNotes()       { get(tmUrl("processing/notes/")); }
+    public void getTmProcessingNotesEdit(String noteId) { get(tmUrl("processing/notes/edit/" + noteId + "/")); }
+    public void getTmProcessingEventHistory(){ get(tmUrl("processing/event-history/")); }
+    public void getTmProcessingPublication() { get(tmUrl("processing/publication/")); }
+    public void getTmProcessingReadHistory() { get(tmUrl("processing/read-history/")); }
+    public void getTmCheckRepute()           { get(tmUrl("check-repute/")); }
+    public void getTmMerge()                 { get(tmUrl("merge/")); }
+    public void getTmUndoDisqualification()  { get(tmUrl("undo-disqualification/")); }
+
+    /* ------------------------------------------------------------------ */
+    /*  TM add-flow helpers (group 2 — write & assert)                    */
+    /* ------------------------------------------------------------------ */
+
+    /** Opens the Notes tab, adds a note via the modal, waits for row to render. */
+    public void addTmProcessingNote(String comment, boolean priority) {
+        getTmProcessingNotes();
+        waitAndClick("//button[@id='add']", SelectorType.XPATH);
+        waitForElementToBePresent("//textarea[@name='fields[comment]']");
+        waitAndEnterText("//textarea[@name='fields[comment]']", SelectorType.XPATH, comment);
+        if (priority) {
+            click("//input[@type='checkbox' and @name='fields[priority]']", SelectorType.XPATH);
+        }
+        waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + comment + "\")]");
+    }
+
+    /** Opens the Competences tab, adds a qualification via the modal. */
+    public void addTmCompetence(String qualificationTypeValue, String serialNo,
+                                String day, String month, String year) {
+        getTmCompetences();
+        waitAndClick("//button[@id='add']", SelectorType.XPATH);
+        waitForElementToBePresent("//select[@name='qualification-details[qualificationType]']");
+        selectValueFromDropDown("//select[@name='qualification-details[qualificationType]']",
+                SelectorType.XPATH, qualificationTypeValue);
+        waitAndEnterText("//input[@name='qualification-details[serialNo]']", SelectorType.XPATH, serialNo);
+        waitAndEnterText("//input[@name='qualification-details[issuedDate][day]']", SelectorType.XPATH, day);
+        waitAndEnterText("//input[@name='qualification-details[issuedDate][month]']", SelectorType.XPATH, month);
+        waitAndEnterText("//input[@name='qualification-details[issuedDate][year]']", SelectorType.XPATH, year);
+        // countryCode defaults to GB — leave as-is
+        waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + serialNo + "\")]");
+    }
+
+    /** Opens the Other Employment tab, adds an employer via the modal (manual address entry). */
+    public void addTmEmployer(String employerName, String position, String hoursPerWeek,
+                              String addressLine1, String town, String postcode) {
+        getTmEmployment();
+        waitAndClick("//button[@id='add']", SelectorType.XPATH);
+        waitForElementToBePresent("//input[@name='tm-employer-name-details[employerName]']");
+        waitAndEnterText("//input[@name='tm-employer-name-details[employerName]']",
+                SelectorType.XPATH, employerName);
+        // manual address entry (skip postcode lookup)
+        waitAndEnterText("//input[@name='address[addressLine1]']", SelectorType.XPATH, addressLine1);
+        waitAndEnterText("//input[@name='address[town]']", SelectorType.XPATH, town);
+        waitAndEnterText("//input[@name='address[postcode]']", SelectorType.XPATH, postcode);
+        // countryCode defaults to GB
+        waitAndEnterText("//input[@name='tm-employment-details[position]']", SelectorType.XPATH, position);
+        waitAndEnterText("//input[@name='tm-employment-details[hoursPerWeek]']", SelectorType.XPATH, hoursPerWeek);
+        waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + employerName + "\")]");
+    }
+
+    /** Opens the Documents tab, uploads a document via the modal. */
+    public void uploadTmDocument(String description, String absoluteFilePath) {
+        getTmDocuments();
+        waitAndClick("//button[@id='upload']", SelectorType.XPATH);
+        waitForElementToBePresent("//select[@name='details[category]']");
+        waitAndEnterText("//input[@name='details[description]']", SelectorType.XPATH, description);
+        // pick first non-empty subcategory
+        selectValueFromDropDownByIndex("//select[@name='details[documentSubCategory]']",
+                SelectorType.XPATH, 1);
+        navigate().findElement(org.openqa.selenium.By.name("details[file]")).sendKeys(absoluteFilePath);
+        waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
+        waitForElementToBePresent(
+                "//table//td//a[contains(normalize-space(),\"" + description + "\")]");
+    }
+
     public void getLicence() {
         get(this.url.concat(String.format("licence/%s", world.createApplication.getLicenceId())));
     }
