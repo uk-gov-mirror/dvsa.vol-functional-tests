@@ -83,6 +83,19 @@ public class GovSignInJourney extends BasePage {
         return user;
     }
 
+    public void skipPasskeyPromptIfPresent() {
+        try {
+            if (isTitlePresent("Sign in faster with your face, fingerprint or passcode", 2)
+                    || isTextPresent("Set up a passkey for a secure and easy way to sign in")
+                    || isElementPresent("//button[@name='createPasskeyOption' and @value='skip']", SelectorType.XPATH)) {
+                LOGGER.info("Passkey prompt detected — clicking 'Skip for now'");
+                waitAndClick("//button[@name='createPasskeyOption' and @value='skip']", SelectorType.XPATH);
+            }
+        } catch (Exception e) {
+            LOGGER.debug("Passkey prompt not present or already dismissed: " + e.getMessage());
+        }
+    }
+
     public void navigateToGovUkSignIn() {
         if (isTextPresent("Declaration information")) {
             if (isElementPresent("sign-in-button", SelectorType.ID)) {
@@ -125,11 +138,13 @@ public class GovSignInJourney extends BasePage {
                 waitAndClick("//button[@type='Submit']", SelectorType.XPATH);
                 waitAndEnterText("code", SelectorType.ID, authCode);
                 waitAndClick("//*[contains(text(),'Continue')]", SelectorType.XPATH);
+                skipPasskeyPromptIfPresent();
                 if (isTextPresent("You have already proved your identity")) {
                     waitAndClick("//*[@id='submitButton']", SelectorType.XPATH);
                 } else {
                     waitAndEnterText("code", SelectorType.ID, authCode);
                     waitAndClick("//*[contains(text(),'Continue')]", SelectorType.XPATH);
+                    skipPasskeyPromptIfPresent();
                 }
             }
         }
@@ -151,6 +166,7 @@ public class GovSignInJourney extends BasePage {
 
             waitAndEnterText("code", SelectorType.ID, authCode);
             waitAndClick("//*[contains(text(),'Continue')]", SelectorType.XPATH);
+            skipPasskeyPromptIfPresent();
         }
 
         if (isTitlePresent("You have already proved your identity", 10)) {
@@ -278,6 +294,7 @@ public class GovSignInJourney extends BasePage {
         waitAndClick("//button[@type='Submit']", SelectorType.XPATH);
         waitAndEnterText("code", SelectorType.ID, authCode);
         waitAndClick("//*[contains(text(),'Continue')]", SelectorType.XPATH);
+        skipPasskeyPromptIfPresent();
     }
 
     public void photoIDQuestion() {
