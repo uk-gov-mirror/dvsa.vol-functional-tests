@@ -196,13 +196,13 @@ public class InternalNavigation extends BasePage {
         getTmCompetences();
         waitAndClick("//button[@id='add']", SelectorType.XPATH);
         waitForElementToBePresent("//select[@name='qualification-details[qualificationType]']");
-        selectValueFromDropDown("//select[@name='qualification-details[qualificationType]']",
-                SelectorType.XPATH, qualificationTypeValue);
+        new org.openqa.selenium.support.ui.Select(
+                findElement("//select[@name='qualification-details[qualificationType]']", SelectorType.XPATH))
+                .selectByValue(qualificationTypeValue);
         waitAndEnterText("//input[@name='qualification-details[serialNo]']", SelectorType.XPATH, serialNo);
         waitAndEnterText("//input[@name='qualification-details[issuedDate][day]']", SelectorType.XPATH, day);
         waitAndEnterText("//input[@name='qualification-details[issuedDate][month]']", SelectorType.XPATH, month);
         waitAndEnterText("//input[@name='qualification-details[issuedDate][year]']", SelectorType.XPATH, year);
-        // countryCode defaults to GB — leave as-is
         waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
         waitForElementToBePresent(
                 "//table//td[contains(normalize-space(),\"" + serialNo + "\")]");
@@ -216,11 +216,16 @@ public class InternalNavigation extends BasePage {
         waitForElementToBePresent("//input[@name='tm-employer-name-details[employerName]']");
         waitAndEnterText("//input[@name='tm-employer-name-details[employerName]']",
                 SelectorType.XPATH, employerName);
-        // manual address entry (skip postcode lookup)
+        // reveal the manual address fields
+        String manualLink = "//a[normalize-space()='Enter the address manually'"
+                + " or normalize-space()='Enter address manually'"
+                + " or normalize-space()='Enter the address yourself']";
+        if (isElementPresent(manualLink, SelectorType.XPATH)) {
+            waitAndClick(manualLink, SelectorType.XPATH);
+        }
         waitAndEnterText("//input[@name='address[addressLine1]']", SelectorType.XPATH, addressLine1);
         waitAndEnterText("//input[@name='address[town]']", SelectorType.XPATH, town);
         waitAndEnterText("//input[@name='address[postcode]']", SelectorType.XPATH, postcode);
-        // countryCode defaults to GB
         waitAndEnterText("//input[@name='tm-employment-details[position]']", SelectorType.XPATH, position);
         waitAndEnterText("//input[@name='tm-employment-details[hoursPerWeek]']", SelectorType.XPATH, hoursPerWeek);
         waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
@@ -234,10 +239,17 @@ public class InternalNavigation extends BasePage {
         waitAndClick("//button[@id='upload']", SelectorType.XPATH);
         waitForElementToBePresent("//select[@name='details[category]']");
         waitAndEnterText("//input[@name='details[description]']", SelectorType.XPATH, description);
-        // pick first non-empty subcategory
         selectValueFromDropDownByIndex("//select[@name='details[documentSubCategory]']",
                 SelectorType.XPATH, 1);
-        navigate().findElement(org.openqa.selenium.By.name("details[file]")).sendKeys(absoluteFilePath);
+        org.openqa.selenium.WebElement fileInput =
+                navigate().findElement(org.openqa.selenium.By.name("details[file]"));
+        // required when running against a remote grid (Selenium hub in a container)
+        if (System.getProperty("platform") != null
+                && fileInput instanceof org.openqa.selenium.remote.RemoteWebElement) {
+            ((org.openqa.selenium.remote.RemoteWebElement) fileInput)
+                    .setFileDetector(new org.openqa.selenium.remote.LocalFileDetector());
+        }
+        fileInput.sendKeys(absoluteFilePath);
         waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
         waitForElementToBePresent(
                 "//table//td//a[contains(normalize-space(),\"" + description + "\")]");

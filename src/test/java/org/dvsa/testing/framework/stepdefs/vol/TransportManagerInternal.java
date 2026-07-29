@@ -146,11 +146,14 @@ public class TransportManagerInternal extends BasePage {
         assertTrue(getDriver().getCurrentUrl().contains(expectedUrlFragment),
                 "Browser should be on TM path ending with '" + urlTail + "', was: " + getDriver().getCurrentUrl());
 
+        // The active tab may be either the vertical-nav (sub-tab under TM details or Processing)
+        // or the horizontal-nav (top-level: TM details / Cases / Documents / Processing).
         String currentNavXpath = String.format(
-                "//li[contains(@class,'vertical-navigation__item') and contains(@class,'current')]//*[normalize-space()='%s']",
+                "//li[(contains(@class,'vertical-navigation__item') or contains(@class,'horizontal-navigation__item'))"
+                        + " and contains(@class,'current')]//*[normalize-space()='%s']",
                 verticalNavTitle);
         assertTrue(isElementPresent(currentNavXpath, SelectorType.XPATH),
-                "'" + verticalNavTitle + "' should be the current vertical-navigation item");
+                "'" + verticalNavTitle + "' should be the current navigation item");
 
         assertTrue(isElementNotPresent("//p[contains(@class,'error') or contains(@class,'notice--error')]",
                         SelectorType.XPATH),
