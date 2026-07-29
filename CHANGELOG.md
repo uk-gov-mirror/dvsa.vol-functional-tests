@@ -1,6 +1,29 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.28.0](https://github.com/dvsa/vol-functional-tests/compare/v4.27.0...v4.28.0) (2026-07-29)
+
+
+### Features
+
+* appeals ([ec13c39](https://github.com/dvsa/vol-functional-tests/commit/ec13c394e0006cdb09ce97cea908dc031766a4ee))
+* appeals ([67820e3](https://github.com/dvsa/vol-functional-tests/commit/67820e39018ebda5707541b17b816e3b98432360))
+* decisions ([91c6321](https://github.com/dvsa/vol-functional-tests/commit/91c632152062c9f73d897cae7588929218560f43))
+* impounding ([e0437ae](https://github.com/dvsa/vol-functional-tests/commit/e0437ae898a33a7be28d7de02327a2820f663eca))
+* non public inquiry ([0e1e70b](https://github.com/dvsa/vol-functional-tests/commit/0e1e70b8aa42ba35c0c425c072e4cdc64c9e891d))
+* pi ([933aa4d](https://github.com/dvsa/vol-functional-tests/commit/933aa4d14a78fb0da0e7210aa88173f2dea3bfb8))
+* SLA ([666d313](https://github.com/dvsa/vol-functional-tests/commit/666d313d50864ef01d21bc64aec203a5889c281e))
+* stays ([c532a21](https://github.com/dvsa/vol-functional-tests/commit/c532a211bacd754777c7b3896e63d9ba6075e552))
+* stays ([0686551](https://github.com/dvsa/vol-functional-tests/commit/0686551acff4edabb3e506631ea9c5020bdaca89))
+
+
+### Bug Fixes
+
+* assertion ([b0713fc](https://github.com/dvsa/vol-functional-tests/commit/b0713fc871d4d65cad9b29c754d418accd65901b))
+* assertion ([07a293f](https://github.com/dvsa/vol-functional-tests/commit/07a293f366bc68771e4dfeb7c7780b5bd1ebfae8))
+* assertion ([df406db](https://github.com/dvsa/vol-functional-tests/commit/df406db6d5b48c6ca13a806eb63f19bd78095e7f))
+* tag ([d940bda](https://github.com/dvsa/vol-functional-tests/commit/d940bda63144c847e2b60b83beb5b08a6595ac07))
+
 ## [4.27.0](https://github.com/dvsa/vol-functional-tests/compare/v4.26.2...v4.27.0) (2026-07-23)
 
 
