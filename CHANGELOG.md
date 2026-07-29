@@ -1,6 +1,15 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.28.1](https://github.com/dvsa/vol-functional-tests/compare/v4.28.0...v4.28.1) (2026-07-29)
+
+
+### Bug Fixes
+
+* sign in prompt work around ([c7f53ce](https://github.com/dvsa/vol-functional-tests/commit/c7f53ce5f88b078823b29fc03433e0de02dd8ac8))
+* step def ([5c66ed2](https://github.com/dvsa/vol-functional-tests/commit/5c66ed24aa04bdd7fefb861ce6f5213d7196971e))
+* step def ([6e35501](https://github.com/dvsa/vol-functional-tests/commit/6e3550143d22f496a09b0395b82147cda6a4e9ff))
+
 ## [4.28.0](https://github.com/dvsa/vol-functional-tests/compare/v4.27.0...v4.28.0) (2026-07-29)
 
 
