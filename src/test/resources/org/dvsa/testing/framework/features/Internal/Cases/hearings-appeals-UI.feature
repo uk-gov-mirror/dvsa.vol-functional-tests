@@ -1,5 +1,6 @@
 @int_regression
 @FullRegression
+ @hearings
 
 Feature: Case hearings and appeals - appeals, public inquiries, non-public inquiries, impoundings
 
@@ -14,6 +15,32 @@ Feature: Case hearings and appeals - appeals, public inquiries, non-public inqui
     When I navigate to Hearings & appeals
     Then I add an appeal to the case
     Then the appeal should be created
+
+  @Add_tc_stay_to_appeal
+  Scenario Outline: UI - Add a Traffic Commissioner / Transport Regulator stay to an appeal - <outcome>, DVSA notified <dvsaNotified>, withdrawn <withdrawn>
+    When I navigate to Hearings & appeals
+    Then I add an appeal to the case
+    Then I add a TC/Transport Regulator stay to the appeal with outcome "<outcome>", DVSA notified "<dvsaNotified>", withdrawn "<withdrawn>"
+    Then the TC/Transport Regulator stay should be created
+
+    Examples:
+      | outcome | dvsaNotified | withdrawn |
+      | GRANTED | Yes          | No        |
+      | REFUSED | No           | No        |
+      | GRANTED | Yes          | Yes       |
+
+  @Add_ut_stay_to_appeal
+  Scenario Outline: UI - Add an Upper Tribunal stay to an appeal - <outcome>, DVSA notified <dvsaNotified>, withdrawn <withdrawn>
+    When I navigate to Hearings & appeals
+    Then I add an appeal to the case
+    Then I add an Upper Tribunal stay to the appeal with outcome "<outcome>", DVSA notified "<dvsaNotified>", withdrawn "<withdrawn>"
+    Then the Upper Tribunal stay should be created
+
+    Examples:
+      | outcome | dvsaNotified | withdrawn |
+      | GRANTED | Yes          | No        |
+      | REFUSED | No           | No        |
+      | REFUSED | Yes          | Yes       |
 
   @Add_public_inquiry_to_case
   Scenario: UI - Add a public inquiry to a case

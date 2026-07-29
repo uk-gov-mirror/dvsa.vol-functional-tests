@@ -438,7 +438,7 @@ public class InternalNavigation extends BasePage {
         piDecisionDate = today.format(fmt);
         piDecisionNotificationDate = notification.format(fmt);
         piDecisionWitnesses = String.valueOf(rnd.nextInt(1, 10));
-        piDecisionNotes = "Automated test decision notes - " + System.currentTimeMillis();
+        piDecisionNotes = "Automated test details to be published - " + System.currentTimeMillis();
 
         waitAndClickByLinkText("Add decision");
         waitForElementToBePresent("//form[@id='Register decision']");
@@ -491,5 +491,87 @@ public class InternalNavigation extends BasePage {
         waitForElementToBePresent("//form[@id='SLA Exception']");
         slaException = selectRandomOptionOnUnderlyingSelect("//select[@id='slaException']");
         waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public String tcStayRequestDate;
+    public String tcStayDecisionDate;
+    public String tcStayOutcome;
+    public String tcStayNotes;
+    public String tcStayDvsaNotified;
+    public String tcStayIsWithdrawn;
+    public String tcStayWithdrawnDate;
+
+    public String utStayRequestDate;
+    public String utStayDecisionDate;
+    public String utStayOutcome;
+    public String utStayNotes;
+    public String utStayDvsaNotified;
+    public String utStayIsWithdrawn;
+    public String utStayWithdrawnDate;
+
+    public static class StayOptions {
+        public String outcome;
+        public boolean dvsaNotified;
+        public boolean withdrawn;
+
+        public StayOptions(String outcome, boolean dvsaNotified, boolean withdrawn) {
+            this.outcome = outcome;
+            this.dvsaNotified = dvsaNotified;
+            this.withdrawn = withdrawn;
+        }
+    }
+
+    public void addTcStay(StayOptions opts) {
+        var values = addStay("stay_t_tc", opts);
+        tcStayRequestDate = values[0];
+        tcStayDecisionDate = values[1];
+        tcStayOutcome = values[2];
+        tcStayNotes = values[3];
+        tcStayDvsaNotified = opts.dvsaNotified ? "Yes" : "No";
+        tcStayIsWithdrawn = opts.withdrawn ? "Yes" : "No";
+        tcStayWithdrawnDate = values[4];
+    }
+
+    public void addUtStay(StayOptions opts) {
+        var values = addStay("stay_t_ut", opts);
+        utStayRequestDate = values[0];
+        utStayDecisionDate = values[1];
+        utStayOutcome = values[2];
+        utStayNotes = values[3];
+        utStayDvsaNotified = opts.dvsaNotified ? "Yes" : "No";
+        utStayIsWithdrawn = opts.withdrawn ? "Yes" : "No";
+        utStayWithdrawnDate = values[4];
+    }
+
+    private String[] addStay(String stayType, StayOptions opts) {
+        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+        LocalDate today = LocalDate.now();
+        LocalDate requestDate = today.minusDays(rnd.nextInt(7, 30));
+        LocalDate decisionDate = today.minusDays(rnd.nextInt(0, 6));
+        LocalDate withdrawnDate = today.minusDays(rnd.nextInt(0, 3));
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String requestDateStr = requestDate.format(fmt);
+        String decisionDateStr = decisionDate.format(fmt);
+        String withdrawnDateStr = opts.withdrawn ? withdrawnDate.format(fmt) : "";
+        String notes = "Automated test stay notes - " + System.currentTimeMillis();
+
+        waitAndClick(String.format("//a[contains(@href,'/stay/add/%s/') and normalize-space()='Add stay']", stayType), SelectorType.XPATH);
+        waitForElementToBePresent("//form[@id='case-stay']");
+
+        enterDateParts("requestDate", requestDate);
+        enterDateParts("decisionDate", decisionDate);
+        waitAndSelectValueFromDropDown("//select[@id='fields[outcome]']", SelectorType.XPATH, opts.outcome);
+        if (opts.dvsaNotified) {
+            waitAndClick("//input[@type='checkbox' and @id='fields[dvsaNotified]']", SelectorType.XPATH);
+        }
+        waitAndEnterText("//textarea[@id='fields[notes]']", SelectorType.XPATH, notes);
+        if (opts.withdrawn) {
+            waitAndClick("//input[@type='checkbox' and @id='fields[isWithdrawn]']", SelectorType.XPATH);
+            enterDateParts("withdrawnDate", withdrawnDate);
+        }
+
+        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+        getHearingAppeal();
+        return new String[]{requestDateStr, decisionDateStr, opts.outcome, notes, withdrawnDateStr};
     }
 }
