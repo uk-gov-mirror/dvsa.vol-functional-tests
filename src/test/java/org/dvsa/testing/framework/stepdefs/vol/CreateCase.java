@@ -243,13 +243,13 @@ public class CreateCase extends BasePage {
         world.internalNavigation.addPiHearing();
     }
 
-    @Then("I add a TC/Transport Regulator stay to the appeal with outcome {string}, DVSA notified {string}, withdrawn {string}")
+    @Then("I add a TC\\/Transport Regulator stay to the appeal with outcome {string}, DVSA notified {string}, withdrawn {string}")
     public void iAddATcStayToTheAppealWithOptions(String outcome, String dvsaNotified, String withdrawn) {
         world.internalNavigation.addTcStay(new org.dvsa.testing.framework.Journeys.licence.InternalNavigation.StayOptions(
                 outcome, dvsaNotified.equalsIgnoreCase("yes"), withdrawn.equalsIgnoreCase("yes")));
     }
 
-    @Then("the TC/Transport Regulator stay should be created")
+    @Then("the TC\\/Transport Regulator stay should be created")
     public void theTcStayShouldBeCreated() {
         assertStaySection("Traffic commissioner / Transport Regulator",
                 world.internalNavigation.tcStayOutcome,
