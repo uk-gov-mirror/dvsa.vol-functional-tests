@@ -11,11 +11,16 @@ import org.dvsa.testing.framework.pageObjects.enums.SelectorType;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import java.time.LocalDate;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import org.dvsa.testing.lib.url.webapp.webAppURL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.dvsa.testing.framework.pageObjects.enums.AdminOption;
 import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Objects;
 
@@ -135,11 +140,6 @@ public class InternalNavigation extends BasePage {
 
     public String transportManagerId;
 
-    /**
-     * Navigates to the internal licence Transport Managers tab and captures the first Transport
-     * Manager's id from the listing. Stores the id in {@link #transportManagerId} for use by
-     * subsequent {@code getTm*} navigation methods.
-     */
     public String captureFirstTransportManagerIdFromLicence() {
         get(this.url.concat(String.format("licence/%s/transport-managers", world.createApplication.getLicenceId())));
         waitForElementToBePresent("//a[starts-with(@href,'/transport-manager/')]");
@@ -172,11 +172,6 @@ public class InternalNavigation extends BasePage {
     public void getTmMerge()                 { get(tmUrl("merge/")); }
     public void getTmUndoDisqualification()  { get(tmUrl("undo-disqualification/")); }
 
-    /* ------------------------------------------------------------------ */
-    /*  TM add-flow helpers (group 2 — write & assert)                    */
-    /* ------------------------------------------------------------------ */
-
-    /** Opens the Notes tab, adds a note via the modal, waits for row to render. */
     public void addTmProcessingNote(String comment, boolean priority) {
         getTmProcessingNotes();
         waitAndClick("//button[@id='add']", SelectorType.XPATH);
@@ -185,30 +180,27 @@ public class InternalNavigation extends BasePage {
         if (priority) {
             click("//input[@type='checkbox' and @name='fields[priority]']", SelectorType.XPATH);
         }
-        waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
+        clickModalSubmit();
         waitForElementToBePresent(
                 "//table//td[contains(normalize-space(),\"" + comment + "\")]");
     }
 
-    /** Opens the Competences tab, adds a qualification via the modal. */
     public void addTmCompetence(String qualificationTypeValue, String serialNo,
                                 String day, String month, String year) {
         getTmCompetences();
         waitAndClick("//button[@id='add']", SelectorType.XPATH);
         waitForElementToBePresent("//select[@name='qualification-details[qualificationType]']");
-        new org.openqa.selenium.support.ui.Select(
-                findElement("//select[@name='qualification-details[qualificationType]']", SelectorType.XPATH))
-                .selectByValue(qualificationTypeValue);
+        selectValueFromDropDownByValue("//select[@name='qualification-details[qualificationType]']",
+                SelectorType.XPATH, qualificationTypeValue);
         waitAndEnterText("//input[@name='qualification-details[serialNo]']", SelectorType.XPATH, serialNo);
         waitAndEnterText("//input[@name='qualification-details[issuedDate][day]']", SelectorType.XPATH, day);
         waitAndEnterText("//input[@name='qualification-details[issuedDate][month]']", SelectorType.XPATH, month);
         waitAndEnterText("//input[@name='qualification-details[issuedDate][year]']", SelectorType.XPATH, year);
-        waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
+        clickModalSubmit();
         waitForElementToBePresent(
                 "//table//td[contains(normalize-space(),\"" + serialNo + "\")]");
     }
 
-    /** Opens the Other Employment tab, adds an employer via the modal (manual address entry). */
     public void addTmEmployer(String employerName, String position, String hoursPerWeek,
                               String addressLine1, String town, String postcode) {
         getTmEmployment();
@@ -216,7 +208,6 @@ public class InternalNavigation extends BasePage {
         waitForElementToBePresent("//input[@name='tm-employer-name-details[employerName]']");
         waitAndEnterText("//input[@name='tm-employer-name-details[employerName]']",
                 SelectorType.XPATH, employerName);
-        // reveal the manual address fields
         String manualLink = "//a[normalize-space()='Enter the address manually'"
                 + " or normalize-space()='Enter address manually'"
                 + " or normalize-space()='Enter the address yourself']";
@@ -228,12 +219,11 @@ public class InternalNavigation extends BasePage {
         waitAndEnterText("//input[@name='address[postcode]']", SelectorType.XPATH, postcode);
         waitAndEnterText("//input[@name='tm-employment-details[position]']", SelectorType.XPATH, position);
         waitAndEnterText("//input[@name='tm-employment-details[hoursPerWeek]']", SelectorType.XPATH, hoursPerWeek);
-        waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
+        clickModalSubmit();
         waitForElementToBePresent(
                 "//table//td[contains(normalize-space(),\"" + employerName + "\")]");
     }
 
-    /** Opens the Documents tab, uploads a document via the modal. */
     public void uploadTmDocument(String description, String absoluteFilePath) {
         getTmDocuments();
         waitAndClick("//button[@id='upload']", SelectorType.XPATH);
@@ -241,19 +231,100 @@ public class InternalNavigation extends BasePage {
         waitAndEnterText("//input[@name='details[description]']", SelectorType.XPATH, description);
         selectValueFromDropDownByIndex("//select[@name='details[documentSubCategory]']",
                 SelectorType.XPATH, 1);
-        org.openqa.selenium.WebElement fileInput =
-                navigate().findElement(org.openqa.selenium.By.name("details[file]"));
-        // required when running against a remote grid (Selenium hub in a container)
-        if (System.getProperty("platform") != null
-                && fileInput instanceof org.openqa.selenium.remote.RemoteWebElement) {
-            ((org.openqa.selenium.remote.RemoteWebElement) fileInput)
-                    .setFileDetector(new org.openqa.selenium.remote.LocalFileDetector());
-        }
-        fileInput.sendKeys(absoluteFilePath);
-        waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
+        uploadFileToInputByName("details[file]", absoluteFilePath);
+        clickModalSubmit();
         waitForElementToBePresent(
                 "//table//td//a[contains(normalize-space(),\"" + description + "\")]");
     }
+
+    public void editTmProcessingNote(String newComment) {
+        getTmProcessingNotes();
+        waitAndClick("//a[contains(@class,'js-modal-ajax') and contains(@href,'/processing/notes/edit/')]",
+                SelectorType.XPATH);
+        waitForElementToBePresent("//textarea[@name='fields[comment]']");
+        clearAndEnter("//textarea[@name='fields[comment]']", SelectorType.XPATH, newComment);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + newComment + "\")]");
+    }
+
+    public void editTmCompetenceSerial(String newSerial) {
+        getTmCompetences();
+        waitAndClick("//a[contains(@class,'js-modal-ajax') and contains(@href,'/competences/edit/')]",
+                SelectorType.XPATH);
+        waitForElementToBePresent("//input[@name='qualification-details[serialNo]']");
+        clearAndEnter("//input[@name='qualification-details[serialNo]']", SelectorType.XPATH, newSerial);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + newSerial + "\")]");
+    }
+
+    public void addTmCase(String description) {
+        getTmCases();
+        waitAndClick("//button[@id='add']", SelectorType.XPATH);
+        waitForElementToBePresent("//select[@id='fields[caseType]']");
+        // Chosen widget id normalises brackets: fields[categorys] -> fields_categorys__chosen
+        selectRandomOptionOnChosen("fields_categorys__chosen");
+        waitAndEnterText("//textarea[@id='fields[description]']", SelectorType.XPATH, description);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//li[contains(@class,'definition-list__item')]"
+                        + "//dt[normalize-space()='Description']"
+                        + "/following-sibling::dd[contains(normalize-space(),\"" + description + "\")]");
+    }
+
+    public void editTmCaseDescription(String newDescription) {
+        waitAndClick("//a[contains(@class,'js-modal-ajax') and contains(@href,'/case/edit/')]",
+                SelectorType.XPATH);
+        waitForElementToBePresent("//textarea[@id='fields[description]']");
+        clearAndEnter("//textarea[@id='fields[description]']", SelectorType.XPATH, newDescription);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//li[contains(@class,'definition-list__item')]"
+                        + "//dt[normalize-space()='Description']"
+                        + "/following-sibling::dd[contains(normalize-space(),\"" + newDescription + "\")]");
+    }
+
+    public void openTmResponsibilityEditForFirstLicence() {
+        get(tmUrl("details/responsibilities/"));
+        waitAndClick("//table//a[contains(@href,'/details/responsibilities/edit-tm-licence/')]",
+                SelectorType.XPATH);
+        waitForElementToBePresent("//input[@type='radio' and @name='details[tmType]']");
+    }
+
+    public void setTmResponsibilityManagerTypeAndSave(String tmTypeValue) {
+        // govuk-frontend hides native radios — set state via JS + change event
+        javaScriptExecutor(
+                "function setRadio(name, value) {"
+                        + " var r = document.querySelector(\"input[name='\" + name + \"'][value='\" + value + \"']\");"
+                        + " if (r) { r.checked = true; r.dispatchEvent(new Event('change', {bubbles: true})); } }"
+                        + " setRadio('details[tmType]', '" + tmTypeValue + "');"
+                        + " setRadio('details[hasUndertakenTraining]', 'N');");
+        clickModalSubmit();
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(20))
+                    .until(d -> !d.getCurrentUrl().contains("/edit-tm-licence/"));
+        } catch (org.openqa.selenium.TimeoutException te) {
+            String errorSummary = "";
+            var errs = findElements(
+                    "//*[contains(@class,'error-summary')"
+                            + " or contains(@class,'notice--error')"
+                            + " or contains(@class,'validation-summary')"
+                            + " or contains(@class,'govuk-error-summary')]",
+                    SelectorType.XPATH);
+            if (errs != null && !errs.isEmpty()) {
+                errorSummary = errs.get(0).getText();
+            }
+            throw new RuntimeException(
+                    "Save of TM responsibility did not navigate away from edit page."
+                            + " URL still: " + getDriver().getCurrentUrl()
+                            + (errorSummary.isEmpty()
+                                    ? " (no error banner detected)"
+                                    : " Validation banner: " + errorSummary),
+                    te);
+        }
+    }
+
 
     public void getLicence() {
         get(this.url.concat(String.format("licence/%s", world.createApplication.getLicenceId())));

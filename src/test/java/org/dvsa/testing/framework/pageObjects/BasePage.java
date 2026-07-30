@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.LocalFileDetector;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.*;
 
 import java.net.MalformedURLException;
@@ -213,6 +215,30 @@ public abstract class BasePage extends DriverUtils {
     protected static void selectValueFromDropDownByIndex(@NotNull String selector, @NotNull SelectorType selectorType, int listValue) {
         var selectItem = new Select(findElement(selector, selectorType));
         selectItem.selectByIndex(listValue);
+    }
+
+    public static void selectValueFromDropDownByValue(@NotNull String selector, @NotNull SelectorType selectorType, @NotNull String optionValue) {
+        var selectItem = new Select(findElement(selector, selectorType));
+        selectItem.selectByValue(optionValue);
+    }
+
+    public static void clearAndEnter(@NotNull String selector, @NotNull SelectorType selectorType, @NotNull String text) {
+        var element = findElement(selector, selectorType);
+        element.clear();
+        element.sendKeys(text);
+    }
+
+    public static void clickModalSubmit() {
+        waitAndClick("//button[@name='form-actions[submit]']", SelectorType.XPATH);
+    }
+
+    public static void uploadFileToInputByName(@NotNull String inputName, @NotNull String absoluteFilePath) {
+        WebElement fileInput = Browser.navigate().findElement(By.name(inputName));
+        if (System.getProperty("platform") != null
+                && fileInput instanceof RemoteWebElement) {
+            ((RemoteWebElement) fileInput).setFileDetector(new LocalFileDetector());
+        }
+        fileInput.sendKeys(absoluteFilePath);
     }
 
     public void cycleThroughPaginationUntilElementIsDisplayed(String selector) {

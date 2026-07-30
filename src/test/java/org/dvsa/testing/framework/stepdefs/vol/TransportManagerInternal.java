@@ -140,6 +140,69 @@ public class TransportManagerInternal extends BasePage {
                 "Documents table should contain a link with description: " + description);
     }
 
+    /* ---------------------------------------------------------------- */
+    /*  Group 3 — edit existing rows                                    */
+    /* ---------------------------------------------------------------- */
+
+    @When("I edit the transport manager's processing note to {string}")
+    public void iEditTheTransportManagersProcessingNoteTo(String newComment) {
+        world.internalNavigation.editTmProcessingNote(newComment);
+    }
+
+    @When("I edit the transport manager's competence serial to {string}")
+    public void iEditTheTransportManagersCompetenceSerialTo(String newSerial) {
+        world.internalNavigation.editTmCompetenceSerial(newSerial);
+    }
+
+    @When("I open the transport manager's responsibility edit page for the first licence")
+    public void iOpenTheTransportManagerResponsibilityEditPage() {
+        world.internalNavigation.openTmResponsibilityEditForFirstLicence();
+    }
+
+    @When("I set the transport manager's responsibility manager type to {string} and save")
+    public void iSetTheTransportManagerResponsibilityManagerTypeAndSave(String tmTypeValue) {
+        world.internalNavigation.setTmResponsibilityManagerTypeAndSave(tmTypeValue);
+    }
+
+    @Then("the browser should be on a transport manager responsibility edit page")
+    public void theBrowserShouldBeOnAResponsibilityEditPage() {
+        String url = getDriver().getCurrentUrl();
+        assertTrue(url.contains("/details/responsibilities/edit-tm-licence/"),
+                "Browser should be on the responsibility edit page, was: " + url);
+    }
+
+    @Then("the transport manager Responsibilities table Manager type should be {string}")
+    public void theTransportManagerResponsibilitiesTableManagerTypeShouldBe(String expected) {
+        assertTrue(isElementPresent(
+                        "//table//td[@data-heading='Manager type' and contains(normalize-space(),\""
+                                + expected + "\")]",
+                        SelectorType.XPATH),
+                "Responsibilities table Manager type column should show: " + expected);
+    }
+
+    @When("I add a case {string} to the transport manager")
+    public void iAddACaseToTheTransportManager(String description) {
+        world.internalNavigation.addTmCase(description);
+    }
+
+    @When("I edit the transport manager's case description to {string}")
+    public void iEditTheTransportManagerCaseDescriptionTo(String newDescription) {
+        world.internalNavigation.editTmCaseDescription(newDescription);
+    }
+
+    @Then("the transport manager Cases table should contain {string}")
+    public void theTransportManagerCasesTableShouldContain(String description) {
+        // After add / edit the browser is on the case detail page — assert on its
+        // read-only definition list rather than the TM cases index table.
+        assertTrue(isElementPresent(
+                        "//li[contains(@class,'definition-list__item')]"
+                                + "//dt[normalize-space()='Description']"
+                                + "/following-sibling::dd[contains(normalize-space(),\""
+                                + description + "\")]",
+                        SelectorType.XPATH),
+                "Case overview Description should show: " + description);
+    }
+
     private void assertTransportManagerPage(String verticalNavTitle, String urlTail) {
         String expectedUrlFragment = String.format("/transport-manager/%s/%s",
                 world.internalNavigation.transportManagerId, urlTail);

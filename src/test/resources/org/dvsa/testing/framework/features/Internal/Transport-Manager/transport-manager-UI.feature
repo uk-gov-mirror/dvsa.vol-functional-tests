@@ -82,3 +82,33 @@ Feature: Transport Manager - internal detail and processing tabs
   Scenario: UI - Upload a document to a Transport Manager
     When I upload a document "AutomatedTmDocument" to the transport manager
     Then the transport manager Documents table should contain "AutomatedTmDocument"
+
+  # ------------------------------------------------------------------
+  # Group 3 — Edit modals (edit existing rows)
+  # ------------------------------------------------------------------
+
+  @Tm_edit_processing_note
+  Scenario: UI - Edit an existing processing note on a Transport Manager
+    When I add a processing note "Original TM note" to the transport manager with priority "N"
+    And I edit the transport manager's processing note to "Edited TM note"
+    Then the transport manager Notes table should contain "Edited TM note"
+
+  @Tm_edit_competence
+  Scenario: UI - Edit an existing competence on a Transport Manager
+    When I add a competence "tm_qt_cpcsn" with serial "AUTO-CPC-11111" issued on "01" "02" "2020" to the transport manager
+    And I edit the transport manager's competence serial to "AUTO-CPC-99999"
+    Then the transport manager Competences table should contain serial "AUTO-CPC-99999"
+
+  @Tm_edit_responsibilities
+  Scenario: UI - Set the manager type on a Transport Manager's responsibility
+    When I open the transport manager's responsibility edit page for the first licence
+    Then the browser should be on a transport manager responsibility edit page
+    When I set the transport manager's responsibility manager type to "tm_t_e" and save
+    Then the transport manager Responsibilities table Manager type should be "External"
+
+  @Tm_edit_case
+  Scenario: UI - Add and edit a case on a Transport Manager
+    When I add a case "Original TM case description" to the transport manager
+    Then the transport manager Cases table should contain "Original TM case description"
+    When I edit the transport manager's case description to "Edited TM case description"
+    Then the transport manager Cases table should contain "Edited TM case description"
