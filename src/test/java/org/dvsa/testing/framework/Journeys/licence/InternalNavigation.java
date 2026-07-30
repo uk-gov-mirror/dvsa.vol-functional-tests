@@ -139,6 +139,10 @@ public class InternalNavigation extends BasePage {
     }
 
     public String transportManagerId;
+    public String transportManagerIdOne;
+    public String transportManagerIdTwo;
+    public String licenceIdOne;
+    public String licenceIdTwo;
 
     public String captureFirstTransportManagerIdFromLicence() {
         get(this.url.concat(String.format("licence/%s/transport-managers", world.createApplication.getLicenceId())));
@@ -322,6 +326,91 @@ public class InternalNavigation extends BasePage {
                                     ? " (no error banner detected)"
                                     : " Validation banner: " + errorSummary),
                     te);
+        }
+    }
+
+    public void captureFirstTmAsSource() throws org.apache.hc.core5.http.HttpException {
+        transportManagerIdOne = captureFirstTransportManagerIdFromLicence();
+        licenceIdOne = world.createApplication.getLicenceId();
+    }
+
+    public void createSecondApplicationAndCaptureSecondTm() throws org.apache.hc.core5.http.HttpException {
+        randomiseRegisterUserIdentity();
+        logOutOfSelfServe();
+        world.APIJourney.registerAndGetUserDetails("operator");
+        world.licenceCreation.createLicence("goods", "standard_national");
+        loginIntoInternal("admin");
+        transportManagerIdTwo = captureFirstTransportManagerIdFromLicence();
+        licenceIdTwo = world.createApplication.getLicenceId();
+    }
+
+    private void logOutOfSelfServe() {
+        String selfServeLogout = webAppURL.build(
+                ApplicationType.EXTERNAL, world.configuration.env, "auth/logout/").toString();
+        try {
+            get(selfServeLogout);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void randomiseRegisterUserIdentity() {
+        var faker = new activesupport.faker.FakerUtils();
+        var rng = java.util.concurrent.ThreadLocalRandom.current();
+        String fore = faker.generateFirstName() + rng.nextInt(100, 1000);
+        String family = faker.generateLastName() + rng.nextInt(100, 1000);
+        world.registerUser.setForeName(fore);
+        world.registerUser.setFamilyName(family);
+        world.registerUser.setUserName("%s%s%d".formatted(fore, family, rng.nextInt(1000, 10000)));
+        world.registerUser.setEmailAddress(
+                "%s_%s%d.tester@dvsa.com".formatted(fore, family, rng.nextInt(10000, 100000)));
+        world.registerUser.setOrganisationName(faker.generateCompanyName());
+    }
+
+    public void mergeTransportManagerIntoTarget(String targetTmId) {
+        transportManagerId = transportManagerIdOne;
+        getTmDetails();
+        waitAndClick("//a[@id='menu-transport-manager-quick-actions-merge']", SelectorType.XPATH);
+        waitForElementToBePresent("//form[@id='tm-merge']//input[@id='toTmId']");
+        waitAndEnterText("//form[@id='tm-merge']//input[@id='toTmId']", SelectorType.XPATH, targetTmId);
+        javaScriptExecutor(
+                "var el = document.getElementById('toTmId');"
+                        + " if (el) { el.dispatchEvent(new Event('blur', {bubbles: true})); }");
+        waitAndClick("//input[@type='checkbox' and @id='confirm']", SelectorType.XPATH);
+        clickModalSubmit();
+        if (waitForElementToBePresentSafely(
+                "//form[@id='generic-confirmation']//button[@name='form-actions[submit]']", 15)) {
+            waitAndClick("//form[@id='generic-confirmation']//button[@name='form-actions[submit]']",
+                    SelectorType.XPATH);
+        }
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(30))
+                    .until(d -> !isElementPresent("//div[contains(@class,'modal__wrapper')]"
+                                    + "//form[@id='tm-merge' or @id='generic-confirmation']",
+                            SelectorType.XPATH));
+        } catch (TimeoutException te) {
+            String modalHtml = "";
+            var modals = findElements("//div[contains(@class,'modal__wrapper')]", SelectorType.XPATH);
+            if (modals != null && !modals.isEmpty()) {
+                modalHtml = modals.get(0).getAttribute("innerHTML");
+                if (modalHtml != null && modalHtml.length() > 2000) {
+                    modalHtml = modalHtml.substring(0, 2000) + "...[truncated]";
+                }
+            }
+            throw new RuntimeException(
+                    "Merge modal did not close after submit."
+                            + " Current URL: " + getDriver().getCurrentUrl()
+                            + " Modal HTML: " + modalHtml,
+                    te);
+        }
+    }
+
+    private boolean waitForElementToBePresentSafely(String xpath, int seconds) {
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(seconds))
+                    .until(d -> isElementPresent(xpath, SelectorType.XPATH));
+            return true;
+        } catch (TimeoutException te) {
+            return false;
         }
     }
 

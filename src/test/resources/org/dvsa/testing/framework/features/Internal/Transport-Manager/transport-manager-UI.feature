@@ -104,3 +104,10 @@ Feature: Transport Manager - internal detail and processing tabs
     Then the transport manager Cases table should contain "Original TM case description"
     When I edit the transport manager's case description to "Edited TM case description"
     Then the transport manager Cases table should contain "Edited TM case description"
+
+  @Tm_merge
+  Scenario: UI - Merge one Transport Manager into another and verify licence links transfer
+    Given I capture the first transport manager as the merge source
+    When I create a second application and capture the second transport manager
+    And I merge the first transport manager into the second
+    Then the winning transport manager should be linked to both licences

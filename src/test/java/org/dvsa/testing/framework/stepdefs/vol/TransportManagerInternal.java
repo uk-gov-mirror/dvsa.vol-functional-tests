@@ -6,6 +6,8 @@ import io.cucumber.java.en.When;
 import org.dvsa.testing.framework.Injectors.World;
 import org.dvsa.testing.framework.pageObjects.BasePage;
 import org.dvsa.testing.framework.pageObjects.enums.SelectorType;
+import org.dvsa.testing.lib.url.webapp.webAppURL;
+import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -80,10 +82,6 @@ public class TransportManagerInternal extends BasePage {
         assertTransportManagerPage(verticalNavTitle, urlTail);
     }
 
-    /* ---------------------------------------------------------------- */
-    /*  Group 2 — add-then-assert flows                                 */
-    /* ---------------------------------------------------------------- */
-
     @When("I add a processing note {string} to the transport manager with priority {string}")
     public void iAddAProcessingNoteToTheTransportManager(String comment, String priority) {
         world.internalNavigation.addTmProcessingNote(comment, "Y".equalsIgnoreCase(priority));
@@ -140,10 +138,6 @@ public class TransportManagerInternal extends BasePage {
                 "Documents table should contain a link with description: " + description);
     }
 
-    /* ---------------------------------------------------------------- */
-    /*  Group 3 — edit existing rows                                    */
-    /* ---------------------------------------------------------------- */
-
     @When("I edit the transport manager's processing note to {string}")
     public void iEditTheTransportManagersProcessingNoteTo(String newComment) {
         world.internalNavigation.editTmProcessingNote(newComment);
@@ -192,8 +186,6 @@ public class TransportManagerInternal extends BasePage {
 
     @Then("the transport manager Cases table should contain {string}")
     public void theTransportManagerCasesTableShouldContain(String description) {
-        // After add / edit the browser is on the case detail page — assert on its
-        // read-only definition list rather than the TM cases index table.
         assertTrue(isElementPresent(
                         "//li[contains(@class,'definition-list__item')]"
                                 + "//dt[normalize-space()='Description']"
@@ -203,14 +195,58 @@ public class TransportManagerInternal extends BasePage {
                 "Case overview Description should show: " + description);
     }
 
+    @Given("I capture the first transport manager as the merge source")
+    public void iCaptureTheFirstTransportManagerAsTheMergeSource() throws org.apache.hc.core5.http.HttpException {
+        world.internalNavigation.captureFirstTmAsSource();
+        assertNotNull(world.internalNavigation.transportManagerIdOne,
+                "First TM id should be captured");
+        assertNotNull(world.internalNavigation.licenceIdOne,
+                "First licence id should be captured");
+    }
+
+    @When("I create a second application and capture the second transport manager")
+    public void iCreateASecondApplicationAndCaptureTheSecondTransportManager()
+            throws org.apache.hc.core5.http.HttpException {
+        world.internalNavigation.createSecondApplicationAndCaptureSecondTm();
+        assertNotNull(world.internalNavigation.transportManagerIdTwo,
+                "Second TM id should be captured");
+        assertNotNull(world.internalNavigation.licenceIdTwo,
+                "Second licence id should be captured");
+    }
+
+    @When("I merge the first transport manager into the second")
+    public void iMergeTheFirstTransportManagerIntoTheSecond() {
+        world.internalNavigation.mergeTransportManagerIntoTarget(
+                world.internalNavigation.transportManagerIdTwo);
+    }
+
+    @Then("the winning transport manager should be linked to both licences")
+    public void theWinningTransportManagerShouldBeLinkedToBothLicences() {
+        int tmOneLicences = countLicenceRowsOnTmResponsibilities(world.internalNavigation.transportManagerIdOne);
+        int tmTwoLicences = countLicenceRowsOnTmResponsibilities(world.internalNavigation.transportManagerIdTwo);
+        int total = tmOneLicences + tmTwoLicences;
+        assertTrue(total >= 2,
+                "After merge, TM1 (" + world.internalNavigation.transportManagerIdOne + ") and TM2 ("
+                        + world.internalNavigation.transportManagerIdTwo + ") should together hold at least 2 licences."
+                        + " Found TM1=" + tmOneLicences + ", TM2=" + tmTwoLicences);
+        assertTrue(tmOneLicences == 2 || tmTwoLicences == 2,
+                "After merge, one of the TMs should hold both licences."
+                        + " Found TM1=" + tmOneLicences + ", TM2=" + tmTwoLicences);
+    }
+
+    private int countLicenceRowsOnTmResponsibilities(String tmId) {
+        get(webAppURL.build(ApplicationType.INTERNAL, world.configuration.env,
+                String.format("transport-manager/%s/details/responsibilities/", tmId)).toString());
+        return findElements("//table//td[@data-heading='Licence No']//a[contains(@href,'/licence/')]",
+                SelectorType.XPATH).size();
+    }
+
     private void assertTransportManagerPage(String verticalNavTitle, String urlTail) {
         String expectedUrlFragment = String.format("/transport-manager/%s/%s",
                 world.internalNavigation.transportManagerId, urlTail);
         assertTrue(getDriver().getCurrentUrl().contains(expectedUrlFragment),
                 "Browser should be on TM path ending with '" + urlTail + "', was: " + getDriver().getCurrentUrl());
 
-        // The active tab may be either the vertical-nav (sub-tab under TM details or Processing)
-        // or the horizontal-nav (top-level: TM details / Cases / Documents / Processing).
         String currentNavXpath = String.format(
                 "//li[(contains(@class,'vertical-navigation__item') or contains(@class,'horizontal-navigation__item'))"
                         + " and contains(@class,'current')]//*[normalize-space()='%s']",
