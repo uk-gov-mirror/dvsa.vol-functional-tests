@@ -59,10 +59,6 @@ Feature: Transport Manager - internal detail and processing tabs
     When I navigate to the transport manager Processing Read History tab
     Then the transport manager "Access history" page should be displayed at path "processing/read-history/"
 
-  # ------------------------------------------------------------------
-  # Group 2 — Add-then-assert (create data via UI, verify row)
-  # ------------------------------------------------------------------
-
   @Tm_add_processing_note
   Scenario: UI - Add a priority processing note to a Transport Manager
     When I add a processing note "Automated TM note - please ignore" to the transport manager with priority "Y"
@@ -82,10 +78,6 @@ Feature: Transport Manager - internal detail and processing tabs
   Scenario: UI - Upload a document to a Transport Manager
     When I upload a document "AutomatedTmDocument" to the transport manager
     Then the transport manager Documents table should contain "AutomatedTmDocument"
-
-  # ------------------------------------------------------------------
-  # Group 3 — Edit modals (edit existing rows)
-  # ------------------------------------------------------------------
 
   @Tm_edit_processing_note
   Scenario: UI - Edit an existing processing note on a Transport Manager
