@@ -321,6 +321,23 @@ public class InternalNavigation extends BasePage {
                         + "/following-sibling::dd[contains(normalize-space(),\"" + newDescription + "\")]");
     }
 
+    public void addTmPreviousLicence(String licNo, String holderName) {
+        getTmPreviousHistory();
+        waitAndClick("//button[@id='add-previous-licence']", SelectorType.XPATH);
+        waitForElementToBePresent("//h2[normalize-space()='Add previous licence']");
+        waitAndEnterText("//input[@id='lic-no']", SelectorType.XPATH, licNo);
+        waitAndEnterText("//input[@id='holderName']", SelectorType.XPATH, holderName);
+        clickModalSubmit();
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(15))
+                    .until(d -> !isElementPresent(
+                            "//h2[normalize-space()='Add previous licence']", SelectorType.XPATH));
+        } catch (TimeoutException ignored) {
+        }
+        waitForElementToBePresent(
+                "//fieldset[@id='previousLicences']//*[contains(normalize-space(),\"" + licNo + "\")]");
+    }
+
     public void openTmResponsibilityEditForFirstLicence() {
         get(tmUrl("details/responsibilities/"));
         waitAndClick("//table//a[contains(@href,'/details/responsibilities/edit-tm-licence/')]",

@@ -163,6 +163,62 @@ public class TransportManagerInternal extends BasePage {
                 "Documents table should contain at least one document row linked to licence: " + licenceNumber);
     }
 
+    @When("I add a previous licence {string} with holder {string} to the transport manager")
+    public void iAddAPreviousLicenceWithHolderToTheTransportManager(String licNo, String holderName) {
+        world.internalNavigation.addTmPreviousLicence(licNo, holderName);
+    }
+
+    @Then("the transport manager Previous History section should contain {string}")
+    public void theTransportManagerPreviousHistorySectionShouldContain(String value) {
+        assertTrue(isElementPresent(
+                        "//fieldset[@id='previousLicences']//*[contains(normalize-space(),\"" + value + "\")]",
+                        SelectorType.XPATH),
+                "Previous History previousLicences section should contain: " + value);
+    }
+
+    @Then("the transport manager page should provide an {string} action")
+    public void theTransportManagerPageShouldProvideAction(String label) {
+        String xpath = "//button[@id='add' or normalize-space()='" + label + "']"
+                + " | //input[@type='submit' and (@id='add' or @value='" + label + "')]"
+                + " | //a[normalize-space()='" + label + "']";
+        assertTrue(isElementPresent(xpath, SelectorType.XPATH),
+                "Expected a '" + label + "' action control on the current transport manager tab");
+    }
+
+    @Then("the transport manager Details page should display the personal details section")
+    public void theTransportManagerDetailsPageShouldDisplayThePersonalDetailsSection() {
+        assertTrue(
+                isElementPresent(
+                        "//*[self::h2 or self::h3 or self::legend]"
+                                + "[contains(normalize-space(),'Personal details')"
+                                + " or contains(normalize-space(),'Home address')"
+                                + " or contains(normalize-space(),'Contact details')]",
+                        SelectorType.XPATH),
+                "Details page should display a Personal details / Home address / Contact details section");
+    }
+
+    @Then("the transport manager Change History table should contain at least one entry")
+    public void theTransportManagerChangeHistoryTableShouldContainAtLeastOneEntry() {
+        assertTrue(isElementPresent("//table//tbody//tr[1]//td", SelectorType.XPATH),
+                "Change history table should contain at least one row");
+    }
+
+    @Then("the transport manager Publication page should display a publications table")
+    public void theTransportManagerPublicationPageShouldDisplayAPublicationsTable() {
+        boolean hasTable = isElementPresent("//table//thead//th", SelectorType.XPATH);
+        boolean hasEmptyState = isElementPresent(
+                "//*[contains(normalize-space(),'no publications') or contains(normalize-space(),'No publications')]",
+                SelectorType.XPATH);
+        assertTrue(hasTable || hasEmptyState,
+                "Publication page should display either a publications table or an explicit empty-state message");
+    }
+
+    @Then("the transport manager Access History table should contain at least one entry")
+    public void theTransportManagerAccessHistoryTableShouldContainAtLeastOneEntry() {
+        assertTrue(isElementPresent("//table//tbody//tr[1]//td", SelectorType.XPATH),
+                "Access history table should contain at least one row (the current visit registers)");
+    }
+
     @When("I edit the transport manager's processing note to {string}")
     public void iEditTheTransportManagersProcessingNoteTo(String newComment) {
         world.internalNavigation.editTmProcessingNote(newComment);

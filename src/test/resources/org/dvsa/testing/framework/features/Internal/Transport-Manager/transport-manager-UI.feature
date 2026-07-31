@@ -13,72 +13,58 @@ Feature: Transport Manager - internal detail and processing tabs
   Scenario: Transport Manager Details tab loads
     When I navigate to the transport manager Details tab
     Then the transport manager "Details" page should be displayed at path "details/"
+    And the transport manager Details page should display the personal details section
 
   @Tm_competences_tab
-  Scenario: Transport Manager Competences tab loads
-    When I navigate to the transport manager Competences tab
-    Then the transport manager "Competences" page should be displayed at path "details/competences/"
-
-  @Tm_employment_tab
-  Scenario: Transport Manager Employment tab loads
-    When I navigate to the transport manager Employment tab
-    Then the transport manager "Other employment" page should be displayed at path "details/employment/"
-
-  @Tm_previous_history_tab
-  Scenario: Transport Manager Previous History tab loads
-    When I navigate to the transport manager Previous History tab
-    Then the transport manager "Previous history" page should be displayed at path "details/previous-history/"
-
-  @Tm_documents_tab
-  Scenario: Transport Manager Documents tab loads
-    When I navigate to the transport manager Documents tab
-    Then the transport manager "Documents" page should be displayed at path "documents/"
-    And the transport manager Documents table should contain a document linked to the licence
-
-  @Tm_cases_tab
-  Scenario: Transport Manager Cases tab loads
-    When I navigate to the transport manager Cases tab
-    Then the transport manager "Cases" page should be displayed at path "cases/"
-
-  @Tm_processing_notes_tab
-  Scenario: Transport Manager Processing Notes tab loads
-    When I navigate to the transport manager Processing Notes tab
-    Then the transport manager "Notes" page should be displayed at path "processing/notes/"
-
-  @Tm_processing_event_history_tab
-  Scenario: Transport Manager Processing Change History tab loads
-    When I navigate to the transport manager Processing Event History tab
-    Then the transport manager "Change history" page should be displayed at path "processing/event-history/"
-
-  @Tm_processing_publication_tab
-  Scenario: Transport Manager Processing Publication tab loads
-    When I navigate to the transport manager Processing Publication tab
-    Then the transport manager "Publication" page should be displayed at path "processing/publication/"
-
-  @Tm_processing_read_history_tab
-  Scenario: Transport Manager Processing Access History tab loads
-    When I navigate to the transport manager Processing Read History tab
-    Then the transport manager "Access history" page should be displayed at path "processing/read-history/"
-
-  @Tm_add_processing_note
-  Scenario: Add a priority processing note to a Transport Manager
-    When I add a processing note "Automated TM note - please ignore" to the transport manager with priority "Y"
-    Then the transport manager Notes table should contain "Automated TM note - please ignore"
-
-  @Tm_add_competence
-  Scenario: Add a competence to a Transport Manager
+  Scenario: Add a competence to a Transport Manager (Competences tab)
     When I add a competence "tm_qt_cpcsn" with serial "AUTO-CPC-12345" issued on "01" "02" "2020" to the transport manager
     Then the transport manager Competences table should contain serial "AUTO-CPC-12345"
 
-  @Tm_add_employer
-  Scenario: Add an employer to a Transport Manager
+  @Tm_employment_tab
+  Scenario: Add an employer to a Transport Manager (Employment tab)
     When I add an employer "Automated Employer Ltd" to the transport manager with position "Owner" hours "10"
     Then the transport manager Employment table should contain employer "Automated Employer Ltd"
 
-  @Tm_upload_document
-  Scenario: Upload a document to a Transport Manager
+  @Tm_previous_history_tab
+  Scenario: Add a previous licence to a Transport Manager (Previous History tab)
+    When I add a previous licence "OB1234567" with holder "Automated Test Holder" to the transport manager
+    Then the transport manager Previous History section should contain "OB1234567"
+
+  @Tm_documents_tab
+  Scenario: Upload a document to a Transport Manager (Documents tab)
     When I upload a document "AutomatedTmDocument" to the transport manager
     Then the transport manager Documents table should contain "AutomatedTmDocument"
+    And the transport manager Documents table should contain a document linked to the licence
+
+  @Tm_cases_tab
+  Scenario: Add a case to a Transport Manager (Cases tab)
+    When I add a case "AutomatedTmCase" to the transport manager
+    Then the transport manager Cases table should contain "AutomatedTmCase"
+
+  @Tm_processing_notes_tab
+  Scenario: Add a processing note to a Transport Manager (Processing Notes tab)
+    When I add a processing note "Automated TM note - please ignore" to the transport manager with priority "Y"
+    Then the transport manager Notes table should contain "Automated TM note - please ignore"
+
+  @Tm_processing_event_history_tab
+  Scenario: Actions on a Transport Manager are recorded in Change History
+    When I add a processing note "Change-history probe" to the transport manager with priority "N"
+    And I navigate to the transport manager Processing Event History tab
+    Then the transport manager "Change history" page should be displayed at path "processing/event-history/"
+    And the transport manager Change History table should contain at least one entry
+
+  @Tm_processing_publication_tab
+  Scenario: Transport Manager Publication tab loads
+    When I navigate to the transport manager Processing Publication tab
+    Then the transport manager "Publication" page should be displayed at path "processing/publication/"
+    And the transport manager Publication page should display a publications table
+
+  @Tm_processing_read_history_tab
+  Scenario: Visits to a Transport Manager are recorded in Access History
+    When I navigate to the transport manager Details tab
+    And I navigate to the transport manager Processing Read History tab
+    Then the transport manager "Access history" page should be displayed at path "processing/read-history/"
+    And the transport manager Access History table should contain at least one entry
 
   @Tm_relink_document_from_licence
   Scenario: Copy a document from a licence to a Transport Manager via Relink
@@ -106,10 +92,9 @@ Feature: Transport Manager - internal detail and processing tabs
     Then the transport manager Responsibilities table Manager type should be "External"
 
   @Tm_edit_case
-  Scenario: Add and edit a case on a Transport Manager
+  Scenario: Edit a case on a Transport Manager
     When I add a case "Original TM case description" to the transport manager
-    Then the transport manager Cases table should contain "Original TM case description"
-    When I edit the transport manager's case description to "Edited TM case description"
+    And I edit the transport manager's case description to "Edited TM case description"
     Then the transport manager Cases table should contain "Edited TM case description"
 
   @Tm_merge
