@@ -33,6 +33,7 @@ Feature: Transport Manager - internal detail and processing tabs
   Scenario: Transport Manager Documents tab loads
     When I navigate to the transport manager Documents tab
     Then the transport manager "Documents" page should be displayed at path "documents/"
+    And the transport manager Documents table should contain a document linked to the licence
 
   @Tm_cases_tab
   Scenario: Transport Manager Cases tab loads

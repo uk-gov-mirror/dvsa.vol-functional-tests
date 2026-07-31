@@ -138,6 +138,16 @@ public class TransportManagerInternal extends BasePage {
                 "Documents table should contain a link with description: " + description);
     }
 
+    @Then("the transport manager Documents table should contain a document linked to the licence")
+    public void theTransportManagerDocumentsTableShouldContainADocumentLinkedToTheLicence() {
+        String licenceNumber = world.applicationDetails.getLicenceNumber();
+        assertNotNull(licenceNumber, "Licence number should have been captured for the granted licence");
+        assertTrue(isElementPresent(
+                        "//table//tr[.//td[contains(normalize-space(),\"" + licenceNumber + "\")]]//td//a",
+                        SelectorType.XPATH),
+                "Documents table should contain at least one document row linked to licence: " + licenceNumber);
+    }
+
     @When("I edit the transport manager's processing note to {string}")
     public void iEditTheTransportManagersProcessingNoteTo(String newComment) {
         world.internalNavigation.editTmProcessingNote(newComment);
