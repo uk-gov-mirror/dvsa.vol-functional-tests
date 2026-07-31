@@ -1,6 +1,25 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.29.0](https://github.com/dvsa/vol-functional-tests/compare/v4.28.1...v4.29.0) (2026-07-31)
+
+
+### Features
+
+* add relink test ([3c29ffc](https://github.com/dvsa/vol-functional-tests/commit/3c29ffc0b7b04e523cffabc6294ab06aea3cba1b))
+* add tests ([02427d6](https://github.com/dvsa/vol-functional-tests/commit/02427d6b4fbafbce6922c49a37ebac34ae99dd5f))
+* add tests ([68324ab](https://github.com/dvsa/vol-functional-tests/commit/68324abf78412d57c2ef8cf30c8c775cf8f4c4a3))
+* add tests ([829a4df](https://github.com/dvsa/vol-functional-tests/commit/829a4df72aa7099b0f38c70d3b8982fbce7caaff))
+* add tests ([068b979](https://github.com/dvsa/vol-functional-tests/commit/068b979adb54b209fe8e0d764d5ef500bbd8f5d3))
+* add tests ([7a0f66c](https://github.com/dvsa/vol-functional-tests/commit/7a0f66c64573bd25bac46bacd32dc9885abef84e))
+* merge tm ([826d576](https://github.com/dvsa/vol-functional-tests/commit/826d5763c6c93c178f7afcd3616b759b15bad61b))
+* processing publication ([b3eeb2b](https://github.com/dvsa/vol-functional-tests/commit/b3eeb2bc96487fb72fe9853e3107cc4555691bfb))
+* tests ([97ff9e0](https://github.com/dvsa/vol-functional-tests/commit/97ff9e0f8f7f10dfb6d21c306832f858e8e7d894))
+* tests ([63eddc0](https://github.com/dvsa/vol-functional-tests/commit/63eddc0ab253eeaaa1ab38baae595c3b3b3f66b6))
+* tests ([0f90d32](https://github.com/dvsa/vol-functional-tests/commit/0f90d32fc402643649bae4954773d4db6a7365f9))
+* tidy up ([76000ba](https://github.com/dvsa/vol-functional-tests/commit/76000baa66958cba289c5b1fa0da9e30677f9c9b))
+* tidy up ([b492553](https://github.com/dvsa/vol-functional-tests/commit/b4925532162675bcb1455752e117a80865f65289))
+
 ## [4.28.1](https://github.com/dvsa/vol-functional-tests/compare/v4.28.0...v4.28.1) (2026-07-29)
 
 
