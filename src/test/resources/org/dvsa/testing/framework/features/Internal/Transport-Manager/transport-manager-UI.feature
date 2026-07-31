@@ -80,6 +80,12 @@ Feature: Transport Manager - internal detail and processing tabs
     When I upload a document "AutomatedTmDocument" to the transport manager
     Then the transport manager Documents table should contain "AutomatedTmDocument"
 
+  @Tm_relink_document_from_licence
+  Scenario: Copy a document from a licence to a Transport Manager via Relink
+    When I copy the first licence document to the transport manager via Relink
+    And I navigate to the transport manager Documents tab
+    Then the transport manager Documents table should contain the relinked document
+
   @Tm_edit_processing_note
   Scenario: Edit an existing processing note on a Transport Manager
     When I add a processing note "Original TM note" to the transport manager with priority "N"

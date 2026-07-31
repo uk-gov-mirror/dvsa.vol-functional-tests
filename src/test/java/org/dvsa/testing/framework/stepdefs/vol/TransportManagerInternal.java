@@ -130,6 +130,21 @@ public class TransportManagerInternal extends BasePage {
         world.internalNavigation.uploadTmDocument(description, fixture);
     }
 
+    @When("I copy the first licence document to the transport manager via Relink")
+    public void iCopyTheFirstLicenceDocumentToTheTransportManagerViaRelink() {
+        world.internalNavigation.copyFirstLicenceDocumentToTransportManagerViaRelink();
+    }
+
+    @Then("the transport manager Documents table should contain the relinked document")
+    public void theTransportManagerDocumentsTableShouldContainTheRelinkedDocument() {
+        String desc = world.internalNavigation.lastRelinkedDocumentDescription;
+        assertNotNull(desc, "A licence document description should have been captured during Relink");
+        assertTrue(isElementPresent(
+                        "//table//td//a[contains(normalize-space(),\"" + desc + "\")]",
+                        SelectorType.XPATH),
+                "Documents table should contain the relinked document: " + desc);
+    }
+
     @Then("the transport manager Documents table should contain {string}")
     public void theTransportManagerDocumentsTableShouldContain(String description) {
         assertTrue(isElementPresent(

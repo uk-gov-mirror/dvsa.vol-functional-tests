@@ -241,6 +241,38 @@ public class InternalNavigation extends BasePage {
                 "//table//td//a[contains(normalize-space(),\"" + description + "\")]");
     }
 
+    public String lastRelinkedDocumentDescription;
+
+    public String copyFirstLicenceDocumentToTransportManagerViaRelink() {
+        get(this.url.concat(String.format("licence/%s/documents/",
+                world.createApplication.getLicenceId())));
+        String firstDocLink = "//table//tbody//tr[1]//td//a[not(contains(@class,'js-modal-ajax'))]";
+        waitForElementToBePresent(firstDocLink);
+        lastRelinkedDocumentDescription = getText(firstDocLink, SelectorType.XPATH).trim();
+        waitAndClick("//table//tbody//tr[1]//input[@type='checkbox']", SelectorType.XPATH);
+        waitAndClick(
+                "//button[normalize-space()='Relink'] | //a[normalize-space()='Relink']",
+                SelectorType.XPATH);
+        waitForElementToBePresent("//h2[normalize-space()='Relink documents']");
+        String entitySelect = "//select[.//option[normalize-space()='Transport Manager']]";
+        waitForElementToBePresent(entitySelect);
+        selectValueFromDropDown(entitySelect, SelectorType.XPATH, "Transport Manager");
+        String tmIdInput = "//label[contains(normalize-space(),'Transport manager ID')]"
+                + "/following::input[not(@type='hidden')][1]";
+        waitForElementToBePresent(tmIdInput);
+        clearAndEnter(tmIdInput, SelectorType.XPATH, transportManagerId);
+        waitAndClick(
+                "//button[normalize-space()='Copy'] | //input[@type='submit' and @value='Copy']",
+                SelectorType.XPATH);
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(15))
+                    .until(d -> !isElementPresent(
+                            "//h2[normalize-space()='Relink documents']", SelectorType.XPATH));
+        } catch (TimeoutException ignored) {
+        }
+        return lastRelinkedDocumentDescription;
+    }
+
     public void editTmProcessingNote(String newComment) {
         getTmProcessingNotes();
         waitAndClick("//a[contains(@class,'js-modal-ajax') and contains(@href,'/processing/notes/edit/')]",
