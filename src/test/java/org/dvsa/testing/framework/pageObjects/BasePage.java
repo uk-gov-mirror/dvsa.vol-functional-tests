@@ -224,7 +224,13 @@ public abstract class BasePage extends DriverUtils {
 
     public static void clearAndEnter(@NotNull String selector, @NotNull SelectorType selectorType, @NotNull String text) {
         var element = findElement(selector, selectorType);
-        element.clear();
+        try {
+            element.clear();
+        } catch (InvalidElementStateException ignored) {
+            javaScriptExecutor("arguments[0].value = '';"
+                    + " arguments[0].dispatchEvent(new Event('input', {bubbles: true}));"
+                    + " arguments[0].dispatchEvent(new Event('change', {bubbles: true}));", element);
+        }
         element.sendKeys(text);
     }
 
