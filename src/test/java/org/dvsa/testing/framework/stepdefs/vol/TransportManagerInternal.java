@@ -162,6 +162,28 @@ public class TransportManagerInternal extends BasePage {
                 "Documents table should contain at least one TM1 / application-snapshot document generated for the granted licence");
     }
 
+    @When("I add a public inquiry to the transport manager case")
+    public void iAddAPublicInquiryToTheTransportManagerCase() {
+        world.internalNavigation.openTmCasePi();
+        world.internalNavigation.addPublicInquiry();
+    }
+
+    @When("I add a hearing to the transport manager's public inquiry")
+    public void iAddAHearingToTheTransportManagersPublicInquiry() {
+        world.internalNavigation.addPiHearing();
+    }
+
+    @When("I add a decision to the transport manager's public inquiry")
+    public void iAddADecisionToTheTransportManagersPublicInquiry() {
+        world.internalNavigation.addPiDecision();
+    }
+
+    @Then("the transport manager Publication table should contain at least one entry")
+    public void theTransportManagerPublicationTableShouldContainAtLeastOneEntry() {
+        assertTrue(isElementPresent("//table//tbody//tr[1]//td", SelectorType.XPATH),
+                "Publication table should contain at least one row after a PI decision has been recorded");
+    }
+
     @When("I add a previous licence {string} with holder {string} to the transport manager")
     public void iAddAPreviousLicenceWithHolderToTheTransportManager(String licNo, String holderName) {
         world.internalNavigation.addTmPreviousLicence(licNo, holderName);

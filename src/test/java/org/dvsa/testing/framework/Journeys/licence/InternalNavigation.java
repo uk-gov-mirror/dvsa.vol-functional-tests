@@ -296,6 +296,8 @@ public class InternalNavigation extends BasePage {
                 "//table//td[contains(normalize-space(),\"" + newSerial + "\")]");
     }
 
+    public String capturedTmCaseId;
+
     public void addTmCase(String description) {
         getTmCases();
         waitAndClick("//button[@id='add']", SelectorType.XPATH);
@@ -308,6 +310,20 @@ public class InternalNavigation extends BasePage {
                 "//li[contains(@class,'definition-list__item')]"
                         + "//dt[normalize-space()='Description']"
                         + "/following-sibling::dd[contains(normalize-space(),\"" + description + "\")]");
+        try {
+            String href = findElement(
+                    "//a[contains(@href,'/case/') or contains(@href,'/cases/')][contains(@href,'edit') or contains(@href,'details')][1]",
+                    SelectorType.XPATH).getAttribute("href");
+            capturedTmCaseId = href.replaceAll(".*?/(?:case|cases)(?:/[^/]+)?/(\\d+)/?.*", "$1");
+        } catch (Exception ignored) {
+        }
+    }
+
+    public void openTmCasePi() {
+        if (capturedTmCaseId == null || capturedTmCaseId.isBlank()) {
+            throw new IllegalStateException("Cannot open TM case PI: no TM case id captured. Was addTmCase run first?");
+        }
+        get(this.url.concat(String.format("case/%s/pi/", capturedTmCaseId)));
     }
 
     public void editTmCaseDescription(String newDescription) {

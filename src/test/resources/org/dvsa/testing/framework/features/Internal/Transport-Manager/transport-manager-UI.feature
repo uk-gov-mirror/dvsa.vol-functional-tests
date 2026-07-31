@@ -54,9 +54,14 @@ Feature: Transport Manager - internal detail and processing tabs
     And the transport manager Change History table should contain at least one entry
 
   @Tm_processing_publication_tab
-  Scenario: Transport Manager Publication tab loads
-    When I navigate to the transport manager Processing Publication tab
+  Scenario: A Public Inquiry decision on a TM case appears on the TM Publication tab
+    When I add a case "AutomatedTmCasePI" to the transport manager
+    And I add a public inquiry to the transport manager case
+    And I add a hearing to the transport manager's public inquiry
+    And I add a decision to the transport manager's public inquiry
+    And I navigate to the transport manager Processing Publication tab
     Then the transport manager "Publication" page should be displayed at path "processing/publication/"
+    And the transport manager Publication table should contain at least one entry
 
   @Tm_processing_read_history_tab
   Scenario: Visits to a Transport Manager are recorded in Access History
