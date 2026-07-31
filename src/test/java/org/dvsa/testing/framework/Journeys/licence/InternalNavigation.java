@@ -275,8 +275,9 @@ public class InternalNavigation extends BasePage {
 
     public void editTmProcessingNote(String newComment) {
         getTmProcessingNotes();
-        waitAndClick("//a[contains(@class,'js-modal-ajax') and contains(@href,'/processing/notes/edit/')]",
+        waitAndClick("//table//tbody//tr[1]//input[@type='radio' or @type='checkbox']",
                 SelectorType.XPATH);
+        waitAndClick("//button[@id='edit' or normalize-space()='Edit']", SelectorType.XPATH);
         waitForElementToBePresent("//textarea[@name='fields[comment]']");
         clearAndEnter("//textarea[@name='fields[comment]']", SelectorType.XPATH, newComment);
         clickModalSubmit();
