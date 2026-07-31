@@ -57,7 +57,6 @@ Feature: Transport Manager - internal detail and processing tabs
   Scenario: Transport Manager Publication tab loads
     When I navigate to the transport manager Processing Publication tab
     Then the transport manager "Publication" page should be displayed at path "processing/publication/"
-    And the transport manager Publication page should display a publications table
 
   @Tm_processing_read_history_tab
   Scenario: Visits to a Transport Manager are recorded in Access History

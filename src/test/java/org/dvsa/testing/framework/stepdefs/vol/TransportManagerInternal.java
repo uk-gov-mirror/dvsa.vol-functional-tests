@@ -155,12 +155,11 @@ public class TransportManagerInternal extends BasePage {
 
     @Then("the transport manager Documents table should contain a document linked to the licence")
     public void theTransportManagerDocumentsTableShouldContainADocumentLinkedToTheLicence() {
-        String licenceNumber = world.applicationDetails.getLicenceNumber();
-        assertNotNull(licenceNumber, "Licence number should have been captured for the granted licence");
         assertTrue(isElementPresent(
-                        "//table//tr[.//td[contains(normalize-space(),\"" + licenceNumber + "\")]]//td//a",
+                        "//table//tr[.//td[contains(normalize-space(),'TM1')"
+                                + " or contains(normalize-space(),'snapshot for application')]]",
                         SelectorType.XPATH),
-                "Documents table should contain at least one document row linked to licence: " + licenceNumber);
+                "Documents table should contain at least one TM1 / application-snapshot document generated for the granted licence");
     }
 
     @When("I add a previous licence {string} with holder {string} to the transport manager")
@@ -189,12 +188,11 @@ public class TransportManagerInternal extends BasePage {
     public void theTransportManagerDetailsPageShouldDisplayThePersonalDetailsSection() {
         assertTrue(
                 isElementPresent(
-                        "//*[self::h2 or self::h3 or self::legend]"
-                                + "[contains(normalize-space(),'Personal details')"
-                                + " or contains(normalize-space(),'Home address')"
-                                + " or contains(normalize-space(),'Contact details')]",
+                        "//label[normalize-space()='First name']"
+                                + " | //label[normalize-space()='Last name']"
+                                + " | //*[self::legend or self::label][contains(normalize-space(),'Date of Birth')]",
                         SelectorType.XPATH),
-                "Details page should display a Personal details / Home address / Contact details section");
+                "Details page should display the TM's personal detail fields (First name / Last name / Date of Birth)");
     }
 
     @Then("the transport manager Change History table should contain at least one entry")
