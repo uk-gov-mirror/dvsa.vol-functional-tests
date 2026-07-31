@@ -11,11 +11,16 @@ import org.dvsa.testing.framework.pageObjects.enums.SelectorType;
 import org.dvsa.testing.lib.url.utils.EnvironmentType;
 
 import java.time.LocalDate;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import org.dvsa.testing.lib.url.webapp.webAppURL;
 import org.dvsa.testing.lib.url.webapp.utils.ApplicationType;
 import org.dvsa.testing.framework.pageObjects.enums.AdminOption;
 import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Objects;
 
@@ -132,6 +137,349 @@ public class InternalNavigation extends BasePage {
     public void getTransportManagerDetails(String transportManagerId) {
         get(this.url.concat(String.format("transport-manager/%s/details/", transportManagerId)));
     }
+
+    public String transportManagerId;
+    public String transportManagerIdOne;
+    public String transportManagerIdTwo;
+    public String licenceIdOne;
+    public String licenceIdTwo;
+
+    public String captureFirstTransportManagerIdFromLicence() {
+        get(this.url.concat(String.format("licence/%s/transport-managers", world.createApplication.getLicenceId())));
+        waitForElementToBePresent("//a[starts-with(@href,'/transport-manager/')]");
+        String href = findElement(
+                "//a[starts-with(@href,'/transport-manager/')][1]",
+                SelectorType.XPATH).getAttribute("href");
+        transportManagerId = href.replaceAll(".*/transport-manager/(\\d+)/.*", "$1");
+        return transportManagerId;
+    }
+
+    private String tmUrl(String tail) {
+        return this.url.concat(String.format("transport-manager/%s/%s", transportManagerId, tail));
+    }
+
+    public void getTmDetails()               { get(tmUrl("details/")); }
+    public void getTmCompetences()           { get(tmUrl("details/competences/")); }
+    public void getTmCompetencesEdit(String competenceId) { get(tmUrl("details/competences/edit/" + competenceId + "/")); }
+    public void getTmEmployment()            { get(tmUrl("details/employment/")); }
+    public void getTmPreviousHistory()       { get(tmUrl("details/previous-history/")); }
+    public void getTmResponsibilitiesEdit(String tmLicenceId) { get(tmUrl("details/responsibilities/edit-tm-licence/" + tmLicenceId + "/")); }
+    public void getTmDocuments()             { get(tmUrl("documents/")); }
+    public void getTmCases()                 { get(tmUrl("cases/")); }
+    public void getTmCasesEdit(String caseId){ get(tmUrl("cases/edit/" + caseId + "/")); }
+    public void getTmProcessingNotes()       { get(tmUrl("processing/notes/")); }
+    public void getTmProcessingNotesEdit(String noteId) { get(tmUrl("processing/notes/edit/" + noteId + "/")); }
+    public void getTmProcessingEventHistory(){ get(tmUrl("processing/event-history/")); }
+    public void getTmProcessingPublication() { get(tmUrl("processing/publication/")); }
+    public void getTmProcessingReadHistory() { get(tmUrl("processing/read-history/")); }
+    public void getTmCheckRepute()           { get(tmUrl("check-repute/")); }
+    public void getTmMerge()                 { get(tmUrl("merge/")); }
+    public void getTmUndoDisqualification()  { get(tmUrl("undo-disqualification/")); }
+
+    public void addTmProcessingNote(String comment, boolean priority) {
+        getTmProcessingNotes();
+        waitAndClick("//button[@id='add']", SelectorType.XPATH);
+        waitForElementToBePresent("//textarea[@name='fields[comment]']");
+        waitAndEnterText("//textarea[@name='fields[comment]']", SelectorType.XPATH, comment);
+        if (priority) {
+            click("//input[@type='checkbox' and @name='fields[priority]']", SelectorType.XPATH);
+        }
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + comment + "\")]");
+    }
+
+    public void addTmCompetence(String qualificationTypeValue, String serialNo,
+                                String day, String month, String year) {
+        getTmCompetences();
+        waitAndClick("//button[@id='add']", SelectorType.XPATH);
+        waitForElementToBePresent("//select[@name='qualification-details[qualificationType]']");
+        selectValueFromDropDownByValue("//select[@name='qualification-details[qualificationType]']",
+                SelectorType.XPATH, qualificationTypeValue);
+        waitAndEnterText("//input[@name='qualification-details[serialNo]']", SelectorType.XPATH, serialNo);
+        waitAndEnterText("//input[@name='qualification-details[issuedDate][day]']", SelectorType.XPATH, day);
+        waitAndEnterText("//input[@name='qualification-details[issuedDate][month]']", SelectorType.XPATH, month);
+        waitAndEnterText("//input[@name='qualification-details[issuedDate][year]']", SelectorType.XPATH, year);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + serialNo + "\")]");
+    }
+
+    public void addTmEmployer(String employerName, String position, String hoursPerWeek,
+                              String addressLine1, String town, String postcode) {
+        getTmEmployment();
+        waitAndClick("//button[@id='add']", SelectorType.XPATH);
+        waitForElementToBePresent("//input[@name='tm-employer-name-details[employerName]']");
+        waitAndEnterText("//input[@name='tm-employer-name-details[employerName]']",
+                SelectorType.XPATH, employerName);
+        String manualLink = "//a[normalize-space()='Enter the address manually'"
+                + " or normalize-space()='Enter address manually'"
+                + " or normalize-space()='Enter the address yourself']";
+        if (isElementPresent(manualLink, SelectorType.XPATH)) {
+            waitAndClick(manualLink, SelectorType.XPATH);
+        }
+        waitAndEnterText("//input[@name='address[addressLine1]']", SelectorType.XPATH, addressLine1);
+        waitAndEnterText("//input[@name='address[town]']", SelectorType.XPATH, town);
+        waitAndEnterText("//input[@name='address[postcode]']", SelectorType.XPATH, postcode);
+        waitAndEnterText("//input[@name='tm-employment-details[position]']", SelectorType.XPATH, position);
+        waitAndEnterText("//input[@name='tm-employment-details[hoursPerWeek]']", SelectorType.XPATH, hoursPerWeek);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + employerName + "\")]");
+    }
+
+    public void uploadTmDocument(String description, String absoluteFilePath) {
+        getTmDocuments();
+        waitAndClick("//button[@id='upload']", SelectorType.XPATH);
+        waitForElementToBePresent("//select[@name='details[category]']");
+        waitAndEnterText("//input[@name='details[description]']", SelectorType.XPATH, description);
+        selectValueFromDropDownByIndex("//select[@name='details[documentSubCategory]']",
+                SelectorType.XPATH, 1);
+        uploadFileToInputByName("details[file]", absoluteFilePath);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//table//td//a[contains(normalize-space(),\"" + description + "\")]");
+    }
+
+    public String lastRelinkedDocumentDescription;
+
+    public String copyFirstLicenceDocumentToTransportManagerViaRelink() {
+        get(this.url.concat(String.format("licence/%s/documents/",
+                world.createApplication.getLicenceId())));
+        String firstDocLink = "//table//tbody//tr[1]//td//a[not(contains(@class,'js-modal-ajax'))]";
+        waitForElementToBePresent(firstDocLink);
+        lastRelinkedDocumentDescription = getText(firstDocLink, SelectorType.XPATH).trim();
+        waitAndClick("//table//tbody//tr[1]//input[@type='checkbox']", SelectorType.XPATH);
+        waitAndClick(
+                "//button[normalize-space()='Relink'] | //a[normalize-space()='Relink']",
+                SelectorType.XPATH);
+        waitForElementToBePresent("//h2[normalize-space()='Relink documents']");
+        String entitySelect = "//select[.//option[normalize-space()='Transport Manager']]";
+        waitForElementToBePresent(entitySelect);
+        selectValueFromDropDown(entitySelect, SelectorType.XPATH, "Transport Manager");
+        String tmIdInput = "//label[contains(normalize-space(),'Transport manager ID')]"
+                + "/following::input[not(@type='hidden')][1]";
+        waitForElementToBePresent(tmIdInput);
+        clearAndEnter(tmIdInput, SelectorType.XPATH, transportManagerId);
+        waitAndClick(
+                "//button[normalize-space()='Copy'] | //input[@type='submit' and @value='Copy']",
+                SelectorType.XPATH);
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(15))
+                    .until(d -> !isElementPresent(
+                            "//h2[normalize-space()='Relink documents']", SelectorType.XPATH));
+        } catch (TimeoutException ignored) {
+        }
+        return lastRelinkedDocumentDescription;
+    }
+
+    public void editTmProcessingNote(String newComment) {
+        getTmProcessingNotes();
+        waitAndClick("//table//tbody//tr[1]//input[@type='radio' or @type='checkbox']",
+                SelectorType.XPATH);
+        waitAndClick("//button[@id='edit' or normalize-space()='Edit']", SelectorType.XPATH);
+        waitForElementToBePresent("//textarea[@name='fields[comment]']");
+        clearAndEnter("//textarea[@name='fields[comment]']", SelectorType.XPATH, newComment);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + newComment + "\")]");
+    }
+
+    public void editTmCompetenceSerial(String newSerial) {
+        getTmCompetences();
+        waitAndClick("//a[contains(@class,'js-modal-ajax') and contains(@href,'/competences/edit/')]",
+                SelectorType.XPATH);
+        waitForElementToBePresent("//input[@name='qualification-details[serialNo]']");
+        clearAndEnter("//input[@name='qualification-details[serialNo]']", SelectorType.XPATH, newSerial);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//table//td[contains(normalize-space(),\"" + newSerial + "\")]");
+    }
+
+    public String capturedTmCaseId;
+
+    public void addTmCase(String description) {
+        getTmCases();
+        waitAndClick("//button[@id='add']", SelectorType.XPATH);
+        waitForElementToBePresent("//select[@id='fields[caseType]']");
+        // Chosen widget id normalises brackets: fields[categorys] -> fields_categorys__chosen
+        selectRandomOptionOnChosen("fields_categorys__chosen");
+        waitAndEnterText("//textarea[@id='fields[description]']", SelectorType.XPATH, description);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//li[contains(@class,'definition-list__item')]"
+                        + "//dt[normalize-space()='Description']"
+                        + "/following-sibling::dd[contains(normalize-space(),\"" + description + "\")]");
+        try {
+            String href = findElement(
+                    "//a[contains(@href,'/case/') or contains(@href,'/cases/')][contains(@href,'edit') or contains(@href,'details')][1]",
+                    SelectorType.XPATH).getAttribute("href");
+            capturedTmCaseId = href.replaceAll(".*?/(?:case|cases)(?:/[^/]+)?/(\\d+)/?.*", "$1");
+        } catch (Exception ignored) {
+        }
+    }
+
+    public void openTmCasePi() {
+        if (capturedTmCaseId == null || capturedTmCaseId.isBlank()) {
+            throw new IllegalStateException("Cannot open TM case PI: no TM case id captured. Was addTmCase run first?");
+        }
+        get(this.url.concat(String.format("case/%s/pi/", capturedTmCaseId)));
+    }
+
+    public void editTmCaseDescription(String newDescription) {
+        waitAndClick("//a[contains(@class,'js-modal-ajax') and contains(@href,'/case/edit/')]",
+                SelectorType.XPATH);
+        waitForElementToBePresent("//textarea[@id='fields[description]']");
+        clearAndEnter("//textarea[@id='fields[description]']", SelectorType.XPATH, newDescription);
+        clickModalSubmit();
+        waitForElementToBePresent(
+                "//li[contains(@class,'definition-list__item')]"
+                        + "//dt[normalize-space()='Description']"
+                        + "/following-sibling::dd[contains(normalize-space(),\"" + newDescription + "\")]");
+    }
+
+    public void addTmPreviousLicence(String licNo, String holderName) {
+        getTmPreviousHistory();
+        waitAndClick("//button[@id='add-previous-licence']", SelectorType.XPATH);
+        waitForElementToBePresent("//h2[normalize-space()='Add previous licence']");
+        waitAndEnterText("//input[@id='lic-no']", SelectorType.XPATH, licNo);
+        waitAndEnterText("//input[@id='holderName']", SelectorType.XPATH, holderName);
+        clickModalSubmit();
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(15))
+                    .until(d -> !isElementPresent(
+                            "//h2[normalize-space()='Add previous licence']", SelectorType.XPATH));
+        } catch (TimeoutException ignored) {
+        }
+        waitForElementToBePresent(
+                "//fieldset[@id='previousLicences']//*[contains(normalize-space(),\"" + licNo + "\")]");
+    }
+
+    public void openTmResponsibilityEditForFirstLicence() {
+        get(tmUrl("details/responsibilities/"));
+        waitAndClick("//table//a[contains(@href,'/details/responsibilities/edit-tm-licence/')]",
+                SelectorType.XPATH);
+        waitForElementToBePresent("//input[@type='radio' and @name='details[tmType]']");
+    }
+
+    public void setTmResponsibilityManagerTypeAndSave(String tmTypeValue) {
+        // govuk-frontend hides native radios — set state via JS + change event
+        javaScriptExecutor(
+                "function setRadio(name, value) {"
+                        + " var r = document.querySelector(\"input[name='\" + name + \"'][value='\" + value + \"']\");"
+                        + " if (r) { r.checked = true; r.dispatchEvent(new Event('change', {bubbles: true})); } }"
+                        + " setRadio('details[tmType]', '" + tmTypeValue + "');"
+                        + " setRadio('details[hasUndertakenTraining]', 'N');");
+        clickModalSubmit();
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(20))
+                    .until(d -> !d.getCurrentUrl().contains("/edit-tm-licence/"));
+        } catch (org.openqa.selenium.TimeoutException te) {
+            String errorSummary = "";
+            var errs = findElements(
+                    "//*[contains(@class,'error-summary')"
+                            + " or contains(@class,'notice--error')"
+                            + " or contains(@class,'validation-summary')"
+                            + " or contains(@class,'govuk-error-summary')]",
+                    SelectorType.XPATH);
+            if (errs != null && !errs.isEmpty()) {
+                errorSummary = errs.get(0).getText();
+            }
+            throw new RuntimeException(
+                    "Save of TM responsibility did not navigate away from edit page."
+                            + " URL still: " + getDriver().getCurrentUrl()
+                            + (errorSummary.isEmpty()
+                                    ? " (no error banner detected)"
+                                    : " Validation banner: " + errorSummary),
+                    te);
+        }
+    }
+
+    public void captureFirstTmAsSource() throws org.apache.hc.core5.http.HttpException {
+        transportManagerIdOne = captureFirstTransportManagerIdFromLicence();
+        licenceIdOne = world.createApplication.getLicenceId();
+    }
+
+    public void createSecondApplicationAndCaptureSecondTm() throws org.apache.hc.core5.http.HttpException {
+        randomiseRegisterUserIdentity();
+        logOutOfSelfServe();
+        world.APIJourney.registerAndGetUserDetails("operator");
+        world.licenceCreation.createLicence("goods", "standard_national");
+        loginIntoInternal("admin");
+        transportManagerIdTwo = captureFirstTransportManagerIdFromLicence();
+        licenceIdTwo = world.createApplication.getLicenceId();
+    }
+
+    private void logOutOfSelfServe() {
+        String selfServeLogout = webAppURL.build(
+                ApplicationType.EXTERNAL, world.configuration.env, "auth/logout/").toString();
+        try {
+            get(selfServeLogout);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void randomiseRegisterUserIdentity() {
+        var faker = new activesupport.faker.FakerUtils();
+        var rng = java.util.concurrent.ThreadLocalRandom.current();
+        String fore = faker.generateFirstName() + rng.nextInt(100, 1000);
+        String family = faker.generateLastName() + rng.nextInt(100, 1000);
+        world.registerUser.setForeName(fore);
+        world.registerUser.setFamilyName(family);
+        world.registerUser.setUserName("%s%s%d".formatted(fore, family, rng.nextInt(1000, 10000)));
+        world.registerUser.setEmailAddress(
+                "%s_%s%d.tester@dvsa.com".formatted(fore, family, rng.nextInt(10000, 100000)));
+        world.registerUser.setOrganisationName(faker.generateCompanyName());
+    }
+
+    public void mergeTransportManagerIntoTarget(String targetTmId) {
+        transportManagerId = transportManagerIdOne;
+        getTmDetails();
+        waitAndClick("//a[@id='menu-transport-manager-quick-actions-merge']", SelectorType.XPATH);
+        waitForElementToBePresent("//form[@id='tm-merge']//input[@id='toTmId']");
+        waitAndEnterText("//form[@id='tm-merge']//input[@id='toTmId']", SelectorType.XPATH, targetTmId);
+        javaScriptExecutor(
+                "var el = document.getElementById('toTmId');"
+                        + " if (el) { el.dispatchEvent(new Event('blur', {bubbles: true})); }");
+        waitAndClick("//input[@type='checkbox' and @id='confirm']", SelectorType.XPATH);
+        clickModalSubmit();
+        if (waitForElementToBePresentSafely(
+                "//form[@id='generic-confirmation']//button[@name='form-actions[submit]']", 15)) {
+            waitAndClick("//form[@id='generic-confirmation']//button[@name='form-actions[submit]']",
+                    SelectorType.XPATH);
+        }
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(30))
+                    .until(d -> !isElementPresent("//div[contains(@class,'modal__wrapper')]"
+                                    + "//form[@id='tm-merge' or @id='generic-confirmation']",
+                            SelectorType.XPATH));
+        } catch (TimeoutException te) {
+            String modalHtml = "";
+            var modals = findElements("//div[contains(@class,'modal__wrapper')]", SelectorType.XPATH);
+            if (modals != null && !modals.isEmpty()) {
+                modalHtml = modals.get(0).getAttribute("innerHTML");
+                if (modalHtml != null && modalHtml.length() > 2000) {
+                    modalHtml = modalHtml.substring(0, 2000) + "...[truncated]";
+                }
+            }
+            throw new RuntimeException(
+                    "Merge modal did not close after submit."
+                            + " Current URL: " + getDriver().getCurrentUrl()
+                            + " Modal HTML: " + modalHtml,
+                    te);
+        }
+    }
+
+    private boolean waitForElementToBePresentSafely(String xpath, int seconds) {
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(seconds))
+                    .until(d -> isElementPresent(xpath, SelectorType.XPATH));
+            return true;
+        } catch (TimeoutException te) {
+            return false;
+        }
+    }
+
 
     public void getLicence() {
         get(this.url.concat(String.format("licence/%s", world.createApplication.getLicenceId())));
