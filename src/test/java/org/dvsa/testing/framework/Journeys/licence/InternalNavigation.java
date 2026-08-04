@@ -794,18 +794,26 @@ public class InternalNavigation extends BasePage {
         piDecisionPresidingTc = selectRandomOption("//select[@id='fields[decidedByTc]']");
         piDecisionPresidingTcRole = selectRandomOption("//select[@id='fields[decidedByTcRole]']");
 
-        piDecisionDecision = selectRandomOptionOnChosen("fields_decisions__chosen");
-        piDecisionTmDecision = selectRandomOptionOnChosen("fields_tmDecisions__chosen");
+        if (isElementVisible("//select[@id='fields_decisions__chosen']", SelectorType.XPATH.ordinal())) {
+            piDecisionDecision = selectRandomOptionOnChosen("fields_decisions__chosen");
+        }
+        if (isElementVisible("//select[@id='fields_tmDecisions__chosen']", SelectorType.XPATH.ordinal())) {
+            piDecisionTmDecision = selectRandomOptionOnChosen("fields_tmDecisions__chosen");
+        }
 
         waitAndEnterText("//input[@id='fields[witnesses]']", SelectorType.XPATH, piDecisionWitnesses);
 
         enterDateParts("decisionDate", today);
         enterDateParts("notificationDate", notification);
 
-        piDecisionDefinition = selectRandomOptionOnUnderlyingSelect("//select[@id='fields[definition]']");
-        waitAndEnterText("//textarea[@id='fields[decisionNotes]']", SelectorType.XPATH, piDecisionNotes);
+        if (isElementVisible("//select[@id='fields[definition]']", SelectorType.XPATH.ordinal())) {
+            piDecisionDefinition = selectRandomOptionOnUnderlyingSelect("//select[@id='fields[definition]']");
+        }
+        if (isElementVisible("//textarea[@id='fields[decisionNotes]']", SelectorType.XPATH.ordinal())) {
+            waitAndEnterText("//textarea[@id='fields[decisionNotes]']", SelectorType.XPATH, piDecisionNotes);
+        }
 
-        waitAndClick("//button[@id='form-actions[submit]']", SelectorType.XPATH);
+        waitAndClick("//button[@id='form-actions[publish]']", SelectorType.XPATH);
     }
 
     public String slaCallUpLetterDate;
