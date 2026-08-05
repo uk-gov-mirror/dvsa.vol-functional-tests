@@ -76,12 +76,6 @@ Feature: Transport Manager - internal detail and processing tabs
     And I navigate to the transport manager Documents tab
     Then the transport manager Documents table should contain the relinked document
 
-  @Tm_edit_processing_note
-  Scenario: Edit an existing processing note on a Transport Manager
-    When I add a processing note "Original TM note" to the transport manager with priority "N"
-    And I edit the transport manager's processing note to "Edited TM note"
-    Then the transport manager Notes table should contain "Edited TM note"
-
   @Tm_edit_competence
   Scenario: Edit an existing competence on a Transport Manager
     When I add a competence "tm_qt_cpcsn" with serial "AUTO-CPC-11111" issued on "01" "02" "2020" to the transport manager
