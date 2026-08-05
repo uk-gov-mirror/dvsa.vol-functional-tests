@@ -1,6 +1,14 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.29.1](https://github.com/dvsa/vol-functional-tests/compare/v4.29.0...v4.29.1) (2026-08-05)
+
+
+### Bug Fixes
+
+* bump jackson ([8febd35](https://github.com/dvsa/vol-functional-tests/commit/8febd35a7ec9886b57accd5d04c471f038834e84))
+* remove test ([70d5e4a](https://github.com/dvsa/vol-functional-tests/commit/70d5e4aeccac735a9f051c0cff32bb8137121bfb))
+
 ## [4.29.0](https://github.com/dvsa/vol-functional-tests/compare/v4.28.1...v4.29.0) (2026-07-31)
 
 
