@@ -1,6 +1,14 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.30.1](https://github.com/dvsa/vol-functional-tests/compare/v4.30.0...v4.30.1) (2026-08-19)
+
+
+### Bug Fixes
+
+* pi test fix ([5eb69c3](https://github.com/dvsa/vol-functional-tests/commit/5eb69c303bbea73ce41cf3c49eef4abfc3c34539))
+* pi test fix ([f68de6b](https://github.com/dvsa/vol-functional-tests/commit/f68de6b18b27ad1aaf6e56eb746b77f7b39d798e))
+
 ## [4.30.0](https://github.com/dvsa/vol-functional-tests/compare/v4.29.1...v4.30.0) (2026-08-05)
 
 
