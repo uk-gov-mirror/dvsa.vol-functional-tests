@@ -237,7 +237,7 @@ jobs:
         run: echo "timestamp=$(date +%Y%m%d%H%M%S%3N)" >> $GITHUB_ENV
 
       - name: Store Allure Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@main
         with:
           name: e2e-${{ needs.create-job-name.outputs.job_name }}
           path: ./upload/${{ env.FOLDER_NAME }}/allure-results
@@ -255,7 +255,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Download Allure Report
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@mainƒ
         with:
           name: e2e-${{ needs.create-job-name.outputs.job_name }}
 
