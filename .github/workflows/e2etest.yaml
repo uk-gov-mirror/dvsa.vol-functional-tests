@@ -86,7 +86,7 @@ jobs:
       JOB_NAME: ${{ needs.create-job-name.outputs.job_name }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
 
       - name: Configure AWS with provided credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -207,7 +207,7 @@ jobs:
       FOLDER_NAME: ${{ needs.create-job-name.outputs.job_name }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
 
       - name: Configure AWS with provided credentials
         uses: aws-actions/configure-aws-credentials@v5
