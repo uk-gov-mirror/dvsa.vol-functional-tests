@@ -86,7 +86,7 @@ jobs:
       JOB_NAME: ${{ needs.create-job-name.outputs.job_name }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
 
       - name: Configure AWS with provided credentials
         uses: aws-actions/configure-aws-credentials@v6.2.3
@@ -252,7 +252,7 @@ jobs:
     environment: ${{ inputs.platform_env }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
 
       - name: Download Allure Report
         uses: actions/download-artifact@main
