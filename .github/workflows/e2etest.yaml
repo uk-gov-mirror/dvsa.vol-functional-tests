@@ -86,10 +86,10 @@ jobs:
       JOB_NAME: ${{ needs.create-job-name.outputs.job_name }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
 
       - name: Configure AWS with provided credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ vars.DVSA_AWS_REGION }}
@@ -207,10 +207,10 @@ jobs:
       FOLDER_NAME: ${{ needs.create-job-name.outputs.job_name }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
 
       - name: Configure AWS with provided credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ vars.DVSA_AWS_REGION }}
@@ -237,7 +237,7 @@ jobs:
         run: echo "timestamp=$(date +%Y%m%d%H%M%S%3N)" >> $GITHUB_ENV
 
       - name: Store Allure Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@main
         with:
           name: e2e-${{ needs.create-job-name.outputs.job_name }}
           path: ./upload/${{ env.FOLDER_NAME }}/allure-results
@@ -252,10 +252,10 @@ jobs:
     environment: ${{ inputs.platform_env }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7.0.1
 
       - name: Download Allure Report
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@main
         with:
           name: e2e-${{ needs.create-job-name.outputs.job_name }}
 
@@ -273,7 +273,7 @@ jobs:
 
       - name: Get Summary
         id: get-summary
-        uses: dvsa/.github/.github/actions/surefire-report-summary@v5.0.8
+        uses: dvsa/.github/.github/actions/surefire-report-summary@main
         with:
           file-path: ./target/results-summary/summary.xml
           fail-on-test-failures: true
