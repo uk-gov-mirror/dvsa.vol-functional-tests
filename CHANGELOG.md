@@ -1,6 +1,19 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.30.2](https://github.com/dvsa/vol-functional-tests/compare/v4.30.1...v4.30.2) (2026-08-20)
+
+
+### Bug Fixes
+
+* aws ([489ddbf](https://github.com/dvsa/vol-functional-tests/commit/489ddbf8e4ecf2f4b9c685e8af1e58e06869d02a))
+* checkou ([5aff53e](https://github.com/dvsa/vol-functional-tests/commit/5aff53eec97a3a38ae8a1438c141d71ad5cabe09))
+* checkout ([d6fbf61](https://github.com/dvsa/vol-functional-tests/commit/d6fbf6175fd8fdb81afa85a305fa2720b02f4f56))
+* surefire ([ae3ba6d](https://github.com/dvsa/vol-functional-tests/commit/ae3ba6d3da172305ebb3baa0932dade85674541f))
+* surefire ([f119cde](https://github.com/dvsa/vol-functional-tests/commit/f119cde3d417cdd738f078f697de38cc1a843702))
+* surefire ([7dc6bdf](https://github.com/dvsa/vol-functional-tests/commit/7dc6bdf53f135c22a7853c30f3e5400062fc5227))
+* typo ([96075d5](https://github.com/dvsa/vol-functional-tests/commit/96075d5c5c300583a92111b850330287a3ac3419))
+
 ## [4.30.1](https://github.com/dvsa/vol-functional-tests/compare/v4.30.0...v4.30.1) (2026-08-19)
 
 
