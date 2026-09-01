@@ -1,6 +1,14 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.34.0](https://github.com/dvsa/vol-functional-tests/compare/v4.33.0...v4.34.0) (2026-09-01)
+
+
+### Features
+
+* drop % ([5cf0fb9](https://github.com/dvsa/vol-functional-tests/commit/5cf0fb99fc0f5b7153a5dca0d91cc999dc90473f))
+* drop % ([d076b1c](https://github.com/dvsa/vol-functional-tests/commit/d076b1c86bb554c0801297c380fded2eca4c51e4))
+
 ## [4.33.0](https://github.com/dvsa/vol-functional-tests/compare/v4.32.0...v4.33.0) (2026-09-01)
 
 
