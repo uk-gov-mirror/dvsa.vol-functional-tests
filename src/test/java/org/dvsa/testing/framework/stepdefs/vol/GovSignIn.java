@@ -59,7 +59,6 @@ public class GovSignIn extends BasePage {
 
     @Then("the application should be digitally signed")
     public void theApplicationShouldBeDigitallySigned() throws MalformedURLException, InterruptedException {
-        world.govSignInJourney.changeProtocolForSignInToWorkOnLocal();
         if (isTitlePresent("You have already proved your identity", 2)) {
             clickById("submitButton");
         }

@@ -1,7 +1,6 @@
 package org.dvsa.testing.framework.Journeys.licence;
 
 import activesupport.aws.s3.SecretsManager;
-import activesupport.driver.Browser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,8 +11,6 @@ import org.dvsa.testing.framework.Injectors.World;
 import org.dvsa.testing.framework.pageObjects.BasePage;
 import org.dvsa.testing.framework.pageObjects.enums.SelectorType;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 import static activesupport.driver.Browser.navigate;
@@ -104,6 +101,7 @@ public class GovSignInJourney extends BasePage {
                 waitAndClick("sign", SelectorType.ID);
             }
         }
+        waitForUrlToContain("account.gov.uk", 30);
     }
 
     public void signInGovAccount() {
@@ -428,15 +426,6 @@ public class GovSignInJourney extends BasePage {
         } else {
             clickByXPath("//input[@value='NONE OF THE ABOVE / DOES NOT APPLY']");
             waitAndClick("continue", SelectorType.ID);
-        }
-    }
-
-    public void changeProtocolForSignInToWorkOnLocal() throws InterruptedException, MalformedURLException {
-        Thread.sleep(1000);
-        if(world.configuration.env.toString().equals("local")) {
-            URL url = new URL(Objects.requireNonNull(navigate().getCurrentUrl()));
-            String urlWithUnsecureProtocol = url.getProtocol().replace("s","").concat("://"+ url.getAuthority() + url.getFile());
-            Browser.navigate().get(urlWithUnsecureProtocol);
         }
     }
 }
