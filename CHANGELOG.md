@@ -1,6 +1,14 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.33.0](https://github.com/dvsa/vol-functional-tests/compare/v4.32.0...v4.33.0) (2026-09-01)
+
+
+### Features
+
+* bump active support ([0164be7](https://github.com/dvsa/vol-functional-tests/commit/0164be74a79518546994db4ece5e7a9ba06fcc06))
+* bump active support ([9348c5c](https://github.com/dvsa/vol-functional-tests/commit/9348c5c36d82d6891f5142fa52166216f215358b))
+
 ## [4.32.0](https://github.com/dvsa/vol-functional-tests/compare/v4.31.0...v4.32.0) (2026-09-01)
 
 
