@@ -1,6 +1,20 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.32.0](https://github.com/dvsa/vol-functional-tests/compare/v4.31.0...v4.32.0) (2026-09-01)
+
+
+### Features
+
+* bump active support ([7ceeaa6](https://github.com/dvsa/vol-functional-tests/commit/7ceeaa6ef5b43641b014b82af5dcd6eb702d5181))
+* bump active support ([7519371](https://github.com/dvsa/vol-functional-tests/commit/751937109b81d876432d31c13f3790cf49bef884))
+
+
+### Bug Fixes
+
+* remove One Login basic auth re-navigation ([30075a5](https://github.com/dvsa/vol-functional-tests/commit/30075a5bfdeec2c4dd4570dfea9e2ab69f70869c))
+* remove One Login basic auth re-navigation ([4ce8ab2](https://github.com/dvsa/vol-functional-tests/commit/4ce8ab2b3dc5cfedd081993b595754577464e206))
+
 ## [4.31.0](https://github.com/dvsa/vol-functional-tests/compare/v4.30.2...v4.31.0) (2026-08-28)
 
 
