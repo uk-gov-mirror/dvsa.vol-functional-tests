@@ -62,12 +62,22 @@ Feature: Search and add a vehicle
     When I reprint a vehicle disc
     Then the "Disc for this vehicle will be reprinted and sent to you in the post" confirmation banner should appear
     And the licence discs number should be updated
-    And the licence disc print output PDF should be created in S3
 
     Examples:
       | user_type  |
       | admin      |
       | consultant |
+
+  @dvla-reprint @localsmoke @batch-smoke
+  Scenario : Reprint vehicle disc on licence
+    Given as a "<user_type>" I have "1" "goods" "standard_national" licences with "2" vehicles and a vehicleAuthority of "5"
+    And discs have been added to my licence
+    And I navigate to manage vehicle page on a licence
+    When I reprint a vehicle disc
+    Then the "Disc for this vehicle will be reprinted and sent to you in the post" confirmation banner should appear
+    And the licence discs number should be updated
+    And the licence disc print output PDF should be created in S3
+
 
   Scenario Outline: Error validation
     Given as a "<user_type>" I have a valid "goods" "standard_national" licence
