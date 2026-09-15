@@ -15,7 +15,7 @@
         <jvmMemory>4000</jvmMemory>
 
         <!-- DVSA Internal Libraries -->
-        <active-support.version>2.23.1</active-support.version>
+        <active-support.version>2.23.3</active-support.version>
         <api-calls.version>4.3.4</api-calls.version>
         <accessibility-ai.version>2.0.4</accessibility-ai.version>
 
@@ -35,15 +35,15 @@
         <zt-zip.version>1.15</zt-zip.version>
         <lorem.version>2.1</lorem.version>
         <httpclient.version>4.5.14</httpclient.version>
-        <httpclient5.version>5.6.3</httpclient5.version>
+        <httpclient5.version>5.6.4</httpclient5.version>
         <snakeyaml.version>2.2</snakeyaml.version>
         <dom4j.version>2.1.4</dom4j.version>
         <ion-java.version>1.11.11</ion-java.version>
 
         <!-- Network Dependencies -->
         <netty.version>4.1.136.Final</netty.version>
-        <jackson.version>2.22.1</jackson.version>
-        <jackson3.version>3.1.5</jackson3.version>
+        <jackson.version>2.22.2</jackson.version>
+        <jackson3.version>3.2.2</jackson3.version>
 
         <!-- Maven Plugins -->
         <maven.compiler.version>3.13.0</maven.compiler.version>
