@@ -69,8 +69,8 @@ Feature: Search and add a vehicle
       | consultant |
 
   @dvla-reprint @localsmoke @batch-smoke
-  Scenario : Reprint vehicle disc on licence
-    Given as a "<user_type>" I have "1" "goods" "standard_national" licences with "2" vehicles and a vehicleAuthority of "5"
+  Scenario: Reprint vehicle disc on licence and check print output in S3
+    Given as a "admin" I have "1" "goods" "standard_national" licences with "2" vehicles and a vehicleAuthority of "5"
     And discs have been added to my licence
     And I navigate to manage vehicle page on a licence
     When I reprint a vehicle disc
