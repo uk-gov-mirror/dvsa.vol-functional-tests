@@ -1,6 +1,17 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.38.3](https://github.com/dvsa/vol-functional-tests/compare/v4.38.2...v4.38.3) (2026-09-16)
+
+
+### Bug Fixes
+
+* bump hado ([273cd48](https://github.com/dvsa/vol-functional-tests/commit/273cd48893ece21df1988aac595800719318e715))
+* bump hado ([4798e4a](https://github.com/dvsa/vol-functional-tests/commit/4798e4a9b1387f5571ad1fcfa3253aa43bc67118))
+* bump hado ([1f49056](https://github.com/dvsa/vol-functional-tests/commit/1f490560cd9f89988eeb08fc9fc841b082f5628e))
+* tag ([ab0400f](https://github.com/dvsa/vol-functional-tests/commit/ab0400fd2feb408bb8a1457ec306114969de60d6))
+* tag ([befb754](https://github.com/dvsa/vol-functional-tests/commit/befb7549662daa531462ed2348a0e310367b7a34))
+
 ## [4.38.2](https://github.com/dvsa/vol-functional-tests/compare/v4.38.1...v4.38.2) (2026-09-16)
 
 
