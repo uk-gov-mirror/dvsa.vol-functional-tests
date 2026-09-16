@@ -1,6 +1,14 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.38.2](https://github.com/dvsa/vol-functional-tests/compare/v4.38.1...v4.38.2) (2026-09-16)
+
+
+### Bug Fixes
+
+* gherkin syntax ([c187c4b](https://github.com/dvsa/vol-functional-tests/commit/c187c4b5bf03b0da9b8b8836e3335b38d738e4ce))
+* gherkin syntax ([1368e9c](https://github.com/dvsa/vol-functional-tests/commit/1368e9c69ac0fc943a76047565e0266c7e46fe48))
+
 ## [4.38.1](https://github.com/dvsa/vol-functional-tests/compare/v4.38.0...v4.38.1) (2026-09-15)
 
 
