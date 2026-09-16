@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v5
-      - uses: hadolint/hadolint-action@v3.1.0
+      - uses: hadolint/hadolint-action@v3.5.0
         with:
           dockerfile: ${{ env.WORKING_DIR }}/Dockerfile
 
