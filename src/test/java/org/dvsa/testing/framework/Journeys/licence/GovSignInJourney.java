@@ -1,5 +1,6 @@
 package org.dvsa.testing.framework.Journeys.licence;
 
+import activesupport.aws.s3.SecretsManager;
 import activesupport.driver.Browser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,12 +24,15 @@ public class GovSignInJourney extends BasePage {
 
     private static final Logger LOGGER = LogManager.getLogger(GovSignInJourney.class);
 
-    public static final String MOCK_SUCCESS_EMAIL = "test.success@mock.gov";
+    public static final String MOCK_EMAIL_SECRET_KEY = "govSignInMockEmail";
+    private static final String DEFAULT_MOCK_EMAIL = "test.success@mock.gov";
 
     private static final String EMAIL_FIELD_ID = "email";
     private static final String CONTINUE_BUTTON_ID = "sign-in-button";
     private static final String MOCK_PAGE_TITLE = "Sign in";
     private static final int MOCK_PAGE_TIMEOUT_SECONDS = 15;
+
+    private static String mockEmail = null;
 
     private final World world;
 
@@ -47,11 +51,33 @@ public class GovSignInJourney extends BasePage {
     }
 
     public void signInGovAccount() {
-        completeMockSignIn(MOCK_SUCCESS_EMAIL);
+        completeMockSignIn(getMockSignInEmail());
     }
 
     public void registerGovAccount() {
-        completeMockSignIn(MOCK_SUCCESS_EMAIL);
+        completeMockSignIn(getMockSignInEmail());
+    }
+
+    /**
+     * Mock sign in email held in AWS Secrets Manager under {@value #MOCK_EMAIL_SECRET_KEY}.
+     * Falls back to the mock service default if the secret is unavailable.
+     */
+    public static synchronized String getMockSignInEmail() {
+        if (mockEmail == null) {
+            String secretValue = null;
+            try {
+                secretValue = SecretsManager.getSecretValue(MOCK_EMAIL_SECRET_KEY);
+            } catch (Exception e) {
+                LOGGER.warn("Could not read " + MOCK_EMAIL_SECRET_KEY + " from secrets manager: " + e.getMessage());
+            }
+            if (secretValue == null || secretValue.isBlank()) {
+                LOGGER.warn("Secret " + MOCK_EMAIL_SECRET_KEY + " not set, using default mock email");
+                mockEmail = DEFAULT_MOCK_EMAIL;
+            } else {
+                mockEmail = secretValue.trim();
+            }
+        }
+        return mockEmail;
     }
 
     /**
