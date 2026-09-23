@@ -12,6 +12,7 @@ import org.dvsa.testing.framework.pageObjects.enums.SelectorType;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static activesupport.driver.Browser.navigate;
 
@@ -25,7 +26,8 @@ public class GovSignInJourney extends BasePage {
     private static final Logger LOGGER = LogManager.getLogger(GovSignInJourney.class);
 
     public static final String MOCK_EMAIL_SECRET_KEY = "govSignInMockEmail";
-    private static final String DEFAULT_MOCK_EMAIL = "test.success@mock.gov";
+
+    private static final Pattern SINGLE_EMAIL = Pattern.compile("^[^\\s{}\",:]+@[^\\s{}\",:]+\\.[^\\s{}\",:]+$");
 
     private static final String EMAIL_FIELD_ID = "email";
     private static final String CONTINUE_BUTTON_ID = "sign-in-button";
@@ -60,22 +62,18 @@ public class GovSignInJourney extends BasePage {
 
     /**
      * Mock sign in email held in AWS Secrets Manager under {@value #MOCK_EMAIL_SECRET_KEY}.
-     * Falls back to the mock service default if the secret is unavailable.
+     * When the key is missing, active-support returns the whole secret document, so the value is
+     * validated as a single email address before it is ever typed into a page or logged.
      */
     public static synchronized String getMockSignInEmail() {
         if (mockEmail == null) {
-            String secretValue = null;
-            try {
-                secretValue = SecretsManager.getSecretValue(MOCK_EMAIL_SECRET_KEY);
-            } catch (Exception e) {
-                LOGGER.warn("Could not read " + MOCK_EMAIL_SECRET_KEY + " from secrets manager: " + e.getMessage());
+            String secretValue = SecretsManager.getSecretValue(MOCK_EMAIL_SECRET_KEY);
+            if (secretValue == null || !SINGLE_EMAIL.matcher(secretValue.trim()).matches()) {
+                throw new IllegalStateException(String.format(
+                        "Secret key '%s' was not found in the test runner secret, or is not a single email address. "
+                                + "Add it before running GOV.UK sign in tests.", MOCK_EMAIL_SECRET_KEY));
             }
-            if (secretValue == null || secretValue.isBlank()) {
-                LOGGER.warn("Secret " + MOCK_EMAIL_SECRET_KEY + " not set, using default mock email");
-                mockEmail = DEFAULT_MOCK_EMAIL;
-            } else {
-                mockEmail = secretValue.trim();
-            }
+            mockEmail = secretValue.trim();
         }
         return mockEmail;
     }
@@ -89,7 +87,7 @@ public class GovSignInJourney extends BasePage {
             LOGGER.info("Mock GOV.UK Sign In page is not displayed - already returned to VOL");
             return;
         }
-        LOGGER.info("Completing mock GOV.UK Sign In as " + email);
+        LOGGER.info("Completing mock GOV.UK Sign In with the email from secret key " + MOCK_EMAIL_SECRET_KEY);
         waitAndEnterText(EMAIL_FIELD_ID, SelectorType.ID, email);
         waitAndClick(CONTINUE_BUTTON_ID, SelectorType.ID);
     }
