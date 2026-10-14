@@ -3,6 +3,7 @@ package org.dvsa.testing.framework.stepdefs.vol;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.datatable.DataTable;
 import org.dvsa.testing.framework.Injectors.World;
 
 public class AddressChanges {
@@ -17,9 +18,9 @@ public class AddressChanges {
         world.addressesJourney.clearMandatoryCorrespondenceFieldsAndSave();
     }
 
-    @Then("the addresses page should display the mandatory field validation errors")
-    public void theAddressesPageShouldDisplayTheMandatoryFieldValidationErrors() {
-        world.addressesJourney.verifyMandatoryFieldValidationErrorsAreDisplayed();
+    @Then("the addresses page should display the validation errors")
+    public void theAddressesPageShouldDisplayTheValidationErrors(DataTable expectedErrors) {
+        world.addressesJourney.verifyValidationErrorsAreDisplayed(expectedErrors.asMap(String.class, String.class));
     }
 
     @And("the original correspondence address should not have been changed")

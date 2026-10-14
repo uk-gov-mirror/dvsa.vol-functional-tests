@@ -22,9 +22,9 @@ Feature file (.feature)  →  Step definitions (stepdefs/)  →  Journey (Journe
 ### Rules
 
 1. **Step definitions only call journeys.** A step body should look like `world.addressesJourney.verifySomething();`. Step def classes must not extend `BasePage`, hold xpaths/ids/names, call `findElement`, or assert on raw element values.
-2. **Locators are private to the journey.** Declare them as `private static final String` inside the journey. Never expose locators, field names, or element getters as public API (that is the page-object pattern we are avoiding).
+2. **No locator objects.** Do not declare selectors, field names or expected texts as constants/fields (`static final String ...`) in journeys or step defs; that is the page-object pattern we are avoiding. Write selectors inline inside the journey method that uses them, and pass expected texts/data in from the feature file (parameters or data tables).
 3. **Journey methods are intent-level.** Name them by what the user does or what must be true, e.g. `clearMandatoryCorrespondenceFieldsAndSave()`, `verifyMandatoryFieldValidationErrorsAreDisplayed()`, not `getAddressLine1Field()` / `clickSaveButton()`.
-4. **Verifications live in the journey.** Use JUnit `assertEquals` / `assertTrue` with clear failure messages inside `verify...` methods. State needed for later verification (e.g. original values before an edit) is stored in private journey fields.
+4. **Verifications live in the journey.** Use JUnit `assertEquals` / `assertTrue` with clear failure messages inside `verify...` methods. Only runtime state needed for a later verification (e.g. original values captured before an edit) may be held in private journey fields.
 5. **Do not add or use classes under `pageObjects/external` or `pageObjects/internal`** for new work. Use journeys instead.
 6. **Register every new journey** in both:
    - `Injectors/World.java` as a public field (e.g. `public AddressesJourney addressesJourney;`)
@@ -34,20 +34,20 @@ Feature file (.feature)  →  Step definitions (stepdefs/)  →  Journey (Journe
 ### Example
 
 ```java
+// Feature: expected data lives here
+Then the addresses page should display the validation errors
+  | correspondence_address[town] | Enter your town/city |
+
 // Step definition: thin, no selectors
-@Then("the addresses page should display the mandatory field validation errors")
-public void theAddressesPageShouldDisplayTheMandatoryFieldValidationErrors() {
-    world.addressesJourney.verifyMandatoryFieldValidationErrorsAreDisplayed();
+@Then("the addresses page should display the validation errors")
+public void theAddressesPageShouldDisplayTheValidationErrors(DataTable expectedErrors) {
+    world.addressesJourney.verifyValidationErrorsAreDisplayed(expectedErrors.asMap(String.class, String.class));
 }
 
-// Journey: owns locators, actions and assertions
-public class AddressesJourney extends BasePage {
-    private static final String VALIDATION_SUMMARY = "//*[@id='validationSummary']";
-
-    public void verifyMandatoryFieldValidationErrorsAreDisplayed() {
-        waitForElementToBePresent(VALIDATION_SUMMARY);
-        assertTrue(isElementPresent(VALIDATION_SUMMARY, SelectorType.XPATH), "...");
-    }
+// Journey: inline selectors, actions and assertions; no locator constants
+public void verifyValidationErrorsAreDisplayed(Map<String, String> expectedErrorsByFieldName) {
+    waitForElementToBePresent("//*[@id='validationSummary']");
+    expectedErrorsByFieldName.forEach((fieldName, expectedError) -> { /* assert summary + inline error */ });
 }
 ```
 
