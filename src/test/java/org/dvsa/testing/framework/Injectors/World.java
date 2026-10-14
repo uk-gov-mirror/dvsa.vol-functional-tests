@@ -52,6 +52,7 @@ public class World {
     public SurrenderJourney surrenderJourney;
     public TransportManagerJourney TMJourney;
     public BusinessDetailsJourney businessDetailsJourney;
+    public AddressesJourney addressesJourney;
     public SafetyComplianceJourney safetyComplianceJourney;
     public SafetyInspectorJourney safetyInspectorJourney;
     public TransportManagerJourney transportManagerJourney;
