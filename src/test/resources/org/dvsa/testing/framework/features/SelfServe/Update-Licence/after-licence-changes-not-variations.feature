@@ -18,7 +18,7 @@ Feature: Self Serve users can make changes to their valid licence.
     When i make changes to the addresses page
     Then the changes to the addresses page are made
 
-  @update-address-validation
+  @update-address-validation @ss_regression
   Scenario: A self serve user cannot save addresses with mandatory fields missing
     When i clear the mandatory correspondence address fields and save
     Then the addresses page should display the validation errors
