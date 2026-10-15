@@ -323,6 +323,17 @@ public class ManageApplications extends BasePage {
         }
     }
 
+    @Given("i have a valid {string} {string} LLP licence")
+    public synchronized void iHaveAValidLLPLicence(String operatorType, String licenceType) throws HttpException {
+        writeLock.lock();
+        try {
+            world.APIJourney.registerAndGetUserDetails(UserType.EXTERNAL.asString());
+            world.licenceCreation.createLLPLicence(operatorType, licenceType);
+        }finally {
+            writeLock.unlock();
+        }
+    }
+
     @Given("i have a {string} application in progress")
     public synchronized void iHaveAnApplicationInProgress(String operatorType) throws HttpException {
         writeLock.lock();
