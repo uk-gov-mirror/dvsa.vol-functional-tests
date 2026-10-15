@@ -52,6 +52,7 @@ public class Initialisation {
         world.DataGenerator = new DataGenerator(world);
         world.forgottenCredsJourney = new ForgottenCredsJourney(world);
         world.businessDetailsJourney = new BusinessDetailsJourney(world);
+        world.addressesJourney = new AddressesJourney(world);
         world.operatingCentreJourney = new OperatingCentreJourney(world);
         world.safetyComplianceJourney = new SafetyComplianceJourney(world);
         world.safetyInspectorJourney = new SafetyInspectorJourney(world);
