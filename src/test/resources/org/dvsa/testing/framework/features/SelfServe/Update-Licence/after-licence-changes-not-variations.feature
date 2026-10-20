@@ -18,6 +18,16 @@ Feature: Self Serve users can make changes to their valid licence.
     When i make changes to the addresses page
     Then the changes to the addresses page are made
 
+  @update-address-validation @ss_regression
+  Scenario: A self serve user cannot save addresses with mandatory fields missing
+    When i clear the mandatory correspondence address fields and save
+    Then the addresses page should display the validation errors
+      | correspondence_address[addressLine1] | Enter the first line of your address            |
+      | correspondence_address[town]         | Enter your town/city                            |
+      | correspondence_address[postcode]     | Postcode: Postcode is required for UK addresses |
+      | contact[phone_primary]               | Contact number is missing                       |
+    And the original correspondence address should not have been changed
+
   @update-vehicles
   Scenario: A self serve user changes their vehicles
     When i make changes to the vehicles page
