@@ -123,6 +123,16 @@ public class LicenceCreation {
         }
     }
 
+    public synchronized void createLLPLicence(String operatorType, String licenceType) throws HttpException {
+        lock.lock();
+        try {
+            world.registerUser.setBusinessType("limited liability partnership");
+            createLicence(operatorType, licenceType);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public synchronized void createLGVOnlyApplication(String NIFlag) throws HttpException {
         lock.lock();
         try {

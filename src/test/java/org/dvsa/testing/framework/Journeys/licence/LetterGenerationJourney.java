@@ -3,7 +3,9 @@ package org.dvsa.testing.framework.Journeys.licence;
 import org.dvsa.testing.framework.Injectors.World;
 import org.dvsa.testing.framework.pageObjects.BasePage;
 import org.dvsa.testing.framework.pageObjects.enums.SelectorType;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
@@ -160,10 +162,15 @@ public class LetterGenerationJourney extends BasePage {
     }
 
     public void closeModalIfOpen() {
-        if (isElementPresentWhenStable(MODAL_CLOSE, SelectorType.XPATH)) {
-            waitAndClick(MODAL_CLOSE, SelectorType.XPATH);
-            waitForPageLoad();
+        if (!isElementPresentWhenStable(MODAL_CLOSE, SelectorType.XPATH)) {
+            return;
         }
+        try {
+            waitAndClick(MODAL_CLOSE, SelectorType.XPATH);
+        } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException modalAlreadyClosed) {
+            return;
+        }
+        waitForPageLoad();
     }
 
     public void filterDocuments(String category) {

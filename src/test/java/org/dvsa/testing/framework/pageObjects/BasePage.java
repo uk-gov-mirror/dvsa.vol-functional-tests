@@ -864,7 +864,7 @@ public abstract class BasePage extends DriverUtils {
         wait.until(expect);
         try {
             assertEquals("complete", javaScriptExecutor("return document.readyState").toString());
-        } catch (Exception e) {
+        } catch (Exception | AssertionError e) {
             LOGGER.info("Page timed out trying to load.");
         }
     }
