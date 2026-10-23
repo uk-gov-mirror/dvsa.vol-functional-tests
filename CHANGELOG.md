@@ -1,6 +1,24 @@
 # Revision History for the VOL Functional Tests
 
 
+## [4.41.0](https://github.com/dvsa/vol-functional-tests/compare/v4.40.2...v4.41.0) (2026-10-23)
+
+
+### Features
+
+* assertion ([7d83b0f](https://github.com/dvsa/vol-functional-tests/commit/7d83b0fa6eeb2e8b97989a378af1cb617c6c9715))
+* local setup ([153d51a](https://github.com/dvsa/vol-functional-tests/commit/153d51ab3dc48b4f79b7bc48c2f0e3a57398aa81))
+* people ([2b5dc10](https://github.com/dvsa/vol-functional-tests/commit/2b5dc104094b481f4f155628307892baf14f2924))
+
+
+### Bug Fixes
+
+* address change ([14e8275](https://github.com/dvsa/vol-functional-tests/commit/14e8275080986705ae736ea72c2c6dea1c6193d7))
+* address change ([d0ee598](https://github.com/dvsa/vol-functional-tests/commit/d0ee598b6e5508473320a043a5c098d3a85106bb))
+* address change ([d95575c](https://github.com/dvsa/vol-functional-tests/commit/d95575c3569f51c9ffd14a26fe940dedc28cb4d8))
+* bump up ([936925a](https://github.com/dvsa/vol-functional-tests/commit/936925a962961d9bce1c81692bd574bb7a0e715a))
+* bump up ([296dcc2](https://github.com/dvsa/vol-functional-tests/commit/296dcc2775cf4f6c4d44381e784f75a370cc7b92))
+
 ## [4.40.2](https://github.com/dvsa/vol-functional-tests/compare/v4.40.1...v4.40.2) (2026-10-09)
 
 
