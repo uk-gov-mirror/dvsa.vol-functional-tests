@@ -2,6 +2,7 @@ package org.dvsa.testing.framework.stepdefs.vol;
 
 import activesupport.aws.s3.SecretsManager;
 import activesupport.driver.Browser;
+import activesupport.proxy.JumpboxProxy;
 import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
@@ -26,6 +27,11 @@ public class TestRunConfiguration {
 
     private static final Logger LOGGER = LogManager.getLogger(TestRunConfiguration.class);
     private static final String BEDROCK_SECRET = "vol-functional-tests/bedrock";
+
+    @BeforeAll(order = Integer.MIN_VALUE)
+    public static void initialiseJumpboxProxy() {
+        JumpboxProxy.enableIfRunning();
+    }
 
     @BeforeAll
     public static void loadBedrockConfig() {

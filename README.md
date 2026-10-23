@@ -17,6 +17,19 @@ The following technologies should be installed on your system.
 
 ``mvn clean test -Denv= -Dbrowser= -Dcucumber.filter.tags="@xx" ``
 
+### Local execution through the jumpbox proxy
+
+Start `aws-helper/jumpbox-proxy` with valid MFA credentials before launching tests.
+The Cucumber startup hook automatically configures the proxy at `127.0.0.1:3128`
+for `dev`, `qa`, `int` and `reg`, including direct Cucumber runs from IntelliJ.
+No additional proxy VM options are needed. For example, use
+`-Denv=qa -Dbrowser=chrome -Dheadless=false` and set the environment variable
+`AWS_PROFILE=aws-helper` for AWS access.
+
+Set `-Djumpbox.proxy=off` to disable automatic proxy configuration. Explicit
+`http.proxyHost`, `https.proxyHost`, `httpProxy` or `httpsProxy` properties also
+prevent automatic configuration.
+
 ## Reports
 To produce the reports run the following command in your terminal
 ``mvn allure:report``
