@@ -1,10 +1,10 @@
-@people-changes @ss_regression
+@people-changes
 Feature: People changes (partners, LLP members)
 
   Background:
     Given i have a valid "goods" "standard_national" LLP licence
 
-  @add-partner
+  @add-partner @ss_regression
   Scenario: Add a non-director partner to an LLP licence
     When i navigate to the people page
     And i add a partner named "John Smith" with date of birth "15 3 1975"

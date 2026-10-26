@@ -107,10 +107,8 @@ public class PeopleJourney extends BasePage {
         String confirmXpath = "//div[contains(@class, 'modal')]//button[contains(text(), 'Remove')]";
         waitForElementToBePresent(confirmXpath);
         waitAndClick(confirmXpath, SelectorType.XPATH);
-        waitForElementToBePresent("//table");
         String removedRowXpath = "//table//tr[contains(., '" + partnerName + "')]";
-        assertTrue(findElements(removedRowXpath, SelectorType.XPATH).isEmpty(),
-                "Partner " + partnerName + " should be removed from table");
+        waitForElementNotToBePresent(removedRowXpath);
     }
 
     public void verifyPartnerIsPresent(String partnerName) {
