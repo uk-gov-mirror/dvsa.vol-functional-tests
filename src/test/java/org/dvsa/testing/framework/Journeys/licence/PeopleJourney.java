@@ -103,15 +103,13 @@ public class PeopleJourney extends BasePage {
     public void removePartner(String partnerName) {
         String removeButtonXpath = "//table//tr[contains(., '" + partnerName + "')]//button[contains(@class, 'trigger-modal')]";
         waitAndClick(removeButtonXpath, SelectorType.XPATH);
-
-        // Modal appears; confirm removal
-        String confirmRemoveXpath = "//button[contains(text(), 'Remove')]";
-        waitForElementToBePresent(confirmRemoveXpath);
-        waitAndClick(confirmRemoveXpath, SelectorType.XPATH);
-
+        waitForElementToBePresent("//div[contains(@class, 'modal')]");
+        String confirmXpath = "//div[contains(@class, 'modal')]//button[contains(text(), 'Remove')]";
+        waitForElementToBePresent(confirmXpath);
+        waitAndClick(confirmXpath, SelectorType.XPATH);
         waitForElementToBePresent("//table");
         String removedRowXpath = "//table//tr[contains(., '" + partnerName + "')]";
-        assertTrue(findElements(removedRowXpath, SelectorType.XPATH).size() == 0,
+        assertTrue(findElements(removedRowXpath, SelectorType.XPATH).isEmpty(),
                 "Partner " + partnerName + " should be removed from table");
     }
 
