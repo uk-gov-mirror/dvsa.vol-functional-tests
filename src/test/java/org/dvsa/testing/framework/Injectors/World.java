@@ -54,6 +54,7 @@ public class World {
     public BusinessDetailsJourney businessDetailsJourney;
     public AddressesJourney addressesJourney;
     public PeopleJourney peopleJourney;
+    public DiscsJourney discsJourney;
     public SafetyComplianceJourney safetyComplianceJourney;
     public SafetyInspectorJourney safetyInspectorJourney;
     public TransportManagerJourney transportManagerJourney;
