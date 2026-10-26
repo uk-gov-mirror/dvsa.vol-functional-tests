@@ -54,6 +54,7 @@ public class Initialisation {
         world.businessDetailsJourney = new BusinessDetailsJourney(world);
         world.addressesJourney = new AddressesJourney(world);
         world.peopleJourney = new PeopleJourney(world);
+        world.discsJourney = new DiscsJourney(world);
         world.operatingCentreJourney = new OperatingCentreJourney(world);
         world.safetyComplianceJourney = new SafetyComplianceJourney(world);
         world.safetyInspectorJourney = new SafetyInspectorJourney(world);
