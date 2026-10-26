@@ -126,7 +126,7 @@ public class LicenceCreation {
     public synchronized void createLLPLicence(String operatorType, String licenceType) throws HttpException {
         lock.lock();
         try {
-            world.registerUser.setBusinessType("limited liability partnership");
+            world.registerUser.setBusinessType("org_t_llp");
             createLicence(operatorType, licenceType);
         } finally {
             lock.unlock();
