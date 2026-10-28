@@ -15,7 +15,7 @@
         <jvmMemory>4000</jvmMemory>
 
         <!-- DVSA Internal Libraries -->
-        <active-support.version>2.24.0</active-support.version>
+        <active-support.version>2.24.1</active-support.version>
         <api-calls.version>4.4.1</api-calls.version>
         <accessibility-ai.version>2.0.4</accessibility-ai.version>
 
@@ -42,8 +42,8 @@
 
         <!-- Network Dependencies -->
         <netty.version>4.1.136.Final</netty.version>
-        <jackson2.version>2.22.3</jackson2.version>
-        <jackson3.version>3.2.3</jackson3.version>
+        <jackson2.version>2.22.4</jackson2.version>
+        <jackson3.version>3.2.4</jackson3.version>
 
         <!-- Maven Plugins -->
         <maven.compiler.version>3.13.0</maven.compiler.version>
@@ -280,7 +280,7 @@
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                         -Xmx${jvmMemory}m
                     </argLine>
-                    <forkCount>5</forkCount>
+                    <forkCount>3</forkCount>
                     <parallel>methods</parallel>
                     <reuseForks>true</reuseForks>
                     <threadCount>8</threadCount>
