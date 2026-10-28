@@ -99,6 +99,8 @@ public class World {
 
     public InternalUIJourney internalUIJourney;
 
+    public InternalUndertakingsAndConditionsJourney internalUndertakingsAndConditionsJourney;
+
     public MessagingJourney messagingJourney;
 
     public MessagingInternal messagingInternal;

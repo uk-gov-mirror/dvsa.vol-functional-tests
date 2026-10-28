@@ -92,6 +92,7 @@ public class Initialisation {
         world.accessibilitySteps = new AccessibilitySteps(world);
         world.selfServeUIJourney = new SelfServeUIJourney(world);
         world.internalUIJourney = new InternalUIJourney(world);
+        world.internalUndertakingsAndConditionsJourney = new InternalUndertakingsAndConditionsJourney(world);
         world.messagingJourney = new MessagingJourney(world);
         world.messagingInternal = new MessagingInternal(world);
         world.messagingSelfServe = new MessagingSelfServe(world);
